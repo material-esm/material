@@ -3,10 +3,13 @@
  * Copyright 2021 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
-import { FilledTonalButton } from './internal/filled-tonal-button.js'
 import { styles as tonalStyles } from './internal/filled-tonal-styles.js'
 import { styles as sharedElevationStyles } from './internal/shared-elevation-styles.js'
 import { styles as sharedStyles } from './internal/shared-styles.js'
+import '../elevation/elevation.js'
+import { html } from 'lit'
+import { Button } from './internal/button.js'
+
 /**
  * @summary Buttons help people take action, such as sending an email, sharing a
  * document, or liking a comment.
@@ -28,14 +31,16 @@ import { styles as sharedStyles } from './internal/shared-styles.js'
  * @final
  * @suppress {visibility}
  */
-export let MdFilledTonalButton = class MdFilledTonalButton extends FilledTonalButton {
+export class FilledTonalButton extends Button {
+    renderElevationOrOutline() {
+        return html`<md-elevation part="elevation"></md-elevation>`
+    }
 }
-MdFilledTonalButton.styles = [
+
+FilledTonalButton.styles = [
     sharedStyles,
     sharedElevationStyles,
     tonalStyles,
 ]
 
-customElements.define('md-filled-tonal-button', MdFilledTonalButton)
-
-//# sourceMappingURL=filled-tonal-button.js.map
+customElements.define('md-filled-tonal-button', FilledTonalButton)

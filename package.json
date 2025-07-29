@@ -15,14 +15,15 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/material-components/material-web.git"
+    "url": "git+https://github.com/treeder/material.git"
   },
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/material-components/material-web/issues"
+    "url": "https://github.com/treeder/material/issues"
   },
-  "homepage": "https://github.com/material-components/material-web#readme",
+  "homepage": "https://github.com/treeder/material#readme",
   "scripts": {
+    "start": "npx serve",
     "build": "wireit",
     "build:ts": "wireit",
     "build:css-to-ts": "wireit",
@@ -56,7 +57,7 @@
     "catalog"
   ],
   "dependencies": {
-    "lit": "^2.7.4 || ^3.0.0"
+    "lit": "^3.3.1"
   },
   "devDependencies": {
     "@lit-labs/analyzer": "^0.9.2",

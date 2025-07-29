@@ -3,9 +3,12 @@
  * Copyright 2021 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
-import { OutlinedButton } from './internal/outlined-button.js'
 import { styles as outlinedStyles } from './internal/outlined-styles.js'
 import { styles as sharedStyles } from './internal/shared-styles.js'
+import '../elevation/elevation.js'
+import { html } from 'lit'
+import { Button } from './internal/button.js'
+
 /**
  * @summary Buttons help people take action, such as sending an email, sharing a
  * document, or liking a comment.
@@ -28,9 +31,11 @@ import { styles as sharedStyles } from './internal/shared-styles.js'
  * @final
  * @suppress {visibility}
  */
-export let MdOutlinedButton = class MdOutlinedButton extends OutlinedButton {
+export class OutlinedButton extends Button {
+  renderElevationOrOutline() {
+    return html`<div class="outline"></div>`
+  }
 }
-MdOutlinedButton.styles = [sharedStyles, outlinedStyles]
-customElements.define('md-outlined-button', MdOutlinedButton)
 
-//# sourceMappingURL=outlined-button.js.map
+OutlinedButton.styles = [sharedStyles, outlinedStyles]
+customElements.define('md-outlined-button', OutlinedButton)

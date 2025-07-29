@@ -3,11 +3,13 @@
  * Copyright 2021 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
-import { customElement } from 'lit/decorators.js'
-import { FilledButton } from './internal/filled-button.js'
 import { styles as filledStyles } from './internal/filled-styles.js'
 import { styles as sharedElevationStyles } from './internal/shared-elevation-styles.js'
 import { styles as sharedStyles } from './internal/shared-styles.js'
+import '../elevation/elevation.js'
+import { html } from 'lit'
+import { Button } from './internal/button.js'
+
 /**
  * @summary Buttons help people take action, such as sending an email, sharing a
  * document, or liking a comment.
@@ -28,14 +30,15 @@ import { styles as sharedStyles } from './internal/shared-styles.js'
  * @final
  * @suppress {visibility}
  */
-export let MdFilledButton = class MdFilledButton extends FilledButton {
+export class FilledButton extends Button {
+    renderElevationOrOutline() {
+        return html`<md-elevation part="elevation"></md-elevation>`
+    }
 }
-MdFilledButton.styles = [
+FilledButton.styles = [
     sharedStyles,
     sharedElevationStyles,
     filledStyles,
 ]
 
-customElements.define('md-filled-button', MdFilledButton)
-
-//# sourceMappingURL=filled-button.js.map
+customElements.define('md-filled-button', FilledButton)
