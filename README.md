@@ -5,7 +5,7 @@
   alt="A collection of Material web components"
   style="border-radius: 32px">
 
-[![jsDelivr hits (npm)](https://img.shields.io/jsdelivr/gh/hm/treeder/material)](https://www.jsdelivr.com/package/gh/treeder/material?tab=stats)
+[![jsDelivr hits (npm)](https://img.shields.io/jsdelivr/gh/hm/material-esm/material)](https://www.jsdelivr.com/package/gh/material-esm/material?tab=stats)
 
 `material` is a library of
 [web components](https://developer.mozilla.org/en-US/docs/Web/Web_Components)
@@ -22,7 +22,7 @@ Please [consider sponsoring](https://github.com/sponsors/treeder) before creatin
 
 ## Demo
 
-Demo is here: https://treeder.github.io/material/demo/
+Demo is here: https://material-esm.github.io/material/demo/
 
 ## Documentation
 
@@ -35,7 +35,7 @@ And we are adding README's in this repository for the new components that aren't
 ### NPM
 
 ```sh
-npm install treeder/material
+npm install material-esm/material
 ```
 
 ### CDN
@@ -54,7 +54,7 @@ Add this importmap to the `<head>` section of you app/site:
       "lit-element/lit-element.js": "https://cdn.jsdelivr.net/npm/lit-element@4/lit-element.js",
       "lit-html": "https://cdn.jsdelivr.net/npm/lit-html@3/lit-html.js",
       "lit-html/": "https://cdn.jsdelivr.net/npm/lit-html@3/",      
-      "material/": "https://cdn.jsdelivr.net/gh/treeder/material@1/"
+      "material/": "https://cdn.jsdelivr.net/gh/material-esm/material@1/"
     }
   }
 </script>
@@ -153,7 +153,7 @@ We welcome contributions, please discuss and/or make pull requests.
 
 ### Demo code
 
-Demo code is here: https://github.com/treeder/material/tree/main/demo
+Demo code is here: https://github.com/material-esm/material/tree/main/demo
 
 You can run it locally by checking out this repo and:
 
