@@ -4,8 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { styles as sharedStyles } from './internal/shared-styles.js'
-import { TextButton } from './internal/text-button.js'
 import { styles as textStyles } from './internal/text-styles.js'
+import '../elevation/elevation.js'
+import { Button } from './internal/button.js'
+
 /**
  * @summary Buttons help people take action, such as sending an email, sharing a
  * document, or liking a comment.
@@ -26,9 +28,7 @@ import { styles as textStyles } from './internal/text-styles.js'
  * @final
  * @suppress {visibility}
  */
-export let MdTextButton = class MdTextButton extends TextButton {
+export class TextButton extends Button {
 }
-MdTextButton.styles = [sharedStyles, textStyles]
-customElements.define('md-text-button', MdTextButton)
-
-//# sourceMappingURL=text-button.js.map
+TextButton.styles = [sharedStyles, textStyles]
+customElements.define('md-text-button', TextButton)

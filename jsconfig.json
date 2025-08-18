@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "checkJs": true, // Enable type checking for JavaScript files
+    "moduleResolution": "node",
+    "skipLibCheck": true,
+  },
+  "exclude": [
+    "node_modules", // Exclude the node_modules directory
+    "dist" // Exclude the build output directory
+  ]
+}
