@@ -18,16 +18,21 @@ jobs:
             const issueNumber = c.issue.number
             const issueCreator = c.payload.sender.login
             console.log("issueCreator:", issueCreator)
-            const owner = c.repo.owner 
+            const owner = c.repo.owner // this will be material-esm
             console.log("owner:", owner)
             const repo = c.repo.repo
             console.log("repo:", repo)
+            let r = await github.rest.orgs.checkMembershipForUser({
+              owner,
+              issueCreator,
+            });
+            console.log("membership:", r)
             if(owner == issueCreator){
               console.log("owner is issue creator")
               return
             }
 
-            const r = await github.graphql(`
+            r = await github.graphql(`
               query {
                 user(login:"${issueCreator}") {
                   sponsorshipForViewerAsSponsorable(activeOnly:true) {
