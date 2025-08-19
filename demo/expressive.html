@@ -44,7 +44,7 @@
     import 'material/iconbutton/icon-button.js'
     import 'material/navigationbar/navigation-bar.js'
     import 'material/navigationtab/navigation-tab.js'
-    import 'material/navigationrail/navigation-rail.js'
+    import 'material/rail/rail.js'
     import 'material/badge/badge.js'
     import 'material/navigationdrawer/navigation-drawer.js'
     import 'material/navigationdrawer/navigation-drawer-modal.js'
@@ -58,23 +58,6 @@
     import './components/top-nav.js'
   </script>
 
-  <!-- this is the modal drawer for small screens -->
-  <md-navigation-drawer-modal id="nav-drawer-modal">
-    <md-list-item href="/" style="width: 100%;">
-      <md-icon slot="start">home</md-icon>
-      <div slot="headline">Home</div>
-    </md-list-item>
-    <md-list-item href="/inbox">
-      <md-icon slot="start">inbox</md-icon>
-      <div slot="headline">Inbox</div>
-      <div slot="end">24</div>
-    </md-list-item>
-    <md-list-item href="/outbox">
-      <md-icon slot="start">outbox</md-icon>
-      <div slot="headline">Outbox</div>
-    </md-list-item>
-  </md-navigation-drawer-modal>
-
   <!-- layout is: { left nav rail/drawer, { header, content } } -->
   <div class="flex g12">
 
@@ -82,11 +65,11 @@
     <div class="gte-medium">
       <div class="flex g4" style="position: sticky; top: 0; overflow-y: auto; height: 100vh;">
         <div class="" id="nav-rail-container">
-          <md-navigation-rail active-index="1">
+          <md-rail active-index="1">
             <!-- todo: should maybe just change this slot to "top" or something then can add whatever to the top section -->
-            <md-icon-button slot="menu" id="rail-menu-button">
+            <!-- <md-icon-button slot="menu" id="rail-menu-button">
               <md-icon>menu</md-icon>
-            </md-icon-button>
+            </md-icon-button> -->
             <md-fab slot="fab" variant="primary" href="/" lowered>
               <md-icon slot="icon">search</md-icon>
             </md-fab>
@@ -104,86 +87,10 @@
               <md-icon slot="inactive-icon">shopping_cart</md-icon>
               <md-badge value="3"></md-badge>
             </md-navigation-tab>
-          </md-navigation-rail>
+          </md-rail>
         </div>
 
 
-
-
-        <!-- This one is non-modal, fixed menu, for bigger screens -->
-        <md-navigation-drawer id="nav-drawer">
-          <md-list-item href="/" style="width: 100%;">
-            <md-icon slot="start">home</md-icon>
-            <div slot="headline">Home</div>
-          </md-list-item>
-          <md-list-item href="/inbox">
-            <md-icon slot="start">inbox</md-icon>
-            <div slot="headline">Inbox</div>
-            <div slot="end">24</div>
-          </md-list-item>
-          <md-list-item href="/outbox">
-            <md-icon slot="start">outbox</md-icon>
-            <div slot="headline">Outbox</div>
-          </md-list-item>
-          <md-list-item href="/" style="width: 100%;">
-            <md-icon slot="start">home</md-icon>
-            <div slot="headline">Home</div>
-          </md-list-item>
-          <md-list-item href="/inbox">
-            <md-icon slot="start">inbox</md-icon>
-            <div slot="headline">Inbox</div>
-            <div slot="end">24</div>
-          </md-list-item>
-          <md-list-item href="/outbox">
-            <md-icon slot="start">outbox</md-icon>
-            <div slot="headline">Outbox</div>
-          </md-list-item>
-          <md-list-item href="/" style="width: 100%;">
-            <md-icon slot="start">home</md-icon>
-            <div slot="headline">Home</div>
-          </md-list-item>
-          <md-list-item href="/inbox">
-            <md-icon slot="start">inbox</md-icon>
-            <div slot="headline">Inbox</div>
-            <div slot="end">24</div>
-          </md-list-item>
-          <md-list-item href="/outbox">
-            <md-icon slot="start">outbox</md-icon>
-            <div slot="headline">Outbox</div>
-          </md-list-item>
-          <md-list-item href="/" style="width: 100%;">
-            <md-icon slot="start">home</md-icon>
-            <div slot="headline">Home</div>
-          </md-list-item>
-          <md-list-item href="/inbox">
-            <md-icon slot="start">inbox</md-icon>
-            <div slot="headline">Inbox</div>
-            <div slot="end">24</div>
-          </md-list-item>
-          <md-list-item href="/outbox">
-            <md-icon slot="start">outbox</md-icon>
-            <div slot="headline">Outbox</div>
-          </md-list-item>
-          <md-list-item href="/" style="width: 100%;">
-            <md-icon slot="start">home</md-icon>
-            <div slot="headline">Home</div>
-          </md-list-item>
-          <md-list-item href="/inbox">
-            <md-icon slot="start">inbox</md-icon>
-            <div slot="headline">Inbox</div>
-            <div slot="end">24</div>
-          </md-list-item>
-          <md-list-item href="/outbox">
-            <md-icon slot="start">outbox</md-icon>
-            <div slot="headline">Outbox</div>
-          </md-list-item>
-        </md-navigation-drawer>
-        <script>
-          if (window.matchMedia("(width >=840px)").matches) {
-            // expanded:
-            document.getElementById('nav-drawer').opened = true
-          } 
-        </script>
       </div>
     </div>
 
@@ -213,10 +120,10 @@
           }
         })
 
-        document.getElementById('rail-menu-button').addEventListener('click', () => {
-          let nd = document.getElementById('nav-drawer')
-          nd.opened = !nd.opened
-        })
+        // document.getElementById('rail-menu-button').addEventListener('click', () => {
+        //   let nd = document.getElementById('nav-drawer')
+        //   nd.opened = !nd.opened
+        // })
       </script>
 
       <!-- main content -->

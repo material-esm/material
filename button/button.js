@@ -895,6 +895,8 @@ export class Button extends LitElement {
     `
   }
   handleSlotChange() {
+    return
+    // errors, no assignedIcons?
     this.hasIcon = this.assignedIcons.length > 0
   }
 }
