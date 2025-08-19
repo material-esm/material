@@ -24,25 +24,26 @@ class ExpressiveComponent extends LitElement {
   static styles = [
     sharedStyles,
     css`
-        md-outlined-card {
-            width: 300px;
-            background: var(--md-sys-color-surface); 
-            overflow: hidden;
-        }
-        md-outlined-card img {
-            width: 100%;
-            height: 160px;
-            object-fit: cover;
-        }
-        .card-title {
-            font-size: 1.2rem;
-            font-weight: 500;
-        }
-        .tabpanel {
-            padding: 16px;
-            background: var(--md-sys-color-surface); 
-        }
-    `]
+      md-outlined-card {
+        width: 300px;
+        background: var(--md-sys-color-surface);
+        overflow: hidden;
+      }
+      md-outlined-card img {
+        width: 100%;
+        height: 160px;
+        object-fit: cover;
+      }
+      .card-title {
+        font-size: 1.2rem;
+        font-weight: 500;
+      }
+      .tabpanel {
+        padding: 16px;
+        background: var(--md-sys-color-surface);
+      }
+    `,
+  ]
 
   static properties = {
     activeTab: { type: Number },
@@ -127,9 +128,15 @@ class ExpressiveComponent extends LitElement {
           <md-button size="extra-large">Extra large</md-button>
         </div>
         <div class="flex g12 aic">
-          <md-button color="elevated">Elevated</md-button>
+          <md-button color="elevated">
+            <md-icon slot="icon">edit</md-icon>
+            Elevated
+          </md-button>
           <md-button color="outlined">Outlined</md-button>
-          <md-button color="filled">Filled</md-button>
+          <md-button color="filled">
+            <md-icon slot="icon">edit</md-icon>
+            Filled
+          </md-button>
           <md-button color="tonal">Tonal</md-button>
           <md-button color="text">Text</md-button>
         </div>
@@ -150,8 +157,8 @@ class ExpressiveComponent extends LitElement {
                     <div class="card-title">Card 1</div>
                     <div>Card content goes here</div>
                     <div class="flex g8 jcr mt12">
-                        <md-outlined-button>Read More</md-outlined-button>
-                        <md-filled-button>Buy Now</md-filled-button>
+                        <md-button color="outlined">Read More</md-button color="outlined">
+                        <md-button color="filled">Buy Now</md-button color="filled">
                     </div>
                 </div>
             </md-outlined-card>
@@ -163,16 +170,26 @@ class ExpressiveComponent extends LitElement {
                     <div class="card-title">Card 2</div>
                     <div>Card content goes here</div>
                     <div class="flex g8 jcr mt12">
-                        <md-outlined-button>Read More</md-outlined-button>
-                        <md-filled-button>Buy Now</md-filled-button>
+                        <md-button color="outlined">Read More</md-button color="outlined">
+                        <md-button color="filled">Buy Now</md-button color="filled">
                     </div>
                 </div>
             </md-outlined-card>
         </div>
 
         <div>
-            <md-filled-button @click=${() => snack('Hello world', { action: { label: 'Undo', onClick: () => { console.log("Undo clicked") } }, showCloseIcon: true })} >Snack</md-filled-button>
-            <md-filled-button @click=${() => this.renderRoot.querySelector("#dialog1").show()} show>Dialog</md-filled-button>
+            <md-button color="filled" @click=${() =>
+              snack('Hello world', {
+                action: {
+                  label: 'Undo',
+                  onClick: () => {
+                    console.log('Undo clicked')
+                  },
+                },
+                showCloseIcon: true,
+              })} >Snack</md-button color="filled">
+            <md-button color="filled" @click=${() =>
+              this.renderRoot.querySelector('#dialog1').show()} show>Dialog</md-button color="filled">
         </div>
 
         <div>
@@ -191,9 +208,14 @@ class ExpressiveComponent extends LitElement {
         </div>
 
         <div class="flex g12">
-          <md-slider @change=${(e) => console.log("Slider changed", e.target.value)}></md-slider>          
-          <md-slider @change=${(e) => console.log("Slider changed", e.target.value)} ticks value="50"></md-slider>
-          <md-slider @change=${(e) => console.log("Slider changed", e.target.valueStart, e.target.valueEnd)} range value-start="25" value-end="75"></md-slider>
+          <md-slider @change=${(e) => console.log('Slider changed', e.target.value)}></md-slider>          
+          <md-slider @change=${(e) => console.log('Slider changed', e.target.value)} ticks value="50"></md-slider>
+          <md-slider @change=${(e) =>
+            console.log(
+              'Slider changed',
+              e.target.valueStart,
+              e.target.valueEnd,
+            )} range value-start="25" value-end="75"></md-slider>
         </div>
 
     </div>
@@ -206,59 +228,55 @@ class ExpressiveComponent extends LitElement {
             A simple dialog with free-form content.
         </form>
         <div slot="actions">
-            <md-text-button form="form-id" @click=${() => this.renderRoot.querySelector("#dialog1").close()}>Ok</md-text-button>
+            <md-button color="text" form="form-id" @click=${() =>
+              this.renderRoot.querySelector('#dialog1').close()}>Ok</md-button color="text">
         </div>
     </md-dialog>
     `
   }
 
   toggleMoreMenu() {
-    let m = this.renderRoot.querySelector("#more-menu")
+    let m = this.renderRoot.querySelector('#more-menu')
     m.open = !m.open
   }
 
   selected(e) {
-    console.log("SELECTED!!!!", e.target, e.target.value)
+    console.log('SELECTED!!!!', e.target, e.target.value)
   }
 
   save(e) {
     e.preventDefault()
-    console.log("Save button clicked")
+    console.log('Save button clicked')
     let f1 = this.renderRoot.querySelector('#form1')
     let file1 = this.renderRoot.querySelector('#file1')
     console.log(file1.value)
     if (!f1.reportValidity()) {
-      console.log("Form is invalid")
+      console.log('Form is invalid')
       return
     }
   }
 
-
   tabChanged(e) {
-    console.log("TAB CHANGED!!!!", e.target, e.target.activeTabIndex)
+    console.log('TAB CHANGED!!!!', e.target, e.target.activeTabIndex)
     this.activeTab = e.target.activeTabIndex
   }
 
   renderTabPanel() {
-    console.log("render tab panel", this.activeTab)
+    console.log('render tab panel', this.activeTab)
     if (this.activeTab == 0) {
       return html`
-      <div class="tabpanel" id="photos-panel" role="tabpanel" aria-labelledby="photos-tab">
-        Tab 1 content
-      </div>
+        <div class="tabpanel" id="photos-panel" role="tabpanel" aria-labelledby="photos-tab">Tab 1 content</div>
       `
     }
     if (this.activeTab == 1) {
-      return html`
-      <div class="tabpanel" id="videos-panel" role="tabpanel" aria-labelledby="videos-tab">
-      Tab 2 content
-    </div>`
+      return html` <div class="tabpanel" id="videos-panel" role="tabpanel" aria-labelledby="videos-tab">
+        Tab 2 content
+      </div>`
     }
     if (this.activeTab == 2) {
-      return html`
-      <div class="tabpanel" id="music-panel" role="tabpanel" aria-labelledby="music-tab">
-      Tab 3 content
-    </div>`
+      return html` <div class="tabpanel" id="music-panel" role="tabpanel" aria-labelledby="music-tab">
+        Tab 3 content
+      </div>`
     }
   }
 }
