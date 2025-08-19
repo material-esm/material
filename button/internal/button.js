@@ -6,7 +6,6 @@
 import '../../focus/md-focus-ring.js'
 import '../../ripple/ripple.js'
 import { html, isServer, LitElement, nothing } from 'lit'
-import { property, query, queryAssignedElements } from 'lit/decorators.js'
 import { requestUpdateOnAriaChange } from '../../internal/aria/delegate.js'
 import { setupFormSubmitter, } from '../../internal/controller/form-submitter.js'
 import { dispatchActivationClick, isActivationClick, } from '../../internal/events/form-label-activation.js'
@@ -17,7 +16,6 @@ const buttonBaseClass = mixinElementInternals(LitElement)
  * A button component.
  */
 export class Button extends buttonBaseClass {
-
 
     static properties = {
         disabled: { type: Boolean, reflect: true },
