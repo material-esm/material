@@ -22,11 +22,15 @@ jobs:
             console.log("owner:", owner)
             const repo = c.repo.repo
             console.log("repo:", repo)
-            let r = await github.rest.orgs.checkMembershipForUser({
-              org: owner,
-              username: issueCreator,
-            });
-            console.log("membership:", r)
+            try {
+              let r = await github.rest.orgs.checkMembershipForUser({
+                org: owner,
+                username: issueCreator,
+              });
+              console.log("membership:", r)
+            } catch(e) {
+              console.log("error getting membership:", e)
+            }
             if(owner == issueCreator){
               console.log("owner is issue creator")
               return
