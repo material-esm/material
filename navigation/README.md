@@ -1,6 +1,6 @@
 # Navigation Rail
 
-This is a material 3 navigation rail. See demo for what it looks like. 
+This is a material 3 navigation rail. See demo for what it looks like.
 
 Import:
 
@@ -14,31 +14,32 @@ Import:
 Usage:
 
 ```html
-<div class="flex g12">
-  <div style="width: 80px;">
-    <md-navigation-rail active-index="1">
-      <md-icon-button slot="menu" id="rail-menu-button">
-        <md-icon>menu</md-icon>
-      </md-icon-button>
-      <md-fab slot="fab" variant="primary" href="/" lowered>
-        <md-icon slot="icon">search</md-icon>
-      </md-fab>
-    
-      <md-navigation-tab label="Home">
-        <md-icon slot="active-icon">home</md-icon>
-        <md-icon slot="inactive-icon">home</md-icon>
-      </md-navigation-tab>
-      <md-navigation-tab label="Stuff" href="/">
-        <md-icon slot="active-icon">home</md-icon>
-        <md-icon slot="inactive-icon">home</md-icon>
-      </md-navigation-tab>
-      <md-navigation-tab label="Cart" badge-value="3" show-badge>
-        <md-icon slot="active-icon">shopping_cart</md-icon>
-        <md-icon slot="inactive-icon">shopping_cart</md-icon>
-        <md-badge value="3"></md-badge>
-      </md-navigation-tab>
-    </md-navigation-rail>
+<div class="gte-medium">
+  <div class="flex g4" style="position: sticky; top: 0; overflow-y: auto; height: 100vh;">
+    <div class="" id="nav-rail-container">
+      <md-nav-rail active-index="1">
+        <!-- <md-icon-button slot="menu" id="rail-menu-button">
+              <md-icon>menu</md-icon>
+            </md-icon-button> -->
+        <md-fab slot="fab" variant="primary" lowered label="Search">
+          <md-icon slot="icon">search</md-icon>
+        </md-fab>
+
+        <md-nav-item label="Home">
+          <md-icon slot="active-icon">home</md-icon>
+          <md-icon slot="inactive-icon">home</md-icon>
+        </md-nav-item>
+        <md-nav-item label="Organizations" href="/">
+          <md-icon slot="active-icon">groups</md-icon>
+          <md-icon slot="inactive-icon">groups</md-icon>
+        </md-nav-item>
+        <md-nav-item label="Cart" badge-value="3" show-badge>
+          <md-icon slot="active-icon">shopping_cart</md-icon>
+          <md-icon slot="inactive-icon">shopping_cart</md-icon>
+          <md-badge value="3"></md-badge>
+        </md-nav-item>
+      </md-nav-rail>
+    </div>
   </div>
-  <div>MAIN CONTENT</div>
 </div>
 ```

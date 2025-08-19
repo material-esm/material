@@ -309,13 +309,12 @@ export class NavigationItem extends LitElement {
         cursor: pointer;
         display: flex;
         flex-direction: column;
-        height: 100%;
         align-items: center;
         justify-content: center;
         min-height: 48px;
         min-width: 48px;
         outline: none;
-        padding: 8px 0px 12px;
+        padding: 6px 0px 6px;
         position: relative;
         text-align: center;
         width: 100%;

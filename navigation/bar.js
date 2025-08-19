@@ -196,7 +196,7 @@ export class NavigationBar extends LitElement {
         );
         --_container-color: var(--md-navigation-bar-container-color, var(--md-sys-color-surface-container, #f3edf7));
         --_container-elevation: var(--md-navigation-bar-container-elevation, 2);
-        --_container-height: var(--md-navigation-bar-container-height, 80px);
+        /* --_container-height: var(--md-navigation-bar-container-height, 80px); */
         --_container-shape: var(--md-navigation-bar-container-shape, var(--md-sys-shape-corner-none, 0px));
         --_focus-state-layer-opacity: var(--md-navigation-bar-focus-state-layer-opacity, 0.12);
         --_hover-state-layer-opacity: var(--md-navigation-bar-hover-state-layer-opacity, 0.08);
