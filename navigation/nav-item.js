@@ -8,16 +8,156 @@ import '../ripple/ripple.js'
 import '../badge/badge.js'
 import { css, html, LitElement, nothing } from 'lit'
 import { literal, html as staticHtml } from 'lit/static-html.js'
-import { property, query } from 'lit/decorators.js'
 import { classMap } from 'lit/directives/class-map.js'
-import { requestUpdateOnAriaChange } from '../internal/aria/delegate.js'
 import { sharedStyles } from '../shared/shared.css.js'
 
 /**
- * @final
- * @suppress {visibility}
+ * Used with nav bar and nav rail.
  */
-export class NavigationTab extends LitElement {
+export class NavigationItem extends LitElement {
+  static properties = {
+    disabled: { type: Boolean },
+    active: { type: Boolean, reflect: true },
+    hideInactiveLabel: { type: Boolean, attribute: 'hide-inactive-label' },
+    label: { type: String },
+    badgeValue: { type: String, attribute: 'badge-value' },
+    showBadge: { type: Boolean, attribute: 'show-badge' },
+    href: { type: String },
+    /**
+     * This will the label horizontally instead of vertically.
+     */
+    expanded: { type: Boolean },
+  }
+  constructor() {
+    super()
+    this.disabled = false
+    this.active = false
+    this.hideInactiveLabel = false
+    this.label = ''
+    this.badgeValue = ''
+    this.showBadge = false
+    this.href = ''
+    this.expanded = false
+  }
+  render() {
+    // Needed for closure conformance
+
+    const { ariaLabel } = this
+    // const tag = this.href ? literal`div` : literal`button`
+    return staticHtml` <div
+      class="md3-navigation-tab flex col g12 ${classMap(this.getRenderClasses())}"
+      role="tab"
+      aria-selected="${this.active}"
+      aria-label=${ariaLabel || nothing}
+      tabindex="${this.active ? 0 : -1}"
+      @click="${this.handleClick}"
+      >
+      ${this.href && this.renderLink()}
+      ${this.expanded ? this.renderButton() : this.renderTab()}
+    </div>`
+  }
+  getRenderClasses() {
+    return {
+      wrapper: true,
+      expanded: this.expanded,
+      'md3-navigation-tab--hide-inactive-label': this.hideInactiveLabel,
+      'md3-navigation-tab--active': this.active,
+    }
+  }
+
+  renderTab() {
+    let flexDir = this.expanded ? 'expanded row aic jcc' : 'col'
+    return html` <md-focus-ring part="focus-ring" inward></md-focus-ring>
+      <md-ripple ?disabled="${this.disabled}" class="md3-navigation-tab__ripple"></md-ripple>
+      <div class="flex ${flexDir} g8 aic jcc">
+        <div aria-hidden="true" class="md3-navigation-tab__icon-content">
+          <span class="md3-navigation-tab__active-indicator"></span>
+          <span class="md3-navigation-tab__icon">
+            <slot name="inactive-icon"></slot>
+          </span>
+          <span class="md3-navigation-tab__icon md3-navigation-tab__icon--active">
+            <slot name="active-icon"></slot>
+          </span>
+          ${this.renderBadge()}
+        </div>
+        <div>${this.renderLabel()}</div>
+      </div>`
+  }
+
+  renderButton() {
+    // let button = document.createElement('md-button')
+    // button.color = 'tonal'
+    // button.size = 'medium'
+    // button.innerHTML = this.label
+    let color = this.active ? 'tonal' : 'text'
+    let style = this.active
+      ? '--md-text-button-label-text-color: var(--md-sys-color-secondary);'
+      : '--md-text-button-label-text-color: var(--md-sys-color-on-surface-variant);'
+    // todo: deal with active and inactive icons
+    return html`
+      <md-button color="${color}" size="medium" style="${style}">
+        <slot name="active-icon" slot="icon"></slot>
+        ${this.label}
+      </md-button>
+    `
+  }
+
+  renderBadge() {
+    return this.showBadge ? html`<md-badge .value="${this.badgeValue}"></md-badge>` : nothing
+  }
+  renderLabel() {
+    // Needed for closure conformance
+    const { ariaLabel } = this
+    const ariaHidden = ariaLabel ? 'true' : 'false'
+    return !this.label
+      ? nothing
+      : html` <span aria-hidden="${ariaHidden}" class="md3-navigation-tab__label-text">${this.label}</span>`
+  }
+  renderLink() {
+    // Needed for closure conformance
+    const { ariaLabel } = this
+    return html`
+      <a
+        style="z-index: 1000;"
+        class="link"
+        id="link"
+        href="${this.href}"
+        target="${this.target || nothing}"
+        aria-label="${ariaLabel || nothing}"
+      ></a>
+    `
+  }
+  firstUpdated(changedProperties) {
+    super.firstUpdated(changedProperties)
+    const event = new Event('navigation-tab-rendered', {
+      bubbles: true,
+      composed: true,
+    })
+    this.dispatchEvent(event)
+  }
+  focus() {
+    const buttonElement = this.buttonElement
+    if (buttonElement) {
+      buttonElement.focus()
+    }
+  }
+  blur() {
+    const buttonElement = this.buttonElement
+    if (buttonElement) {
+      buttonElement.blur()
+    }
+  }
+  handleClick() {
+    // b/269772145 - connect to ripple
+    this.dispatchEvent(
+      new CustomEvent('navigation-tab-interaction', {
+        detail: { state: this },
+        bubbles: true,
+        composed: true,
+      }),
+    )
+  }
+
   static styles = [
     sharedStyles,
     css`
@@ -162,7 +302,6 @@ export class NavigationTab extends LitElement {
       }
 
       .md3-navigation-tab {
-        align-items: center;
         appearance: none;
         background: none;
         border: none;
@@ -171,6 +310,7 @@ export class NavigationTab extends LitElement {
         display: flex;
         flex-direction: column;
         height: 100%;
+        align-items: center;
         justify-content: center;
         min-height: 48px;
         min-width: 48px;
@@ -329,6 +469,11 @@ export class NavigationTab extends LitElement {
         color: var(--_inactive-pressed-label-text-color);
       }
 
+      .wrapper.expanded {
+        justify-content: start;
+        align-items: start;
+        padding: 0;
+      }
       .link {
         height: 100%;
         outline: none;
@@ -343,122 +488,5 @@ export class NavigationTab extends LitElement {
       }
     `,
   ]
-  static properties = {
-    disabled: { type: Boolean },
-    active: { type: Boolean, reflect: true },
-    hideInactiveLabel: { type: Boolean, attribute: 'hide-inactive-label' },
-    label: { type: String },
-    badgeValue: { type: String, attribute: 'badge-value' },
-    showBadge: { type: Boolean, attribute: 'show-badge' },
-    href: { type: String },
-    expanded: { type: Boolean },
-  }
-  constructor() {
-    super()
-    this.disabled = false
-    this.active = false
-    this.hideInactiveLabel = false
-    this.label = ''
-    this.badgeValue = ''
-    this.showBadge = false
-    this.href = ''
-    this.expanded = false
-  }
-  render() {
-    // Needed for closure conformance
-    let flexDir = this.expanded ? 'expanded row aic jcc' : 'col'
-    const { ariaLabel } = this
-    const tag = this.href ? literal`div` : literal`button`
-    return staticHtml` <${tag}
-      class="md3-navigation-tab flex col ${classMap(this.getRenderClasses())}"
-      role="tab"
-      aria-selected="${this.active}"
-      aria-label=${ariaLabel || nothing}
-      tabindex="${this.active ? 0 : -1}"
-      @click="${this.handleClick}"
-      >
-      ${this.href && this.renderLink()}
-      <md-focus-ring part="focus-ring" inward></md-focus-ring>
-      <md-ripple
-        ?disabled="${this.disabled}"
-        class="md3-navigation-tab__ripple"></md-ripple>
-      <div class="flex ${flexDir} g8">
-        <div aria-hidden="true" class="md3-navigation-tab__icon-content">
-          <span class="md3-navigation-tab__active-indicator"></span>
-          <span class="md3-navigation-tab__icon">
-          <slot name="inactive-icon"></slot>
-          </span>
-          <span class="md3-navigation-tab__icon md3-navigation-tab__icon--active">
-          <slot name="active-icon"></slot>
-          </span>
-          ${this.renderBadge()}
-        </div>
-        <div>
-          ${this.renderLabel()}
-        </div>
-      </div>
-    </${tag}>`
-  }
-  getRenderClasses() {
-    return {
-      'md3-navigation-tab--hide-inactive-label': this.hideInactiveLabel,
-      'md3-navigation-tab--active': this.active,
-    }
-  }
-  renderBadge() {
-    return this.showBadge ? html`<md-badge .value="${this.badgeValue}"></md-badge>` : nothing
-  }
-  renderLabel() {
-    // Needed for closure conformance
-    const { ariaLabel } = this
-    const ariaHidden = ariaLabel ? 'true' : 'false'
-    return !this.label
-      ? nothing
-      : html` <span aria-hidden="${ariaHidden}" class="md3-navigation-tab__label-text">${this.label}</span>`
-  }
-  renderLink() {
-    // Needed for closure conformance
-    const { ariaLabel } = this
-    return html`
-      <a
-        style="z-index: 1000;"
-        class="link"
-        id="link"
-        href="${this.href}"
-        target="${this.target || nothing}"
-        aria-label="${ariaLabel || nothing}"
-      ></a>
-    `
-  }
-  firstUpdated(changedProperties) {
-    super.firstUpdated(changedProperties)
-    const event = new Event('navigation-tab-rendered', {
-      bubbles: true,
-      composed: true,
-    })
-    this.dispatchEvent(event)
-  }
-  focus() {
-    const buttonElement = this.buttonElement
-    if (buttonElement) {
-      buttonElement.focus()
-    }
-  }
-  blur() {
-    const buttonElement = this.buttonElement
-    if (buttonElement) {
-      buttonElement.blur()
-    }
-  }
-  handleClick() {
-    // b/269772145 - connect to ripple
-    this.dispatchEvent(
-      new CustomEvent('navigation-tab-interaction', {
-        detail: { state: this },
-        bubbles: true,
-        composed: true,
-      }),
-    )
-  }
 }
-customElements.define('md-navigation-tab', NavigationTab)
+customElements.define('md-nav-item', NavigationItem)

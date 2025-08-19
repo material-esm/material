@@ -43,8 +43,8 @@
     import 'material/icon/icon.js'
     import 'material/iconbutton/icon-button.js'
     import 'material/navigationbar/navigation-bar.js'
-    import 'material/navigationtab/navigation-tab.js'
-    import 'material/rail/rail.js'
+    import 'material/navigation/rail.js'
+    import 'material/navigation/nav-item.js'
     import 'material/badge/badge.js'
     import 'material/navigationdrawer/navigation-drawer.js'
     import 'material/navigationdrawer/navigation-drawer-modal.js'
@@ -66,27 +66,26 @@
       <div class="flex g4" style="position: sticky; top: 0; overflow-y: auto; height: 100vh;">
         <div class="" id="nav-rail-container">
           <md-rail active-index="1">
-            <!-- todo: should maybe just change this slot to "top" or something then can add whatever to the top section -->
             <!-- <md-icon-button slot="menu" id="rail-menu-button">
               <md-icon>menu</md-icon>
             </md-icon-button> -->
-            <md-fab slot="fab" variant="primary" href="/" lowered>
+            <md-fab slot="fab" variant="primary" lowered label="Search">
               <md-icon slot="icon">search</md-icon>
             </md-fab>
 
-            <md-navigation-tab label="Home">
+            <md-nav-item label="Home">
               <md-icon slot="active-icon">home</md-icon>
               <md-icon slot="inactive-icon">home</md-icon>
-            </md-navigation-tab>
-            <md-navigation-tab label="Stuff" href="/">
-              <md-icon slot="active-icon">home</md-icon>
-              <md-icon slot="inactive-icon">home</md-icon>
-            </md-navigation-tab>
-            <md-navigation-tab label="Cart" badge-value="3" show-badge>
+            </md-nav-item>
+            <md-nav-item label="Organizations" href="/">
+              <md-icon slot="active-icon">groups</md-icon>
+              <md-icon slot="inactive-icon">groups</md-icon>
+            </md-nav-item>
+            <md-nav-item label="Cart" badge-value="3" show-badge>
               <md-icon slot="active-icon">shopping_cart</md-icon>
               <md-icon slot="inactive-icon">shopping_cart</md-icon>
               <md-badge value="3"></md-badge>
-            </md-navigation-tab>
+            </md-nav-item>
           </md-rail>
         </div>
 
@@ -173,19 +172,19 @@
 
   <div class="compact" style="position: fixed; bottom: 0; width: 100%;">
     <md-navigation-bar active-index="1">
-      <md-navigation-tab label="Home">
+      <md-nav-item label="Home">
         <md-icon slot="active-icon">home</md-icon>
         <md-icon slot="inactive-icon">home</md-icon>
-      </md-navigation-tab>
-      <md-navigation-tab label="Stuff">
+      </md-nav-item>
+      <md-nav-item label="Stuff">
         <md-icon slot="active-icon">home</md-icon>
         <md-icon slot="inactive-icon">home</md-icon>
-      </md-navigation-tab>
-      <md-navigation-tab label="Cart" badge-value="3" show-badge>
+      </md-nav-item>
+      <md-nav-item label="Cart" badge-value="3" show-badge>
         <md-icon slot="active-icon">shopping_cart</md-icon>
         <md-icon slot="inactive-icon">shopping_cart</md-icon>
         <md-badge value="3"></md-badge>
-      </md-navigation-tab>
+      </md-nav-item>
     </md-navigation-bar>
   </div>
 
