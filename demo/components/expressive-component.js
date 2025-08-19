@@ -123,7 +123,7 @@ class ExpressiveComponent extends LitElement {
           <md-button>Default</md-button>
           <md-button size="extra-small">Extra small</md-button>
           <md-button size="small">Small</md-button>
-          <md-button size="medium">Medium</md-button>
+          <md-button size="medium"><md-icon slot="icon">edit</md-icon>Medium</md-button>
           <md-button size="large">Large</md-button>
           <md-button size="extra-large">Extra large</md-button>
         </div>
@@ -137,7 +137,10 @@ class ExpressiveComponent extends LitElement {
             <md-icon slot="icon">edit</md-icon>
             Filled
           </md-button>
-          <md-button color="tonal">Tonal</md-button>
+          <md-button color="tonal">
+            <md-icon slot="icon">edit</md-icon>
+            Tonal
+          </md-button>
           <md-button color="text">Text</md-button>
         </div>
 

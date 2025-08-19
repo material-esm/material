@@ -10,6 +10,157 @@ import '../ripple/ripple.js'
  * https://m3.material.io/components/buttons/overview
  */
 export class Button extends LitElement {
+  renderElevationOrOutline() {
+    if (this.color === 'elevated') {
+      return html`<md-elevation></md-elevation>`
+    }
+    if (this.color === 'outlined') {
+      return html`<div class="outline"></div>`
+    }
+  }
+
+  static properties = {
+    toggle: { type: Boolean, reflect: true },
+    size: { type: String },
+    shape: { type: String },
+    color: { type: String }, // this is elevated, filled, etc. Not an actual color.
+    disabled: { type: Boolean, reflect: true },
+    href: { type: String },
+    target: { type: String },
+    trailingIcon: { type: Boolean, attribute: 'trailing-icon', reflect: true },
+    hasIcon: { type: Boolean, attribute: 'has-icon', reflect: true },
+    type: { type: String },
+  }
+
+  get name() {
+    return this.getAttribute('name') ?? ''
+  }
+  set name(name) {
+    this.setAttribute('name', name)
+  }
+  constructor() {
+    super()
+
+    this.toggle = false
+    /**
+     * Accepted values are 'small' (default), 'extra-small', 'medium', 'large', 'extra-large'.
+     */
+    this.size = 'small'
+    /**
+     * Accepted values are 'round' (default), 'square'.
+     */
+    this.shape = 'round'
+    /**
+     * Accepted values are 'outlined', 'filled' (default), 'elevated', 'tonal', 'text'
+     */
+    this.color = 'filled'
+
+    /**
+     * Whether or not the button is disabled.
+     */
+    this.disabled = false
+    /**
+     * The URL that the link button points to.
+     */
+    this.href = ''
+    /**
+     * Where to display the linked `href` URL for a link button. Common options
+     * include `_blank` to open in a new tab.
+     */
+    this.target = ''
+    /**
+     * Whether to render the icon at the inline end of the label rather than the
+     * inline start.
+     *
+     * _Note:_ Link buttons cannot have trailing icons.
+     */
+    this.trailingIcon = false
+    /**
+     * Whether to display the icon or not.
+     */
+    this.hasIcon = false
+    /**
+     * The default behavior of the button. May be "text", "reset", or "submit"
+     * (default).
+     */
+    this.type = 'submit'
+    /**
+     * The value added to a form with the button's name when the button submits a
+     * form.
+     */
+    this.value = ''
+    this.handleActivationClick = (event) => {
+      if (!isActivationClick(event) || !this.buttonElement) {
+        return
+      }
+      this.focus()
+      dispatchActivationClick(this.buttonElement)
+    }
+  }
+  focus() {
+    this.buttonElement?.focus()
+  }
+  blur() {
+    this.buttonElement?.blur()
+  }
+  render() {
+    // Link buttons may not be disabled
+    const isDisabled = this.disabled && !this.href
+    const buttonOrLink = this.href ? this.renderLink() : this.renderButton()
+    // TODO(b/310046938): due to a limitation in focus ring/ripple, we can't use
+    // the same ID for different elements, so we change the ID instead.
+    const buttonId = this.href ? 'link' : 'button'
+    return html`
+      <div class="wrapper ${this.color} ${this.size} ${this.shape} ">
+        <div class="background"></div>
+        <md-focus-ring part="focus-ring" for=${buttonId}></md-focus-ring>
+        <md-ripple for=${buttonId} ?disabled="${isDisabled}"></md-ripple>
+        ${buttonOrLink}
+      </div>
+    `
+  }
+  renderButton() {
+    // Needed for closure conformance
+    const { ariaLabel, ariaHasPopup, ariaExpanded } = this
+    return html`<button
+      id="button"
+      class="button"
+      ?disabled=${this.disabled}
+      aria-label="${ariaLabel || nothing}"
+      aria-haspopup="${ariaHasPopup || nothing}"
+      aria-expanded="${ariaExpanded || nothing}"
+    >
+      ${this.renderContent()}
+    </button>`
+  }
+  renderLink() {
+    // Needed for closure conformance
+    const { ariaLabel, ariaHasPopup, ariaExpanded } = this
+    return html`<a
+      id="link"
+      class="button"
+      aria-label="${ariaLabel || nothing}"
+      aria-haspopup="${ariaHasPopup || nothing}"
+      aria-expanded="${ariaExpanded || nothing}"
+      href=${this.href}
+      target=${this.target || nothing}
+      >${this.renderContent()}
+    </a>`
+  }
+  renderContent() {
+    const icon = html`<slot name="icon" @slotchange="${this.handleSlotChange}"></slot>`
+    return html`
+      <span class="touch"></span>
+      ${this.trailingIcon ? nothing : icon}
+      <span class="label"><slot></slot></span>
+      ${this.trailingIcon ? icon : nothing}
+    `
+  }
+  handleSlotChange() {
+    return
+    // errors, no assignedIcons?
+    this.hasIcon = this.assignedIcons.length > 0
+  }
   static styles = [
     css`
       .wrapper.filled {
@@ -533,6 +684,7 @@ export class Button extends LitElement {
         cursor: pointer;
         display: inline-flex;
         gap: 8px;
+        align-items: center;
         outline: none;
         place-content: center;
         place-items: center;
@@ -747,155 +899,5 @@ export class Button extends LitElement {
       }
     `,
   ]
-
-  renderElevationOrOutline() {
-    if (this.color === 'elevated') {
-      return html`<md-elevation></md-elevation>`
-    }
-    if (this.color === 'outlined') {
-      return html`<div class="outline"></div>`
-    }
-  }
-
-  static properties = {
-    toggle: { type: Boolean, reflect: true },
-    size: { type: String },
-    shape: { type: String },
-    color: { type: String }, // this is elevated, filled, etc. Not an actual color.
-    disabled: { type: Boolean, reflect: true },
-    href: { type: String },
-    target: { type: String },
-    trailingIcon: { type: Boolean, attribute: 'trailing-icon', reflect: true },
-    hasIcon: { type: Boolean, attribute: 'has-icon', reflect: true },
-    type: { type: String },
-  }
-
-  get name() {
-    return this.getAttribute('name') ?? ''
-  }
-  set name(name) {
-    this.setAttribute('name', name)
-  }
-  constructor() {
-    super()
-
-    this.toggle = false
-    /**
-     * Accepted values are 'small' (default), 'extra-small', 'medium', 'large', 'extra-large'.
-     */
-    this.size = 'small'
-    /**
-     * Accepted values are 'round' (default), 'square'.
-     */
-    this.shape = 'round'
-    /**
-     * Accepted values are 'outlined', 'filled' (default), 'elevated', 'tonal', 'text'
-     */
-    this.color = 'filled'
-
-    /**
-     * Whether or not the button is disabled.
-     */
-    this.disabled = false
-    /**
-     * The URL that the link button points to.
-     */
-    this.href = ''
-    /**
-     * Where to display the linked `href` URL for a link button. Common options
-     * include `_blank` to open in a new tab.
-     */
-    this.target = ''
-    /**
-     * Whether to render the icon at the inline end of the label rather than the
-     * inline start.
-     *
-     * _Note:_ Link buttons cannot have trailing icons.
-     */
-    this.trailingIcon = false
-    /**
-     * Whether to display the icon or not.
-     */
-    this.hasIcon = false
-    /**
-     * The default behavior of the button. May be "text", "reset", or "submit"
-     * (default).
-     */
-    this.type = 'submit'
-    /**
-     * The value added to a form with the button's name when the button submits a
-     * form.
-     */
-    this.value = ''
-    this.handleActivationClick = (event) => {
-      if (!isActivationClick(event) || !this.buttonElement) {
-        return
-      }
-      this.focus()
-      dispatchActivationClick(this.buttonElement)
-    }
-  }
-  focus() {
-    this.buttonElement?.focus()
-  }
-  blur() {
-    this.buttonElement?.blur()
-  }
-  render() {
-    // Link buttons may not be disabled
-    const isDisabled = this.disabled && !this.href
-    const buttonOrLink = this.href ? this.renderLink() : this.renderButton()
-    // TODO(b/310046938): due to a limitation in focus ring/ripple, we can't use
-    // the same ID for different elements, so we change the ID instead.
-    const buttonId = this.href ? 'link' : 'button'
-    return html`
-      <div class="wrapper ${this.color} ${this.size} ${this.shape} ">
-        <div class="background"></div>
-        <md-focus-ring part="focus-ring" for=${buttonId}></md-focus-ring>
-        <md-ripple for=${buttonId} ?disabled="${isDisabled}"></md-ripple>
-        ${buttonOrLink}
-      </div>
-    `
-  }
-  renderButton() {
-    // Needed for closure conformance
-    const { ariaLabel, ariaHasPopup, ariaExpanded } = this
-    return html`<button
-      id="button"
-      class="button"
-      ?disabled=${this.disabled}
-      aria-label="${ariaLabel || nothing}"
-      aria-haspopup="${ariaHasPopup || nothing}"
-      aria-expanded="${ariaExpanded || nothing}"
-    >
-      ${this.renderContent()}
-    </button>`
-  }
-  renderLink() {
-    // Needed for closure conformance
-    const { ariaLabel, ariaHasPopup, ariaExpanded } = this
-    return html`<a
-      id="link"
-      class="button"
-      aria-label="${ariaLabel || nothing}"
-      aria-haspopup="${ariaHasPopup || nothing}"
-      aria-expanded="${ariaExpanded || nothing}"
-      href=${this.href}
-      target=${this.target || nothing}
-      >${this.renderContent()}
-    </a>`
-  }
-  renderContent() {
-    const icon = html`<slot name="icon" @slotchange="${this.handleSlotChange}"></slot>`
-    return html`
-      <span class="touch"></span>
-      ${this.trailingIcon ? nothing : icon}
-      <span class="label"><slot></slot></span>
-      ${this.trailingIcon ? icon : nothing}
-    `
-  }
-  handleSlotChange() {
-    this.hasIcon = this.assignedIcons.length > 0
-  }
 }
 customElements.define('md-button', Button)
