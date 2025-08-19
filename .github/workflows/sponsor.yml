@@ -23,8 +23,8 @@ jobs:
             const repo = c.repo.repo
             console.log("repo:", repo)
             let r = await github.rest.orgs.checkMembershipForUser({
-              owner,
-              issueCreator,
+              org: owner,
+              username: issueCreator,
             });
             console.log("membership:", r)
             if(owner == issueCreator){
