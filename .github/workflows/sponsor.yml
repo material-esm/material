@@ -13,13 +13,15 @@ jobs:
         with:
           # github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            console.log(context)
-            console.log("issue", context.issue, context.payload.issue)
+            console.log("context:", context)
             let c = context
             const issueNumber = c.issue.number
-            const issueCreator = context.payload.sender.login
+            const issueCreator = c.payload.sender.login
+            console.log("issueCreator:", issueCreator)
             const owner = c.repo.owner 
+            console.log("owner:", owner)
             const repo = c.repo.repo
+            console.log("repo:", repo)
             if(owner == issueCreator){
               console.log("owner is issue creator")
               return
