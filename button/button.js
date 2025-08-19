@@ -3,6 +3,7 @@ import { dispatchActivationClick, isActivationClick } from '../internal/events/f
 import '../elevation/elevation.js'
 import '../focus/md-focus-ring.js'
 import '../ripple/ripple.js'
+import { classMap } from 'lit/directives/class-map.js'
 
 /**
  * A material 3 expressive button component.
@@ -24,6 +25,7 @@ export class Button extends LitElement {
     size: { type: String },
     shape: { type: String },
     color: { type: String }, // this is elevated, filled, etc. Not an actual color.
+    pressed: { type: Boolean, reflect: true },
     disabled: { type: Boolean, reflect: true },
     href: { type: String },
     target: { type: String },
@@ -55,6 +57,7 @@ export class Button extends LitElement {
      */
     this.color = 'filled'
 
+    this.pressed = false
     /**
      * Whether or not the button is disabled.
      */
@@ -103,6 +106,12 @@ export class Button extends LitElement {
   blur() {
     this.buttonElement?.blur()
   }
+  get classes() {
+    return {
+      pressed: this.pressed,
+      disabled: this.disabled,
+    }
+  }
   render() {
     // Link buttons may not be disabled
     const isDisabled = this.disabled && !this.href
@@ -111,13 +120,33 @@ export class Button extends LitElement {
     // the same ID for different elements, so we change the ID instead.
     const buttonId = this.href ? 'link' : 'button'
     return html`
-      <div class="wrapper ${this.color} ${this.size} ${this.shape} ">
+      <div
+        class="wrapper ${this.color} ${this.size} ${this.shape} ${this.pressed ? 'pressed' : ''}"
+        @mousedown=${this.handlePress}
+        @mouseup=${this.handleRelease}
+        @touchstart=${this.handlePress}
+        @touchend=${this.handleRelease}
+        @click=${this.handleClick}
+        @keydown=${this.handleActivationClick}
+      >
         <div class="background"></div>
         <md-focus-ring part="focus-ring" for=${buttonId}></md-focus-ring>
         <md-ripple for=${buttonId} ?disabled="${isDisabled}"></md-ripple>
         ${buttonOrLink}
       </div>
     `
+  }
+
+  handlePress() {
+    this.pressed = true
+  }
+  handleRelease() {
+    this.pressed = false
+  }
+  handleClick(event) {
+    // if (this.href) {
+    //   event.preventDefault()
+    // }
   }
   renderButton() {
     // Needed for closure conformance
@@ -896,6 +925,39 @@ export class Button extends LitElement {
         font-size: 32px;
         line-height: 40px;
         border-width: 3px;
+      }
+    `,
+    // shapes
+    css`
+      .square.extra-small {
+        border-radius: 12px;
+      }
+      .square.small {
+        border-radius: 12px;
+      }
+      .square.medium {
+        border-radius: 16px;
+      }
+      .square.large {
+        border-radius: 28px;
+      }
+      .square.extra-large {
+        border-radius: 28px;
+      }
+      .pressed.extra-small {
+        border-radius: 8px;
+      }
+      .pressed.small {
+        border-radius: 8px;
+      }
+      .pressed.medium {
+        border-radius: 12px;
+      }
+      .pressed.large {
+        border-radius: 16px;
+      }
+      .pressed.extra-large {
+        border-radius: 16px;
       }
     `,
   ]

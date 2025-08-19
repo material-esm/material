@@ -6,7 +6,7 @@
 import { LitElement, css, html, nothing } from 'lit'
 import 'material/icon/icon.js'
 import 'material/iconbutton/icon-button.js'
-import { NavigationBar } from '../navigationbar/internal/navigation-bar.js'
+import { NavigationBar } from './bar.js'
 /**
  * New expandable rail.
  *
@@ -144,4 +144,4 @@ export class Rail extends NavigationBar {
   ]
 }
 
-customElements.define('md-rail', Rail)
+customElements.define('md-nav-rail', Rail)

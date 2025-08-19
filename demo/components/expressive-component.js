@@ -119,7 +119,7 @@ class ExpressiveComponent extends LitElement {
 
       
         <!-- Buttons -->
-        <div class="flex g12 aic">
+        <div class="flexw g12 aic">
           <md-button>Default</md-button>
           <md-button size="extra-small">Extra small</md-button>
           <md-button size="small">Small</md-button>
@@ -127,7 +127,7 @@ class ExpressiveComponent extends LitElement {
           <md-button size="large">Large</md-button>
           <md-button size="extra-large">Extra large</md-button>
         </div>
-        <div class="flex g12 aic">
+        <div class="flexw g12 aic">
           <md-button color="elevated">
             <md-icon slot="icon">edit</md-icon>
             Elevated
@@ -144,6 +144,16 @@ class ExpressiveComponent extends LitElement {
           <md-button color="text">Text</md-button>
         </div>
 
+        <div>Square buttons</div>
+         <div class="flexw g12 aic">
+          <md-button shape="square">Default</md-button>
+          <md-button shape="square" size="extra-small">Extra small</md-button>
+          <md-button shape="square" size="small">Small</md-button>
+          <md-button shape="square" size="medium"><md-icon slot="icon">edit</md-icon>Medium</md-button>
+          <md-button shape="square" size="large">Large</md-button>
+          <md-button shape="square" size="extra-large">Extra large</md-button>
+        </div>
+
         <md-chip-set>
             <md-assist-chip label="Assist chip"></md-assist-chip>
             <md-filter-chip label="Filter chip"></md-filter-chip>
@@ -151,7 +161,7 @@ class ExpressiveComponent extends LitElement {
             <md-suggestion-chip label="Suggestion chip"></md-suggestion-chip>
         </md-chip-set>
 
-        <div class="flex g12" style="flex-wrap: wrap;">
+        <div class="flexw g12" style="flex-wrap: wrap;">
             <md-outlined-card style="">
                 <div class="flex col">
                     <img src="./images/img1.jpg">
@@ -210,7 +220,7 @@ class ExpressiveComponent extends LitElement {
           ${this.renderTabPanel()}
         </div>
 
-        <div class="flex g12">
+        <div class="flexw g12">
           <md-slider @change=${(e) => console.log('Slider changed', e.target.value)}></md-slider>          
           <md-slider @change=${(e) => console.log('Slider changed', e.target.value)} ticks value="50"></md-slider>
           <md-slider @change=${(e) =>

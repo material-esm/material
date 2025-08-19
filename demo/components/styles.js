@@ -1,49 +1,55 @@
 import { css } from 'lit'
 
 export const styles = css`
-.circle {
+  .circle {
     border-radius: 50%;
-}
-.flex {
+  }
+  .flex {
     display: flex;
-}
-.col {
+  }
+  .flexw {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .row {
+    flex-direction: row;
+  }
+  .col {
     flex-direction: column;
-}
+  }
 
-
-.aic {
+  .aic {
     align-items: center;
-}
+  }
 
-.jcc {
+  .jcc {
     justify-content: center;
-}
-.jcr {
+  }
+  .jcr {
     justify-content: right;
-}
+  }
 
-.g8 {
+  .g8 {
     gap: 8px;
-}
-.g12 {
+  }
+  .g12 {
     gap: 12px;
-}
-.g24 {
+  }
+  .g24 {
     gap: 24px;
-}
+  }
 
-.p4 {
+  .p4 {
     padding: 4px;
-}
-.p12 {
+  }
+  .p12 {
     padding: 12px;
-}
-.p16 {
+  }
+  .p16 {
     padding: 16px;
-}
+  }
 
-.mt12 {
+  .mt12 {
     margin-top: 12px;
-}
+  }
 `
