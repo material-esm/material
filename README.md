@@ -20,6 +20,16 @@ develop this at our own pace, and that pace is FAST.
 
 Please [consider sponsoring](https://github.com/sponsors/treeder) before creating issues for us. 
 
+## Material 3 Expressive
+
+Material 3 Expressive is in progress! [Follow along here](https://github.com/material-esm/material/issues/36). 
+
+To start using it, change the importmap to:
+
+```
+"material/": "https://cdn.jsdelivr.net/gh/material-esm/material@m3e/"
+```
+
 ## Demo
 
 Demo is here: https://material-esm.github.io/material/demo/
