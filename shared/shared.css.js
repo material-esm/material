@@ -16,6 +16,9 @@ export const sharedStyles = css`
   .jcc {
     justify-content: center;
   }
+  .fw {
+    width: 100%;
+  }
 
   .g8 {
     gap: 8px;
@@ -25,5 +28,24 @@ export const sharedStyles = css`
   }
   .g24 {
     gap: 24px;
+  }
+
+  .pl4 {
+    padding-left: 4px;
+  }
+  .pl8 {
+    padding-left: 8px;
+  }
+  .pl16 {
+    padding-left: 16px;
+  }
+  .pr4 {
+    padding-right: 4px;
+  }
+  .pr8 {
+    padding-right: 8px;
+  }
+  .pr16 {
+    padding-right: 16px;
   }
 `

@@ -29,6 +29,10 @@ export const styles = css`
     justify-content: right;
   }
 
+  .fw {
+    width: 100%;
+  }
+
   .g8 {
     gap: 8px;
   }
@@ -49,6 +53,9 @@ export const styles = css`
     padding: 16px;
   }
 
+  .mt8 {
+    margin-top: 8px;
+  }
   .mt12 {
     margin-top: 12px;
   }

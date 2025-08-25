@@ -7,6 +7,7 @@
   # Use https://search.nixos.org/packages to find packages
   packages = [
     pkgs.gnumake
+    pkgs.gh
   ];
 
   # Sets environment variables in the workspace

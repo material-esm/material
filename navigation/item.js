@@ -10,6 +10,7 @@ import { css, html, LitElement, nothing } from 'lit'
 import { literal, html as staticHtml } from 'lit/static-html.js'
 import { classMap } from 'lit/directives/class-map.js'
 import { sharedStyles } from '../shared/shared.css.js'
+import '../button/button.js'
 
 /**
  * Used with nav bar and nav rail.

@@ -54,8 +54,8 @@
     import 'material/menu/menu.js'
     import 'material/menu/menu-item.js'
     import 'material/snackbar/snackbar.js'
+    import 'material/app/bar.js'
     import './components/expressive-component.js'
-    import './components/top-nav.js'
   </script>
 
   <!-- layout is: { left nav rail/drawer, { header, content } } -->
@@ -91,31 +91,41 @@
       </div>
     </div>
 
-    <div class="flex col g8">
+    <div class="flex col g8 mt8">
 
       <!-- top nav -->
-      <div>
-        <top-nav id="topNav"></top-nav>
-      </div>
-      <script>
-        document.getElementById('topNav').addEventListener('drawerButtonClicked', () => {
-          console.log('drawerButtonClicked')
-          // let display = document.getElementById('nav-drawer-container').style.display
-          // if (display == 'block') {
-          //   document.getElementById('nav-drawer-container').style.display = 'none'
-          //   document.getElementById('nav-drawer').opened = false
-          // } else {
-          //   document.getElementById('nav-drawer-container').style.display = 'block'
-          //   document.getElementById('nav-drawer').opened = true
-          // }
+      <md-app-bar id="appBar">
+          <md-icon-button slot="leading-icon"><md-icon>menu</md-icon></md-icon-button>
+          <div slot="trailing-icon">
+            <img
+              id="profile-pic"
+              src="./images/avatar2.png"
+              class="circle"
+              style="height: 40px;"
+              @click=${this.toggleMenu}
+            />
+          </div>
+      </md-app-bar>
 
-          let opened = document.getElementById('nav-drawer-modal').opened
-          if (opened) {
-            document.getElementById('nav-drawer-modal').opened = false
-          } else {
-            document.getElementById('nav-drawer-modal').opened = true
-          }
-        })
+      <script>
+        // document.getElementById('topNav').addEventListener('drawerButtonClicked', () => {
+        //   console.log('drawerButtonClicked')
+        //   // let display = document.getElementById('nav-drawer-container').style.display
+        //   // if (display == 'block') {
+        //   //   document.getElementById('nav-drawer-container').style.display = 'none'
+        //   //   document.getElementById('nav-drawer').opened = false
+        //   // } else {
+        //   //   document.getElementById('nav-drawer-container').style.display = 'block'
+        //   //   document.getElementById('nav-drawer').opened = true
+        //   // }
+
+        //   let opened = document.getElementById('nav-drawer-modal').opened
+        //   if (opened) {
+        //     document.getElementById('nav-drawer-modal').opened = false
+        //   } else {
+        //     document.getElementById('nav-drawer-modal').opened = true
+        //   }
+        // })
 
         // document.getElementById('rail-menu-button').addEventListener('click', () => {
         //   let nd = document.getElementById('nav-drawer')

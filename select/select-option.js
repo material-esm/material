@@ -1,9 +1,4 @@
-/**
- * @license
- * Copyright 2023 Google LLC
- * SPDX-License-Identifier: Apache-2.0
- */
-import { styles } from '../menu/internal/menuitem/menu-item-styles.js'
+import { Menu } from '../menu/menu.js'
 import { SelectOptionEl } from './internal/selectoption/select-option.js'
 /**
  * @summary
@@ -35,8 +30,7 @@ import { SelectOptionEl } from './internal/selectoption/select-option.js'
  * @final
  * @suppress {visibility}
  */
-export let MdSelectOption = class MdSelectOption extends SelectOptionEl {
-}
-MdSelectOption.styles = [styles]
+export let MdSelectOption = class MdSelectOption extends SelectOptionEl {}
+MdSelectOption.styles = [Menu.styles]
 
 customElements.define('md-select-option', MdSelectOption)
