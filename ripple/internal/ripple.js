@@ -371,7 +371,6 @@ export class Ripple extends LitElement {
   }
   /** @private */
   async handleEvent(event) {
-    console.log('ripple.handleEvent')
     if (FORCED_COLORS?.matches) {
       // Skip event logic since the ripple is `display: none`.
       console.log('skipping')

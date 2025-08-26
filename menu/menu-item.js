@@ -18,15 +18,14 @@
  * @final
  * @suppress {visibility}
  */
-import '../../../focus/md-focus-ring.js'
-import '../../../labs/item/item.js'
-import '../../../ripple/ripple.js'
+import '../focus/md-focus-ring.js'
+import '../labs/item/item.js'
+import '../ripple/ripple.js'
 import { css, html, LitElement, nothing } from 'lit'
 import { classMap } from 'lit/directives/class-map.js'
 import { literal, html as staticHtml } from 'lit/static-html.js'
-import { requestUpdateOnAriaChange } from '../internal/aria/delegate.js'
 import { MenuItemController } from './controllers/menuItemController.js'
-import { queryAssignedElements, queryAssignedNodes } from '../../../utils/query.js'
+import { queryAssignedElements, queryAssignedNodes } from '../utils/query.js'
 
 export const menuItemStyles = css`
   :host {

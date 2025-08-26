@@ -91,7 +91,7 @@ class ExpressiveComponent extends LitElement {
                   <md-icon>more_vert</md-icon>
               </md-filled-tonal-icon-button>
               <md-menu id="more-menu" anchor="more-button">
-                <md-menu-item href="/profile">
+                <md-menu-item>
                     <div slot="headline">Profile</div>
                     <md-icon class="startIcon" slot="start">person</md-icon>
                 </md-menu-item>
@@ -99,7 +99,7 @@ class ExpressiveComponent extends LitElement {
                     <div slot="headline">My Organizations</div>
                     <md-icon class="startIcon" slot="start">storefront</md-icon>
                 </md-menu-item>
-                <md-menu-item id="goto-signout" @click=${this.signOut}>
+                <md-menu-item id="goto-signout">
                     <div slot="headline">Sign out</div>
                     <md-icon class="startIcon" slot="start">logout</md-icon>
                 </md-menu-item>
