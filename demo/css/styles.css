@@ -26,6 +26,12 @@ body {
     }
 }
 
+@media (width >=600px) {
+    .gte-medium {
+        display: block;
+    }
+}
+
 @media (width >=600px) and (width < 840px) {
     :is(.compact, .expanded):not(.medium) {
         display: none;
@@ -48,11 +54,6 @@ body {
     }
 }
 
-@media (width >=600px) {
-    .gte-medium {
-        display: block;
-    }
-}
 
 .main {
     margin: 0 auto;
