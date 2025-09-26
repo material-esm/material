@@ -29,7 +29,7 @@
             "lit-element/lit-element.js": "https://cdn.jsdelivr.net/npm/lit-element@4/lit-element.js",
             "lit-html": "https://cdn.jsdelivr.net/npm/lit-html@3/lit-html.js",
             "lit-html/": "https://cdn.jsdelivr.net/npm/lit-html@3/",
-            "material/": "../"
+            "material/": "https://cdn.jsdelivr.net/gh/material-esm/material@1/"
           }
         }
       </script>
@@ -38,13 +38,13 @@
 <body>
 
   <script type="module">
-    import 'material/text-field/text-field.js'
-    import 'material/buttons/button.js'
+    import 'material/textfield/outlined-text-field.js'
+    import 'material/button/filled-button.js'
     import 'material/icon/icon.js'
-    import 'material/buttons/icon-button.js'
-    import 'material/navigation/bar.js'
-    import 'material/navigation/rail.js'
-    import 'material/navigation/item.js'
+    import 'material/iconbutton/icon-button.js'
+    import 'material/navigationbar/navigation-bar.js'
+    import 'material/navigationtab/navigation-tab.js'
+    import 'material/navigationrail/navigation-rail.js'
     import 'material/badge/badge.js'
     import 'material/navigationdrawer/navigation-drawer.js'
     import 'material/navigationdrawer/navigation-drawer-modal.js'
@@ -54,9 +54,26 @@
     import 'material/menu/menu.js'
     import 'material/menu/menu-item.js'
     import 'material/snackbar/snackbar.js'
-    import 'material/app/bar.js'
-    import './components/expressive-component.js'
+    import './components/demo-component.js'
+    import './components/top-nav.js'
   </script>
+
+  <!-- this is the modal drawer for small screens -->
+  <md-navigation-drawer-modal id="nav-drawer-modal">
+    <md-list-item href="/" style="width: 100%;">
+      <md-icon slot="start">home</md-icon>
+      <div slot="headline">Home</div>
+    </md-list-item>
+    <md-list-item href="/inbox">
+      <md-icon slot="start">inbox</md-icon>
+      <div slot="headline">Inbox</div>
+      <div slot="end">24</div>
+    </md-list-item>
+    <md-list-item href="/outbox">
+      <md-icon slot="start">outbox</md-icon>
+      <div slot="headline">Outbox</div>
+    </md-list-item>
+  </md-navigation-drawer-modal>
 
   <!-- layout is: { left nav rail/drawer, { header, content } } -->
   <div class="flex g12">
@@ -65,72 +82,141 @@
     <div class="gte-medium">
       <div class="flex g4" style="position: sticky; top: 0; overflow-y: auto; height: 100vh;">
         <div class="" id="nav-rail-container">
-          <md-nav-rail active-index="1">
-            <!-- <md-icon-button slot="menu" id="rail-menu-button">
+          <md-navigation-rail active-index="1">
+            <!-- todo: should maybe just change this slot to "top" or something then can add whatever to the top section -->
+            <md-icon-button slot="menu" id="rail-menu-button">
               <md-icon>menu</md-icon>
-            </md-icon-button> -->
-            <md-fab slot="fab" variant="primary" lowered label="Search">
+            </md-icon-button>
+            <md-fab slot="fab" variant="primary" href="/" lowered>
               <md-icon slot="icon">search</md-icon>
             </md-fab>
 
-            <md-nav-item label="Home">
+            <md-navigation-tab label="Home">
               <md-icon slot="active-icon">home</md-icon>
               <md-icon slot="inactive-icon">home</md-icon>
-            </md-nav-item>
-            <md-nav-item label="Organizations" href="/">
-              <md-icon slot="active-icon">groups</md-icon>
-              <md-icon slot="inactive-icon">groups</md-icon>
-            </md-nav-item>
-            <md-nav-item label="Cart" badge-value="3" show-badge>
+            </md-navigation-tab>
+            <md-navigation-tab label="Stuff" href="/">
+              <md-icon slot="active-icon">home</md-icon>
+              <md-icon slot="inactive-icon">home</md-icon>
+            </md-navigation-tab>
+            <md-navigation-tab label="Cart" badge-value="3" show-badge>
               <md-icon slot="active-icon">shopping_cart</md-icon>
               <md-icon slot="inactive-icon">shopping_cart</md-icon>
               <md-badge value="3"></md-badge>
-            </md-nav-item>
-          </md-nav-rail>
+            </md-navigation-tab>
+          </md-navigation-rail>
         </div>
+
+
+
+
+        <!-- This one is non-modal, fixed menu, for bigger screens -->
+        <md-navigation-drawer id="nav-drawer">
+          <md-list-item href="/" style="width: 100%;">
+            <md-icon slot="start">home</md-icon>
+            <div slot="headline">Home</div>
+          </md-list-item>
+          <md-list-item href="/inbox">
+            <md-icon slot="start">inbox</md-icon>
+            <div slot="headline">Inbox</div>
+            <div slot="end">24</div>
+          </md-list-item>
+          <md-list-item href="/outbox">
+            <md-icon slot="start">outbox</md-icon>
+            <div slot="headline">Outbox</div>
+          </md-list-item>
+          <md-list-item href="/" style="width: 100%;">
+            <md-icon slot="start">home</md-icon>
+            <div slot="headline">Home</div>
+          </md-list-item>
+          <md-list-item href="/inbox">
+            <md-icon slot="start">inbox</md-icon>
+            <div slot="headline">Inbox</div>
+            <div slot="end">24</div>
+          </md-list-item>
+          <md-list-item href="/outbox">
+            <md-icon slot="start">outbox</md-icon>
+            <div slot="headline">Outbox</div>
+          </md-list-item>
+          <md-list-item href="/" style="width: 100%;">
+            <md-icon slot="start">home</md-icon>
+            <div slot="headline">Home</div>
+          </md-list-item>
+          <md-list-item href="/inbox">
+            <md-icon slot="start">inbox</md-icon>
+            <div slot="headline">Inbox</div>
+            <div slot="end">24</div>
+          </md-list-item>
+          <md-list-item href="/outbox">
+            <md-icon slot="start">outbox</md-icon>
+            <div slot="headline">Outbox</div>
+          </md-list-item>
+          <md-list-item href="/" style="width: 100%;">
+            <md-icon slot="start">home</md-icon>
+            <div slot="headline">Home</div>
+          </md-list-item>
+          <md-list-item href="/inbox">
+            <md-icon slot="start">inbox</md-icon>
+            <div slot="headline">Inbox</div>
+            <div slot="end">24</div>
+          </md-list-item>
+          <md-list-item href="/outbox">
+            <md-icon slot="start">outbox</md-icon>
+            <div slot="headline">Outbox</div>
+          </md-list-item>
+          <md-list-item href="/" style="width: 100%;">
+            <md-icon slot="start">home</md-icon>
+            <div slot="headline">Home</div>
+          </md-list-item>
+          <md-list-item href="/inbox">
+            <md-icon slot="start">inbox</md-icon>
+            <div slot="headline">Inbox</div>
+            <div slot="end">24</div>
+          </md-list-item>
+          <md-list-item href="/outbox">
+            <md-icon slot="start">outbox</md-icon>
+            <div slot="headline">Outbox</div>
+          </md-list-item>
+        </md-navigation-drawer>
+        <script>
+          if (window.matchMedia("(width >=840px)").matches) {
+            // expanded:
+            document.getElementById('nav-drawer').opened = true
+          } 
+        </script>
       </div>
     </div>
 
-    <div class="flex col g8 mt8">
+    <div class="flex col g8">
 
       <!-- top nav -->
-      <md-app-bar id="appBar">
-          <md-icon-button slot="leading-icon"><md-icon>menu</md-icon></md-icon-button>
-          <div slot="trailing-icon">
-            <img
-              id="profile-pic"
-              src="./images/avatar2.png"
-              class="circle"
-              style="height: 40px;"
-              @click=${this.toggleMenu}
-            />
-          </div>
-      </md-app-bar>
-
+      <div>
+        <top-nav id="topNav"></top-nav>
+      </div>
       <script>
-        // document.getElementById('topNav').addEventListener('drawerButtonClicked', () => {
-        //   console.log('drawerButtonClicked')
-        //   // let display = document.getElementById('nav-drawer-container').style.display
-        //   // if (display == 'block') {
-        //   //   document.getElementById('nav-drawer-container').style.display = 'none'
-        //   //   document.getElementById('nav-drawer').opened = false
-        //   // } else {
-        //   //   document.getElementById('nav-drawer-container').style.display = 'block'
-        //   //   document.getElementById('nav-drawer').opened = true
-        //   // }
+        document.getElementById('topNav').addEventListener('drawerButtonClicked', () => {
+          console.log('drawerButtonClicked')
+          // let display = document.getElementById('nav-drawer-container').style.display
+          // if (display == 'block') {
+          //   document.getElementById('nav-drawer-container').style.display = 'none'
+          //   document.getElementById('nav-drawer').opened = false
+          // } else {
+          //   document.getElementById('nav-drawer-container').style.display = 'block'
+          //   document.getElementById('nav-drawer').opened = true
+          // }
 
-        //   let opened = document.getElementById('nav-drawer-modal').opened
-        //   if (opened) {
-        //     document.getElementById('nav-drawer-modal').opened = false
-        //   } else {
-        //     document.getElementById('nav-drawer-modal').opened = true
-        //   }
-        // })
+          let opened = document.getElementById('nav-drawer-modal').opened
+          if (opened) {
+            document.getElementById('nav-drawer-modal').opened = false
+          } else {
+            document.getElementById('nav-drawer-modal').opened = true
+          }
+        })
 
-        // document.getElementById('rail-menu-button').addEventListener('click', () => {
-        //   let nd = document.getElementById('nav-drawer')
-        //   nd.opened = !nd.opened
-        // })
+        document.getElementById('rail-menu-button').addEventListener('click', () => {
+          let nd = document.getElementById('nav-drawer')
+          nd.opened = !nd.opened
+        })
       </script>
 
       <!-- main content -->
@@ -144,20 +230,20 @@
 
           <h2>Inputs</h2>
 
-          <md-text-field type="outlined" label="Name" required minlength="4"></md-text-field>
-          <md-text-field type="outlined" id="preferredDate" class="data" type="date" label="Preferred Date" required
-            minlength="4"></md-text-field>
-          <md-button onclick="save()">Save</md-button>
+          <md-outlined-text-field label="Name" required minlength="4"></md-outlined-text-field>
+          <md-outlined-text-field id="preferredDate" class="data" type="date" label="Preferred Date" required
+            minlength="4"></md-outlined-text-field>
+          <md-filled-button onclick="save()">Save</md-filled-button>
 
           <script>
             function save() {
               console.log("Save clicked")
-//              document.getElementById('nav-drawer').opened = true
+              document.getElementById('nav-drawer').opened = true
             }
           </script>
 
           <div style="margin-top: 24px;">
-            <expressive-component></expressive-component>
+            <demo-component></demo-component>
           </div>
 
           <md-snackbar message="Hello World!" open></md-snackbar>
@@ -179,21 +265,21 @@
   </div>
 
   <div class="compact" style="position: fixed; bottom: 0; width: 100%;">
-    <md-nav-bar active-index="1">
-      <md-nav-item label="Home">
+    <md-navigation-bar active-index="1">
+      <md-navigation-tab label="Home">
         <md-icon slot="active-icon">home</md-icon>
         <md-icon slot="inactive-icon">home</md-icon>
-      </md-nav-item>
-      <md-nav-item label="Stuff">
+      </md-navigation-tab>
+      <md-navigation-tab label="Stuff">
         <md-icon slot="active-icon">home</md-icon>
         <md-icon slot="inactive-icon">home</md-icon>
-      </md-nav-item>
-      <md-nav-item label="Cart" badge-value="3" show-badge>
+      </md-navigation-tab>
+      <md-navigation-tab label="Cart" badge-value="3" show-badge>
         <md-icon slot="active-icon">shopping_cart</md-icon>
         <md-icon slot="inactive-icon">shopping_cart</md-icon>
         <md-badge value="3"></md-badge>
-      </md-nav-item>
-    </md-nav-bar>
+      </md-navigation-tab>
+    </md-navigation-bar>
   </div>
 
 </body>
