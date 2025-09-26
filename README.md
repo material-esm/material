@@ -24,11 +24,7 @@ Please [consider sponsoring](https://github.com/sponsors/treeder) before creatin
 
 Material 3 Expressive is in progress! [Follow along here](https://github.com/material-esm/material/issues/36).
 
-To start using it, change the importmap to:
-
-```
-"material/": "https://cdn.jsdelivr.net/gh/material-esm/material@2/"
-```
+To start using it, see [this topic](https://github.com/orgs/material-esm/discussions/71).
 
 ## Demo
 

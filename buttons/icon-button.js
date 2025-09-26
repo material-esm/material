@@ -77,7 +77,7 @@ export class IconButton extends iconButtonBaseClass {
     /**
      * filled, tonal, outlined, standard
      */
-    this.color = 'filled'
+    this.color = 'standard'
   }
   get name() {
     return this.getAttribute('name') ?? ''
@@ -610,120 +610,108 @@ export class IconButton extends iconButtonBaseClass {
     `,
     css`
       .wrapper.tonal {
-        --_container-color: var(
-          --md-filled-tonal-icon-button-container-color,
-          var(--md-sys-color-secondary-container, #e8def8)
-        );
-        --_container-height: var(--md-filled-tonal-icon-button-container-height, 40px);
-        --_container-width: var(--md-filled-tonal-icon-button-container-width, 40px);
+        --_container-color: var(--md-icon-button-container-color, var(--md-sys-color-secondary-container, #e8def8));
+        --_container-height: var(--md-icon-button-container-height, 40px);
+        --_container-width: var(--md-icon-button-container-width, 40px);
         --_disabled-container-color: var(
-          --md-filled-tonal-icon-button-disabled-container-color,
+          --md-icon-button-disabled-container-color,
           var(--md-sys-color-on-surface, #1d1b20)
         );
-        --_disabled-container-opacity: var(--md-filled-tonal-icon-button-disabled-container-opacity, 0.12);
-        --_disabled-icon-color: var(
-          --md-filled-tonal-icon-button-disabled-icon-color,
-          var(--md-sys-color-on-surface, #1d1b20)
-        );
-        --_disabled-icon-opacity: var(--md-filled-tonal-icon-button-disabled-icon-opacity, 0.38);
+        --_disabled-container-opacity: var(--md-icon-button-disabled-container-opacity, 0.12);
+        --_disabled-icon-color: var(--md-icon-button-disabled-icon-color, var(--md-sys-color-on-surface, #1d1b20));
+        --_disabled-icon-opacity: var(--md-icon-button-disabled-icon-opacity, 0.38);
         --_focus-icon-color: var(
-          --md-filled-tonal-icon-button-focus-icon-color,
+          --md-icon-button-focus-icon-color,
           var(--md-sys-color-on-secondary-container, #1d192b)
         );
         --_hover-icon-color: var(
-          --md-filled-tonal-icon-button-hover-icon-color,
+          --md-icon-button-hover-icon-color,
           var(--md-sys-color-on-secondary-container, #1d192b)
         );
         --_hover-state-layer-color: var(
-          --md-filled-tonal-icon-button-hover-state-layer-color,
+          --md-icon-button-hover-state-layer-color,
           var(--md-sys-color-on-secondary-container, #1d192b)
         );
-        --_hover-state-layer-opacity: var(--md-filled-tonal-icon-button-hover-state-layer-opacity, 0.08);
-        --_icon-color: var(
-          --md-filled-tonal-icon-button-icon-color,
-          var(--md-sys-color-on-secondary-container, #1d192b)
-        );
-        --_icon-size: var(--md-filled-tonal-icon-button-icon-size, 24px);
+        --_hover-state-layer-opacity: var(--md-icon-button-hover-state-layer-opacity, 0.08);
+        --_icon-color: var(--md-icon-button-icon-color, var(--md-sys-color-on-secondary-container, #1d192b));
+        --_icon-size: var(--md-icon-button-icon-size, 24px);
         --_pressed-icon-color: var(
-          --md-filled-tonal-icon-button-pressed-icon-color,
+          --md-icon-button-pressed-icon-color,
           var(--md-sys-color-on-secondary-container, #1d192b)
         );
         --_pressed-state-layer-color: var(
-          --md-filled-tonal-icon-button-pressed-state-layer-color,
+          --md-icon-button-pressed-state-layer-color,
           var(--md-sys-color-on-secondary-container, #1d192b)
         );
-        --_pressed-state-layer-opacity: var(--md-filled-tonal-icon-button-pressed-state-layer-opacity, 0.12);
+        --_pressed-state-layer-opacity: var(--md-icon-button-pressed-state-layer-opacity, 0.12);
         --_selected-container-color: var(
-          --md-filled-tonal-icon-button-selected-container-color,
+          --md-icon-button-selected-container-color,
           var(--md-sys-color-secondary-container, #e8def8)
         );
         --_toggle-selected-focus-icon-color: var(
-          --md-filled-tonal-icon-button-toggle-selected-focus-icon-color,
+          --md-icon-button-toggle-selected-focus-icon-color,
           var(--md-sys-color-on-secondary-container, #1d192b)
         );
         --_toggle-selected-hover-icon-color: var(
-          --md-filled-tonal-icon-button-toggle-selected-hover-icon-color,
+          --md-icon-button-toggle-selected-hover-icon-color,
           var(--md-sys-color-on-secondary-container, #1d192b)
         );
         --_toggle-selected-hover-state-layer-color: var(
-          --md-filled-tonal-icon-button-toggle-selected-hover-state-layer-color,
+          --md-icon-button-toggle-selected-hover-state-layer-color,
           var(--md-sys-color-on-secondary-container, #1d192b)
         );
         --_toggle-selected-icon-color: var(
-          --md-filled-tonal-icon-button-toggle-selected-icon-color,
+          --md-icon-button-toggle-selected-icon-color,
           var(--md-sys-color-on-secondary-container, #1d192b)
         );
         --_toggle-selected-pressed-icon-color: var(
-          --md-filled-tonal-icon-button-toggle-selected-pressed-icon-color,
+          --md-icon-button-toggle-selected-pressed-icon-color,
           var(--md-sys-color-on-secondary-container, #1d192b)
         );
         --_toggle-selected-pressed-state-layer-color: var(
-          --md-filled-tonal-icon-button-toggle-selected-pressed-state-layer-color,
+          --md-icon-button-toggle-selected-pressed-state-layer-color,
           var(--md-sys-color-on-secondary-container, #1d192b)
         );
         --_unselected-container-color: var(
-          --md-filled-tonal-icon-button-unselected-container-color,
+          --md-icon-button-unselected-container-color,
           var(--md-sys-color-surface-container-highest, #e6e0e9)
         );
         --_toggle-focus-icon-color: var(
-          --md-filled-tonal-icon-button-toggle-focus-icon-color,
+          --md-icon-button-toggle-focus-icon-color,
           var(--md-sys-color-on-surface-variant, #49454f)
         );
         --_toggle-hover-icon-color: var(
-          --md-filled-tonal-icon-button-toggle-hover-icon-color,
+          --md-icon-button-toggle-hover-icon-color,
           var(--md-sys-color-on-surface-variant, #49454f)
         );
         --_toggle-hover-state-layer-color: var(
-          --md-filled-tonal-icon-button-toggle-hover-state-layer-color,
+          --md-icon-button-toggle-hover-state-layer-color,
           var(--md-sys-color-on-surface-variant, #49454f)
         );
-        --_toggle-icon-color: var(
-          --md-filled-tonal-icon-button-toggle-icon-color,
-          var(--md-sys-color-on-surface-variant, #49454f)
-        );
+        --_toggle-icon-color: var(--md-icon-button-toggle-icon-color, var(--md-sys-color-on-surface-variant, #49454f));
         --_toggle-pressed-icon-color: var(
-          --md-filled-tonal-icon-button-toggle-pressed-icon-color,
+          --md-icon-button-toggle-pressed-icon-color,
           var(--md-sys-color-on-surface-variant, #49454f)
         );
         --_toggle-pressed-state-layer-color: var(
-          --md-filled-tonal-icon-button-toggle-pressed-state-layer-color,
+          --md-icon-button-toggle-pressed-state-layer-color,
           var(--md-sys-color-on-surface-variant, #49454f)
         );
         --_container-shape-start-start: var(
-          --md-filled-tonal-icon-button-container-shape-start-start,
-          var(--md-filled-tonal-icon-button-container-shape, var(--md-sys-shape-corner-full, 9999px))
+          --md-icon-button-container-shape-start-start,
+          var(--md-icon-button-container-shape, var(--md-sys-shape-corner-full, 9999px))
         );
         --_container-shape-start-end: var(
-          --md-filled-tonal-icon-button-container-shape-start-end,
-          var(--md-filled-tonal-icon-button-container-shape, var(--md-sys-shape-corner-full, 9999px))
+          --md-icon-button-container-shape-start-end,
+          var(--md-icon-button-container-shape, var(--md-sys-shape-corner-full, 9999px))
         );
         --_container-shape-end-end: var(
-          --md-filled-tonal-icon-button-container-shape-end-end,
-          var(--md-filled-tonal-icon-button-container-shape, var(--md-sys-shape-corner-full, 9999px))
+          --md-icon-button-container-shape-end-end,
+          var(--md-icon-button-container-shape, var(--md-sys-shape-corner-full, 9999px))
         );
         --_container-shape-end-start: var(
-          --md-filled-tonal-icon-button-container-shape-end-start,
-          var(--md-filled-tonal-icon-button-container-shape, var(--md-sys-shape-corner-full, 9999px))
+          --md-icon-button-container-shape-end-start,
+          var(--md-icon-button-container-shape, var(--md-sys-shape-corner-full, 9999px))
         );
       }
 

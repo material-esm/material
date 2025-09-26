@@ -55,63 +55,63 @@ class ExpressiveComponent extends LitElement {
     return html`
     <div class="flex col g12">
         <form id="form1">
-            <div class="flex col g12">
-                <md-text-field color="filled" label="Name in filled text field" required minlength="4"></md-text-field>
-                <md-text-field color="outlined" label="Name" required minlength="4"></md-text-field>
-                <md-text-field color="outlined" label="Email" type="email" required></md-text-field>
-                <md-text-field color="outlined" label="Password" type="password" required></md-text-field>
-                <md-text-field color="outlined" label="Phone" type="tel" required></md-text-field>
-                <md-text-field color="outlined" label="File" type="file" id="file1" required></md-text-field>
-                <md-text-field color="outlined" label="Date" type="date" required></md-text-field>
-                <md-outlined-select required @change=${this.selected}>
-                    <md-select-option aria-label="blank"></md-select-option>
-                    <md-select-option selected value="apple">
-                        <div slot="headline">Apple</div>
-                    </md-select-option>
-                    <md-select-option value="orange">
-                        <div slot="headline">Orange</div>
-                    </md-select-option>
-                </md-outlined-select>
-                <md-button type="button" @click=${this.save}>Save</md-button>
-            </div>
+          <div class="flex col g12">
+            <md-text-field color="filled" label="Name in filled text field" required minlength="4"></md-text-field>
+            <md-text-field color="outlined" label="Name" required minlength="4"></md-text-field>
+            <md-text-field color="outlined"label="Email" type="email" required></md-text-field>
+            <md-text-field color="outlined" label="Password" type="password" required></md-text-field>
+            <md-text-field color="outlined" label="Phone" type="tel" required style="width: 50%;" ></md-text-field>
+            <md-text-field color="outlined" label="File" type="file" id="file1" required></md-text-field>
+            <md-text-field color="outlined" label="Date" type="date" required></md-text-field>
+            <md-outlined-select required @change=${this.selected}>
+                <md-select-option aria-label="blank"></md-select-option>
+                <md-select-option selected value="apple">
+                    <div slot="headline">Apple</div>
+                </md-select-option>
+                <md-select-option value="orange">
+                    <div slot="headline">Orange</div>
+                </md-select-option>
+            </md-outlined-select>
+            <md-button type="button" @click=${this.save}>Save</md-button>
+          </div>
         </form>
 
         <div class="flex g12 aic">
-            <md-icon-button>
-                <md-icon>search</md-icon>
+          <md-icon-button>
+              <md-icon>search</md-icon>
+          </md-icon-button>
+          <md-icon-button style="--md-icon-button-icon-color: red;">
+              <md-icon>favorite</md-icon>
+          </md-icon-button>
+          <div style="position: relative">
+            <md-icon-button color="tonal" id="more-button" @click=${this.toggleMoreMenu}>
+                <md-icon>more_vert</md-icon>
             </md-icon-button>
-            <md-icon-button style="--md-icon-button-icon-color: red;">
-                <md-icon>favorite</md-icon>
-            </md-icon-button>
-            <div style="position: relative">
-              <md-filled-tonal-icon-button id="more-button" @click=${this.toggleMoreMenu}>
-                  <md-icon>more_vert</md-icon>
-              </md-filled-tonal-icon-button>
-              <md-menu id="more-menu" anchor="more-button">
-                <md-menu-item>
-                    <div slot="headline">Profile</div>
-                    <md-icon class="startIcon" slot="start">person</md-icon>
-                </md-menu-item>
-                <md-menu-item id="goto-orgs" href="/orgs">
-                    <div slot="headline">My Organizations</div>
-                    <md-icon class="startIcon" slot="start">storefront</md-icon>
-                </md-menu-item>
-                <md-menu-item id="goto-signout">
-                    <div slot="headline">Sign out</div>
-                    <md-icon class="startIcon" slot="start">logout</md-icon>
-                </md-menu-item>
-              </md-menu>
-            </div>
-            <md-icon-button href="https://thingster.app" target="_blank">
-                <md-icon>open_in_new</md-icon>
-            </md-icon-button>
-            <div>small:</div>
-            <md-icon-button style="--md-icon-button-icon-size: 16px; --md-icon-button-container-width: 24px; --md-icon-button-container-height: 24px;">
-                <md-icon>content_copy</md-icon>
-            </md-icon-button>
-            <md-icon-button color="filled" style="--md-icon-button-icon-size: 16px; --md-icon-button-container-width: 24px; --md-icon-button-container-height: 24px;">
-                <md-icon>content_copy</md-icon>
-            </md-icon-button>
+            <md-menu id="more-menu" anchor="more-button">
+              <md-menu-item>
+                  <div slot="headline">Profile</div>
+                  <md-icon class="startIcon" slot="start">person</md-icon>
+              </md-menu-item>
+              <md-menu-item id="goto-orgs" href="/orgs">
+                  <div slot="headline">My Organizations</div>
+                  <md-icon class="startIcon" slot="start">storefront</md-icon>
+              </md-menu-item>
+              <md-menu-item id="goto-signout">
+                  <div slot="headline">Sign out</div>
+                  <md-icon class="startIcon" slot="start">logout</md-icon>
+              </md-menu-item>
+            </md-menu>
+          </div>
+          <md-icon-button href="https://thingster.app" target="_blank">
+              <md-icon>open_in_new</md-icon>
+          </md-icon-button>
+          <div>small:</div>
+          <md-icon-button style="--md-icon-button-icon-size: 16px; --md-icon-button-container-width: 24px; --md-icon-button-container-height: 24px;">
+              <md-icon>content_copy</md-icon>
+          </md-icon-button>
+          <md-icon-button color="filled" style="--md-icon-button-icon-size: 16px; --md-icon-button-container-width: 24px; --md-icon-button-container-height: 24px;">
+              <md-icon>content_copy</md-icon>
+          </md-icon-button>
         </div>
 
       

@@ -29,7 +29,8 @@ export const styles = css`
     justify-content: right;
   }
 
-  .fw {
+  .fw,
+  .w100 {
     width: 100%;
   }
 

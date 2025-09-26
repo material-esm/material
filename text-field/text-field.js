@@ -677,12 +677,17 @@ __decorate([
 
   static styles = [
     css`
+      :host {
+        width: inherit;
+      }
+
       .wrapper {
         display: inline-flex;
         outline: none;
         resize: both;
         text-align: start;
         -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        width: 100%;
       }
 
       .text-field,

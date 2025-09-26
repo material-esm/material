@@ -1,8 +1,12 @@
 import { html, css, LitElement } from 'lit'
-import 'material/text-field/text-field.js'
-import 'material/buttons/button.js'
-import 'material/buttons/icon-button.js'
-import 'material/card/card.js'
+import 'material/textfield/outlined-text-field.js'
+import 'material/textfield/filled-text-field.js'
+import 'material/button/filled-button.js'
+import 'material/button/outlined-button.js'
+import 'material/iconbutton/icon-button.js'
+import 'material/iconbutton/filled-icon-button.js'
+import 'material/iconbutton/filled-tonal-icon-button.js'
+import 'material/card/outlined-card.js'
 import 'material/chips/chip-set.js'
 import 'material/chips/assist-chip.js'
 import 'material/chips/filter-chip.js'
@@ -21,12 +25,12 @@ class DemoComponent extends LitElement {
   static styles = [
     sharedStyles,
     css`
-      md-card {
+      md-outlined-card {
         width: 300px;
         background: var(--md-sys-color-surface);
         overflow: hidden;
       }
-      md-card img {
+      md-outlined-card img {
         width: 100%;
         height: 160px;
         object-fit: cover;
@@ -56,13 +60,13 @@ class DemoComponent extends LitElement {
       <div class="flex col g12">
         <form id="form1">
           <div class="flex col g12">
-            <md-text-field type="filled" label="Name in filled text field" required minlength="4"></md-text-field>
-            <md-text-field type="outlined" label="Name" required minlength="4"></md-text-field>
-            <md-text-field type="outlined" label="Email" type="email" required></md-text-field>
-            <md-text-field type="outlined" label="Password" type="password" required></md-text-field>
-            <md-text-field type="outlined" label="Phone" type="tel" required></md-text-field>
-            <md-text-field type="outlined" label="File" type="file" id="file1" required></md-text-field>
-            <md-text-field type="outlined" label="Date" type="date" required></md-text-field>
+            <md-filled-text-field label="Name in filled text field" required minlength="4"></md-filled-text-field>
+            <md-outlined-text-field label="Name" required minlength="4"></md-outlined-text-field>
+            <md-outlined-text-field label="Email" type="email" required></md-outlined-text-field>
+            <md-outlined-text-field label="Password" type="password" required></md-outlined-text-field>
+            <md-outlined-text-field label="Phone" type="tel" required></md-outlined-text-field>
+            <md-outlined-text-field label="File" type="file" id="file1" required></md-outlined-text-field>
+            <md-outlined-text-field label="Date" type="date" required></md-outlined-text-field>
             <md-outlined-select required @change=${this.selected}>
               <md-select-option aria-label="blank"></md-select-option>
               <md-select-option selected value="apple">
@@ -72,7 +76,7 @@ class DemoComponent extends LitElement {
                 <div slot="headline">Orange</div>
               </md-select-option>
             </md-outlined-select>
-            <md-button color="filled" type="button" @click=${this.save}>Save</md-button>
+            <md-filled-button type="button" @click=${this.save}>Save</md-filled-button>
           </div>
         </form>
 
@@ -111,12 +115,11 @@ class DemoComponent extends LitElement {
           >
             <md-icon>content_copy</md-icon>
           </md-icon-button>
-          <md-icon-button
-            color="filled"
-            style="--md-icon-button-icon-size: 16px; --md-icon-button-container-width: 24px; --md-icon-button-container-height: 24px;"
+          <md-filled-icon-button
+            style="--md-filled-icon-button-icon-size: 16px; --md-filled-icon-button-container-width: 24px; --md-filled-icon-button-container-height: 24px;"
           >
             <md-icon>content_copy</md-icon>
-          </md-icon-button>
+          </md-filled-icon-button>
         </div>
 
         <md-chip-set>
@@ -127,7 +130,7 @@ class DemoComponent extends LitElement {
         </md-chip-set>
 
         <div class="flex g12" style="flex-wrap: wrap;">
-          <md-card style="">
+          <md-outlined-card style="">
             <div class="flex col">
               <img src="./images/img1.jpg" />
             </div>
@@ -136,11 +139,11 @@ class DemoComponent extends LitElement {
               <div>Card content goes here</div>
               <div class="flex g8 jcr mt12">
                 <md-outlined-button>Read More</md-outlined-button>
-                <md-button color="filled">Buy Now</md-button>
+                <md-filled-button>Buy Now</md-filled-button>
               </div>
             </div>
-          </md-card>
-          <md-card style="">
+          </md-outlined-card>
+          <md-outlined-card style="">
             <div class="flex col">
               <img src="./images/img2.jpg" />
             </div>
@@ -149,15 +152,14 @@ class DemoComponent extends LitElement {
               <div>Card content goes here</div>
               <div class="flex g8 jcr mt12">
                 <md-outlined-button>Read More</md-outlined-button>
-                <md-button color="filled">Buy Now</md-button>
+                <md-filled-button>Buy Now</md-filled-button>
               </div>
             </div>
-          </md-card>
+          </md-outlined-card>
         </div>
 
         <div>
-          <md-button
-            color="filled"
+          <md-filled-button
             @click=${() =>
               snack('Hello world', {
                 action: {
@@ -168,10 +170,10 @@ class DemoComponent extends LitElement {
                 },
                 showCloseIcon: true,
               })}
-            >Snack</md-button
+            >Snack</md-filled-button
           >
-          <md-button color="filled" @click=${() => this.renderRoot.querySelector('#dialog1').show()} show
-            >Dialog</md-button
+          <md-filled-button @click=${() => this.renderRoot.querySelector('#dialog1').show()} show
+            >Dialog</md-filled-button
           >
         </div>
 
@@ -230,10 +232,12 @@ class DemoComponent extends LitElement {
   }
 
   tabChanged(e) {
+    console.log('TAB CHANGED!!!!', e.target, e.target.activeTabIndex)
     this.activeTab = e.target.activeTabIndex
   }
 
   renderTabPanel() {
+    console.log('render tab panel', this.activeTab)
     if (this.activeTab == 0) {
       return html`
         <div class="tabpanel" id="photos-panel" role="tabpanel" aria-labelledby="photos-tab">Tab 1 content</div>
