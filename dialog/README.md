@@ -13,12 +13,12 @@ First, create the dialog. This will be hidden by default, unless you specify the
       Are you sure you want to delete this item?
   </div>
   <div slot="actions">
-    <md-text-button @click=${() => this.renderRoot.querySelector("#confirm-remove").close()}>Cancel</md-text-button>
-    <md-text-button @click=${this.deleteConfirmed}>Ok</md-text-button>
+    <md-button color="text" @click=${() => this.renderRoot.querySelector("#confirm-remove").close()}>Cancel</md-button>
+    <md-button color="text" @click=${this.deleteConfirmed}>Ok</md-button>
   </div>
 </md-dialog>
 
-<md-filled-button @click=${this.openDialog}>Delete</md-filled-button>
+<md-button color="filled" @click=${this.openDialog}>Delete</md-button>
 ```
 
 Then if someone click the button above, it will call this:
