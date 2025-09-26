@@ -15,13 +15,13 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/treeder/material.git"
+    "url": "git+https://github.com/material-esm/material.git"
   },
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/treeder/material/issues"
+    "url": "https://github.com/material-esm/material/issues"
   },
-  "homepage": "https://github.com/treeder/material#readme",
+  "homepage": "https://github.com/material-esm/material#readme",
   "scripts": {
     "start": "npx -y serve",
     "build": "wireit",
@@ -82,119 +82,6 @@
     "printWidth": 120,
     "semi": false,
     "trailingComma": "all"
-  },
-  "wireit": {
-    "build": {
-      "dependencies": [
-        "build:ts"
-      ]
-    },
-    "build:ts": {
-      "command": "tsc --pretty",
-      "files": [
-        "tsconfig.json",
-        "**/*.ts",
-        "!**/*.d.ts",
-        "!**/*-styles.ts",
-        "!catalog/",
-        "!scripts/"
-      ],
-      "output": [
-        ".tsbuildinfo",
-        "**/*.js",
-        "**/*.js.map",
-        "**/*.d.ts",
-        "!web-test-runner.config.js",
-        "!commitlint.config.js",
-        "!types/",
-        "!catalog/",
-        "!scripts/"
-      ],
-      "clean": "if-file-deleted",
-      "dependencies": [
-        "build:css-to-ts"
-      ]
-    },
-    "build:css-to-ts": {
-      "command": "find . \\( -path ./.wireit -o -path ./node_modules -o -path ./catalog \\) -prune -o -name '*-styles.css' -print | xargs -L1 node scripts/css-to-ts.js",
-      "files": [
-        "**/*-styles.css",
-        "!catalog/"
-      ],
-      "output": [
-        "**/*-styles.ts",
-        "!catalog/"
-      ],
-      "dependencies": [
-        "build:scripts",
-        "build:sass"
-      ]
-    },
-    "build:sass": {
-      "command": "sass --style=compressed --load-path=node_modules --load-path=node_modules/sass-true/sass $(ls -d */ | grep -vE 'node_modules|catalog')",
-      "files": [
-        "**/*.scss",
-        "!catalog/"
-      ],
-      "output": [
-        "**/*.css",
-        "**/*.css.map",
-        "!catalog/"
-      ]
-    },
-    "test": {
-      "command": "wtr",
-      "dependencies": [
-        "build:ts"
-      ],
-      "files": [
-        "web-test-runner.config.js"
-      ],
-      "output": []
-    },
-    "build:catalog": {
-      "dependencies": [
-        "./catalog:build:prod"
-      ]
-    },
-    "build:scripts": {
-      "command": "tsc -b scripts/tsconfig.json --pretty",
-      "files": [
-        "scripts/tsconfig.json",
-        "scripts/**/*.ts",
-        "!**/*.d.ts",
-        "!**/*-styles.ts"
-      ],
-      "output": [
-        "scripts/.tsbuildinfo",
-        "scripts/**/*.js",
-        "scripts/**/*.js.map",
-        "scripts/**/*.d.ts"
-      ],
-      "clean": "if-file-deleted"
-    },
-    "update-docs": {
-      "command": "node scripts/analyzer/update-docs.js",
-      "files": [
-        "docs/components/*.md",
-        "**/*.ts",
-        "!**/*.d.ts",
-        "!**/*-styles.ts",
-        "!catalog/",
-        "!scripts/",
-        "scripts/analyzer/update-docs.js"
-      ],
-      "output": [],
-      "dependencies": [
-        "build:scripts"
-      ]
-    },
-    "update-size": {
-      "command": "node scripts/size/update-size.js",
-      "dependencies": [
-        "build:scripts",
-        "build"
-      ]
-    }
   }
+ 
 }
