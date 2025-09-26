@@ -1,9 +1,4 @@
 /**
- * @license
- * Copyright 2023 Google LLC
- * SPDX-License-Identifier: Apache-2.0
- */
-/**
  * @fileoverview A convenience bundle import that includes common components.
  *
  * WARNING: This import is intended for prototyping and development builds only.
@@ -11,16 +6,14 @@
  * components for starting a project. Import only the individual components used
  * for production.
  */
-// LINT.IfChange(imports)
-// go/keep-sorted start
-import './button/button.js'
+import './buttons/button.js'
 import './checkbox/checkbox.js'
 import './chips/assist-chip.js'
 import './chips/chip-set.js'
 import './chips/filter-chip.js'
 import './dialog/dialog.js'
 import './icon/icon.js'
-import './iconbutton/icon-button.js'
+import './buttons/icon-button.js'
 import './list/list.js'
 import './list/list-item.js'
 import './menu/menu.js'
@@ -33,19 +26,16 @@ import './select/outlined-select.js'
 import './select/select-option.js'
 import './tabs/primary-tab.js'
 import './tabs/tabs.js'
-import './textfield/outlined-text-field.js'
-// go/keep-sorted end
-// LINT.ThenChange(:exports)
-// LINT.IfChange(exports)
-// go/keep-sorted start
-export * from './button/button.js'
+import './text-field/text-field.js'
+
+export * from './buttons/button.js'
 export * from './checkbox/checkbox.js'
 export * from './chips/assist-chip.js'
 export * from './chips/chip-set.js'
 export * from './chips/filter-chip.js'
 export * from './dialog/dialog.js'
 export * from './icon/icon.js'
-export * from './iconbutton/icon-button.js'
+export * from './buttons/icon-button.js'
 export * from './list/list.js'
 export * from './list/list-item.js'
 export * from './menu/menu.js'
@@ -58,7 +48,4 @@ export * from './select/outlined-select.js'
 export * from './select/select-option.js'
 export * from './tabs/primary-tab.js'
 export * from './tabs/tabs.js'
-export * from './textfield/outlined-text-field.js'
-// go/keep-sorted end
-// LINT.ThenChange(:imports)
-//# sourceMappingURL=common.js.map
+export * from './text-field/text-field.js'

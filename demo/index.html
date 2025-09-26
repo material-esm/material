@@ -38,10 +38,10 @@
 <body>
 
   <script type="module">
-    import 'material/textfield/outlined-text-field.js'
-    import 'material/button/button.js'
+    import 'material/text-field/text-field.js'
+    import 'material/buttons/button.js'
     import 'material/icon/icon.js'
-    import 'material/iconbutton/icon-button.js'
+    import 'material/buttons/icon-button.js'
     import 'material/navigation/bar.js'
     import 'material/navigation/rail.js'
     import 'material/navigation/item.js'
@@ -144,15 +144,15 @@
 
           <h2>Inputs</h2>
 
-          <md-outlined-text-field label="Name" required minlength="4"></md-outlined-text-field>
-          <md-outlined-text-field id="preferredDate" class="data" type="date" label="Preferred Date" required
-            minlength="4"></md-outlined-text-field>
+          <md-text-field type="outlined" label="Name" required minlength="4"></md-text-field>
+          <md-text-field type="outlined" id="preferredDate" class="data" type="date" label="Preferred Date" required
+            minlength="4"></md-text-field>
           <md-button onclick="save()">Save</md-button>
 
           <script>
             function save() {
               console.log("Save clicked")
-              document.getElementById('nav-drawer').opened = true
+//              document.getElementById('nav-drawer').opened = true
             }
           </script>
 

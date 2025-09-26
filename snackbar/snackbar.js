@@ -1,5 +1,5 @@
 import { html, css, LitElement } from 'lit'
-import '../button/button.js'
+import '../buttons/button.js'
 
 export function snack(message, { duration = 3000, action = null, showCloseIcon = false } = {}) {
   // console.log('duration:', duration, 'action:', action, 'showCloseIcon', showCloseIcon)

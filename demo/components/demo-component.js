@@ -1,10 +1,7 @@
 import { html, css, LitElement } from 'lit'
-import 'material/textfield/outlined-text-field.js'
-import 'material/textfield/filled-text-field.js'
-import 'material/button/button.js'
-import 'material/iconbutton/icon-button.js'
-import 'material/iconbutton/filled-icon-button.js'
-import 'material/iconbutton/filled-tonal-icon-button.js'
+import 'material/text-field/text-field.js'
+import 'material/buttons/button.js'
+import 'material/buttons/icon-button.js'
 import 'material/card/card.js'
 import 'material/chips/chip-set.js'
 import 'material/chips/assist-chip.js'
@@ -59,13 +56,13 @@ class DemoComponent extends LitElement {
       <div class="flex col g12">
         <form id="form1">
           <div class="flex col g12">
-            <md-filled-text-field label="Name in filled text field" required minlength="4"></md-filled-text-field>
-            <md-outlined-text-field label="Name" required minlength="4"></md-outlined-text-field>
-            <md-outlined-text-field label="Email" type="email" required></md-outlined-text-field>
-            <md-outlined-text-field label="Password" type="password" required></md-outlined-text-field>
-            <md-outlined-text-field label="Phone" type="tel" required></md-outlined-text-field>
-            <md-outlined-text-field label="File" type="file" id="file1" required></md-outlined-text-field>
-            <md-outlined-text-field label="Date" type="date" required></md-outlined-text-field>
+            <md-text-field type="filled" label="Name in filled text field" required minlength="4"></md-text-field>
+            <md-text-field type="outlined" label="Name" required minlength="4"></md-text-field>
+            <md-text-field type="outlined" label="Email" type="email" required></md-text-field>
+            <md-text-field type="outlined" label="Password" type="password" required></md-text-field>
+            <md-text-field type="outlined" label="Phone" type="tel" required></md-text-field>
+            <md-text-field type="outlined" label="File" type="file" id="file1" required></md-text-field>
+            <md-text-field type="outlined" label="Date" type="date" required></md-text-field>
             <md-outlined-select required @change=${this.selected}>
               <md-select-option aria-label="blank"></md-select-option>
               <md-select-option selected value="apple">
@@ -114,11 +111,12 @@ class DemoComponent extends LitElement {
           >
             <md-icon>content_copy</md-icon>
           </md-icon-button>
-          <md-filled-icon-button
-            style="--md-filled-icon-button-icon-size: 16px; --md-filled-icon-button-container-width: 24px; --md-filled-icon-button-container-height: 24px;"
+          <md-icon-button
+            color="filled"
+            style="--md-icon-button-icon-size: 16px; --md-icon-button-container-width: 24px; --md-icon-button-container-height: 24px;"
           >
             <md-icon>content_copy</md-icon>
-          </md-filled-icon-button>
+          </md-icon-button>
         </div>
 
         <md-chip-set>

@@ -1,5 +1,5 @@
 import { LitElement, html, css } from 'lit'
-import '../textfield/outlined-text-field.js'
+import '../text-field/text-field.js'
 import { sharedStyles } from '../shared/shared.css.js'
 
 class AppBar extends LitElement {
@@ -22,10 +22,17 @@ class AppBar extends LitElement {
     return html`
       <div class="main flex g8 pl4 pr4 aic fw">
         <slot name="leading-icon"></slot>
-        <md-outlined-text-field id="input" class="fw" style="max-height: 48px;" label="${this.label}" placeholder="">
+        <md-text-field
+          color="outlined"
+          id="input"
+          class="fw"
+          style="max-height: 48px;"
+          label="${this.label}"
+          placeholder=""
+        >
           <slot name="leading-icon-text-field" slot="leading-icon"></slot>
           <slot name="trailing-icon-text-field" slot="trailing-icon"></slot>
-        </md-outlined-text-field>
+        </md-text-field>
         <slot name="trailing-icon"></slot>
       </div>
     `
@@ -39,7 +46,7 @@ class AppBar extends LitElement {
     sharedStyles,
     css`
       :host {
-        --md-outlined-text-field-container-shape: 24px;
+        --md-text-field-container-shape: 24px;
         /* width: 100%; */
         height: 48px;
       }

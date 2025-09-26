@@ -20,14 +20,14 @@ develop this at our own pace, and that pace is FAST.
 
 Please [consider sponsoring](https://github.com/sponsors/treeder) before creating issues for us.
 
-## Material 3 Expressive
+## Material 3 Expressive 🔥
 
-Material 3 Expressive is in progress! [Follow along here](https://github.com/material-esm/material/issues/36). 
+Material 3 Expressive is in progress! [Follow along here](https://github.com/material-esm/material/issues/36).
 
 To start using it, change the importmap to:
 
 ```
-"material/": "https://cdn.jsdelivr.net/gh/material-esm/material@m3e/"
+"material/": "https://cdn.jsdelivr.net/gh/material-esm/material@2/"
 ```
 
 ## Demo
@@ -76,12 +76,12 @@ Then you can start using all the components like this:
 
 ```html
 <script type="module">
-  import 'material/textfield/outlined-text-field.js'
-  import 'material/button/filled-button.js'
+  import 'material/text-field/text-field.js'
+  import 'material/buttons/button.js'
 </script>
 
 <div>
-  <md-outlined-text-field label="Name" required minlength="4"></md-outlined-text-field>
+  <md-text-field type="outlined" label="Name" required minlength="4"></md-text-field>
   <md-button color="filled">Save</md-button>
 </div>
 ```
@@ -92,8 +92,8 @@ Create a component with the material components in it:
 
 ```js
 import { html, css, LitElement } from 'lit'
-import 'material/textfield/outlined-text-field.js'
-import 'material/button/filled-button.js'
+import 'material/text-field/text-field.js'
+import 'material/buttons/filled-button.js'
 
 class DemoComponent extends LitElement {
   static styles = css`
@@ -102,7 +102,7 @@ class DemoComponent extends LitElement {
 
   render() {
     return html` <div style="display: flex; flex-direction: column; gap: 12px;">
-      <md-outlined-text-field label="Name" required minlength="4"></md-outlined-text-field>
+      <md-text-field type="outlined" label="Name" required minlength="4"></md-text-field>
       <md-button color="filled" @click=${this.save}>Save</md-button>
     </div>`
   }
