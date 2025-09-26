@@ -28,6 +28,10 @@ jobs:
                 username: issueCreator,
               });
               console.log("membership:", r)
+              if(r.status == 204){
+                console.log("user is a member")
+                return
+              }
             } catch(e) {
               console.log("error getting membership:", e)
             }
