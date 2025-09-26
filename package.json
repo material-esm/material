@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/treeder/material#readme",
   "scripts": {
-    "start": "npx serve",
+    "start": "npx -y serve",
     "build": "wireit",
     "build:ts": "wireit",
     "build:css-to-ts": "wireit",

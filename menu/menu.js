@@ -49,7 +49,7 @@
  */
 export { FocusState } from './controllers/shared.js'
 import '../elevation/elevation.js'
-import '../focus/md-focus-ring.js'
+import '../focus/focus-ring.js'
 import { LitElement, css, html, isServer, nothing } from 'lit'
 import { property, query, queryAssignedElements, state } from 'lit/decorators.js'
 import { classMap } from 'lit/directives/class-map.js'

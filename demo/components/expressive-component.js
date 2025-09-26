@@ -5,7 +5,7 @@ import 'material/button/button.js'
 import 'material/iconbutton/icon-button.js'
 import 'material/iconbutton/filled-icon-button.js'
 import 'material/iconbutton/filled-tonal-icon-button.js'
-import 'material/card/outlined-card.js'
+import 'material/card/card.js'
 import 'material/chips/chip-set.js'
 import 'material/chips/assist-chip.js'
 import 'material/chips/filter-chip.js'
@@ -24,12 +24,12 @@ class ExpressiveComponent extends LitElement {
   static styles = [
     sharedStyles,
     css`
-      md-outlined-card {
+      md-card {
         width: 300px;
         background: var(--md-sys-color-surface);
         overflow: hidden;
       }
-      md-outlined-card img {
+      md-card img {
         width: 100%;
         height: 160px;
         object-fit: cover;
@@ -162,7 +162,7 @@ class ExpressiveComponent extends LitElement {
         </md-chip-set>
 
         <div class="flexw g12" style="flex-wrap: wrap;">
-            <md-outlined-card style="">
+            <md-card style="">
                 <div class="flex col">
                     <img src="./images/img1.jpg">
                 </div>
@@ -174,8 +174,8 @@ class ExpressiveComponent extends LitElement {
                         <md-button color="filled">Buy Now</md-button color="filled">
                     </div>
                 </div>
-            </md-outlined-card>
-            <md-outlined-card style="">
+            </md-card>
+            <md-card style="">
                 <div class="flex col">
                     <img src="./images/img2.jpg">
                 </div>
@@ -187,7 +187,7 @@ class ExpressiveComponent extends LitElement {
                         <md-button color="filled">Buy Now</md-button color="filled">
                     </div>
                 </div>
-            </md-outlined-card>
+            </md-card>
         </div>
 
         <div>
@@ -270,12 +270,10 @@ class ExpressiveComponent extends LitElement {
   }
 
   tabChanged(e) {
-    console.log('TAB CHANGED!!!!', e.target, e.target.activeTabIndex)
     this.activeTab = e.target.activeTabIndex
   }
 
   renderTabPanel() {
-    console.log('render tab panel', this.activeTab)
     if (this.activeTab == 0) {
       return html`
         <div class="tabpanel" id="photos-panel" role="tabpanel" aria-labelledby="photos-tab">Tab 1 content</div>

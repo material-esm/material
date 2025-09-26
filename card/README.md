@@ -1,11 +1,9 @@
 # Card
 
 ```js
-import 'material/card/outlined-card.js'
+import 'material/card/card.js'
 ```
 
 ```html
-<md-outlined-card class="p16">
-  Card contents
-</md-outlined-card>
+<md-card type="outlined" class="p16"> Card contents </md-card>
 ```

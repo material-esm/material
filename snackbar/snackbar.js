@@ -1,5 +1,5 @@
 import { html, css, LitElement } from 'lit'
-import '../button/text-button.js'
+import '../button/button.js'
 
 export function snack(message, { duration = 3000, action = null, showCloseIcon = false } = {}) {
   // console.log('duration:', duration, 'action:', action, 'showCloseIcon', showCloseIcon)
@@ -8,7 +8,8 @@ export function snack(message, { duration = 3000, action = null, showCloseIcon =
   snack.message = message
   snack.duration = duration
   if (action) {
-    let actionButton = document.createElement('md-text-button')
+    let actionButton = document.createElement('md-button')
+    actionButton.type = 'text'
     actionButton.slot = 'action'
     actionButton.innerText = action.label
     if (action.onClick) actionButton.addEventListener('click', action.onClick)
@@ -19,7 +20,9 @@ export function snack(message, { duration = 3000, action = null, showCloseIcon =
     let closeButton = document.createElement('md-icon')
     closeButton.slot = 'icon'
     closeButton.innerText = 'close'
-    closeButton.addEventListener('click', () => { snack.close() })
+    closeButton.addEventListener('click', () => {
+      snack.close()
+    })
     snack.insertAdjacentElement('beforeend', closeButton)
   }
   document.body.appendChild(snack)
@@ -28,52 +31,64 @@ export function snack(message, { duration = 3000, action = null, showCloseIcon =
 
 class SnackBar extends LitElement {
   static styles = css`
-#snackbar {
-  /* visibility: hidden; */
-  min-width: 250px;
-  transform: translateX(-50%); /* centers the div */
-  background-color: var(--md-sys-color-inverse-surface, #333);
-  color: var(--md-sys-color-inverse-on-surface, white);
-  text-align: center;
-  border-radius: 4px;
-  position: fixed;
-  z-index: 1000;
-  left: 50%;
-  bottom: 30px;
-  height: 48px;
-}
+    #snackbar {
+      /* visibility: hidden; */
+      min-width: 250px;
+      transform: translateX(-50%); /* centers the div */
+      background-color: var(--md-sys-color-inverse-surface, #333);
+      color: var(--md-sys-color-inverse-on-surface, white);
+      text-align: center;
+      border-radius: 4px;
+      position: fixed;
+      z-index: 1000;
+      left: 50%;
+      bottom: 30px;
+      height: 48px;
+    }
 
-.inner {
-  margin-left: 16px;
-  margin-right: 8px;
-  display: flex;
-  gap: 8px;
-  justify-content: space-between;
-  align-items: center;
-  height: 100%;
-}
+    .inner {
+      margin-left: 16px;
+      margin-right: 8px;
+      display: flex;
+      gap: 8px;
+      justify-content: space-between;
+      align-items: center;
+      height: 100%;
+    }
 
-.right {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  margin-right: 4px;
-}
+    .right {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-right: 4px;
+    }
 
-#snackbar.show {
-  /* visibility: visible; */
-}
+    #snackbar.show {
+      /* visibility: visible; */
+    }
 
-@keyframes fadein {
-  from {bottom: 0; opacity: 0;}
-  to {bottom: 30px; opacity: 1;}
-}
+    @keyframes fadein {
+      from {
+        bottom: 0;
+        opacity: 0;
+      }
+      to {
+        bottom: 30px;
+        opacity: 1;
+      }
+    }
 
-@keyframes fadeout {
-  from {bottom: 30px; opacity: 1;}
-  to {bottom: 0; opacity: 0;}
-}
-    `
+    @keyframes fadeout {
+      from {
+        bottom: 30px;
+        opacity: 1;
+      }
+      to {
+        bottom: 0;
+        opacity: 0;
+      }
+    }
+  `
 
   static properties = {
     message: { type: String },
@@ -87,7 +102,7 @@ class SnackBar extends LitElement {
 
   constructor() {
     super()
-    this.message = ""
+    this.message = ''
     this.action = null
     this.showCloseIcon = false
     this.showing = false
@@ -104,16 +119,16 @@ class SnackBar extends LitElement {
     if (!this.showing) return ''
     let animStyle = `animation: fadein 0.5s` // , fadeout 0.5s ${this.duration}ms forwards;`
     return html`
-            <div id="snackbar" class="show" style="${animStyle}">
-                <div class="inner">
-                    <div>${this.message}</div>
-                    <div class="right">
-                      <slot name="action"></slot>
-                      <slot name="icon"></slot>
-                    </div>
-                </div>
-            </div>
-        `
+      <div id="snackbar" class="show" style="${animStyle}">
+        <div class="inner">
+          <div>${this.message}</div>
+          <div class="right">
+            <slot name="action"></slot>
+            <slot name="icon"></slot>
+          </div>
+        </div>
+      </div>
+    `
   }
 
   show() {
@@ -136,7 +151,7 @@ class SnackBar extends LitElement {
   }
 
   close() {
-    var x = this.renderRoot.getElementById("snackbar")
+    var x = this.renderRoot.getElementById('snackbar')
     x.style.setProperty('animation', 'fadeout 0.5s forwards')
     setTimeout(() => {
       this.showing = false

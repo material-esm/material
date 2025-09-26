@@ -206,13 +206,11 @@ export class Ripple extends LitElement {
     this.startPressAnimation(event)
   }
   handleClick() {
-    console.log('handleClick')
     // Click is a MouseEvent in Firefox and Safari, so we cannot use
     // `shouldReactToEvent`
     if (this.disabled) {
       return
     }
-    console.log('not disabled', this.state)
     if (this.state === State.WAITING_FOR_CLICK) {
       this.endPressAnimation()
       return
@@ -279,7 +277,6 @@ export class Ripple extends LitElement {
     return { startPoint, endPoint }
   }
   startPressAnimation(positionEvent) {
-    console.log('START PRESS ANIMATION')
     if (!this.mdRoot) {
       //   this.mdRoot = this.htmlFor
       //   this.mdRoot = this.renderRoot.querySelector(this.getAttribute('for'))
@@ -288,7 +285,6 @@ export class Ripple extends LitElement {
     if (!this.mdRoot) {
       return
     }
-    console.log('START PRESS ANIMATION 2')
     this.pressed = true
     this.growAnimation?.cancel()
     this.determineRippleSize()

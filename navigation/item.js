@@ -3,7 +3,7 @@
  * Copyright 2021 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
-import '../focus/md-focus-ring.js'
+import '../focus/focus-ring.js'
 import '../ripple/ripple.js'
 import '../badge/badge.js'
 import { css, html, LitElement, nothing } from 'lit'
@@ -92,8 +92,8 @@ export class NavigationItem extends LitElement {
     // button.innerHTML = this.label
     let color = this.active ? 'tonal' : 'text'
     let style = this.active
-      ? '--md-text-button-label-text-color: var(--md-sys-color-secondary);'
-      : '--md-text-button-label-text-color: var(--md-sys-color-on-surface-variant);'
+      ? '--md-button-label-text-color: var(--md-sys-color-secondary);'
+      : '--md-button-label-text-color: var(--md-sys-color-on-surface-variant);'
     // todo: deal with active and inactive icons
     return html`
       <md-button color="${color}" size="medium" style="${style}">

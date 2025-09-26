@@ -18,7 +18,7 @@
  * @final
  * @suppress {visibility}
  */
-import '../focus/md-focus-ring.js'
+import '../focus/focus-ring.js'
 import '../labs/item/item.js'
 import '../ripple/ripple.js'
 import { css, html, LitElement, nothing } from 'lit'
