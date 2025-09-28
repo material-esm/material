@@ -5,6 +5,7 @@
  */
 import { LitElement, css, html, nothing } from 'lit'
 import '../field/filled-field.js'
+import '../field/outlined-field.js'
 import { literal } from 'lit/static-html.js'
 import { classMap } from 'lit/directives/class-map.js'
 import { live } from 'lit/directives/live.js'

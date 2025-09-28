@@ -63,6 +63,14 @@ class ExpressiveComponent extends LitElement {
             <md-text-field color="outlined" label="Phone" type="tel" required style="width: 50%;" ></md-text-field>
             <md-text-field color="outlined" label="File" type="file" id="file1" required></md-text-field>
             <md-text-field color="outlined" label="Date" type="date" required></md-text-field>
+            <md-text-field
+              color="outlined"
+              type="textarea"
+              id="commentBody"
+              label="What's on your mind?"
+              rows="3"
+              value=""
+            ></md-text-field>
             <md-outlined-select required @change=${this.selected}>
                 <md-select-option aria-label="blank"></md-select-option>
                 <md-select-option selected value="apple">
