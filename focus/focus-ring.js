@@ -1,5 +1,5 @@
 import { css, isServer, LitElement } from 'lit'
-import { AttachableController } from '../../internal/controller/attachable-controller.js'
+import { AttachableController } from '../internal/controller/attachable-controller.js'
 /**
  * Events that the focus ring listens to.
  */
@@ -15,7 +15,7 @@ export class FocusRing extends LitElement {
     inward: { type: Boolean, reflect: true },
   }
   constructor() {
-    super(...arguments)
+    super()
     /**
      * Makes the focus ring visible.
      */
@@ -89,8 +89,8 @@ export class FocusRing extends LitElement {
     css`
       :host {
         animation-delay: 0s, calc(var(--md-focus-ring-duration, 600ms) * 0.25);
-        animation-duration: calc(var(--md-focus-ring-duration, 600ms) * 0.25),
-          calc(var(--md-focus-ring-duration, 600ms) * 0.75);
+        animation-duration:
+          calc(var(--md-focus-ring-duration, 600ms) * 0.25), calc(var(--md-focus-ring-duration, 600ms) * 0.75);
         animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
         box-sizing: border-box;
         color: var(--md-focus-ring-color, var(--md-sys-color-secondary, #625b71));
@@ -125,20 +125,28 @@ export class FocusRing extends LitElement {
       :host([inward]) {
         animation-name: inward-grow, inward-shrink;
         border-end-end-radius: calc(
-          var(--md-focus-ring-shape-end-end, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) -
-            var(--md-focus-ring-inward-offset, 0px)
+          var(--md-focus-ring-shape-end-end, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) - var(
+              --md-focus-ring-inward-offset,
+              0px
+            )
         );
         border-end-start-radius: calc(
-          var(--md-focus-ring-shape-end-start, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) -
-            var(--md-focus-ring-inward-offset, 0px)
+          var(
+              --md-focus-ring-shape-end-start,
+              var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))
+            ) - var(--md-focus-ring-inward-offset, 0px)
         );
         border-start-end-radius: calc(
-          var(--md-focus-ring-shape-start-end, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) -
-            var(--md-focus-ring-inward-offset, 0px)
+          var(
+              --md-focus-ring-shape-start-end,
+              var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))
+            ) - var(--md-focus-ring-inward-offset, 0px)
         );
         border-start-start-radius: calc(
-          var(--md-focus-ring-shape-start-start, var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))) -
-            var(--md-focus-ring-inward-offset, 0px)
+          var(
+              --md-focus-ring-shape-start-start,
+              var(--md-focus-ring-shape, var(--md-sys-shape-corner-full, 9999px))
+            ) - var(--md-focus-ring-inward-offset, 0px)
         );
         border: var(--md-focus-ring-width, 3px) solid currentColor;
         inset: var(--md-focus-ring-inward-offset, 0px);

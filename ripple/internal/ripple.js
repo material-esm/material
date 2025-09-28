@@ -87,7 +87,7 @@ export class Ripple extends LitElement {
     rippleScale: { type: String, reflect: true },
   }
   constructor() {
-    super(...arguments)
+    super()
     /**
      * Disables the ripple.
      */
