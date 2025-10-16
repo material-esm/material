@@ -5,5 +5,5 @@
 import "material/progress/circular-progress.js"
 </script>
 
-<md-circular-progress indeterminate></md-circular-progress>
+<md-progress indeterminate></md-circular-progress>
 ```

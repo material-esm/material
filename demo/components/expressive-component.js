@@ -9,7 +9,7 @@ import 'material/chips/filter-chip.js'
 import 'material/chips/input-chip.js'
 import 'material/chips/suggestion-chip.js'
 import 'material/dialog/dialog.js'
-import 'material/select/outlined-select.js'
+import 'material/select/select.js'
 import 'material/select/select-option.js'
 import 'material/tabs/tabs.js'
 import 'material/tabs/primary-tab.js'
@@ -71,7 +71,7 @@ class ExpressiveComponent extends LitElement {
               rows="3"
               value=""
             ></md-text-field>
-            <md-outlined-select required @change=${this.selected}>
+            <md-select required @change=${this.selected}>
                 <md-select-option aria-label="blank"></md-select-option>
                 <md-select-option selected value="apple">
                     <div slot="headline">Apple</div>
@@ -79,7 +79,7 @@ class ExpressiveComponent extends LitElement {
                 <md-select-option value="orange">
                     <div slot="headline">Orange</div>
                 </md-select-option>
-            </md-outlined-select>
+            </md-select>
             <md-button type="button" @click=${this.save}>Save</md-button>
           </div>
         </form>

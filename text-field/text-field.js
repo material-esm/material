@@ -4,8 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { LitElement, css, html, nothing } from 'lit'
-import '../field/filled-field.js'
-import '../field/outlined-field.js'
+import '../field/field.js'
 import { literal } from 'lit/static-html.js'
 import { classMap } from 'lit/directives/class-map.js'
 import { live } from 'lit/directives/live.js'
@@ -434,8 +433,8 @@ export class TextField extends textFieldBaseClass {
     }
   }
   renderField() {
-    let fieldTag = this.color == 'filled' ? literal`md-filled-field` : literal`md-outlined-field`
-    return staticHtml`<${fieldTag}
+    return staticHtml`<md-field
+      color=${this.color}
       class="field"
       count=${this.value.length}
       ?disabled=${this.disabled}
@@ -455,7 +454,7 @@ export class TextField extends textFieldBaseClass {
       ${this.renderInputOrTextarea()}
       ${this.renderTrailingIcon()}
       <div id="description" slot="aria-describedby"></div>
-    </${fieldTag}>`
+    </md-field>`
   }
   renderLeadingIcon() {
     return html`
