@@ -1,8 +1,3 @@
-/**
- * @license
- * Copyright 2021 Google LLC
- * SPDX-License-Identifier: Apache-2.0
- */
 import '../focus/focus-ring.js'
 import '../ripple/ripple.js'
 import '../badge/badge.js'
@@ -205,7 +200,9 @@ export class NavigationTab extends LitElement {
         justify-content: center;
         opacity: 0;
         position: absolute;
-        transition: width 100ms cubic-bezier(0.4, 0, 0.2, 1), opacity 100ms cubic-bezier(0.4, 0, 0.2, 1);
+        transition:
+          width 100ms cubic-bezier(0.4, 0, 0.2, 1),
+          opacity 100ms cubic-bezier(0.4, 0, 0.2, 1);
         width: 32px;
         background-color: var(--_active-indicator-color);
         border-radius: var(--_active-indicator-shape);

@@ -15,6 +15,7 @@ import 'material/tabs/tabs.js'
 import 'material/tabs/primary-tab.js'
 import 'material/slider/slider.js'
 import 'material/switch/switch.js'
+import 'material/radio/radio.js'
 import { snack } from 'material/snackbar/snackbar.js'
 import { styles as sharedStyles } from './styles.js'
 
@@ -87,16 +88,23 @@ class ExpressiveComponent extends LitElement {
 
         <div class="flex g12 aic">
           <md-switch value="something" @change=${(e) => console.log('Switch changed', e.target.selected, e.target.value)}></md-switch>
-           <md-button color="outlined" @click=${() =>
-             snack('Hello world', {
-               action: {
-                 label: 'Undo',
-                 onClick: () => {
-                   console.log('Undo clicked')
-                 },
-               },
-               showCloseIcon: true,
-             })} >Snack</md-button color="filled">
+          <div class="flex g8 aic">
+        <md-radio id="cats-radio" name="animals" value="cats"></md-radio>
+      <label for="cats-radio">Cats</label>
+
+      <md-radio id="dogs-radio" name="animals" value="dogs"></md-radio>
+      <label for="dogs-radio">Dogs</label>
+          </div>
+          <md-button color="outlined" @click=${() =>
+            snack('Hello world', {
+              action: {
+                label: 'Undo',
+                onClick: () => {
+                  console.log('Undo clicked')
+                },
+              },
+              showCloseIcon: true,
+            })} >Snack</md-button color="filled">
             <md-button color="outlined" @click=${() =>
               this.renderRoot.querySelector('#dialog1').show()} show>Dialog</md-button color="filled">
         </div>
