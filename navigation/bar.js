@@ -1,5 +1,6 @@
-import '../elevation/elevation.js'
 import { css, html, LitElement, nothing } from 'lit'
+import '../elevation/elevation.js'
+import { isRtl } from '../internal/controller/is-rtl.js'
 /**
  * NavigationBar
  */
