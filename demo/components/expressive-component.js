@@ -16,6 +16,7 @@ import 'material/tabs/primary-tab.js'
 import 'material/slider/slider.js'
 import 'material/switch/switch.js'
 import 'material/radio/radio.js'
+import 'material/checkbox/checkbox.js'
 import { snack } from 'material/snackbar/snackbar.js'
 import { styles as sharedStyles } from './styles.js'
 
@@ -86,8 +87,9 @@ class ExpressiveComponent extends LitElement {
           </div>
         </form>
 
-        <div class="flex g12 aic">
+        <div class="flex g20 aic">
           <md-switch value="something" @change=${(e) => console.log('Switch changed', e.target.selected, e.target.value)}></md-switch>
+          <md-checkbox></md-checkbox>
           <div class="flex g8 aic">
         <md-radio id="cats-radio" name="animals" value="cats"></md-radio>
       <label for="cats-radio">Cats</label>

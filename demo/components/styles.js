@@ -40,6 +40,12 @@ export const styles = css`
   .g12 {
     gap: 12px;
   }
+  .g16 {
+    gap: 16px;
+  }
+  .g20 {
+    gap: 20px;
+  }
   .g24 {
     gap: 24px;
   }
