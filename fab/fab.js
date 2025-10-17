@@ -1,5 +1,5 @@
 import '../elevation/elevation.js'
-import '../focus/focus-ring.js'
+import '../internal/focus/focus-ring.js'
 import '../internal/ripple/ripple.js'
 import { html, LitElement, nothing, css } from 'lit'
 import { literal, html as staticHtml } from 'lit/static-html.js'

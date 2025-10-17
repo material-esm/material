@@ -1,5 +1,5 @@
 import { css, isServer, LitElement } from 'lit'
-import { AttachableController } from '../internal/controller/attachable-controller.js'
+import { AttachableController } from '../controller/attachable-controller.js'
 /**
  * Events that the focus ring listens to.
  */

@@ -1,4 +1,4 @@
-import '../focus/focus-ring.js'
+import '../internal/focus/focus-ring.js'
 import '../internal/ripple/ripple.js'
 import { html, isServer, LitElement, nothing, css } from 'lit'
 import { property, query, state } from 'lit/decorators.js'

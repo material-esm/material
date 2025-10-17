@@ -5,7 +5,7 @@
  */
 var _a
 import '../../elevation/elevation.js'
-import '../../focus/focus-ring.js'
+import '../../internal/focus/focus-ring.js'
 import '../../internal/ripple/ripple.js'
 import { html, isServer, LitElement, nothing } from 'lit'
 import { classMap } from 'lit/directives/class-map.js'

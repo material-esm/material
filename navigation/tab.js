@@ -1,4 +1,4 @@
-import '../focus/focus-ring.js'
+import '../internal/focus/focus-ring.js'
 import '../internal/ripple/ripple.js'
 import '../badge/badge.js'
 import { css, html, LitElement, nothing } from 'lit'

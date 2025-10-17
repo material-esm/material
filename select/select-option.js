@@ -35,7 +35,7 @@ import { Menu } from '../menu/menu.js'
  * Copyright 2023 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
-import '../focus/focus-ring.js'
+import '../internal/focus/focus-ring.js'
 import '../labs/item/item.js'
 import '../internal/ripple/ripple.js'
 import { html, LitElement, nothing } from 'lit'

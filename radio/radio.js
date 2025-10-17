@@ -1,5 +1,5 @@
 var _a
-import '../focus/focus-ring.js'
+import '../internal/focus/focus-ring.js'
 import '../internal/ripple/ripple.js'
 import { html, isServer, LitElement, css } from 'lit'
 import { classMap } from 'lit/directives/class-map.js'

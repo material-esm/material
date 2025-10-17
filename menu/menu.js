@@ -49,7 +49,7 @@
  */
 export { FocusState } from './controllers/shared.js'
 import '../elevation/elevation.js'
-import '../focus/focus-ring.js'
+import '../internal/focus/focus-ring.js'
 import { LitElement, css, html, isServer, nothing } from 'lit'
 import { property, query, queryAssignedElements, state } from 'lit/decorators.js'
 import { classMap } from 'lit/directives/class-map.js'
@@ -560,8 +560,7 @@ export class Menu extends LitElement {
       <div
         class="menu ${classMap(this.getSurfaceClasses())}"
         style=${styleMap(this.menuPositionController.surfaceStyles)}
-        popover=${this.positioning === 'popover' ? 'manual' : nothing}
-      >
+        popover=${this.positioning === 'popover' ? 'manual' : nothing}>
         ${this.renderElevation()}
         <div class="items">
           <div class="item-padding">${this.renderMenuItems()}</div>
@@ -581,8 +580,7 @@ export class Menu extends LitElement {
       @activate-typeahead=${this.handleActivateTypeahead}
       @stay-open-on-focusout=${this.handleStayOpenOnFocusout}
       @close-on-focusout=${this.handleCloseOnFocusout}
-      @slotchange=${this.listController.onSlotchange}
-    ></slot>`
+      @slotchange=${this.listController.onSlotchange}></slot>`
   }
   /**
    * Renders the elevation component.

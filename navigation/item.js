@@ -3,7 +3,7 @@
  * Copyright 2021 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
-import '../focus/focus-ring.js'
+import '../internal/focus/focus-ring.js'
 import '../internal/ripple/ripple.js'
 import '../badge/badge.js'
 import { css, html, LitElement, nothing } from 'lit'

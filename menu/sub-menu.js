@@ -59,7 +59,7 @@ import {
   createRequestActivationEvent,
   deactivateActiveItem,
   getFirstActivatableItem,
-} from '../list/internal/list-navigation-helpers.js'
+} from '../list/list-navigation-helpers.js'
 import {
   CloseReason,
   createActivateTypeaheadEvent,
@@ -174,8 +174,7 @@ export class SubMenu extends LitElement {
         name="menu"
         @keydown=${this.onSubMenuKeydown}
         @close-menu=${this.onCloseSubmenu}
-        @slotchange=${this.onSlotchange}
-      >
+        @slotchange=${this.onSlotchange}>
       </slot>
     `
   }
