@@ -295,10 +295,10 @@ export class ListItem extends LitElement {
   ]
 }
 ;(() => {
-  requestUpdateOnAriaChange(ListItemEl)
+  requestUpdateOnAriaChange(ListItem)
 })()
 /** @nocollapse */
-ListItemEl.shadowRootOptions = {
+ListItem.shadowRootOptions = {
   ...LitElement.shadowRootOptions,
   delegatesFocus: true,
 }
