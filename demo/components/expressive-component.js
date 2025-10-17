@@ -9,7 +9,7 @@ import 'material/dialog/dialog.js'
 import 'material/select/select.js'
 import 'material/select/select-option.js'
 import 'material/tabs/tabs.js'
-import 'material/tabs/primary-tab.js'
+import 'material/tabs/tab.js'
 import 'material/slider/slider.js'
 import 'material/switch/switch.js'
 import 'material/radio/radio.js'
@@ -44,11 +44,13 @@ class ExpressiveComponent extends LitElement {
 
   static properties = {
     activeTab: { type: Number },
+    secondaryTab: { type: Number },
   }
 
   constructor() {
     super()
     this.activeTab = 0
+    this.secondaryTab = 0
   }
 
   render() {
@@ -197,6 +199,17 @@ class ExpressiveComponent extends LitElement {
             <md-chip type="suggestion" label="Suggestion chip"></md-chip>
         </md-chip-set>
 
+           <div class="flexw g12">
+          <md-slider @change=${(e) => console.log('Slider changed', e.target.value)} labeled></md-slider>          
+          <md-slider @change=${(e) => console.log('Slider changed', e.target.value)} ticks value="50"></md-slider>
+          <md-slider @change=${(e) =>
+            console.log(
+              'Slider changed',
+              e.target.valueStart,
+              e.target.valueEnd,
+            )} range value-start="25" value-end="75"></md-slider>
+        </div>
+
         <div class="flexw g12" style="flex-wrap: wrap;">
             <md-card style="">
                 <div class="flex col">
@@ -226,31 +239,42 @@ class ExpressiveComponent extends LitElement {
             </md-card>
         </div>
 
+        <h3>Tabs</h3>
+
         <div>
           <md-tabs @change=${this.tabChanged} id="tabs">
-            <md-primary-tab id="photos-tab"  aria-label="Photos" aria-controls="photos-panel">
+            <md-tab type="primary" id="photos-tab"  aria-label="Photos" aria-controls="photos-panel">
+            <md-icon slot="icon">photo</md-icon>
               Photos
-            </md-primary-tab>
-            <md-primary-tab id="videos-tab"  aria-label="Videos" aria-controls="videos-panel">
-              Videos
-            </md-primary-tab>
-            <md-primary-tab id="music-tab" aria-label="Music" aria-controls="music-panel">
+            </md-tab>
+            <md-tab type="primary" id="videos-tab"  aria-label="Videos" aria-controls="videos-panel">
+              <md-icon slot="icon">videocam</md-icon>
+              Video
+            </md-tab>
+            <md-tab type="primary" id="music-tab" aria-label="Music" aria-controls="music-panel">
+              <md-icon slot="icon">music_note</md-icon>
               Music
-            </md-primary-tab>
+            </md-tab>
           </md-tabs>
           ${this.renderTabPanel()}
         </div>
 
-        <div class="flexw g12">
-          <md-slider @change=${(e) => console.log('Slider changed', e.target.value)} labeled></md-slider>          
-          <md-slider @change=${(e) => console.log('Slider changed', e.target.value)} ticks value="50"></md-slider>
-          <md-slider @change=${(e) =>
-            console.log(
-              'Slider changed',
-              e.target.valueStart,
-              e.target.valueEnd,
-            )} range value-start="25" value-end="75"></md-slider>
+          <div>
+          <md-tabs @change=${this.secondaryTabChanged} id="tabs2">
+            <md-tab type="secondary" id="photos-tab"  aria-label="Photos" aria-controls="photos-panel">
+              Photos
+            </md-tab>
+            <md-tab type="secondary" id="videos-tab"  aria-label="Videos" aria-controls="videos-panel">
+              Videos
+            </md-tab>
+            <md-tab type="secondary" id="music-tab" aria-label="Music" aria-controls="music-panel">
+              Music
+            </md-tab>
+          </md-tabs>
+          ${this.renderSecondaryTabPanel()}
         </div>
+
+     
 
     </div>
     
@@ -263,7 +287,7 @@ class ExpressiveComponent extends LitElement {
         </form>
         <div slot="actions">
             <md-button color="text" form="form-id" @click=${() =>
-              this.renderRoot.querySelector('#dialog1').close()}>Ok</md-button color="text">
+              this.renderRoot.querySelector('#dialog1').close()}>Ok</md-button>
         </div>
     </md-dialog>
     `
@@ -310,6 +334,28 @@ class ExpressiveComponent extends LitElement {
       </div>`
     }
     if (this.activeTab == 2) {
+      return html` <div class="tabpanel" id="music-panel" role="tabpanel" aria-labelledby="music-tab">
+        Tab 3 content
+      </div>`
+    }
+  }
+
+  secondaryTabChanged(e) {
+    this.secondaryTab = e.target.activeTabIndex
+  }
+
+  renderSecondaryTabPanel() {
+    if (this.secondaryTab == 0) {
+      return html`
+        <div class="tabpanel" id="photos-panel" role="tabpanel" aria-labelledby="photos-tab">Tab 1 content</div>
+      `
+    }
+    if (this.secondaryTab == 1) {
+      return html` <div class="tabpanel" id="videos-panel" role="tabpanel" aria-labelledby="videos-tab">
+        Tab 2 content
+      </div>`
+    }
+    if (this.secondaryTab == 2) {
       return html` <div class="tabpanel" id="music-panel" role="tabpanel" aria-labelledby="music-tab">
         Tab 3 content
       </div>`
