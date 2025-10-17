@@ -48,7 +48,7 @@
  * @suppress {visibility}
  */
 export { FocusState } from './controllers/shared.js'
-import '../elevation/elevation.js'
+import '../internal/elevation/elevation.js'
 import '../internal/focus/focus-ring.js'
 import { LitElement, css, html, isServer, nothing } from 'lit'
 import { property, query, queryAssignedElements, state } from 'lit/decorators.js'

@@ -3,7 +3,7 @@
  * Copyright 2023 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
-import '../elevation/elevation.js'
+import '../internal/elevation/elevation.js'
 import { html, LitElement, css } from 'lit'
 /**
  * A card component.

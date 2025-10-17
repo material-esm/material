@@ -1,6 +1,6 @@
 import { html, LitElement, nothing, css } from 'lit'
 import { dispatchActivationClick, isActivationClick } from '../internal/events/form-label-activation.js'
-import '../elevation/elevation.js'
+import '../internal/elevation/elevation.js'
 import '../internal/focus/focus-ring.js'
 import '../internal/ripple/ripple.js'
 

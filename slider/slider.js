@@ -3,7 +3,7 @@
  * Copyright 2023 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
-import '../elevation/elevation.js'
+import '../internal/elevation/elevation.js'
 import '../internal/focus/focus-ring.js'
 import '../internal/ripple/ripple.js'
 import { html, isServer, LitElement, nothing, css } from 'lit'

@@ -1,12 +1,7 @@
-/**
- * @license
- * Copyright 2021 Google LLC
- * SPDX-License-Identifier: Apache-2.0
- */
 import { html, LitElement, nothing, render, css } from 'lit'
-import { queryAssignedElements, queryAssignedNodes } from '../utils/query.js'
+import { queryAssignedElements, queryAssignedNodes } from '../../utils/query.js'
 import { classMap } from 'lit/directives/class-map.js'
-import { EASING } from '../internal/motion/animation.js'
+import { EASING } from '../motion/animation.js'
 /**
  * A field component.
  */

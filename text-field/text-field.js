@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { LitElement, css, html, nothing } from 'lit'
-import '../field/field.js'
+import '../internal/field/field.js'
 import { literal } from 'lit/static-html.js'
 import { classMap } from 'lit/directives/class-map.js'
 import { live } from 'lit/directives/live.js'
@@ -502,8 +502,7 @@ export class TextField extends textFieldBaseClass {
           @blur=${this.handleFocusChange}
           @input=${this.handleInput}
           @select=${this.redispatchEvent}
-          autocomplete=${autocomplete || nothing}
-        ></textarea>
+          autocomplete=${autocomplete || nothing}></textarea>
       `
     }
     const prefix = this.renderPrefix()
@@ -540,8 +539,7 @@ export class TextField extends textFieldBaseClass {
           @blur=${this.handleFocusChange}
           @input=${this.handleInput}
           @select=${this.redispatchEvent}
-          autocomplete=${autocomplete || nothing}
-        />
+          autocomplete=${autocomplete || nothing} />
         ${suffix}
       </div>
     `

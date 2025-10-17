@@ -1,5 +1,5 @@
 import { css, html, LitElement, nothing } from 'lit'
-import '../elevation/elevation.js'
+import '../internal/elevation/elevation.js'
 import { isRtl } from '../internal/controller/is-rtl.js'
 /**
  * NavigationBar
@@ -24,8 +24,7 @@ export class NavigationBar extends LitElement {
       aria-label=${ariaLabel || nothing}
       @keydown="${this.handleKeydown}"
       @navigation-tab-interaction="${this.handleNavigationTabInteraction}"
-      @navigation-tab-rendered=${this.handleNavigationTabConnected}
-    >
+      @navigation-tab-rendered=${this.handleNavigationTabConnected}>
       <md-elevation part="elevation"></md-elevation>
       <div class="md3-navigation-bar__tabs-slot-container"><slot></slot></div>
     </div>`

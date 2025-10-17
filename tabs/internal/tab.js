@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 var _a
-import '../../elevation/elevation.js'
+import '../../internal/elevation/elevation.js'
 import '../../internal/focus/focus-ring.js'
 import '../../internal/ripple/ripple.js'
 import { html, isServer, LitElement, nothing } from 'lit'
