@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import '../focus/focus-ring.js'
-import '../ripple/ripple.js'
+import '../internal/ripple/ripple.js'
 import '../badge/badge.js'
 import { css, html, LitElement, nothing } from 'lit'
 import { literal, html as staticHtml } from 'lit/static-html.js'
@@ -124,8 +124,7 @@ export class NavigationItem extends LitElement {
         id="link"
         href="${this.href}"
         target="${this.target || nothing}"
-        aria-label="${ariaLabel || nothing}"
-      ></a>
+        aria-label="${ariaLabel || nothing}"></a>
     `
   }
   firstUpdated(changedProperties) {
@@ -345,7 +344,9 @@ export class NavigationItem extends LitElement {
         justify-content: center;
         opacity: 0;
         position: absolute;
-        transition: width 100ms cubic-bezier(0.4, 0, 0.2, 1), opacity 100ms cubic-bezier(0.4, 0, 0.2, 1);
+        transition:
+          width 100ms cubic-bezier(0.4, 0, 0.2, 1),
+          opacity 100ms cubic-bezier(0.4, 0, 0.2, 1);
         width: 32px;
         background-color: var(--_active-indicator-color);
         border-radius: var(--_active-indicator-shape);

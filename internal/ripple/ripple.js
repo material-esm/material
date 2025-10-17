@@ -1,12 +1,7 @@
-/**
- * @license
- * Copyright 2022 Google LLC
- * SPDX-License-Identifier: Apache-2.0
- */
-import { html, isServer, LitElement } from 'lit'
+import { html, isServer, LitElement, css } from 'lit'
 import { classMap } from 'lit/directives/class-map.js'
-import { AttachableController } from '../../internal/controller/attachable-controller.js'
-import { EASING } from '../../internal/motion/animation.js'
+import { AttachableController } from '../controller/attachable-controller.js'
+import { EASING } from '../motion/animation.js'
 
 const PRESS_GROW_MS = 450
 const MINIMUM_PRESS_MS = 225
@@ -75,8 +70,19 @@ const TOUCH_DELAY_MS = 150
  * ripple is not displayed.
  */
 const FORCED_COLORS = isServer ? null : window.matchMedia('(forced-colors: active)')
+
 /**
- * A ripple component.
+ * @summary Ripples, also known as state layers, are visual indicators used to
+ * communicate the status of a component or interactive element.
+ *
+ * @description A state layer is a semi-transparent covering on an element that
+ * indicates its state. State layers provide a systematic approach to
+ * visualizing states by using opacity. A layer can be applied to an entire
+ * element or in a circular shape and only one state layer can be applied at a
+ * given time.
+ *
+ * @final
+ * @suppress {visibility}
  */
 export class Ripple extends LitElement {
   static properties = {
@@ -405,4 +411,63 @@ export class Ripple extends LitElement {
       next?.addEventListener(event, this)
     }
   }
+  static styles = [
+    css`
+      :host {
+        display: flex;
+        margin: auto;
+        pointer-events: none;
+      }
+      :host([disabled]) {
+        display: none;
+      }
+      @media (forced-colors: active) {
+        :host {
+          display: none;
+        }
+      }
+      :host,
+      .surface {
+        border-radius: inherit;
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+      }
+      .surface {
+        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+      }
+      .surface::before,
+      .surface::after {
+        content: '';
+        opacity: 0;
+        position: absolute;
+      }
+      .surface::before {
+        background-color: var(--md-ripple-hover-color, var(--md-sys-color-on-surface, #1d1b20));
+        inset: 0;
+        transition:
+          opacity 15ms linear,
+          background-color 15ms linear;
+      }
+      .surface::after {
+        background: radial-gradient(
+          closest-side,
+          var(--md-ripple-pressed-color, var(--md-sys-color-on-surface, #1d1b20)) max(100% - 70px, 65%),
+          transparent 100%
+        );
+        transform-origin: center center;
+        transition: opacity 375ms linear;
+      }
+      .hovered::before {
+        background-color: var(--md-ripple-hover-color, var(--md-sys-color-on-surface, #1d1b20));
+        opacity: var(--md-ripple-hover-opacity, 0.08);
+      }
+      .pressed::after {
+        opacity: var(--md-ripple-pressed-opacity, 0.12);
+        transition-duration: 105ms;
+      }
+    `,
+  ]
 }
+
+customElements.define('md-ripple', Ripple)

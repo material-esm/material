@@ -5,7 +5,7 @@
  */
 import '../elevation/elevation.js'
 import '../focus/focus-ring.js'
-import '../ripple/ripple.js'
+import '../internal/ripple/ripple.js'
 import { html, isServer, LitElement, nothing, css } from 'lit'
 import { classMap } from 'lit/directives/class-map.js'
 import { styleMap } from 'lit/directives/style-map.js'
@@ -348,8 +348,7 @@ export class Slider extends sliderBaseClass {
         hover,
         onTop,
         isOverlapping,
-      })}"
-    >
+      })}">
       <md-focus-ring part="focus-ring" for=${name}></md-focus-ring>
       <md-ripple for=${name} class=${name} ?disabled=${this.disabled}></md-ripple>
       <div class="handleNub">
@@ -389,8 +388,7 @@ export class Slider extends sliderBaseClass {
       .value=${String(value)}
       .tabIndex=${start ? 1 : 0}
       aria-label=${ariaLabel || nothing}
-      aria-valuetext=${ariaValueText}
-    />`
+      aria-valuetext=${ariaValueText} />`
   }
   async toggleRippleHover(ripple, hovering) {
     const rippleEl = await ripple

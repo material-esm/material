@@ -20,7 +20,7 @@
  */
 import '../focus/focus-ring.js'
 import '../labs/item/item.js'
-import '../ripple/ripple.js'
+import '../internal/ripple/ripple.js'
 import { css, html, LitElement, nothing } from 'lit'
 import { classMap } from 'lit/directives/class-map.js'
 import { literal, html as staticHtml } from 'lit/static-html.js'

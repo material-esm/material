@@ -1,5 +1,5 @@
 import '../focus/focus-ring.js'
-import '../ripple/ripple.js'
+import '../internal/ripple/ripple.js'
 import { html, isServer, LitElement, nothing, css } from 'lit'
 import { property, query, state } from 'lit/decorators.js'
 import { classMap } from 'lit/directives/class-map.js'
@@ -117,8 +117,7 @@ export class Checkbox extends checkboxBaseClass {
           .indeterminate=${this.indeterminate}
           .checked=${this.checked}
           @input=${this.handleInput}
-          @change=${this.handleChange}
-        />
+          @change=${this.handleChange} />
 
         <div class="outline"></div>
         <div class="background"></div>

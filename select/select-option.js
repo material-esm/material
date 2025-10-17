@@ -37,7 +37,7 @@ import { Menu } from '../menu/menu.js'
  */
 import '../focus/focus-ring.js'
 import '../labs/item/item.js'
-import '../ripple/ripple.js'
+import '../internal/ripple/ripple.js'
 import { html, LitElement, nothing } from 'lit'
 import { classMap } from 'lit/directives/class-map.js'
 import { requestUpdateOnAriaChange } from '../internal/aria/delegate.js'
@@ -148,8 +148,7 @@ export class SelectOption extends LitElement {
         aria-haspopup=${this.ariaHasPopup || nothing}
         class="list-item ${classMap(this.getRenderClasses())}"
         @click=${this.selectOptionController.onClick}
-        @keydown=${this.selectOptionController.onKeydown}
-      >
+        @keydown=${this.selectOptionController.onKeydown}>
         ${content}
       </li>
     `

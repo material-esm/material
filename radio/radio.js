@@ -1,6 +1,6 @@
 var _a
 import '../focus/focus-ring.js'
-import '../ripple/ripple.js'
+import '../internal/ripple/ripple.js'
 import { html, isServer, LitElement, css } from 'lit'
 import { classMap } from 'lit/directives/class-map.js'
 import { isActivationClick } from '../internal/events/form-label-activation.js'
@@ -89,8 +89,7 @@ export class Radio extends radioBaseClass {
           tabindex="-1"
           .checked=${this.checked}
           .value=${this.value}
-          ?disabled=${this.disabled}
-        />
+          ?disabled=${this.disabled} />
       </div>
     `
   }

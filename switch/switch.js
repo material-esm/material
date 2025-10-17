@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import '../focus/focus-ring.js'
-import '../ripple/ripple.js'
+import '../internal/ripple/ripple.js'
 import { html, isServer, LitElement, nothing, css } from 'lit'
 import { property, query } from 'lit/decorators.js'
 import { classMap } from 'lit/directives/class-map.js'
@@ -89,8 +89,7 @@ export class Switch extends switchBaseClass {
           ?disabled=${this.disabled}
           ?required=${this.required}
           @input=${this.handleInput}
-          @change=${this.handleChange}
-        />
+          @change=${this.handleChange} />
 
         <md-focus-ring part="focus-ring" for="switch"></md-focus-ring>
         <span class="track"> ${this.renderHandle()} </span>
@@ -141,8 +140,7 @@ export class Switch extends switchBaseClass {
       <slot class="icon icon--off" name="off-icon">
         <svg viewBox="0 0 24 24">
           <path
-            d="M6.4 19.2 4.8 17.6 10.4 12 4.8 6.4 6.4 4.8 12 10.4 17.6 4.8 19.2 6.4 13.6 12 19.2 17.6 17.6 19.2 12 13.6Z"
-          />
+            d="M6.4 19.2 4.8 17.6 10.4 12 4.8 6.4 6.4 4.8 12 10.4 17.6 4.8 19.2 6.4 13.6 12 19.2 17.6 17.6 19.2 12 13.6Z" />
         </svg>
       </slot>
     `

@@ -2,7 +2,7 @@ import { html, LitElement, nothing, css } from 'lit'
 import { dispatchActivationClick, isActivationClick } from '../internal/events/form-label-activation.js'
 import '../elevation/elevation.js'
 import '../focus/focus-ring.js'
-import '../ripple/ripple.js'
+import '../internal/ripple/ripple.js'
 
 /**
  * A material 3 expressive button component.
@@ -126,8 +126,7 @@ export class Button extends LitElement {
         @touchstart=${this.handlePress}
         @touchend=${this.handleRelease}
         @click=${this.handleClick}
-        @keydown=${this.handleActivationClick}
-      >
+        @keydown=${this.handleActivationClick}>
         <div class="background"></div>
         <md-focus-ring part="focus-ring" for=${buttonId}></md-focus-ring>
         <md-ripple for=${buttonId} ?disabled="${isDisabled}"></md-ripple>
@@ -156,8 +155,7 @@ export class Button extends LitElement {
       ?disabled=${this.disabled}
       aria-label="${ariaLabel || nothing}"
       aria-haspopup="${ariaHasPopup || nothing}"
-      aria-expanded="${ariaExpanded || nothing}"
-    >
+      aria-expanded="${ariaExpanded || nothing}">
       ${this.renderContent()}
     </button>`
   }

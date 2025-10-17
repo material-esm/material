@@ -1,5 +1,5 @@
 import '../focus/focus-ring.js'
-import '../ripple/ripple.js'
+import '../internal/ripple/ripple.js'
 import { css, html, LitElement, nothing } from 'lit'
 import { classMap } from 'lit/directives/class-map.js'
 import { literal, html as staticHtml } from 'lit/static-html.js'
@@ -145,8 +145,7 @@ export class IconButton extends iconButtonBaseClass {
         id="link"
         href="${this.href}"
         target="${this.target || nothing}"
-        aria-label="${ariaLabel || nothing}"
-      ></a>
+        aria-label="${ariaLabel || nothing}"></a>
     `
   }
   getRenderClasses() {
