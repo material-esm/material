@@ -18,9 +18,6 @@ Usage:
   <div class="flex g4" style="position: sticky; top: 0; overflow-y: auto; height: 100vh;">
     <div class="" id="nav-rail-container">
       <md-nav-rail active-index="1">
-        <!-- <md-icon-button slot="menu" id="rail-menu-button">
-              <md-icon>menu</md-icon>
-            </md-icon-button> -->
         <md-fab slot="fab" variant="primary" lowered label="Search">
           <md-icon slot="icon">search</md-icon>
         </md-fab>
