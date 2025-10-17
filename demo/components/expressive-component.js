@@ -4,10 +4,7 @@ import 'material/buttons/button.js'
 import 'material/buttons/icon-button.js'
 import 'material/card/card.js'
 import 'material/chips/chip-set.js'
-import 'material/chips/assist-chip.js'
-import 'material/chips/filter-chip.js'
-import 'material/chips/input-chip.js'
-import 'material/chips/suggestion-chip.js'
+import 'material/chips/chip.js'
 import 'material/dialog/dialog.js'
 import 'material/select/select.js'
 import 'material/select/select-option.js'
@@ -187,10 +184,15 @@ class ExpressiveComponent extends LitElement {
         </div>
 
         <md-chip-set>
-            <md-assist-chip label="Assist chip"></md-assist-chip>
-            <md-filter-chip label="Filter chip"></md-filter-chip>
-            <md-input-chip label="Input chip"></md-input-chip>
-            <md-suggestion-chip label="Suggestion chip"></md-suggestion-chip>
+            <md-chip type="assist" label="Assist chip" @click=${this.clicked}>
+              <md-icon slot="icon">calendar_add_on</md-icon>
+            </md-chip>
+            <md-chip type="filter" label="Filter chip"></md-chip>
+            <md-chip type="input" label="Input chip"></md-chip>
+            <md-chip type="input" label="Pic chip" @click=${this.clicked} avatar>
+              <img src="/demo/images/avatar2.png" slot="icon"/>
+            </md-chip>
+            <md-chip type="suggestion" label="Suggestion chip"></md-chip>
         </md-chip-set>
 
         <div class="flexw g12" style="flex-wrap: wrap;">
@@ -272,6 +274,10 @@ class ExpressiveComponent extends LitElement {
 
   selected(e) {
     console.log('SELECTED!!!!', e.target, e.target.value)
+  }
+
+  clicked(e) {
+    console.log('CLICKED!!!!', e.target, e.target.value)
   }
 
   save(e) {

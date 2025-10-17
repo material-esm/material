@@ -11,7 +11,7 @@ import "material/chips/filter-chip.js"
 // Then in render()
 
 <md-chip-set>
-  <md-filter-chip label="Upcoming" selected></md-filter-chip>
+  <md-chip type="filter" label="Upcoming" selected></md-filter-chip>
 </md-chip-set>
 ```
 
