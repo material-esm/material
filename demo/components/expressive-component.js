@@ -80,7 +80,9 @@ class ExpressiveComponent extends LitElement {
                     <div slot="headline">Orange</div>
                 </md-select-option>
             </md-select>
-            <md-button type="button" @click=${this.save}>Save</md-button>
+            <div>
+              <md-button type="button" @click=${this.save}>Save</md-button>
+            </div>
           </div>
         </form>
 
