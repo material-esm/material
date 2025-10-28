@@ -1,5 +1,7 @@
 # Buttons
 
+## Regular Buttons
+
 [Material 3 expressive buttons](https://m3.material.io/components/buttons/overview).
 
 Changes from previous version:
@@ -28,4 +30,24 @@ Changes from previous version:
   <md-button color="tonal">Tonal</md-button>
   <md-button color="text">Text</md-button>
 </div>
+```
+
+## Floating Action Button - FAB
+
+[Material 3 Floating Action Button](https://m3.material.io/components/floating-action-button/overview)]
+
+```html
+<md-fab class="fabBottom" variant="primary" href="#">
+  <md-icon slot="icon">add</md-icon>
+</md-fab>
+```
+
+Extended FAB
+
+[Extended](https://m3.material.io/components/extended-fab/overview)
+
+```html
+<md-fab class="fabBottom" variant="primary" href="#" label="Extended FAB" extended>
+  <md-icon slot="icon">add</md-icon>
+</md-fab>
 ```
