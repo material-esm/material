@@ -46,7 +46,7 @@ npm install material-esm/material
 
 ### CDN
 
-Add this importmap to the `<head>` section of you app/site:
+Add this importmap to the `<head>` section of your app/site:
 
 ```js
 <script type="importmap">
@@ -97,7 +97,7 @@ class DemoComponent extends LitElement {
   `
 
   render() {
-    return html` <div style="display: flex; flex-direction: column; gap: 12px;">
+    return html`<div style="display: flex; flex-direction: column; gap: 12px;">
       <md-text-field type="outlined" label="Name" required minlength="4"></md-text-field>
       <md-button color="filled" @click=${this.save}>Save</md-button>
     </div>`
@@ -149,14 +149,12 @@ Be sure to import the fonts you want to use along with Material Symbols:
   rel="preload"
   href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"
   as="style"
-  onload="this.onload=null;this.rel='stylesheet'"
-/>
+  onload="this.onload=null;this.rel='stylesheet'" />
 <link
   rel="preload"
   href="https://fonts.googleapis.com/css2?family=Roboto+Flex:wght@400;500;700&display=swap"
   as="style"
-  onload="this.onload=null;this.rel='stylesheet'"
-/>
+  onload="this.onload=null;this.rel='stylesheet'" />
 ```
 
 To get your dark.css and light.css, go to [Material Theme Builder](https://material-foundation.github.io/material-theme-builder/), pick some colors and export to web/css. Extract the light.css and dark.css from the zip file and place beside your main css file.
