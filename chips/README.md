@@ -6,7 +6,7 @@ Example:
 
 ```js
 import "material/chips/chip-set.js"
-import "material/chips/filter-chip.js"
+import "material/chips/chip.js"
 
 // Then in render()
 
