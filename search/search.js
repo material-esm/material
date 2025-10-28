@@ -1,5 +1,5 @@
 import { LitElement, html, css } from 'lit'
-import '../text-field/text-field.js'
+import '../text/text-field.js'
 
 class Search extends LitElement {
   static styles = css`
@@ -34,8 +34,7 @@ class Search extends LitElement {
           id="input"
           style="width: 100%;"
           label="${this.label}"
-          placeholder="${this.placeholder}"
-        >
+          placeholder="${this.placeholder}">
           <slot name="leading-icon" slot="leading-icon"></slot>
           <slot name="trailing-icon" slot="trailing-icon"></slot>
         </md-text-field>

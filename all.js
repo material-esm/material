@@ -42,7 +42,7 @@ import './switch/switch.js'
 import './tabs/primary-tab.js'
 import './tabs/secondary-tab.js'
 import './tabs/tabs.js'
-import './text-field/text-field.js'
+import './text/text-field.js'
 // go/keep-sorted end
 // LINT.ThenChange(:exports)
 // LINT.IfChange(exports)
@@ -73,4 +73,4 @@ export * from './slider/slider.js'
 export * from './switch/switch.js'
 export * from './tabs/tab.js'
 export * from './tabs/tabs.js'
-export * from './text-field/text-field.js'
+export * from './text/text-field.js'

@@ -1,5 +1,5 @@
 import { LitElement, html, css } from 'lit'
-import '../text-field/text-field.js'
+import '../text/text-field.js'
 import { sharedStyles } from '../shared/shared.css.js'
 
 class AppBar extends LitElement {
@@ -28,8 +28,7 @@ class AppBar extends LitElement {
           class="fw"
           style="max-height: 48px;"
           label="${this.label}"
-          placeholder=""
-        >
+          placeholder="">
           <slot name="leading-icon-text-field" slot="leading-icon"></slot>
           <slot name="trailing-icon-text-field" slot="trailing-icon"></slot>
         </md-text-field>
