@@ -39,6 +39,7 @@ export class Fab extends LitElement {
     label: { type: String },
     lowered: { type: Boolean },
     href: { type: String },
+    target: { type: String },
     extended: { type: Boolean },
     variant: { type: String, reflect: true },
   }
@@ -61,6 +62,12 @@ export class Fab extends LitElement {
      * Sets the underlying `HTMLAnchorElement`'s `href` resource attribute.
      */
     this.href = ''
+
+    /**
+     * Sets targer if href is set.
+     */
+    this.target = ''
+
     /**
      * This will allow the fab to expand and use the label
      */

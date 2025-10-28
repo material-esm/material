@@ -1,9 +1,3 @@
-/**
- * @license
- * Copyright 2024 Google LLC
- * SPDX-License-Identifier: Apache-2.0
- */
-// Generated stylesheet for ./typography/md-typescale-styles.css.
 import { css } from 'lit'
 export const styles = css`
   @layer {
@@ -107,4 +101,3 @@ export const styles = css`
     }
   }
 `
-//# sourceMappingURL=md-typescale-styles.js.map
