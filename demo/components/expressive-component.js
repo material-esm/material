@@ -1,5 +1,5 @@
 import { html, css, LitElement } from 'lit'
-import 'material/text-field/text-field.js'
+import 'material/text/text-field.js'
 import 'material/buttons/button.js'
 import 'material/buttons/icon-button.js'
 import 'material/card/card.js'
@@ -55,14 +55,14 @@ class ExpressiveComponent extends LitElement {
 
   render() {
     return html`
-    <div class="flex col g12">
+      <div class="flex col g12">
         <form id="form1">
           <div class="flex col g12">
             <md-text-field color="filled" label="Name in filled text field" required minlength="4"></md-text-field>
             <md-text-field color="outlined" label="Name" required minlength="4"></md-text-field>
-            <md-text-field color="outlined"label="Email" type="email" required></md-text-field>
+            <md-text-field color="outlined" label="Email" type="email" required></md-text-field>
             <md-text-field color="outlined" label="Password" type="password" required></md-text-field>
-            <md-text-field color="outlined" label="Phone" type="tel" required style="width: 50%;" ></md-text-field>
+            <md-text-field color="outlined" label="Phone" type="tel" required style="width: 50%;"></md-text-field>
             <md-text-field color="outlined" label="File" type="file" id="file1" required></md-text-field>
             <md-text-field color="outlined" label="Date" type="date" required></md-text-field>
             <md-text-field
@@ -71,16 +71,15 @@ class ExpressiveComponent extends LitElement {
               id="commentBody"
               label="What's on your mind?"
               rows="3"
-              value=""
-            ></md-text-field>
+              value=""></md-text-field>
             <md-select required @change=${this.selected}>
-                <md-select-option aria-label="blank"></md-select-option>
-                <md-select-option selected value="apple">
-                    <div slot="headline">Apple</div>
-                </md-select-option>
-                <md-select-option value="orange">
-                    <div slot="headline">Orange</div>
-                </md-select-option>
+              <md-select-option aria-label="blank"></md-select-option>
+              <md-select-option selected value="apple">
+                <div slot="headline">Apple</div>
+              </md-select-option>
+              <md-select-option value="orange">
+                <div slot="headline">Orange</div>
+              </md-select-option>
             </md-select>
             <div>
               <md-button type="button" @click=${this.save}>Save</md-button>
@@ -89,68 +88,76 @@ class ExpressiveComponent extends LitElement {
         </form>
 
         <div class="flex g20 aic">
-          <md-switch value="something" @change=${(e) => console.log('Switch changed', e.target.selected, e.target.value)}></md-switch>
+          <md-switch
+            value="something"
+            @change=${(e) => console.log('Switch changed', e.target.selected, e.target.value)}></md-switch>
           <md-checkbox></md-checkbox>
           <div class="flex g8 aic">
-        <md-radio id="cats-radio" name="animals" value="cats"></md-radio>
-      <label for="cats-radio">Cats</label>
+            <md-radio id="cats-radio" name="animals" value="cats"></md-radio>
+            <label for="cats-radio">Cats</label>
 
-      <md-radio id="dogs-radio" name="animals" value="dogs"></md-radio>
-      <label for="dogs-radio">Dogs</label>
+            <md-radio id="dogs-radio" name="animals" value="dogs"></md-radio>
+            <label for="dogs-radio">Dogs</label>
           </div>
-          <md-button color="outlined" @click=${() =>
-            snack('Hello world', {
-              action: {
-                label: 'Undo',
-                onClick: () => {
-                  console.log('Undo clicked')
+          <md-button
+            color="outlined"
+            @click=${() =>
+              snack('Hello world', {
+                action: {
+                  label: 'Undo',
+                  onClick: () => {
+                    console.log('Undo clicked')
+                  },
                 },
-              },
-              showCloseIcon: true,
-            })} >Snack</md-button color="filled">
-            <md-button color="outlined" @click=${() =>
-              this.renderRoot.querySelector('#dialog1').show()} show>Dialog</md-button color="filled">
+                showCloseIcon: true,
+              })}
+            >Snack</md-button
+          >
+          <md-button color="outlined" show @click=${() => this.renderRoot.querySelector('#dialog1').show()}
+            >Dialog</md-button
+          >
         </div>
 
         <div class="flex g12 aic">
           <md-icon-button>
-              <md-icon>search</md-icon>
+            <md-icon>search</md-icon>
           </md-icon-button>
           <md-icon-button style="--md-icon-button-icon-color: red;">
-              <md-icon>favorite</md-icon>
+            <md-icon>favorite</md-icon>
           </md-icon-button>
           <div style="position: relative">
             <md-icon-button color="tonal" id="more-button" @click=${this.toggleMoreMenu}>
-                <md-icon>more_vert</md-icon>
+              <md-icon>more_vert</md-icon>
             </md-icon-button>
             <md-menu id="more-menu" anchor="more-button">
               <md-menu-item>
-                  <div slot="headline">Profile</div>
-                  <md-icon class="startIcon" slot="start">person</md-icon>
+                <div slot="headline">Profile</div>
+                <md-icon class="startIcon" slot="start">person</md-icon>
               </md-menu-item>
               <md-menu-item id="goto-orgs" href="/orgs">
-                  <div slot="headline">My Organizations</div>
-                  <md-icon class="startIcon" slot="start">storefront</md-icon>
+                <div slot="headline">My Organizations</div>
+                <md-icon class="startIcon" slot="start">storefront</md-icon>
               </md-menu-item>
               <md-menu-item id="goto-signout">
-                  <div slot="headline">Sign out</div>
-                  <md-icon class="startIcon" slot="start">logout</md-icon>
+                <div slot="headline">Sign out</div>
+                <md-icon class="startIcon" slot="start">logout</md-icon>
               </md-menu-item>
             </md-menu>
           </div>
           <md-icon-button href="https://thingster.app" target="_blank">
-              <md-icon>open_in_new</md-icon>
+            <md-icon>open_in_new</md-icon>
           </md-icon-button>
           <div>small:</div>
-          <md-icon-button style="--md-icon-button-icon-size: 16px; --md-icon-button-container-width: 24px; --md-icon-button-container-height: 24px;">
-              <md-icon>content_copy</md-icon>
+          <md-icon-button
+            style="--md-icon-button-icon-size: 16px; --md-icon-button-container-width: 24px; --md-icon-button-container-height: 24px;">
+            <md-icon>content_copy</md-icon>
           </md-icon-button>
-          <md-icon-button color="filled" style="--md-icon-button-icon-size: 16px; --md-icon-button-container-width: 24px; --md-icon-button-container-height: 24px;">
-              <md-icon>content_copy</md-icon>
+          <md-icon-button
+            color="filled"
+            style="--md-icon-button-icon-size: 16px; --md-icon-button-container-width: 24px; --md-icon-button-container-height: 24px;">
+            <md-icon>content_copy</md-icon>
           </md-icon-button>
         </div>
-
-      
         <!-- Buttons -->
         <div class="flexw g12 aic">
           <md-button>Default</md-button>
@@ -178,7 +185,7 @@ class ExpressiveComponent extends LitElement {
         </div>
 
         <div>Square buttons</div>
-         <div class="flexw g12 aic">
+        <div class="flexw g12 aic">
           <md-button shape="square">Default</md-button>
           <md-button shape="square" size="extra-small">Extra small</md-button>
           <md-button shape="square" size="small">Small</md-button>
@@ -188,66 +195,71 @@ class ExpressiveComponent extends LitElement {
         </div>
 
         <md-chip-set>
-            <md-chip type="assist" label="Assist chip" @click=${this.clicked}>
-              <md-icon slot="icon">calendar_add_on</md-icon>
-            </md-chip>
-            <md-chip type="filter" label="Filter chip"></md-chip>
-            <md-chip type="input" label="Input chip"></md-chip>
-            <md-chip type="input" label="Pic chip" @click=${this.clicked} avatar>
-              <img src="/demo/images/avatar2.png" slot="icon"/>
-            </md-chip>
-            <md-chip type="suggestion" label="Suggestion chip"></md-chip>
+          <md-chip type="assist" label="Assist chip" @click=${this.clicked}>
+            <md-icon slot="icon">calendar_add_on</md-icon>
+          </md-chip>
+          <md-chip type="filter" label="Filter chip"></md-chip>
+          <md-chip type="input" label="Input chip"></md-chip>
+          <md-chip type="input" label="Pic chip" @click=${this.clicked} avatar>
+            <img src="/demo/images/avatar2.png" slot="icon" />
+          </md-chip>
+          <md-chip type="suggestion" label="Suggestion chip"></md-chip>
         </md-chip-set>
 
-           <div class="flexw g12">
-          <md-slider @change=${(e) => console.log('Slider changed', e.target.value)} labeled></md-slider>          
-          <md-slider @change=${(e) => console.log('Slider changed', e.target.value)} ticks value="50"></md-slider>
-          <md-slider @change=${(e) =>
-            console.log(
-              'Slider changed',
-              e.target.valueStart,
-              e.target.valueEnd,
-            )} range value-start="25" value-end="75"></md-slider>
+        <div class="flexw g12">
+          <md-slider @change=${(e) => console.log('Slider changed', e.target.value)} labeled></md-slider>
+          <md-slider
+            @change=${(e) => console.log('Slider changed', e.target.value)}
+            min="0"
+            max="50"
+            step="10"
+            ticks
+            value="10"></md-slider>
+          <md-slider
+            @change=${(e) => console.log('Slider changed', e.target.valueStart, e.target.valueEnd)}
+            range
+            value-start="25"
+            value-end="75"></md-slider>
         </div>
 
-        <div class="flexw g12" style="flex-wrap: wrap;">
-            <md-card style="">
-                <div class="flex col">
-                    <img src="./images/img1.jpg">
-                </div>
-                <div class="flex col g12 p16" style="">
-                    <div class="card-title">Card 1</div>
-                    <div>Card content goes here</div>
-                    <div class="flex g8 jcr mt12">
-                        <md-button color="outlined">Read More</md-button color="outlined">
-                        <md-button color="filled">Buy Now</md-button color="filled">
-                    </div>
-                </div>
-            </md-card>
-            <md-card style="">
-                <div class="flex col">
-                    <img src="./images/img2.jpg">
-                </div>
-                <div class="flex col g12 p16" style="">
-                    <div class="card-title">Card 2</div>
-                    <div>Card content goes here</div>
-                    <div class="flex g8 jcr mt12">
-                        <md-button color="outlined">Read More</md-button color="outlined">
-                        <md-button color="filled">Buy Now</md-button color="filled">
-                    </div>
-                </div>
-            </md-card>
+        <div class="flexw g12">
+          <md-card style="">
+            <div class="flex col">
+              <img src="./images/img1.jpg" />
+            </div>
+            <div class="flex col g12 p16" style="">
+              <div class="card-title">Card 1</div>
+              <div>Card content goes here</div>
+              <div class="flex g8 jcr mt12">
+                <md-button color="outlined">Read More</md-button>
+                <md-button color="filled">Buy Now</md-button>
+              </div>
+            </div>
+          </md-card>
+          <md-card style="">
+            <div class="flex col">
+              <img src="./images/img2.jpg" />
+            </div>
+            <div class="flex col g12 p16" style="">
+              <div class="card-title">Card 2</div>
+              <div>Card content goes here</div>
+              <div class="flex g8 jcr mt12">
+                <md-button color="outlined">Read More</md-button>
+                <md-button color="filled">Buy Now</md-button>
+              </div>
+            </div>
+          </md-card>
         </div>
 
         <h3>Tabs</h3>
 
         <div>
           <md-tabs @change=${this.tabChanged} id="tabs">
-            <md-tab type="primary" id="photos-tab"  aria-label="Photos" aria-controls="photos-panel">
-            <md-icon slot="icon">photo</md-icon>
+            <md-tab type="primary" id="photos-tab" aria-label="Photos" aria-controls="photos-panel">
+              <md-icon slot="icon">photo</md-icon>
               Photos
             </md-tab>
-            <md-tab type="primary" id="videos-tab"  aria-label="Videos" aria-controls="videos-panel">
+            <md-tab type="primary" id="videos-tab" aria-label="Videos" aria-controls="videos-panel">
               <md-icon slot="icon">videocam</md-icon>
               Video
             </md-tab>
@@ -259,37 +271,25 @@ class ExpressiveComponent extends LitElement {
           ${this.renderTabPanel()}
         </div>
 
-          <div>
+        <div>
           <md-tabs @change=${this.secondaryTabChanged} id="tabs2">
-            <md-tab type="secondary" id="photos-tab"  aria-label="Photos" aria-controls="photos-panel">
-              Photos
-            </md-tab>
-            <md-tab type="secondary" id="videos-tab"  aria-label="Videos" aria-controls="videos-panel">
-              Videos
-            </md-tab>
-            <md-tab type="secondary" id="music-tab" aria-label="Music" aria-controls="music-panel">
-              Music
-            </md-tab>
+            <md-tab type="secondary" id="photos-tab" aria-label="Photos" aria-controls="photos-panel"> Photos </md-tab>
+            <md-tab type="secondary" id="videos-tab" aria-label="Videos" aria-controls="videos-panel"> Videos </md-tab>
+            <md-tab type="secondary" id="music-tab" aria-label="Music" aria-controls="music-panel"> Music </md-tab>
           </md-tabs>
           ${this.renderSecondaryTabPanel()}
         </div>
+      </div>
 
-     
-
-    </div>
-    
-    <md-dialog id="dialog1">
-        <div slot="headline">
-            Dialog title
-        </div>
-        <form slot="content" id="form-id" method="dialog">
-            A simple dialog with free-form content.
-        </form>
+      <md-dialog id="dialog1">
+        <div slot="headline">Dialog title</div>
+        <form slot="content" id="form-id" method="dialog">A simple dialog with free-form content.</form>
         <div slot="actions">
-            <md-button color="text" form="form-id" @click=${() =>
-              this.renderRoot.querySelector('#dialog1').close()}>Ok</md-button>
+          <md-button color="text" form="form-id" @click=${() => this.renderRoot.querySelector('#dialog1').close()}
+            >Ok</md-button
+          >
         </div>
-    </md-dialog>
+      </md-dialog>
     `
   }
 
