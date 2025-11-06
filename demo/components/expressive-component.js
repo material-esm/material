@@ -201,7 +201,7 @@ class ExpressiveComponent extends LitElement {
           <md-chip type="filter" label="Filter chip"></md-chip>
           <md-chip type="input" label="Input chip"></md-chip>
           <md-chip type="input" label="Pic chip" @click=${this.clicked} avatar>
-            <img src="/demo/images/avatar2.png" slot="icon" />
+            <img src="./images/avatar2.png" slot="icon" />
           </md-chip>
           <md-chip type="suggestion" label="Suggestion chip"></md-chip>
         </md-chip-set>
