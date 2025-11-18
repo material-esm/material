@@ -286,7 +286,7 @@ export class Ripple extends LitElement {
     if (!this.mdRoot) {
       //   this.mdRoot = this.htmlFor
       //   this.mdRoot = this.renderRoot.querySelector(this.getAttribute('for'))
-      this.mdRoot = this.renderRoot.querySelector('.wrapper')
+      this.mdRoot = this.renderRoot.querySelector('.surface')
     }
     if (!this.mdRoot) {
       return
