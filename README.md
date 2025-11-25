@@ -15,8 +15,7 @@ open-source design system.
 
 This is a fork of the original [material web](https://github.com/material-components/material-web) project that seems to be on hold.
 We are very grateful for the work the team at Google put into the project, but we just can't wait for them to start moving again and we
-don't want to stop using these material components we've grown to love. So we'll continue to
-develop this at our own pace, and that pace is FAST.
+don't want to stop using these material components we've grown to love. 
 
 Please [consider sponsoring](https://github.com/sponsors/treeder) before creating issues for us.
 
@@ -26,7 +25,7 @@ Material 3 Expressive is in progress! [Follow along here](https://github.com/mat
 
 To start using it, see [this topic](https://github.com/orgs/material-esm/discussions/71).
 
-[Material 3 demo](https://material-esm.github.io/material/demo/v3)
+[Material 3 Expressive demo](https://material-esm.github.io/material/demo/v3)
 
 ## Demo
 
