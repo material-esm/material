@@ -81,6 +81,15 @@ class ExpressiveComponent extends LitElement {
                 <div slot="headline">Orange</div>
               </md-select-option>
             </md-select>
+            <md-select color="filled" required @change=${this.selected}>
+              <md-select-option aria-label="blank"></md-select-option>
+              <md-select-option selected value="apple">
+                <div slot="headline">Apple</div>
+              </md-select-option>
+              <md-select-option value="orange">
+                <div slot="headline">Orange</div>
+              </md-select-option>
+            </md-select>
             <div>
               <md-button type="button" @click=${this.save}>Save</md-button>
             </div>
