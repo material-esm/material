@@ -9,7 +9,7 @@ export function snack(message, { duration = 3000, action = null, showCloseIcon =
   snack.duration = duration
   if (action) {
     let actionButton = document.createElement('md-button')
-    actionButton.type = 'text'
+    actionButton.color = 'text'
     actionButton.slot = 'action'
     actionButton.innerText = action.label
     if (action.onClick) actionButton.addEventListener('click', action.onClick)
