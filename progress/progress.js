@@ -7,7 +7,7 @@ import { styleMap } from 'lit/directives/style-map.js'
  */
 export class Progress extends LitElement {
   static properties = {
-    type: { type: String },
+    type: { type: String, reflect: true },
     value: { type: Number },
     max: { type: Number },
     indeterminate: { type: Boolean },
@@ -60,6 +60,8 @@ export class Progress extends LitElement {
     return {
       indeterminate: this.indeterminate,
       'four-color': this.fourColor,
+      circular: this.type === 'circular',
+      linear: this.type === 'linear',
     }
   }
   renderIndicator() {
@@ -134,7 +136,7 @@ export class Progress extends LitElement {
 
   static styles = [
     css`
-      .circular {
+      :host([type='circular']) {
         --_active-indicator-color: var(
           --md-circular-progress-active-indicator-color,
           var(--md-sys-color-primary, #6750a4)
@@ -331,7 +333,7 @@ export class Progress extends LitElement {
       }
     `,
     css`
-      :host {
+      :host([type='linear']) {
         --_active-indicator-color: var(
           --md-linear-progress-active-indicator-color,
           var(--md-sys-color-primary, #6750a4)
@@ -364,14 +366,14 @@ export class Progress extends LitElement {
         content-visibility: auto;
         contain: strict;
       }
-      .progress,
+      .linear.progress,
       .dots,
       .inactive-track,
       .bar,
       .bar-inner {
         position: absolute;
       }
-      .progress {
+      .linear.progress {
         direction: ltr;
         inset: 0;
         border-radius: inherit;
@@ -563,3 +565,5 @@ export class Progress extends LitElement {
 ;(() => {
   requestUpdateOnAriaChange(Progress)
 })()
+
+customElements.define('md-progress', Progress)
