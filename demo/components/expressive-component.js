@@ -232,7 +232,7 @@ class ExpressiveComponent extends LitElement {
         </div>
 
         <div class="flexw g12">
-          <md-card style="">
+          <md-card type="outlined">
             <div class="flex col">
               <img src="./images/img1.jpg" />
             </div>
@@ -245,12 +245,25 @@ class ExpressiveComponent extends LitElement {
               </div>
             </div>
           </md-card>
-          <md-card style="">
+          <md-card type="filled">
             <div class="flex col">
               <img src="./images/img2.jpg" />
             </div>
             <div class="flex col g12 p16" style="">
               <div class="card-title">Card 2</div>
+              <div>Card content goes here</div>
+              <div class="flex g8 jcr mt12">
+                <md-button color="outlined">Read More</md-button>
+                <md-button color="filled">Buy Now</md-button>
+              </div>
+            </div>
+          </md-card>
+          <md-card type="elevated">
+            <div class="flex col">
+              <img src="./images/img2.jpg" />
+            </div>
+            <div class="flex col g12 p16" style="">
+              <div class="card-title">Card 3</div>
               <div>Card content goes here</div>
               <div class="flex g8 jcr mt12">
                 <md-button color="outlined">Read More</md-button>
