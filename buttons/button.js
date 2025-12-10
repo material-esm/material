@@ -118,9 +118,14 @@ export class Button extends LitElement {
     // TODO(b/310046938): due to a limitation in focus ring/ripple, we can't use
     // the same ID for different elements, so we change the ID instead.
     const buttonId = this.href ? 'link' : 'button'
+    let externalClasses = this.classList
+    let clzes = ''
+    for (let v of externalClasses.values()) {
+      clzes += v + ' '
+    }
     return html`
       <div
-        class="wrapper ${this.color} ${this.size} ${this.shape} ${this.pressed ? 'pressed' : ''}"
+        class="wrapper ${this.color} ${this.size} ${this.shape} ${this.pressed ? 'pressed' : ''} ${clzes}"
         @mousedown=${this.handlePress}
         @mouseup=${this.handleRelease}
         @touchstart=${this.handlePress}
@@ -549,6 +554,10 @@ export class Button extends LitElement {
         --_container-color: none;
         --_disabled-container-color: none;
         --_disabled-container-opacity: 0;
+      }
+      /* This is for things like the snackbar, will use opposite colors */
+      .wrapper.text.inverse {
+        --_label-text-color: var(--md-button-label-text-color, var(--md-sys-color-on-primary, #6750a4));
       }
     `,
     css`

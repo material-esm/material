@@ -15,7 +15,7 @@ open-source design system.
 
 This is a fork of the original [material web](https://github.com/material-components/material-web) project that seems to be on hold.
 We are very grateful for the work the team at Google put into the project, but we just can't wait for them to start moving again and we
-don't want to stop using these material components we've grown to love. 
+don't want to stop using these material components we've grown to love.
 
 Please [consider sponsoring](https://github.com/sponsors/treeder) before creating issues for us.
 

@@ -11,6 +11,7 @@ export function snack(message, { duration = 3000, action = null, showCloseIcon =
     let actionButton = document.createElement('md-button')
     actionButton.color = 'text'
     actionButton.slot = 'action'
+    actionButton.classList.add('inverse')
     actionButton.innerText = action.label
     if (action.onClick) actionButton.addEventListener('click', action.onClick)
     if (action.href) actionButton.href = action.href
