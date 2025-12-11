@@ -57,6 +57,7 @@
       import 'material/menu/menu-item.js'
       import 'material/snackbar/snackbar.js'
       import 'material/app/bar.js'
+      import 'material/progress/progress.js'
       import './components/expressive-component.js'
     </script>
 
@@ -163,6 +164,10 @@
             <div style="margin-top: 24px">
               <expressive-component></expressive-component>
             </div>
+
+            <h2>Progress</h2>
+            <md-progress type="circular" indeterminate></md-progress>
+            <md-progress type="linear" value="0.5" indeterminate></md-progress>
 
             <md-snackbar message="Hello World!" open></md-snackbar>
           </div>
