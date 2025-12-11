@@ -15,18 +15,16 @@ export class Card extends LitElement {
 
   render() {
     return html`
-      <div class="root ${this.type}">
-        <md-elevation part="elevation"></md-elevation>
-        <div class="background"></div>
-        <slot></slot>
-        <div class="outline ${this.type}"></div>
-      </div>
+      <md-elevation part="elevation"></md-elevation>
+      <div class="background"></div>
+      <slot></slot>
+      <div class="outline ${this.type}"></div>
     `
   }
 
   static styles = [
     css`
-      .root {
+      :host {
         border-radius: var(--_container-shape);
         box-sizing: border-box;
         display: flex;
@@ -60,30 +58,13 @@ export class Card extends LitElement {
         border-radius: inherit;
       }
 
-      .root.outlined {
-        --_container-color: var(--md-card-container-color, var(--md-sys-color-surface, #fef7ff));
-        --_container-elevation: var(--md-card-container-elevation, 0);
-        --_container-shadow-color: var(--md-card-container-shadow-color, var(--md-sys-color-shadow, #000));
-        --_container-shape: var(--md-card-container-shape, var(--md-sys-shape-corner-medium, 12px));
-        --_outline-color: var(--md-card-outline-color, var(--md-sys-color-outline-variant, #cac4d0));
-        --_outline-width: var(--md-card-outline-width, 1px);
-      }
       .outline.outlined {
         border-color: var(--_outline-color);
         border-width: var(--_outline-width);
       }
-
-      .root.filled {
-        --_container-color: var(
-          --md-filled-card-container-color,
-          var(--md-sys-color-surface-container-highest, #e6e0e9)
-        );
-        --_container-elevation: var(--md-filled-card-container-elevation, 0);
-        --_container-shadow-color: var(--md-filled-card-container-shadow-color, var(--md-sys-color-shadow, #000));
-        --_container-shape: var(--md-filled-card-container-shape, var(--md-sys-shape-corner-medium, 12px));
-      }
-
-      .root.elevated {
+    `,
+    css`
+      :host([type='elevated']) {
         --_container-color: var(--md-elevated-card-container-color, var(--md-sys-color-surface-container-low, #f7f2fa));
         --_container-elevation: var(--md-elevated-card-container-elevation, 1);
         --_container-shadow-color: var(--md-elevated-card-container-shadow-color, var(--md-sys-color-shadow, #000));
@@ -91,15 +72,7 @@ export class Card extends LitElement {
       }
     `,
     css`
-      :host.elevated {
-        --_container-color: var(--md-elevated-card-container-color, var(--md-sys-color-surface-container-low, #f7f2fa));
-        --_container-elevation: var(--md-elevated-card-container-elevation, 1);
-        --_container-shadow-color: var(--md-elevated-card-container-shadow-color, var(--md-sys-color-shadow, #000));
-        --_container-shape: var(--md-elevated-card-container-shape, var(--md-sys-shape-corner-medium, 12px));
-      }
-    `,
-    css`
-      .root.filled {
+      :host([type='filled']) {
         --_container-color: var(
           --md-filled-card-container-color,
           var(--md-sys-color-surface-container-highest, #e6e0e9)
@@ -110,7 +83,7 @@ export class Card extends LitElement {
       }
     `,
     css`
-      .root.outlined {
+      :host([type='outlined']) {
         --_container-color: var(--md-card-container-color, var(--md-sys-color-surface, #fef7ff));
         --_container-elevation: var(--md-card-container-elevation, 0);
         --_container-shadow-color: var(--md-card-container-shadow-color, var(--md-sys-color-shadow, #000));
