@@ -98,4 +98,3 @@ export function msFromTimeCSSValue(value) {
     const seconds = match?.[2];
     return Number(time ?? 0) * (seconds ? 1000 : 1);
 }
-//# sourceMappingURL=animation.js.map

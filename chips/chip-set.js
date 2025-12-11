@@ -118,13 +118,6 @@ export class ChipSet extends LitElement {
     }
   }
 
-  /*
-    
-    __decorate([
-    queryAssignedElements()
-    ], ChipSet.prototype, "childElements", void 0);
-    //# sourceMappingURL=chip-set.js.map
-    */
   get childElements() {
     return Array.from(this.children)
   }

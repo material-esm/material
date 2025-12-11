@@ -3,7 +3,7 @@
  * Copyright 2023 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
-import { ARIA_PROPERTIES, ariaPropertyToAttribute } from './aria.js';
+import { ARIA_PROPERTIES, ariaPropertyToAttribute } from './aria.js'
 /**
  * Sets up a `ReactiveElement` constructor to enable updates when delegating
  * aria attributes. Elements may bind `this.aria*` properties to `aria-*`
@@ -35,19 +35,18 @@ import { ARIA_PROPERTIES, ariaPropertyToAttribute } from './aria.js';
  * @param ctor The `ReactiveElement` constructor to patch.
  */
 export function requestUpdateOnAriaChange(ctor) {
-    for (const ariaProperty of ARIA_PROPERTIES) {
-        ctor.createProperty(ariaProperty, {
-            attribute: ariaPropertyToAttribute(ariaProperty),
-            reflect: true,
-        });
+  for (const ariaProperty of ARIA_PROPERTIES) {
+    ctor.createProperty(ariaProperty, {
+      attribute: ariaPropertyToAttribute(ariaProperty),
+      reflect: true,
+    })
+  }
+  ctor.addInitializer((element) => {
+    const controller = {
+      hostConnected() {
+        element.setAttribute('role', 'presentation')
+      },
     }
-    ctor.addInitializer((element) => {
-        const controller = {
-            hostConnected() {
-                element.setAttribute('role', 'presentation');
-            },
-        };
-        element.addController(controller);
-    });
+    element.addController(controller)
+  })
 }
-//# sourceMappingURL=delegate.js.map

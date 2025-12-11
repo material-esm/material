@@ -193,10 +193,3 @@ export class ListController {
     return slots.assignedElements()
   }
 }
-
-/*
-__decorate([
-    queryAssignedElements({ flatten: true })
-], List.prototype, "slotItems", void 0);
-*/
-//# sourceMappingURL=list-controller.js.map

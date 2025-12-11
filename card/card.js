@@ -31,7 +31,6 @@ export class Card extends LitElement {
         flex-direction: column;
         position: relative;
         z-index: 0;
-        overflow: hidden;
       }
       md-elevation,
       .background,
@@ -69,6 +68,16 @@ export class Card extends LitElement {
         --_container-elevation: var(--md-elevated-card-container-elevation, 1);
         --_container-shadow-color: var(--md-elevated-card-container-shadow-color, var(--md-sys-color-shadow, #000));
         --_container-shape: var(--md-elevated-card-container-shape, var(--md-sys-shape-corner-medium, 12px));
+        filter: drop-shadow(0px 1px 2px var(--_container-shadow-color));
+      }
+      :host([type='elevated']:hover) {
+        --_container-elevation: var(--md-elevated-card-hover-container-elevation, 2);
+      }
+      :host([type='elevated']:focus) {
+        --_container-elevation: var(--md-elevated-card-focus-container-elevation, 1);
+      }
+      :host([type='elevated']:active) {
+        --_container-elevation: var(--md-elevated-card-pressed-container-elevation, 1);
       }
     `,
     css`
@@ -90,10 +99,6 @@ export class Card extends LitElement {
         --_container-shape: var(--md-card-container-shape, var(--md-sys-shape-corner-medium, 12px));
         --_outline-color: var(--md-card-outline-color, var(--md-sys-color-outline-variant, #cac4d0));
         --_outline-width: var(--md-card-outline-width, 1px);
-      }
-      .outline {
-        border-color: var(--_outline-color);
-        border-width: var(--_outline-width);
       }
     `,
   ]
