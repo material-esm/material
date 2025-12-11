@@ -388,6 +388,8 @@ export class Progress extends LitElement {
         height: var(--_active-indicator-height);
         transform-origin: left center;
         transition: transform 250ms cubic-bezier(0.4, 0, 0.6, 1);
+        inset: 0;
+        left: 0;
       }
       .secondary-bar {
         display: none;
