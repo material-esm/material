@@ -50,8 +50,7 @@ export class Progress extends LitElement {
         aria-label="${ariaLabel || nothing}"
         aria-valuemin="0"
         aria-valuemax=${this.max}
-        aria-valuenow=${this.indeterminate ? nothing : this.value}
-      >
+        aria-valuenow=${this.indeterminate ? nothing : this.value}>
         ${this.renderIndicator()}
       </div>
     `
@@ -380,7 +379,6 @@ export class Progress extends LitElement {
         overflow: hidden;
         display: flex;
         align-items: center;
-        margin: 0;
       }
       .bar {
         animation: none;
