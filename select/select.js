@@ -12,7 +12,7 @@ import { css } from 'lit'
  *
  * @example
  * ```html
- * <md-select label="fruits">
+ * <md-filled-select label="fruits">
  *   <!-- An empty selected option will give select an "un-filled" state -->
  *   <md-select-option selected></md-select-option>
  *   <md-select-option value="apple" headline="Apple"></md-select-option>
@@ -20,7 +20,7 @@ import { css } from 'lit'
  *   <md-select-option value="kiwi" headline="Kiwi"></md-select-option>
  *   <md-select-option value="orange" headline="Orange"></md-select-option>
  *   <md-select-option value="tomato" headline="Tomato"></md-select-option>
- * </md-select>
+ * </md-filled-select>
  * ```
  *
  * @final
@@ -89,7 +89,6 @@ export function getSelectedItems(items) {
  */
 export class Select extends selectBaseClass {
   static properties = {
-    color: { type: String },
     quick: { type: Boolean },
     required: { type: Boolean },
     errorText: { type: String },
@@ -167,10 +166,7 @@ export class Select extends selectBaseClass {
   }
   constructor() {
     super()
-    /**
-     * outlined or filled
-     */
-    this.color = 'outlined'
+    this.color = 'filled'
     /**
      * Opens the menu synchronously with no animation.
      */
@@ -376,7 +372,6 @@ export class Select extends selectBaseClass {
           aria-expanded=${this.open ? 'true' : 'false'}
           aria-controls="listbox"
           class="field"
-          color=${this.color}
           label=${this.label}
           .focused=${this.focused || this.open}
           .populated=${!!this.displayText}
