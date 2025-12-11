@@ -7,7 +7,7 @@ import { styleMap } from 'lit/directives/style-map.js'
  */
 export class Progress extends LitElement {
   static properties = {
-    type: { type: String },
+    type: { type: String, reflect: true },
     value: { type: Number },
     max: { type: Number },
     indeterminate: { type: Boolean },
@@ -50,8 +50,7 @@ export class Progress extends LitElement {
         aria-label="${ariaLabel || nothing}"
         aria-valuemin="0"
         aria-valuemax=${this.max}
-        aria-valuenow=${this.indeterminate ? nothing : this.value}
-      >
+        aria-valuenow=${this.indeterminate ? nothing : this.value}>
         ${this.renderIndicator()}
       </div>
     `
@@ -60,6 +59,8 @@ export class Progress extends LitElement {
     return {
       indeterminate: this.indeterminate,
       'four-color': this.fourColor,
+      circular: this.type === 'circular',
+      linear: this.type === 'linear',
     }
   }
   renderIndicator() {
@@ -134,7 +135,7 @@ export class Progress extends LitElement {
 
   static styles = [
     css`
-      .circular {
+      :host([type='circular']) {
         --_active-indicator-color: var(
           --md-circular-progress-active-indicator-color,
           var(--md-sys-color-primary, #6750a4)
@@ -201,7 +202,7 @@ export class Progress extends LitElement {
       .track {
         stroke: rgba(0, 0, 0, 0);
       }
-      .progress.indeterminate {
+      .circular.progress.indeterminate {
         animation: linear infinite linear-rotate;
         animation-duration: 1568.2352941176ms;
       }
@@ -331,7 +332,7 @@ export class Progress extends LitElement {
       }
     `,
     css`
-      :host {
+      :host([type='linear']) {
         --_active-indicator-color: var(
           --md-linear-progress-active-indicator-color,
           var(--md-sys-color-primary, #6750a4)
@@ -364,20 +365,21 @@ export class Progress extends LitElement {
         content-visibility: auto;
         contain: strict;
       }
-      .progress,
+      .linear.progress,
       .dots,
       .inactive-track,
       .bar,
       .bar-inner {
         position: absolute;
       }
-      .progress {
+      .linear.progress {
         direction: ltr;
         inset: 0;
         border-radius: inherit;
         overflow: hidden;
         display: flex;
         align-items: center;
+        margin: 0;
       }
       .bar {
         animation: none;
@@ -385,6 +387,8 @@ export class Progress extends LitElement {
         height: var(--_active-indicator-height);
         transform-origin: left center;
         transition: transform 250ms cubic-bezier(0.4, 0, 0.6, 1);
+        inset: 0;
+        left: 0;
       }
       .secondary-bar {
         display: none;
@@ -563,3 +567,5 @@ export class Progress extends LitElement {
 ;(() => {
   requestUpdateOnAriaChange(Progress)
 })()
+
+customElements.define('md-progress', Progress)
