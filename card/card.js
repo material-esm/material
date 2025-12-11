@@ -1,3 +1,8 @@
+/**
+ * @license
+ * Copyright 2023 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
 import '../internal/elevation/elevation.js'
 import { html, LitElement, css } from 'lit'
 /**
@@ -26,14 +31,13 @@ export class Card extends LitElement {
 
   static styles = [
     css`
-      .root {
+      :host {
         border-radius: var(--_container-shape);
         box-sizing: border-box;
         display: flex;
         flex-direction: column;
         position: relative;
         z-index: 0;
-        overflow: hidden;
       }
       md-elevation,
       .background,

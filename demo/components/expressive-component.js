@@ -81,15 +81,6 @@ class ExpressiveComponent extends LitElement {
                 <div slot="headline">Orange</div>
               </md-select-option>
             </md-select>
-            <md-select color="filled" required @change=${this.selected}>
-              <md-select-option aria-label="blank"></md-select-option>
-              <md-select-option selected value="apple">
-                <div slot="headline">Apple</div>
-              </md-select-option>
-              <md-select-option value="orange">
-                <div slot="headline">Orange</div>
-              </md-select-option>
-            </md-select>
             <div>
               <md-button type="button" @click=${this.save}>Save</md-button>
             </div>
@@ -232,7 +223,7 @@ class ExpressiveComponent extends LitElement {
         </div>
 
         <div class="flexw g12">
-          <md-card type="outlined">
+          <md-card style="">
             <div class="flex col">
               <img src="./images/img1.jpg" />
             </div>
@@ -245,25 +236,12 @@ class ExpressiveComponent extends LitElement {
               </div>
             </div>
           </md-card>
-          <md-card type="filled">
+          <md-card style="">
             <div class="flex col">
               <img src="./images/img2.jpg" />
             </div>
             <div class="flex col g12 p16" style="">
               <div class="card-title">Card 2</div>
-              <div>Card content goes here</div>
-              <div class="flex g8 jcr mt12">
-                <md-button color="outlined">Read More</md-button>
-                <md-button color="filled">Buy Now</md-button>
-              </div>
-            </div>
-          </md-card>
-          <md-card type="elevated">
-            <div class="flex col">
-              <img src="./images/img2.jpg" />
-            </div>
-            <div class="flex col g12 p16" style="">
-              <div class="card-title">Card 3</div>
               <div>Card content goes here</div>
               <div class="flex g8 jcr mt12">
                 <md-button color="outlined">Read More</md-button>

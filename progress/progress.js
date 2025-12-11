@@ -380,6 +380,7 @@ export class Progress extends LitElement {
         overflow: hidden;
         display: flex;
         align-items: center;
+        margin: 0;
       }
       .bar {
         animation: none;
