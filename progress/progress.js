@@ -50,7 +50,8 @@ export class Progress extends LitElement {
         aria-label="${ariaLabel || nothing}"
         aria-valuemin="0"
         aria-valuemax=${this.max}
-        aria-valuenow=${this.indeterminate ? nothing : this.value}>
+        aria-valuenow=${this.indeterminate ? nothing : this.value}
+      >
         ${this.renderIndicator()}
       </div>
     `
@@ -202,7 +203,7 @@ export class Progress extends LitElement {
       .track {
         stroke: rgba(0, 0, 0, 0);
       }
-      .progress.indeterminate {
+      .circular.progress.indeterminate {
         animation: linear infinite linear-rotate;
         animation-duration: 1568.2352941176ms;
       }
@@ -379,6 +380,7 @@ export class Progress extends LitElement {
         overflow: hidden;
         display: flex;
         align-items: center;
+        margin: 0;
       }
       .bar {
         animation: none;
