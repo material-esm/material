@@ -763,7 +763,7 @@ export class Select extends selectBaseClass {
     css`
       .wrapper {
         color: unset;
-        min-width: 210px;
+        min-width: 160px;
         display: flex;
       }
       .field {
