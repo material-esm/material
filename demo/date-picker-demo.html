@@ -4,34 +4,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Date Picker Demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="preload"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"
+      as="style"
+      onload="this.onload=null;this.rel='stylesheet'" />
+    <link
+      rel="preload"
+      href="https://fonts.googleapis.com/css2?family=Roboto+Flex:wght@400;500;700&family=Roboto+Serif:wght@400;500;700&display=swap"
+      as="style"
+      onload="this.onload=null;this.rel='stylesheet'" />
+
+    <link rel="icon" href="./images/material.jpeg" />
+
+    <link rel="stylesheet" href="./css/styles.css" />
+
     <script type="importmap">
-    {
-      "imports": {
-        "lit": "/node_modules/lit/index.js",
-        "lit/": "/node_modules/lit/",
-        "@lit/reactive-element": "/node_modules/@lit/reactive-element/reactive-element.js",
-        "@lit/reactive-element/": "/node_modules/@lit/reactive-element/",
-        "lit-element/lit-element.js": "/node_modules/lit-element/lit-element.js",
-        "lit-html": "/node_modules/lit-html/lit-html.js",
-        "lit-html/": "/node_modules/lit-html/"
+      {
+        "imports": {
+          "lit": "https://cdn.jsdelivr.net/npm/lit@3/index.js",
+          "lit/": "https://cdn.jsdelivr.net/npm/lit@3/",
+          "@lit/localize": "https://cdn.jsdelivr.net/npm/@lit/localize/lit-localize.js",
+          "@lit/reactive-element": "https://cdn.jsdelivr.net/npm/@lit/reactive-element@1/reactive-element.js",
+          "@lit/reactive-element/": "https://cdn.jsdelivr.net/npm/@lit/reactive-element@1/",
+          "lit-element/lit-element.js": "https://cdn.jsdelivr.net/npm/lit-element@4/lit-element.js",
+          "lit-html": "https://cdn.jsdelivr.net/npm/lit-html@3/lit-html.js",
+          "lit-html/": "https://cdn.jsdelivr.net/npm/lit-html@3/",
+          "material/": "../"
+        }
       }
-    }
     </script>
     <script type="module" src="/datepicker/date-picker.js"></script>
     <script type="module" src="/datepicker/date-picker-dialog.js"></script>
     <script type="module" src="/buttons/button.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Roboto', sans-serif;
-            padding: 24px;
-            background-color: #f5f5f5;
-        }
-        .demo-section {
-            margin-bottom: 40px;
-        }
-    </style>
+    
 </head>
 <body>
     <div class="demo-section">
