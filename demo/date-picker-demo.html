@@ -20,6 +20,7 @@
     <script type="module" src="/datepicker/date-picker.js"></script>
     <script type="module" src="/datepicker/date-picker-dialog.js"></script>
     <script type="module" src="/buttons/button.js"></script>
+    <script type="module" src="/text/text-field.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
     <style>
@@ -47,6 +48,12 @@
         <p>Dialog Value: <span id="dialog-value">None</span></p>
     </div>
 
+    <div class="demo-section">
+        <h2>Text Field with Date Picker</h2>
+        <md-text-field id="date-field" label="Birthday" type="date"></md-text-field>
+        <md-date-picker-dialog id="field-picker"></md-date-picker-dialog>
+    </div>
+
     <script>
         const embeddedPicker = document.getElementById('embedded-picker');
         const embeddedValue = document.getElementById('embedded-value');
@@ -64,6 +71,17 @@
 
         dialogPicker.addEventListener('confirm', (e) => {
             dialogValue.textContent = dialogPicker.value;
+        });
+
+        const dateField = document.getElementById('date-field');
+        const fieldPicker = document.getElementById('field-picker');
+
+        dateField.addEventListener('request-date-picker', () => {
+            fieldPicker.show();
+        });
+
+        fieldPicker.addEventListener('confirm', () => {
+            dateField.value = fieldPicker.value;
         });
     </script>
 </body>

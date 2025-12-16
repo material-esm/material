@@ -1,0 +1,311 @@
+
+> material@2.4.23 start
+> npx -y serve
+
+ INFO  Accepting connections at http://localhost:3000
+ HTTP  12/16/2025 6:10:28 AM ::1 GET /demo/date-picker-test.html
+ HTTP  12/16/2025 6:10:28 AM ::1 Returned 301 in 330 ms
+ HTTP  12/16/2025 6:10:28 AM ::1 GET /demo/date-picker-test
+ HTTP  12/16/2025 6:10:28 AM ::1 Returned 200 in 5 ms
+ HTTP  12/16/2025 6:10:28 AM ::1 GET /demo/text/text-field.js
+ HTTP  12/16/2025 6:10:28 AM ::1 GET /demo/datepicker/date-picker-dialog.js
+ HTTP  12/16/2025 6:10:28 AM ::1 Returned 404 in 16 ms
+ HTTP  12/16/2025 6:10:28 AM ::1 Returned 404 in 16 ms
+ HTTP  12/16/2025 6:11:18 AM ::1 GET /demo/date-picker-test.html
+ HTTP  12/16/2025 6:11:18 AM ::1 Returned 301 in 1 ms
+ HTTP  12/16/2025 6:11:18 AM ::1 GET /demo/date-picker-test
+ HTTP  12/16/2025 6:11:18 AM ::1 Returned 200 in 3 ms
+ HTTP  12/16/2025 6:11:18 AM ::1 GET /text/text-field.js
+ HTTP  12/16/2025 6:11:18 AM ::1 GET /datepicker/date-picker-dialog.js
+ HTTP  12/16/2025 6:11:18 AM ::1 Returned 200 in 3 ms
+ HTTP  12/16/2025 6:11:18 AM ::1 Returned 200 in 3 ms
+ HTTP  12/16/2025 6:12:16 AM ::1 GET /demo/date-picker-test.html
+ HTTP  12/16/2025 6:12:16 AM ::1 Returned 301 in 2 ms
+ HTTP  12/16/2025 6:12:16 AM ::1 GET /demo/date-picker-test
+ HTTP  12/16/2025 6:12:16 AM ::1 Returned 200 in 2 ms
+ HTTP  12/16/2025 6:12:16 AM ::1 GET /text/text-field.js
+ HTTP  12/16/2025 6:12:16 AM ::1 GET /datepicker/date-picker-dialog.js
+ HTTP  12/16/2025 6:12:16 AM ::1 Returned 200 in 3 ms
+ HTTP  12/16/2025 6:12:16 AM ::1 Returned 200 in 4 ms
+ HTTP  12/16/2025 6:12:54 AM ::1 GET /demo/date-picker-test.html
+ HTTP  12/16/2025 6:12:54 AM ::1 Returned 301 in 0 ms
+ HTTP  12/16/2025 6:12:54 AM ::1 GET /demo/date-picker-test
+ HTTP  12/16/2025 6:12:54 AM ::1 Returned 200 in 2 ms
+ HTTP  12/16/2025 6:12:54 AM ::1 GET /text/text-field.js
+ HTTP  12/16/2025 6:12:54 AM ::1 GET /datepicker/date-picker-dialog.js
+ HTTP  12/16/2025 6:12:54 AM ::1 Returned 200 in 2 ms
+ HTTP  12/16/2025 6:12:54 AM ::1 Returned 200 in 2 ms
+ HTTP  12/16/2025 6:12:54 AM ::1 GET /node_modules/lit/index.js
+ HTTP  12/16/2025 6:12:54 AM ::1 GET /dialog/dialog.js
+ HTTP  12/16/2025 6:12:54 AM ::1 Returned 200 in 4 ms
+ HTTP  12/16/2025 6:12:54 AM ::1 Returned 200 in 2 ms
+ HTTP  12/16/2025 6:12:54 AM ::1 GET /buttons/button.js
+ HTTP  12/16/2025 6:12:54 AM ::1 GET /datepicker/date-picker.js
+ HTTP  12/16/2025 6:12:54 AM ::1 GET /internal/field/field.js
+ HTTP  12/16/2025 6:12:54 AM ::1 GET /node_modules/lit/static-html.js
+ HTTP  12/16/2025 6:12:54 AM ::1 GET /node_modules/lit/directives/class-map.js
+ HTTP  12/16/2025 6:12:54 AM ::1 GET /node_modules/lit/directives/live.js
+ HTTP  12/16/2025 6:12:54 AM ::1 Returned 200 in 7 ms
+ HTTP  12/16/2025 6:12:54 AM ::1 Returned 200 in 7 ms
+ HTTP  12/16/2025 6:12:54 AM ::1 Returned 200 in 6 ms
+ HTTP  12/16/2025 6:12:54 AM ::1 Returned 200 in 7 ms
+ HTTP  12/16/2025 6:12:54 AM ::1 Returned 200 in 7 ms
+ HTTP  12/16/2025 6:12:54 AM ::1 Returned 200 in 7 ms
+ HTTP  12/16/2025 6:12:54 AM ::1 GET /node_modules/lit/directives/style-map.js
+ HTTP  12/16/2025 6:12:54 AM ::1 GET /internal/aria/delegate.js
+ HTTP  12/16/2025 6:12:54 AM ::1 GET /internal/controller/string-converter.js
+ HTTP  12/16/2025 6:12:54 AM ::1 Returned 200 in 3 ms
+ HTTP  12/16/2025 6:12:54 AM ::1 Returned 200 in 3 ms
+ HTTP  12/16/2025 6:12:54 AM ::1 Returned 200 in 3 ms
+ HTTP  12/16/2025 6:12:54 AM ::1 GET /internal/events/redispatch-event.js
+ HTTP  12/16/2025 6:12:54 AM ::1 GET /labs/behaviors/constraint-validation.js
+ HTTP  12/16/2025 6:12:54 AM ::1 GET /labs/behaviors/element-internals.js
+ HTTP  12/16/2025 6:12:54 AM ::1 GET /labs/behaviors/form-associated.js
+ HTTP  12/16/2025 6:12:54 AM ::1 GET /labs/behaviors/on-report-validity.js
+ HTTP  12/16/2025 6:12:54 AM ::1 GET /labs/behaviors/validators/text-field-validator.js
+ HTTP  12/16/2025 6:12:54 AM ::1 Returned 200 in 6 ms
+ HTTP  12/16/2025 6:12:54 AM ::1 Returned 200 in 6 ms
+ HTTP  12/16/2025 6:12:54 AM ::1 Returned 200 in 6 ms
+ HTTP  12/16/2025 6:12:54 AM ::1 Returned 200 in 6 ms
+ HTTP  12/16/2025 6:12:54 AM ::1 Returned 200 in 6 ms
+ HTTP  12/16/2025 6:12:54 AM ::1 Returned 200 in 7 ms
+ HTTP  12/16/2025 6:12:54 AM ::1 GET /node_modules/@lit/reactive-element/reactive-element.js
+ HTTP  12/16/2025 6:12:54 AM ::1 GET /node_modules/lit-html/lit-html.js
+ HTTP  12/16/2025 6:12:54 AM ::1 Returned 200 in 3 ms
+ HTTP  12/16/2025 6:12:54 AM ::1 Returned 200 in 3 ms
+ HTTP  12/16/2025 6:12:54 AM ::1 GET /node_modules/lit-element/lit-element.js
+ HTTP  12/16/2025 6:12:54 AM ::1 GET /node_modules/lit-html/is-server.js
+ HTTP  12/16/2025 6:12:54 AM ::1 GET /divider/divider.js
+ HTTP  12/16/2025 6:12:54 AM ::1 GET /dialog/internal/animations.js
+ HTTP  12/16/2025 6:12:54 AM ::1 GET /node_modules/lit-html/static.js
+ HTTP  12/16/2025 6:12:54 AM ::1 GET /node_modules/lit-html/directives/class-map.js
+ HTTP  12/16/2025 6:12:54 AM ::1 Returned 200 in 3 ms
+ HTTP  12/16/2025 6:12:54 AM ::1 Returned 200 in 4 ms
+ HTTP  12/16/2025 6:12:54 AM ::1 Returned 200 in 4 ms
+ HTTP  12/16/2025 6:12:54 AM ::1 Returned 200 in 4 ms
+ HTTP  12/16/2025 6:12:54 AM ::1 Returned 200 in 4 ms
+ HTTP  12/16/2025 6:12:54 AM ::1 Returned 200 in 4 ms
+ HTTP  12/16/2025 6:12:54 AM ::1 GET /node_modules/lit-html/directives/live.js
+ HTTP  12/16/2025 6:12:54 AM ::1 GET /internal/events/form-label-activation.js
+ HTTP  12/16/2025 6:12:54 AM ::1 Returned 200 in 5 ms
+ HTTP  12/16/2025 6:12:54 AM ::1 GET /internal/elevation/elevation.js
+ HTTP  12/16/2025 6:12:54 AM ::1 GET /internal/focus/focus-ring.js
+ HTTP  12/16/2025 6:12:54 AM ::1 GET /internal/ripple/ripple.js
+ HTTP  12/16/2025 6:12:54 AM ::1 GET /utils/query.js
+ HTTP  12/16/2025 6:12:54 AM ::1 Returned 200 in 6 ms
+ HTTP  12/16/2025 6:12:54 AM ::1 GET /internal/motion/animation.js
+ HTTP  12/16/2025 6:12:54 AM ::1 Returned 200 in 5 ms
+ HTTP  12/16/2025 6:12:54 AM ::1 Returned 200 in 6 ms
+ HTTP  12/16/2025 6:12:54 AM ::1 Returned 200 in 6 ms
+ HTTP  12/16/2025 6:12:54 AM ::1 Returned 200 in 5 ms
+ HTTP  12/16/2025 6:12:54 AM ::1 Returned 200 in 4 ms
+ HTTP  12/16/2025 6:12:54 AM ::1 GET /icon/icon.js
+ HTTP  12/16/2025 6:12:54 AM ::1 GET /buttons/icon-button.js
+ HTTP  12/16/2025 6:12:54 AM ::1 GET /node_modules/lit-html/directives/style-map.js
+ HTTP  12/16/2025 6:12:54 AM ::1 GET /internal/aria/aria.js
+ HTTP  12/16/2025 6:12:54 AM ::1 Returned 200 in 5 ms
+ HTTP  12/16/2025 6:12:54 AM ::1 Returned 200 in 4 ms
+ HTTP  12/16/2025 6:12:54 AM ::1 Returned 200 in 4 ms
+ HTTP  12/16/2025 6:12:54 AM ::1 Returned 200 in 4 ms
+ HTTP  12/16/2025 6:12:54 AM ::1 GET /labs/behaviors/validators/validator.js
+ HTTP  12/16/2025 6:12:54 AM ::1 GET /node_modules/@lit/reactive-element/css-tag.js
+ HTTP  12/16/2025 6:12:54 AM ::1 GET /node_modules/lit-html/directive.js
+ HTTP  12/16/2025 6:12:54 AM ::1 GET /node_modules/lit-html/directive-helpers.js
+ HTTP  12/16/2025 6:12:54 AM ::1 Returned 200 in 6 ms
+ HTTP  12/16/2025 6:12:54 AM ::1 Returned 200 in 5 ms
+ HTTP  12/16/2025 6:12:54 AM ::1 Returned 200 in 5 ms
+ HTTP  12/16/2025 6:12:54 AM ::1 Returned 200 in 4 ms
+ HTTP  12/16/2025 6:12:54 AM ::1 GET /internal/controller/attachable-controller.js
+ HTTP  12/16/2025 6:12:54 AM ::1 GET /internal/controller/form-submitter.js
+ HTTP  12/16/2025 6:12:54 AM ::1 GET /internal/controller/is-rtl.js
+ HTTP  12/16/2025 6:12:54 AM ::1 Returned 200 in 5 ms
+ HTTP  12/16/2025 6:12:54 AM ::1 Returned 200 in 6 ms
+ HTTP  12/16/2025 6:12:54 AM ::1 Returned 200 in 3 ms
+ HTTP  12/16/2025 6:14:31 AM ::1 GET /demo/date-picker-test.html
+ HTTP  12/16/2025 6:14:31 AM ::1 Returned 301 in 5 ms
+ HTTP  12/16/2025 6:14:31 AM ::1 GET /demo/date-picker-test
+ HTTP  12/16/2025 6:14:31 AM ::1 Returned 200 in 6 ms
+ HTTP  12/16/2025 6:14:31 AM ::1 GET /text/text-field.js
+ HTTP  12/16/2025 6:14:31 AM ::1 GET /datepicker/date-picker-dialog.js
+ HTTP  12/16/2025 6:14:31 AM ::1 Returned 200 in 17 ms
+ HTTP  12/16/2025 6:14:31 AM ::1 Returned 200 in 18 ms
+ HTTP  12/16/2025 6:14:31 AM ::1 GET /node_modules/lit/index.js
+ HTTP  12/16/2025 6:14:31 AM ::1 GET /dialog/dialog.js
+ HTTP  12/16/2025 6:14:31 AM ::1 GET /buttons/button.js
+ HTTP  12/16/2025 6:14:31 AM ::1 Returned 200 in 2 ms
+ HTTP  12/16/2025 6:14:31 AM ::1 Returned 200 in 3 ms
+ HTTP  12/16/2025 6:14:31 AM ::1 GET /datepicker/date-picker.js
+ HTTP  12/16/2025 6:14:31 AM ::1 Returned 200 in 5 ms
+ HTTP  12/16/2025 6:14:31 AM ::1 Returned 200 in 3 ms
+ HTTP  12/16/2025 6:14:31 AM ::1 GET /internal/field/field.js
+ HTTP  12/16/2025 6:14:31 AM ::1 GET /node_modules/lit/static-html.js
+ HTTP  12/16/2025 6:14:31 AM ::1 Returned 200 in 2 ms
+ HTTP  12/16/2025 6:14:31 AM ::1 Returned 200 in 1 ms
+ HTTP  12/16/2025 6:14:31 AM ::1 GET /node_modules/lit/directives/class-map.js
+ HTTP  12/16/2025 6:14:31 AM ::1 GET /node_modules/lit/directives/live.js
+ HTTP  12/16/2025 6:14:31 AM ::1 GET /node_modules/lit/directives/style-map.js
+ HTTP  12/16/2025 6:14:31 AM ::1 Returned 200 in 6 ms
+ HTTP  12/16/2025 6:14:31 AM ::1 Returned 200 in 5 ms
+ HTTP  12/16/2025 6:14:31 AM ::1 Returned 200 in 6 ms
+ HTTP  12/16/2025 6:14:31 AM ::1 GET /internal/aria/delegate.js
+ HTTP  12/16/2025 6:14:31 AM ::1 Returned 200 in 2 ms
+ HTTP  12/16/2025 6:14:31 AM ::1 GET /internal/controller/string-converter.js
+ HTTP  12/16/2025 6:14:31 AM ::1 Returned 200 in 2 ms
+ HTTP  12/16/2025 6:14:31 AM ::1 GET /internal/events/redispatch-event.js
+ HTTP  12/16/2025 6:14:31 AM ::1 GET /labs/behaviors/constraint-validation.js
+ HTTP  12/16/2025 6:14:31 AM ::1 GET /labs/behaviors/element-internals.js
+ HTTP  12/16/2025 6:14:31 AM ::1 GET /labs/behaviors/form-associated.js
+ HTTP  12/16/2025 6:14:31 AM ::1 GET /labs/behaviors/on-report-validity.js
+ HTTP  12/16/2025 6:14:31 AM ::1 GET /labs/behaviors/validators/text-field-validator.js
+ HTTP  12/16/2025 6:14:31 AM ::1 Returned 200 in 7 ms
+ HTTP  12/16/2025 6:14:31 AM ::1 Returned 200 in 9 ms
+ HTTP  12/16/2025 6:14:31 AM ::1 Returned 200 in 11 ms
+ HTTP  12/16/2025 6:14:31 AM ::1 Returned 200 in 8 ms
+ HTTP  12/16/2025 6:14:31 AM ::1 Returned 200 in 8 ms
+ HTTP  12/16/2025 6:14:31 AM ::1 Returned 200 in 8 ms
+ HTTP  12/16/2025 6:14:31 AM ::1 GET /node_modules/@lit/reactive-element/reactive-element.js
+ HTTP  12/16/2025 6:14:31 AM ::1 GET /node_modules/lit-html/lit-html.js
+ HTTP  12/16/2025 6:14:31 AM ::1 GET /node_modules/lit-element/lit-element.js
+ HTTP  12/16/2025 6:14:31 AM ::1 GET /node_modules/lit-html/is-server.js
+ HTTP  12/16/2025 6:14:31 AM ::1 GET /divider/divider.js
+ HTTP  12/16/2025 6:14:31 AM ::1 GET /dialog/internal/animations.js
+ HTTP  12/16/2025 6:14:31 AM ::1 Returned 200 in 3 ms
+ HTTP  12/16/2025 6:14:31 AM ::1 Returned 200 in 2 ms
+ HTTP  12/16/2025 6:14:31 AM ::1 Returned 200 in 3 ms
+ HTTP  12/16/2025 6:14:31 AM ::1 Returned 200 in 2 ms
+ HTTP  12/16/2025 6:14:31 AM ::1 Returned 200 in 3 ms
+ HTTP  12/16/2025 6:14:31 AM ::1 Returned 200 in 3 ms
+ HTTP  12/16/2025 6:14:31 AM ::1 GET /icon/icon.js
+ HTTP  12/16/2025 6:14:31 AM ::1 Returned 200 in 6 ms
+ HTTP  12/16/2025 6:14:31 AM ::1 GET /buttons/icon-button.js
+ HTTP  12/16/2025 6:14:31 AM ::1 GET /internal/events/form-label-activation.js
+ HTTP  12/16/2025 6:14:31 AM ::1 GET /internal/elevation/elevation.js
+ HTTP  12/16/2025 6:14:31 AM ::1 GET /internal/focus/focus-ring.js
+ HTTP  12/16/2025 6:14:31 AM ::1 GET /internal/ripple/ripple.js
+ HTTP  12/16/2025 6:14:31 AM ::1 Returned 200 in 2 ms
+ HTTP  12/16/2025 6:14:31 AM ::1 Returned 200 in 2 ms
+ HTTP  12/16/2025 6:14:31 AM ::1 Returned 200 in 3 ms
+ HTTP  12/16/2025 6:14:31 AM ::1 GET /node_modules/lit-html/static.js
+ HTTP  12/16/2025 6:14:31 AM ::1 Returned 200 in 4 ms
+ HTTP  12/16/2025 6:14:31 AM ::1 Returned 200 in 4 ms
+ HTTP  12/16/2025 6:14:31 AM ::1 Returned 200 in 2 ms
+ HTTP  12/16/2025 6:14:31 AM ::1 GET /node_modules/lit-html/directives/class-map.js
+ HTTP  12/16/2025 6:14:31 AM ::1 Returned 200 in 1 ms
+ HTTP  12/16/2025 6:14:31 AM ::1 GET /node_modules/lit-html/directives/live.js
+ HTTP  12/16/2025 6:14:31 AM ::1 GET /internal/aria/aria.js
+ HTTP  12/16/2025 6:14:31 AM ::1 Returned 200 in 1 ms
+ HTTP  12/16/2025 6:14:31 AM ::1 Returned 200 in 1 ms
+ HTTP  12/16/2025 6:14:31 AM ::1 GET /node_modules/lit-html/directives/style-map.js
+ HTTP  12/16/2025 6:14:31 AM ::1 GET /utils/query.js
+ HTTP  12/16/2025 6:14:31 AM ::1 GET /internal/motion/animation.js
+ HTTP  12/16/2025 6:14:31 AM ::1 GET /labs/behaviors/validators/validator.js
+ HTTP  12/16/2025 6:14:31 AM ::1 Returned 200 in 2 ms
+ HTTP  12/16/2025 6:14:31 AM ::1 Returned 200 in 2 ms
+ HTTP  12/16/2025 6:14:31 AM ::1 Returned 200 in 2 ms
+ HTTP  12/16/2025 6:14:31 AM ::1 Returned 200 in 2 ms
+ HTTP  12/16/2025 6:14:31 AM ::1 GET /node_modules/@lit/reactive-element/css-tag.js
+ HTTP  12/16/2025 6:14:31 AM ::1 Returned 200 in 1 ms
+ HTTP  12/16/2025 6:14:31 AM ::1 GET /node_modules/lit-html/directive.js
+ HTTP  12/16/2025 6:14:31 AM ::1 GET /internal/controller/attachable-controller.js
+ HTTP  12/16/2025 6:14:31 AM ::1 GET /internal/controller/form-submitter.js
+ HTTP  12/16/2025 6:14:31 AM ::1 GET /internal/controller/is-rtl.js
+ HTTP  12/16/2025 6:14:31 AM ::1 GET /node_modules/lit-html/directive-helpers.js
+ HTTP  12/16/2025 6:14:31 AM ::1 Returned 200 in 2 ms
+ HTTP  12/16/2025 6:14:31 AM ::1 Returned 200 in 2 ms
+ HTTP  12/16/2025 6:14:31 AM ::1 Returned 200 in 1 ms
+ HTTP  12/16/2025 6:14:31 AM ::1 Returned 200 in 2 ms
+ HTTP  12/16/2025 6:14:31 AM ::1 Returned 200 in 3 ms
+ HTTP  12/16/2025 6:17:09 AM ::1 GET /demo/date-picker-test.html
+ HTTP  12/16/2025 6:17:09 AM ::1 Returned 301 in 1 ms
+ HTTP  12/16/2025 6:17:09 AM ::1 GET /demo/date-picker-test
+ HTTP  12/16/2025 6:17:09 AM ::1 Returned 200 in 2 ms
+ HTTP  12/16/2025 6:17:09 AM ::1 GET /text/text-field.js
+ HTTP  12/16/2025 6:17:09 AM ::1 GET /datepicker/date-picker-dialog.js
+ HTTP  12/16/2025 6:17:09 AM ::1 Returned 200 in 2 ms
+ HTTP  12/16/2025 6:17:09 AM ::1 Returned 200 in 6 ms
+ HTTP  12/16/2025 6:17:09 AM ::1 GET /node_modules/lit/index.js
+ HTTP  12/16/2025 6:17:09 AM ::1 GET /dialog/dialog.js
+ HTTP  12/16/2025 6:17:09 AM ::1 GET /buttons/button.js
+ HTTP  12/16/2025 6:17:09 AM ::1 GET /datepicker/date-picker.js
+ HTTP  12/16/2025 6:17:09 AM ::1 Returned 200 in 2 ms
+ HTTP  12/16/2025 6:17:09 AM ::1 Returned 200 in 2 ms
+ HTTP  12/16/2025 6:17:09 AM ::1 Returned 200 in 2 ms
+ HTTP  12/16/2025 6:17:09 AM ::1 Returned 200 in 3 ms
+ HTTP  12/16/2025 6:17:09 AM ::1 GET /internal/field/field.js
+ HTTP  12/16/2025 6:17:09 AM ::1 Returned 200 in 1 ms
+ HTTP  12/16/2025 6:17:09 AM ::1 GET /icon/icon.js
+ HTTP  12/16/2025 6:17:09 AM ::1 GET /buttons/icon-button.js
+ HTTP  12/16/2025 6:17:09 AM ::1 GET /node_modules/lit/static-html.js
+ HTTP  12/16/2025 6:17:09 AM ::1 GET /node_modules/lit/directives/class-map.js
+ HTTP  12/16/2025 6:17:09 AM ::1 GET /node_modules/lit/directives/live.js
+ HTTP  12/16/2025 6:17:09 AM ::1 GET /node_modules/lit/directives/style-map.js
+ HTTP  12/16/2025 6:17:09 AM ::1 Returned 200 in 5 ms
+ HTTP  12/16/2025 6:17:09 AM ::1 Returned 200 in 4 ms
+ HTTP  12/16/2025 6:17:09 AM ::1 Returned 200 in 5 ms
+ HTTP  12/16/2025 6:17:09 AM ::1 Returned 200 in 3 ms
+ HTTP  12/16/2025 6:17:09 AM ::1 Returned 200 in 2 ms
+ HTTP  12/16/2025 6:17:09 AM ::1 Returned 200 in 3 ms
+ HTTP  12/16/2025 6:17:10 AM ::1 GET /internal/aria/delegate.js
+ HTTP  12/16/2025 6:17:10 AM ::1 GET /internal/controller/string-converter.js
+ HTTP  12/16/2025 6:17:10 AM ::1 GET /internal/events/redispatch-event.js
+ HTTP  12/16/2025 6:17:10 AM ::1 GET /labs/behaviors/constraint-validation.js
+ HTTP  12/16/2025 6:17:10 AM ::1 Returned 200 in 2 ms
+ HTTP  12/16/2025 6:17:10 AM ::1 Returned 200 in 2 ms
+ HTTP  12/16/2025 6:17:10 AM ::1 Returned 200 in 2 ms
+ HTTP  12/16/2025 6:17:10 AM ::1 GET /labs/behaviors/element-internals.js
+ HTTP  12/16/2025 6:17:10 AM ::1 GET /labs/behaviors/form-associated.js
+ HTTP  12/16/2025 6:17:10 AM ::1 Returned 200 in 2 ms
+ HTTP  12/16/2025 6:17:10 AM ::1 Returned 200 in 1 ms
+ HTTP  12/16/2025 6:17:10 AM ::1 Returned 200 in 2 ms
+ HTTP  12/16/2025 6:17:10 AM ::1 GET /labs/behaviors/on-report-validity.js
+ HTTP  12/16/2025 6:17:10 AM ::1 GET /labs/behaviors/validators/text-field-validator.js
+ HTTP  12/16/2025 6:17:10 AM ::1 Returned 200 in 1 ms
+ HTTP  12/16/2025 6:17:10 AM ::1 Returned 200 in 4 ms
+ HTTP  12/16/2025 6:17:10 AM ::1 GET /node_modules/@lit/reactive-element/reactive-element.js
+ HTTP  12/16/2025 6:17:10 AM ::1 Returned 200 in 1 ms
+ HTTP  12/16/2025 6:17:10 AM ::1 GET /node_modules/lit-html/lit-html.js
+ HTTP  12/16/2025 6:17:10 AM ::1 GET /node_modules/lit-element/lit-element.js
+ HTTP  12/16/2025 6:17:10 AM ::1 GET /node_modules/lit-html/is-server.js
+ HTTP  12/16/2025 6:17:10 AM ::1 Returned 200 in 2 ms
+ HTTP  12/16/2025 6:17:10 AM ::1 Returned 200 in 2 ms
+ HTTP  12/16/2025 6:17:10 AM ::1 Returned 200 in 2 ms
+ HTTP  12/16/2025 6:17:10 AM ::1 GET /divider/divider.js
+ HTTP  12/16/2025 6:17:10 AM ::1 Returned 200 in 2 ms
+ HTTP  12/16/2025 6:17:10 AM ::1 GET /internal/events/form-label-activation.js
+ HTTP  12/16/2025 6:17:10 AM ::1 Returned 200 in 1 ms
+ HTTP  12/16/2025 6:17:10 AM ::1 GET /internal/elevation/elevation.js
+ HTTP  12/16/2025 6:17:10 AM ::1 Returned 200 in 1 ms
+ HTTP  12/16/2025 6:17:10 AM ::1 GET /internal/focus/focus-ring.js
+ HTTP  12/16/2025 6:17:10 AM ::1 GET /internal/ripple/ripple.js
+ HTTP  12/16/2025 6:17:10 AM ::1 GET /dialog/internal/animations.js
+ HTTP  12/16/2025 6:17:10 AM ::1 GET /utils/query.js
+ HTTP  12/16/2025 6:17:10 AM ::1 GET /internal/motion/animation.js
+ HTTP  12/16/2025 6:17:10 AM ::1 Returned 200 in 2 ms
+ HTTP  12/16/2025 6:17:10 AM ::1 Returned 200 in 2 ms
+ HTTP  12/16/2025 6:17:10 AM ::1 Returned 200 in 2 ms
+ HTTP  12/16/2025 6:17:10 AM ::1 Returned 200 in 2 ms
+ HTTP  12/16/2025 6:17:10 AM ::1 Returned 200 in 2 ms
+ HTTP  12/16/2025 6:17:10 AM ::1 GET /node_modules/lit-html/static.js
+ HTTP  12/16/2025 6:17:10 AM ::1 GET /node_modules/lit-html/directives/class-map.js
+ HTTP  12/16/2025 6:17:10 AM ::1 Returned 200 in 1 ms
+ HTTP  12/16/2025 6:17:10 AM ::1 Returned 200 in 1 ms
+ HTTP  12/16/2025 6:17:10 AM ::1 GET /node_modules/lit-html/directives/live.js
+ HTTP  12/16/2025 6:17:10 AM ::1 GET /node_modules/lit-html/directives/style-map.js
+ HTTP  12/16/2025 6:17:10 AM ::1 GET /internal/controller/form-submitter.js
+ HTTP  12/16/2025 6:17:10 AM ::1 GET /internal/controller/is-rtl.js
+ HTTP  12/16/2025 6:17:10 AM ::1 GET /internal/aria/aria.js
+ HTTP  12/16/2025 6:17:10 AM ::1 GET /labs/behaviors/validators/validator.js
+ HTTP  12/16/2025 6:17:10 AM ::1 Returned 200 in 2 ms
+ HTTP  12/16/2025 6:17:10 AM ::1 Returned 200 in 2 ms
+ HTTP  12/16/2025 6:17:10 AM ::1 Returned 200 in 1 ms
+ HTTP  12/16/2025 6:17:10 AM ::1 Returned 200 in 1 ms
+ HTTP  12/16/2025 6:17:10 AM ::1 Returned 200 in 2 ms
+ HTTP  12/16/2025 6:17:10 AM ::1 Returned 200 in 2 ms
+ HTTP  12/16/2025 6:17:10 AM ::1 GET /node_modules/@lit/reactive-element/css-tag.js
+ HTTP  12/16/2025 6:17:10 AM ::1 GET /internal/controller/attachable-controller.js
+ HTTP  12/16/2025 6:17:10 AM ::1 Returned 200 in 1 ms
+ HTTP  12/16/2025 6:17:10 AM ::1 Returned 200 in 4 ms
+ HTTP  12/16/2025 6:17:10 AM ::1 GET /node_modules/lit-html/directive-helpers.js
+ HTTP  12/16/2025 6:17:10 AM ::1 GET /node_modules/lit-html/directive.js
+ HTTP  12/16/2025 6:17:10 AM ::1 Returned 200 in 0 ms
+ HTTP  12/16/2025 6:17:10 AM ::1 Returned 200 in 1 ms
