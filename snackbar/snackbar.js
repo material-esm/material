@@ -28,6 +28,7 @@ export function snack(message, { duration = 3000, action = null, showCloseIcon =
   }
   document.body.appendChild(snack)
   snack.show()
+  return snack
 }
 
 class SnackBar extends LitElement {
