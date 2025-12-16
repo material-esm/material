@@ -1,10 +1,7 @@
-/**
- * @license
- * Copyright 2021 Google LLC
- * SPDX-License-Identifier: Apache-2.0
- */
 import { LitElement, css, html, nothing } from 'lit'
 import '../internal/field/field.js'
+import '../icon/icon.js'
+import '../buttons/icon-button.js'
 import { literal } from 'lit/static-html.js'
 import { classMap } from 'lit/directives/class-map.js'
 import { live } from 'lit/directives/live.js'
@@ -431,6 +428,9 @@ export class TextField extends textFieldBaseClass {
       // before checking its value.
       this.value = value
     }
+    if (changedProperties.has('type')) {
+      this.handleIconChange()
+    }
   }
   renderField() {
     return staticHtml`<md-field
@@ -466,9 +466,21 @@ export class TextField extends textFieldBaseClass {
   renderTrailingIcon() {
     return html`
       <span class="icon trailing" slot="end">
-        <slot name="trailing-icon" @slotchange=${this.handleIconChange}></slot>
+        <slot name="trailing-icon" @slotchange=${this.handleIconChange}>
+          ${this.type === 'date' ? this.renderDefaultDateIcon() : nothing}
+        </slot>
       </span>
     `
+  }
+  renderDefaultDateIcon() {
+    return html`<md-icon-button
+      type="button"
+      @click=${this.handleDatePickerRequest}
+      ><md-icon>calendar_today</md-icon></md-icon-button
+    >`
+  }
+  handleDatePickerRequest(e) {
+    this.dispatchEvent(new Event('request-date-picker', { bubbles: true, composed: true }))
   }
   renderInputOrTextarea() {
     const style = { direction: this.textDirection }
@@ -603,7 +615,7 @@ export class TextField extends textFieldBaseClass {
   }
   handleIconChange() {
     this.hasLeadingIcon = this.leadingIcons.length > 0
-    this.hasTrailingIcon = this.trailingIcons.length > 0
+    this.hasTrailingIcon = this.trailingIcons.length > 0 || this.type === 'date'
   }
   [getFormValue]() {
     return this.value
@@ -753,7 +765,7 @@ __decorate([
       }
 
       .input::-webkit-calendar-picker-indicator {
-        /* display: none */
+        display: none;
       }
 
       .input::-webkit-search-decoration,
