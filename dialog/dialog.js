@@ -224,8 +224,7 @@ export class Dialog extends LitElement {
         @click=${this.handleDialogClick}
         @close=${this.handleClose}
         @keydown=${this.handleKeydown}
-        .returnValue=${this.returnValue || nothing}
-      >
+        .returnValue=${this.returnValue || nothing}>
         <div class="container" @click=${this.handleContentClick}>
           <div class="headline">
             <div class="icon" aria-hidden="true">
@@ -436,8 +435,8 @@ export class Dialog extends LitElement {
         );
         display: contents;
         margin: auto;
-        max-height: min(560px, 100% - 48px);
-        max-width: min(560px, 100% - 48px);
+        // max-height: min(560px, 100% - 48px);
+        // max-width: min(560px, 100% - 48px);
         min-height: 140px;
         min-width: 280px;
         position: fixed;

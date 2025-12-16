@@ -65,7 +65,8 @@ class ExpressiveComponent extends LitElement {
             <md-text-field color="outlined" label="Phone" type="tel" required style="width: 50%;"></md-text-field>
             <md-text-field color="outlined" label="File" type="file" id="file1" required></md-text-field>
             <md-text-field color="outlined" label="Date" type="date" required></md-text-field>
-            <md-text-field color="outlined" label="Date" type="datetime-local" required></md-text-field>
+            <md-text-field color="outlined" label="Date & time" type="datetime-local" required></md-text-field>
+            <md-text-field color="outlined" label="Time" type="time" required></md-text-field>
             <md-text-field
               color="outlined"
               type="textarea"

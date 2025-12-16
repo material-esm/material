@@ -2,7 +2,9 @@ import { LitElement, css, html, nothing } from 'lit'
 import '../internal/field/field.js'
 import '../icon/icon.js'
 import '../buttons/icon-button.js'
-import '../datepicker/date-picker-dialog.js'
+import '../pickers/date-picker-dialog.js'
+import '../pickers/time-picker-dialog.js'
+import '../pickers/date-time-picker-dialog.js'
 import { literal } from 'lit/static-html.js'
 import { classMap } from 'lit/directives/class-map.js'
 import { live } from 'lit/directives/live.js'
@@ -404,8 +406,7 @@ export class TextField extends textFieldBaseClass {
     super.attributeChangedCallback(attribute, newValue, oldValue)
   }
   render() {
-    return html`${this.renderField()}
-    ${this.type === 'date' || this.type === 'datetime-local' ? this.renderDateDialog() : ''}`
+    return html`${this.renderField()} ${this.renderDialog()}`
   }
   updated(changedProperties) {
     // Keep changedProperties arg so that subclasses may call it
@@ -456,24 +457,75 @@ export class TextField extends textFieldBaseClass {
   renderTrailingIcon() {
     return html`
       <span class="icon trailing" slot="end">
-        <slot name="trailing-icon" @slotchange=${this.handleIconChange}>
-          ${this.type === 'date' || this.type === 'datetime-local' ? this.renderDefaultDateIcon() : nothing}
-        </slot>
+        <slot name="trailing-icon" @slotchange=${this.handleIconChange}> ${this.renderDefaultIcon()} </slot>
       </span>
     `
+  }
+  renderDefaultIcon() {
+    if (this.type === 'date') {
+      return this.renderDefaultDateIcon()
+    } else if (this.type === 'datetime-local') {
+      return this.renderDefaultDateTimeIcon()
+    } else if (this.type === 'time') {
+      return this.renderDefaultTimeIcon()
+    }
+    return nothing
   }
   renderDefaultDateIcon() {
     return html`<md-icon-button type="button" @click=${this.handleDatePickerRequest}
       ><md-icon>calendar_today</md-icon></md-icon-button
     >`
   }
+  renderDefaultDateTimeIcon() {
+    return html`<md-icon-button type="button" @click=${this.handleDateTimePickerRequest}
+      ><md-icon>calendar_today</md-icon></md-icon-button
+    >`
+  }
+  renderDefaultTimeIcon() {
+    return html`<md-icon-button type="button" @click=${this.handleTimePickerRequest}
+      ><md-icon>schedule</md-icon></md-icon-button
+    >`
+  }
+  renderDialog() {
+    // ${this.type === 'date' || this.type === 'datetime-local' ? this.renderDateDialog() : ''}
+    if (this.type == 'date') {
+      return this.renderDateDialog()
+    } else if (this.type == 'datetime-local') {
+      return this.renderDateTimeDialog()
+    } else if (this.type == 'time') {
+      return this.renderTimeDialog()
+    }
+    return nothing
+  }
   renderDateDialog() {
     return html`<md-date-picker-dialog id="date-picker"></md-date-picker-dialog>`
+  }
+  renderTimeDialog() {
+    return html`<md-time-picker-dialog id="time-picker"></md-time-picker-dialog>`
+  }
+  renderDateTimeDialog() {
+    return html`<md-date-time-picker-dialog id="date-time-picker"></md-date-time-picker-dialog>`
   }
 
   handleDatePickerRequest(e) {
     // this.dispatchEvent(new Event('request-date-picker', { bubbles: true, composed: true }))
     const fieldPicker = this.renderRoot.getElementById('date-picker')
+    fieldPicker.show()
+    fieldPicker.addEventListener('confirm', () => {
+      this.value = fieldPicker.value
+    })
+  }
+  handleDateTimePickerRequest(e) {
+    // this.dispatchEvent(new Event('request-date-picker', { bubbles: true, composed: true }))
+    const fieldPicker = this.renderRoot.getElementById('date-time-picker')
+    fieldPicker.show()
+    fieldPicker.addEventListener('confirm', () => {
+      this.value = fieldPicker.value
+    })
+  }
+  handleTimePickerRequest(e) {
+    // this.dispatchEvent(new Event('request-time-picker', { bubbles: true, composed: true }))
+    const fieldPicker = this.renderRoot.getElementById('time-picker')
     fieldPicker.show()
     fieldPicker.addEventListener('confirm', () => {
       this.value = fieldPicker.value
@@ -612,7 +664,8 @@ export class TextField extends textFieldBaseClass {
   }
   handleIconChange() {
     this.hasLeadingIcon = this.leadingIcons.length > 0
-    this.hasTrailingIcon = this.trailingIcons.length > 0 || this.type === 'date' || this.type === 'datetime-local'
+    this.hasTrailingIcon =
+      this.trailingIcons.length > 0 || this.type === 'date' || this.type === 'datetime-local' || this.type === 'time'
   }
   [getFormValue]() {
     return this.value
