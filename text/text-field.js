@@ -2,6 +2,7 @@ import { LitElement, css, html, nothing } from 'lit'
 import '../internal/field/field.js'
 import '../icon/icon.js'
 import '../buttons/icon-button.js'
+import '../datepicker/date-picker-dialog.js'
 import { literal } from 'lit/static-html.js'
 import { classMap } from 'lit/directives/class-map.js'
 import { live } from 'lit/directives/live.js'
@@ -38,7 +39,7 @@ const textFieldBaseClass = mixinOnReportValidity(
  */
 export class TextField extends textFieldBaseClass {
   static properties = {
-    error: { type: Boolean },
+    error: { type: Boolean, reflect: true },
     errorText: { type: String, attribute: 'error-text' },
     label: { type: String },
     required: { type: Boolean },
@@ -403,19 +404,8 @@ export class TextField extends textFieldBaseClass {
     super.attributeChangedCallback(attribute, newValue, oldValue)
   }
   render() {
-    const classes = {
-      disabled: this.disabled,
-      error: !this.disabled && this.hasError,
-      textarea: this.type === 'textarea',
-      'no-spinner': this.noSpinner,
-      // filled: this.color == 'filled',
-      // outlined: this.color == 'outlined',
-    }
-    return html`
-      <div class="wrapper ${this.color}">
-        <span class="text-field ${classMap(classes)}"> ${this.renderField()} </span>
-      </div>
-    `
+    return html`${this.renderField()}
+    ${this.type === 'date' || this.type === 'datetime-local' ? this.renderDateDialog() : ''}`
   }
   updated(changedProperties) {
     // Keep changedProperties arg so that subclasses may call it
@@ -477,8 +467,17 @@ export class TextField extends textFieldBaseClass {
       ><md-icon>calendar_today</md-icon></md-icon-button
     >`
   }
+  renderDateDialog() {
+    return html`<md-date-picker-dialog id="date-picker"></md-date-picker-dialog>`
+  }
+
   handleDatePickerRequest(e) {
-    this.dispatchEvent(new Event('request-date-picker', { bubbles: true, composed: true }))
+    // this.dispatchEvent(new Event('request-date-picker', { bubbles: true, composed: true }))
+    const fieldPicker = this.renderRoot.getElementById('date-picker')
+    fieldPicker.show()
+    fieldPicker.addEventListener('confirm', () => {
+      this.value = fieldPicker.value
+    })
   }
   renderInputOrTextarea() {
     const style = { direction: this.textDirection }
@@ -686,10 +685,6 @@ __decorate([
   static styles = [
     css`
       :host {
-        width: inherit;
-      }
-
-      .wrapper {
         display: inline-flex;
         outline: none;
         resize: both;
@@ -698,25 +693,19 @@ __decorate([
         width: 100%;
       }
 
-      .text-field,
       .field {
         width: 100%;
-      }
-
-      .text-field {
-        display: inline-flex;
       }
 
       .field {
         cursor: text;
       }
 
-      .disabled .field {
+      :host([disabled]) .field {
         cursor: default;
       }
 
-      .text-field,
-      .textarea .field {
+      :host([type='textarea']) .field {
         resize: inherit;
       }
 
@@ -777,12 +766,12 @@ __decorate([
         }
       }
 
-      .no-spinner .input::-webkit-inner-spin-button,
-      .no-spinner .input::-webkit-outer-spin-button {
+      :host([no-spinner]) .input::-webkit-inner-spin-button,
+      :host([no-spinner]) .input::-webkit-outer-spin-button {
         display: none;
       }
 
-      .no-spinner .input[type='number'] {
+      :host([no-spinner]) .input[type='number'] {
         -moz-appearance: textfield;
       }
 
@@ -790,19 +779,20 @@ __decorate([
         caret-color: var(--_focus-caret-color);
       }
 
-      .error:focus-within .input {
+      :host([error]:not([disabled])):focus-within .input,
+      :host([native-error]:not([disabled])):focus-within .input {
         caret-color: var(--_error-focus-caret-color);
       }
 
-      .text-field:not(.disabled) .prefix {
+      :host(:not([disabled])) .prefix {
         color: var(--_input-text-prefix-color);
       }
 
-      .text-field:not(.disabled) .suffix {
+      :host(:not([disabled])) .suffix {
         color: var(--_input-text-suffix-color);
       }
 
-      .text-field:not(.disabled) .input::placeholder {
+      :host(:not([disabled])) .input::placeholder {
         color: var(--_input-text-placeholder-color);
       }
 
@@ -821,7 +811,7 @@ __decorate([
       }
     `,
     css`
-      .wrapper.outlined {
+      :host([color='outlined']) {
         --_caret-color: var(--md-text-field-caret-color, var(--md-sys-color-primary, #6750a4));
         --_disabled-input-text-color: var(
           --md-text-field-disabled-input-text-color,
@@ -1124,7 +1114,7 @@ __decorate([
       }
     `,
     css`
-      .wrapper.filled {
+      :host([color='filled']) {
         --_active-indicator-color: var(
           --md-text-field-active-indicator-color,
           var(--md-sys-color-on-surface-variant, #49454f)

@@ -85,13 +85,18 @@
         const dateField = document.getElementById('date-field');
         const fieldPicker = document.getElementById('field-picker');
 
-        dateField.addEventListener('request-date-picker', () => {
-            fieldPicker.show();
+        // dateField.addEventListener('request-date-picker', () => {
+        //     fieldPicker.show();
+        // });
+
+        // fieldPicker.addEventListener('confirm', () => {
+        //     dateField.value = fieldPicker.value;
+        // });
+        dateField.addEventListener('change', () => {
+            console.log('data changed')
         });
 
-        fieldPicker.addEventListener('confirm', () => {
-            dateField.value = fieldPicker.value;
-        });
+
     </script>
 </body>
 </html>
