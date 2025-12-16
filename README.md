@@ -25,7 +25,7 @@ Material 3 Expressive is in progress! [Follow along here](https://github.com/mat
 
 To start using it, see [this topic](https://github.com/orgs/material-esm/discussions/71).
 
-[Material 3 Expressive demo](https://material-esm.github.io/material/demo/v3)
+[Material 3 Expressive demo](https://material-esm.github.io/material/demo/expressive)
 
 ## Demo
 
