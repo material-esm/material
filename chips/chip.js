@@ -1,8 +1,3 @@
-/**
- * @license
- * Copyright 2023 Google LLC
- * SPDX-License-Identifier: Apache-2.0
- */
 import '../internal/focus/focus-ring.js'
 import '../internal/ripple/ripple.js'
 import { html, LitElement, css, nothing } from 'lit'
@@ -100,9 +95,9 @@ export class Chip extends LitElement {
   }
 
   render() {
-    return html`<div class="wrapper ${this.type}">
+    return html`
       <div class="container ${classMap(this.getContainerClasses())}">${this.renderContainerContent()}</div>
-    </div>`
+    `
   }
   updated(changed) {
     if (changed.has('disabled') && changed.get('disabled') !== undefined) {
@@ -375,7 +370,7 @@ export class Chip extends LitElement {
 
   static styles = [
     css`
-      .wrapper {
+      :host {
         border-start-start-radius: var(--_container-shape-start-start);
         border-start-end-radius: var(--_container-shape-start-end);
         border-end-start-radius: var(--_container-shape-end-start);
@@ -392,7 +387,7 @@ export class Chip extends LitElement {
         --_avatar-size: var(--md-input-chip-avatar-size, 24px);
         --_disabled-avatar-opacity: var(--md-input-chip-disabled-avatar-opacity, 0.38);
       }
-      .wrapper([avatar]) {
+      :host([avatar]) {
         --_container-shape-start-start: var(
           --md-input-chip-container-shape-start-start,
           var(--md-input-chip-container-shape, calc(var(--_container-height) / 2))
@@ -429,10 +424,10 @@ export class Chip extends LitElement {
           opacity: 1;
         }
       }
-      .wrapper([disabled]) {
+      :host([disabled]) {
         pointer-events: none;
       }
-      .wrapper([touch-target='wrapper']) {
+      :host([touch-target='wrapper']) {
         margin: max(0px, (48px - var(--_container-height))/2) 0;
       }
       md-focus-ring {
@@ -622,7 +617,7 @@ export class Chip extends LitElement {
       }
     `,
     css`
-      .wrapper.assist {
+      :host([type='assist']) {
         --_container-height: var(--md-assist-chip-container-height, 32px);
         --_disabled-label-text-color: var(
           --md-assist-chip-disabled-label-text-color,
@@ -738,7 +733,7 @@ export class Chip extends LitElement {
       }
     `,
     css`
-      .wrapper.suggestion {
+      :host([type='suggestion']) {
         --_container-height: var(--md-suggestion-chip-container-height, 32px);
         --_disabled-label-text-color: var(
           --md-suggestion-chip-disabled-label-text-color,
@@ -863,7 +858,7 @@ export class Chip extends LitElement {
       }
     `,
     css`
-      .wrapper.filter {
+      :host([type='filter']) {
         --_container-height: var(--md-filter-chip-container-height, 32px);
         --_disabled-label-text-color: var(
           --md-filter-chip-disabled-label-text-color,
@@ -1194,7 +1189,7 @@ export class Chip extends LitElement {
       }
     `,
     css`
-      .wrapper.input {
+      :host([type='input']) {
         --_container-height: var(--md-input-chip-container-height, 32px);
         --_disabled-label-text-color: var(
           --md-input-chip-disabled-label-text-color,
