@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Date Picker Demo</title>
+    <script type="importmap">
+    {
+      "imports": {
+        "lit": "/node_modules/lit/index.js",
+        "lit/": "/node_modules/lit/",
+        "@lit/reactive-element": "/node_modules/@lit/reactive-element/reactive-element.js",
+        "@lit/reactive-element/": "/node_modules/@lit/reactive-element/",
+        "lit-element/lit-element.js": "/node_modules/lit-element/lit-element.js",
+        "lit-html": "/node_modules/lit-html/lit-html.js",
+        "lit-html/": "/node_modules/lit-html/"
+      }
+    }
+    </script>
+    <script type="module" src="/datepicker/date-picker.js"></script>
+    <script type="module" src="/datepicker/date-picker-dialog.js"></script>
+    <script type="module" src="/buttons/button.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            padding: 24px;
+            background-color: #f5f5f5;
+        }
+        .demo-section {
+            margin-bottom: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-section">
+        <h2>Embedded Date Picker</h2>
+        <md-date-picker id="embedded-picker"></md-date-picker>
+        <p>Selected Value: <span id="embedded-value">None</span></p>
+    </div>
+
+    <div class="demo-section">
+        <h2>Date Picker Dialog</h2>
+        <md-button id="dialog-trigger" color="filled">Open Date Picker</md-button>
+        <md-date-picker-dialog id="dialog-picker"></md-date-picker-dialog>
+        <p>Dialog Value: <span id="dialog-value">None</span></p>
+    </div>
+
+    <script>
+        const embeddedPicker = document.getElementById('embedded-picker');
+        const embeddedValue = document.getElementById('embedded-value');
+        embeddedPicker.addEventListener('change', (e) => {
+            embeddedValue.textContent = e.target.value;
+        });
+
+        const dialogTrigger = document.getElementById('dialog-trigger');
+        const dialogPicker = document.getElementById('dialog-picker');
+        const dialogValue = document.getElementById('dialog-value');
+
+        dialogTrigger.addEventListener('click', () => {
+            dialogPicker.show();
+        });
+
+        dialogPicker.addEventListener('confirm', (e) => {
+            dialogValue.textContent = dialogPicker.value;
+        });
+    </script>
+</body>
+</html>
