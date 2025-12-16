@@ -467,15 +467,13 @@ export class TextField extends textFieldBaseClass {
     return html`
       <span class="icon trailing" slot="end">
         <slot name="trailing-icon" @slotchange=${this.handleIconChange}>
-          ${this.type === 'date' ? this.renderDefaultDateIcon() : nothing}
+          ${this.type === 'date' || this.type === 'datetime-local' ? this.renderDefaultDateIcon() : nothing}
         </slot>
       </span>
     `
   }
   renderDefaultDateIcon() {
-    return html`<md-icon-button
-      type="button"
-      @click=${this.handleDatePickerRequest}
+    return html`<md-icon-button type="button" @click=${this.handleDatePickerRequest}
       ><md-icon>calendar_today</md-icon></md-icon-button
     >`
   }
@@ -615,7 +613,7 @@ export class TextField extends textFieldBaseClass {
   }
   handleIconChange() {
     this.hasLeadingIcon = this.leadingIcons.length > 0
-    this.hasTrailingIcon = this.trailingIcons.length > 0 || this.type === 'date'
+    this.hasTrailingIcon = this.trailingIcons.length > 0 || this.type === 'date' || this.type === 'datetime-local'
   }
   [getFormValue]() {
     return this.value
