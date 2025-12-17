@@ -16,10 +16,12 @@ import 'material/radio/radio.js'
 import 'material/checkbox/checkbox.js'
 import { snack } from 'material/snackbar/snackbar.js'
 import { styles as sharedStyles } from './styles.js'
+import { styles as typography } from '../../typography/md-typescale-styles.js'
 
 class ExpressiveComponent extends LitElement {
   static styles = [
     sharedStyles,
+    typography,
     css`
       md-card {
         width: 300px;
@@ -170,6 +172,7 @@ class ExpressiveComponent extends LitElement {
           </md-icon-button>
         </div>
         <!-- Buttons -->
+        <h3>Button sizes</h3>
         <div class="flexw g12 aic">
           <md-button>Default</md-button>
           <md-button size="extra-small">Extra small</md-button>
@@ -178,6 +181,8 @@ class ExpressiveComponent extends LitElement {
           <md-button size="large">Large</md-button>
           <md-button size="extra-large">Extra large</md-button>
         </div>
+
+        <h3>Button Colors</h3>
         <div class="flexw g12 aic">
           <md-button color="elevated">
             <md-icon slot="icon">edit</md-icon>
@@ -195,7 +200,7 @@ class ExpressiveComponent extends LitElement {
           <md-button color="text">Text</md-button>
         </div>
 
-        <div>Square buttons</div>
+        <h3>Square buttons</h3>
         <div class="flexw g12 aic">
           <md-button shape="square">Default</md-button>
           <md-button shape="square" size="extra-small">Extra small</md-button>
@@ -205,6 +210,7 @@ class ExpressiveComponent extends LitElement {
           <md-button shape="square" size="extra-large">Extra large</md-button>
         </div>
 
+        <h3>Chips</h3>
         <md-chip-set>
           <md-chip type="assist" label="Assist chip" @click=${this.clicked}>
             <md-icon slot="icon">calendar_add_on</md-icon>
@@ -217,6 +223,7 @@ class ExpressiveComponent extends LitElement {
           <md-chip type="suggestion" label="Suggestion chip"></md-chip>
         </md-chip-set>
 
+        <h3>Sliders</h3>
         <div class="flexw g12">
           <md-slider @change=${(e) => console.log('Slider changed', e.target.value)} labeled></md-slider>
           <md-slider
@@ -233,6 +240,7 @@ class ExpressiveComponent extends LitElement {
             value-end="75"></md-slider>
         </div>
 
+        <h3>Cards</h3>
         <div class="flexw g12">
           <md-card type="outlined">
             <div class="flex col">
