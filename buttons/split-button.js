@@ -1,12 +1,18 @@
-import { html, LitElement, css } from 'lit'
+import { html, LitElement, css, nothing } from 'lit'
 import { classMap } from 'lit/directives/class-map.js'
+import 'material/menu/menu.js'
+import 'material/menu/menu-item.js'
 
 export class SplitButton extends LitElement {
+  menuEl = null
+  dropdownBtn = null
+
   static properties = {
     size: { type: String },
     toggle: { type: Boolean },
     togglefn: { type: Function },
     disabled: { type: Boolean },
+    options: { type: Array },
   }
 
   constructor() {
@@ -15,6 +21,28 @@ export class SplitButton extends LitElement {
     this.togglefn = () => {}
     this.size = 'small'
     this.disabled = false
+    this.options = []
+  }
+
+  async updated(changedProps) {
+    this.menuEl = this.renderRoot.querySelector('md-menu')
+    this.dropdownBtn = this.renderRoot.querySelector('#dropdown')
+    if (changedProps.has('toggle')) {
+      await this.updateComplete
+
+      if (!this.menuEl || !this.dropdownBtn) return
+
+      this.menuEl.anchorElement = this.dropdownBtn
+      this.menuEl.anchorCorner = 'start-start'
+      this.menuEl.menuCorner = 'end-start'
+      this.menuEl.positioning = 'fixed'
+
+      if (this.toggle) {
+        this.menuEl.open = true
+      } else {
+        this.menuEl.open = false
+      }
+    }
   }
 
   static styles = [
@@ -205,6 +233,15 @@ export class SplitButton extends LitElement {
             }></polygon>
         </svg>
       </button>
+      <md-menu>
+        ${this.options.map(
+          (option) => html`
+            <md-menu-item>
+              ${option.icon ? html`<md-icon slot="start">${option.icon}</md-icon>` : nothing} ${option.label}
+            </md-menu-item>
+          `,
+        )}
+      </md-menu>
     </div>`
   }
 }
