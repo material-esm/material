@@ -22,6 +22,7 @@ export class SplitButton extends LitElement {
     this.size = 'small'
     this.disabled = false
     this.options = []
+    this._onDocumentClick = this._onDocumentClick.bind(this)
   }
 
   async updated(changedProps) {
@@ -39,9 +40,17 @@ export class SplitButton extends LitElement {
 
       if (this.toggle) {
         this.menuEl.open = true
+        document.addEventListener('mousedown', this._onDocumentClick)
       } else {
         this.menuEl.open = false
+        document.removeEventListener('mousedown', this._onDocumentClick)
       }
+    }
+  }
+  _onDocumentClick(e) {
+    // Check if click is outside the split button
+    if (!this.contains(e.target)) {
+      this.toggle = false
     }
   }
 
