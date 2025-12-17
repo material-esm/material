@@ -10,20 +10,22 @@ import '../internal/ripple/ripple.js'
  * https://m3.material.io/components/buttons/overview
  */
 export class Button extends LitElement {
+  static shadowRootOptions = { ...LitElement.shadowRootOptions, delegatesFocus: true }
+
   renderElevationOrOutline() {
     if (this.color === 'elevated') {
       return html`<md-elevation></md-elevation>`
     }
     if (this.color === 'outlined') {
-      return html`<div class="outline"></div>`
+      return html`<div class="outlined"></div>`
     }
   }
 
   static properties = {
     toggle: { type: Boolean, reflect: true },
-    size: { type: String },
-    shape: { type: String },
-    color: { type: String }, // this is elevated, filled, etc. Not an actual color.
+    size: { type: String, reflect: true },
+    shape: { type: String, reflect: true },
+    color: { type: String, reflect: true }, // this is elevated, filled, etc. Not an actual color.
     pressed: { type: Boolean, reflect: true },
     disabled: { type: Boolean, reflect: true },
     href: { type: String },
@@ -39,6 +41,11 @@ export class Button extends LitElement {
   set name(name) {
     this.setAttribute('name', name)
   }
+
+  get buttonElement() {
+    return this.shadowRoot.querySelector('#button') || this.shadowRoot.querySelector('#link')
+  }
+
   constructor() {
     super()
 
@@ -99,6 +106,27 @@ export class Button extends LitElement {
       dispatchActivationClick(this.buttonElement)
     }
   }
+
+  connectedCallback() {
+    super.connectedCallback()
+    this.addEventListener('mousedown', this.handlePress)
+    this.addEventListener('mouseup', this.handleRelease)
+    this.addEventListener('touchstart', this.handlePress)
+    this.addEventListener('touchend', this.handleRelease)
+    this.addEventListener('click', this.handleClick)
+    this.addEventListener('keydown', this.handleActivationClick)
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback()
+    this.removeEventListener('mousedown', this.handlePress)
+    this.removeEventListener('mouseup', this.handleRelease)
+    this.removeEventListener('touchstart', this.handlePress)
+    this.removeEventListener('touchend', this.handleRelease)
+    this.removeEventListener('click', this.handleClick)
+    this.removeEventListener('keydown', this.handleActivationClick)
+  }
+
   focus() {
     this.buttonElement?.focus()
   }
@@ -118,25 +146,12 @@ export class Button extends LitElement {
     // TODO(b/310046938): due to a limitation in focus ring/ripple, we can't use
     // the same ID for different elements, so we change the ID instead.
     const buttonId = this.href ? 'link' : 'button'
-    let externalClasses = this.classList
-    let clzes = ''
-    for (let v of externalClasses.values()) {
-      clzes += v + ' '
-    }
+
     return html`
-      <div
-        class="wrapper ${this.color} ${this.size} ${this.shape} ${this.pressed ? 'pressed' : ''} ${clzes}"
-        @mousedown=${this.handlePress}
-        @mouseup=${this.handleRelease}
-        @touchstart=${this.handlePress}
-        @touchend=${this.handleRelease}
-        @click=${this.handleClick}
-        @keydown=${this.handleActivationClick}>
-        <div class="background"></div>
-        <md-focus-ring part="focus-ring" for=${buttonId}></md-focus-ring>
-        <md-ripple for=${buttonId} ?disabled="${isDisabled}"></md-ripple>
-        ${buttonOrLink}
-      </div>
+      <div class="background"></div>
+      <md-focus-ring part="focus-ring" for=${buttonId}></md-focus-ring>
+      <md-ripple for=${buttonId} ?disabled="${isDisabled}"></md-ripple>
+      ${this.renderElevationOrOutline()} ${buttonOrLink}
     `
   }
 
@@ -194,7 +209,7 @@ export class Button extends LitElement {
   }
   static styles = [
     css`
-      .wrapper.filled {
+      :host([color='filled']) {
         --_container-color: var(--md-button-container-color, var(--md-sys-color-primary, #6750a4));
         --_container-elevation: var(--md-button-container-elevation, 0);
         /* --_container-height: var(--_container-height, var(--md-button-container-height, 40px)); */
@@ -263,7 +278,7 @@ export class Button extends LitElement {
       }
     `,
     css`
-      .wrapper.tonal {
+      :host([color='tonal']) {
         --_container-color: var(
           --md-filled-tonal-button-container-color,
           var(--md-sys-color-secondary-container, #e8def8)
@@ -374,7 +389,7 @@ export class Button extends LitElement {
     `,
     // elevated
     css`
-      .wrapper.elevated {
+      :host([color='elevated']) {
         --_container-color: var(
           --md-elevated-button-container-color,
           var(--md-sys-color-surface-container-low, #f7f2fa)
@@ -467,9 +482,12 @@ export class Button extends LitElement {
 
       md-elevation {
         transition-duration: 280ms;
+        inset: 0;
+        pointer-events: none;
+        position: absolute;
       }
 
-      .wrapper([disabled]) md-elevation {
+      :host([disabled]) md-elevation {
         transition: none;
       }
 
@@ -478,24 +496,24 @@ export class Button extends LitElement {
         --md-elevation-shadow-color: var(--_container-shadow-color);
       }
 
-      .wrapper(:focus-within) md-elevation {
+      :host(:focus-within) md-elevation {
         --md-elevation-level: var(--_focus-container-elevation);
       }
 
-      .wrapper(:hover) md-elevation {
+      :host(:hover) md-elevation {
         --md-elevation-level: var(--_hover-container-elevation);
       }
 
-      .wrapper(:active) md-elevation {
+      :host(:active) md-elevation {
         --md-elevation-level: var(--_pressed-container-elevation);
       }
 
-      .wrapper([disabled]) md-elevation {
+      :host([disabled]) md-elevation {
         --md-elevation-level: var(--_disabled-container-elevation);
       }
     `,
     css`
-      .wrapper.text {
+      :host([color='text']) {
         --_disabled-label-text-color: var(
           --md-button-disabled-label-text-color,
           var(--md-sys-color-on-surface, #1d1b20)
@@ -556,12 +574,12 @@ export class Button extends LitElement {
         --_disabled-container-opacity: 0;
       }
       /* This is for things like the snackbar, will use opposite colors */
-      .wrapper.text.inverse {
+      :host([color='text'].inverse) {
         --_label-text-color: var(--md-button-label-text-color, var(--md-sys-color-on-primary, #6750a4));
       }
     `,
     css`
-      .wrapper.outlined {
+      :host([color='outlined']) {
         --_disabled-label-text-color: var(
           --md-outlined-button-disabled-label-text-color,
           var(--md-sys-color-on-surface, #1d1b20)
@@ -660,21 +678,21 @@ export class Button extends LitElement {
         border-end-end-radius: var(--_container-shape-end-end);
       }
 
-      .wrapper(:active) .outlined {
+      :host(:active) .outlined {
         border-color: var(--_pressed-outline-color);
       }
 
-      .wrapper([disabled]) .outlined {
+      :host([disabled]) .outlined {
         border-color: var(--_disabled-outline-color);
         opacity: var(--_disabled-outline-opacity);
       }
 
       @media (forced-colors: active) {
-        .wrapper([disabled]) .background {
+        :host([disabled]) .background {
           border-color: GrayText;
         }
 
-        .wrapper([disabled]) .outlined {
+        :host([disabled]) .outlined {
           opacity: 1;
         }
       }
@@ -692,7 +710,7 @@ export class Button extends LitElement {
       }
     `,
     css`
-      .wrapper {
+      :host {
         border-start-start-radius: var(--_container-shape-start-start);
         border-start-end-radius: var(--_container-shape-start-end);
         border-end-start-radius: var(--_container-shape-end-start);
@@ -726,7 +744,7 @@ export class Button extends LitElement {
         --md-focus-ring-shape-end-start: var(--_container-shape-end-start);
       }
 
-      .wrapper([disabled]) {
+      :host([disabled]) {
         cursor: default;
         pointer-events: none;
       }
@@ -759,15 +777,15 @@ export class Button extends LitElement {
         border: 0;
       }
 
-      .wrapper(:hover) .button {
+      :host(:hover) .button {
         color: var(--_hover-label-text-color);
       }
 
-      .wrapper(:focus-within) .button {
+      :host(:focus-within) .button {
         color: var(--_focus-label-text-color);
       }
 
-      .wrapper(:active) .button {
+      :host(:active) .button {
         color: var(--_pressed-label-text-color);
       }
 
@@ -787,12 +805,12 @@ export class Button extends LitElement {
         text-overflow: inherit;
       }
 
-      .wrapper([disabled]) .label {
+      :host([disabled]) .label {
         color: var(--_disabled-label-text-color);
         opacity: var(--_disabled-label-text-opacity);
       }
 
-      .wrapper([disabled]) .background {
+      :host([disabled]) .background {
         background-color: var(--_disabled-container-color);
         opacity: var(--_disabled-container-opacity);
       }
@@ -802,7 +820,7 @@ export class Button extends LitElement {
           border: 1px solid CanvasText;
         }
 
-        .wrapper([disabled]) {
+        :host([disabled]) {
           --_disabled-icon-color: GrayText;
           --_disabled-icon-opacity: 1;
           --_disabled-container-opacity: 1;
@@ -811,12 +829,12 @@ export class Button extends LitElement {
         }
       }
 
-      .wrapper([has-icon]:not([trailing-icon])) {
+      :host([has-icon]:not([trailing-icon])) {
         padding-inline-start: var(--_with-leading-icon-leading-space);
         padding-inline-end: var(--_with-leading-icon-trailing-space);
       }
 
-      .wrapper([has-icon][trailing-icon]) {
+      :host([has-icon][trailing-icon]) {
         padding-inline-start: var(--_with-trailing-icon-leading-space);
         padding-inline-end: var(--_with-trailing-icon-trailing-space);
       }
@@ -833,19 +851,19 @@ export class Button extends LitElement {
         block-size: var(--_icon-size);
       }
 
-      .wrapper(:hover) ::slotted([slot='icon']) {
+      :host(:hover) ::slotted([slot='icon']) {
         color: var(--_hover-icon-color);
       }
 
-      .wrapper(:focus-within) ::slotted([slot='icon']) {
+      :host(:focus-within) ::slotted([slot='icon']) {
         color: var(--_focus-icon-color);
       }
 
-      .wrapper(:active) ::slotted([slot='icon']) {
+      :host(:active) ::slotted([slot='icon']) {
         color: var(--_pressed-icon-color);
       }
 
-      .wrapper([disabled]) ::slotted([slot='icon']) {
+      :host([disabled]) ::slotted([slot='icon']) {
         color: var(--_disabled-icon-color);
         opacity: var(--_disabled-icon-opacity);
       }
@@ -859,17 +877,17 @@ export class Button extends LitElement {
         transform: translateY(-50%);
       }
 
-      .wrapper([touch-target='wrapper']) {
+      :host([touch-target='wrapper']) {
         margin: max(0px, (48px - var(--_container-height))/2) 0;
       }
 
-      .wrapper([touch-target='none']) .touch {
+      :host([touch-target='none']) .touch {
         display: none;
       }
     `,
     // sizes
     css`
-      .extra-small {
+      :host([size='extra-small']) {
         height: 32px;
         padding-left: 12px;
         padding-right: 12px;
@@ -878,7 +896,7 @@ export class Button extends LitElement {
         line-height: 20px;
         border-width: 1px;
       }
-      .small {
+      :host([size='small']) {
         height: 40px;
         padding-left: 16px;
         padding-right: 16px;
@@ -887,7 +905,7 @@ export class Button extends LitElement {
         line-height: 20px;
         border-width: 1px;
       }
-      .medium {
+      :host([size='medium']) {
         height: 56px;
         padding-left: 24px;
         padding-right: 24px;
@@ -896,7 +914,7 @@ export class Button extends LitElement {
         line-height: 24px;
         border-width: 1px;
       }
-      .large {
+      :host([size='large']) {
         height: 96px;
         padding-left: 48px;
         padding-right: 48px;
@@ -905,7 +923,7 @@ export class Button extends LitElement {
         line-height: 32px;
         border-width: 2px;
       }
-      .extra-large {
+      :host([size='extra-large']) {
         height: 136px;
         padding-left: 64px;
         padding-right: 64px;
@@ -917,34 +935,34 @@ export class Button extends LitElement {
     `,
     // shapes
     css`
-      .square.extra-small {
+      :host([shape='square'][size='extra-small']) {
         border-radius: 12px;
       }
-      .square.small {
+      :host([shape='square'][size='small']) {
         border-radius: 12px;
       }
-      .square.medium {
+      :host([shape='square'][size='medium']) {
         border-radius: 16px;
       }
-      .square.large {
+      :host([shape='square'][size='large']) {
         border-radius: 28px;
       }
-      .square.extra-large {
+      :host([shape='square'][size='extra-large']) {
         border-radius: 28px;
       }
-      .pressed.extra-small {
+      :host([pressed][size='extra-small']) {
         border-radius: 8px;
       }
-      .pressed.small {
+      :host([pressed][size='small']) {
         border-radius: 8px;
       }
-      .pressed.medium {
+      :host([pressed][size='medium']) {
         border-radius: 12px;
       }
-      .pressed.large {
+      :host([pressed][size='large']) {
         border-radius: 16px;
       }
-      .pressed.extra-large {
+      :host([pressed][size='extra-large']) {
         border-radius: 16px;
       }
     `,
