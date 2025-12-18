@@ -4,13 +4,10 @@ import 'material/menu/menu.js'
 import 'material/menu/menu-item.js'
 
 export class SplitButton extends LitElement {
-  menuEl = null
-  dropdownBtn = null
-
   static properties = {
     size: { type: String },
+    color: { type: String },
     toggle: { type: Boolean },
-    togglefn: { type: Function },
     disabled: { type: Boolean },
     options: { type: Array },
   }
@@ -18,31 +15,31 @@ export class SplitButton extends LitElement {
   constructor() {
     super()
     this.toggle = false
-    this.togglefn = () => {}
     this.size = 'small'
+    this.color = 'filled'
     this.disabled = false
     this.options = []
     this._onDocumentClick = this._onDocumentClick.bind(this)
   }
 
   async updated(changedProps) {
-    this.menuEl = this.renderRoot.querySelector('md-menu')
-    this.dropdownBtn = this.renderRoot.querySelector('#dropdown')
+    const menuEl = this.renderRoot.querySelector('md-menu')
+    const dropdownBtn = this.renderRoot.querySelector('#dropdown')
     if (changedProps.has('toggle')) {
       await this.updateComplete
 
-      if (!this.menuEl || !this.dropdownBtn) return
+      if (!menuEl || !dropdownBtn) return
 
-      this.menuEl.anchorElement = this.dropdownBtn
-      this.menuEl.anchorCorner = 'start-start'
-      this.menuEl.menuCorner = 'end-start'
-      this.menuEl.positioning = 'fixed'
+      menuEl.anchorElement = dropdownBtn
+      menuEl.anchorCorner = 'start-start'
+      menuEl.menuCorner = 'end-start'
+      menuEl.positioning = 'fixed'
 
       if (this.toggle) {
-        this.menuEl.open = true
+        menuEl.open = true
         document.addEventListener('mousedown', this._onDocumentClick)
       } else {
-        this.menuEl.open = false
+        menuEl.open = false
         document.removeEventListener('mousedown', this._onDocumentClick)
       }
     }
@@ -56,7 +53,7 @@ export class SplitButton extends LitElement {
 
   static styles = [
     css`
-      .wrapper {
+      .wrapper.filled {
         display: inline-flex;
         align-items: center;
         border-radius: 999px;
@@ -212,7 +209,7 @@ export class SplitButton extends LitElement {
   ]
 
   render() {
-    return html`<div class="wrapper ${this.disabled ? 'disabled' : ''}">
+    return html`<div class="wrapper ${this.disabled ? 'disabled' : ''} ${this.color}">
       <button id="main-action" class="main-action ${this.size}" ?disabled=${this.disabled}>
         <slot name="icon"></slot>
         <span class="label"><slot></slot></span>
@@ -222,7 +219,6 @@ export class SplitButton extends LitElement {
         class="dropdown ${this.size}"
         @click=${() => {
           this.toggle = !this.toggle
-          this.togglefn()
         }}
         aria-haspopup="menu"
         aria-expanded=${this.toggle}
