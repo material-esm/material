@@ -513,6 +513,7 @@ export class TextField extends textFieldBaseClass {
     fieldPicker.show()
     fieldPicker.addEventListener('confirm', () => {
       this.value = fieldPicker.value
+      this.dispatchEvent(new Event('change', { bubbles: true }))
     })
   }
   handleDateTimePickerRequest(e) {
@@ -521,6 +522,7 @@ export class TextField extends textFieldBaseClass {
     fieldPicker.show()
     fieldPicker.addEventListener('confirm', () => {
       this.value = fieldPicker.value
+      this.dispatchEvent(new Event('change', { bubbles: true }))
     })
   }
   handleTimePickerRequest(e) {
@@ -529,6 +531,7 @@ export class TextField extends textFieldBaseClass {
     fieldPicker.show()
     fieldPicker.addEventListener('confirm', () => {
       this.value = fieldPicker.value
+      this.dispatchEvent(new Event('change', { bubbles: true }))
     })
   }
   renderInputOrTextarea() {
@@ -636,6 +639,7 @@ export class TextField extends textFieldBaseClass {
     this.value = event.target.value
   }
   redispatchEvent(event) {
+    console.log('redispatch event')
     redispatchEvent(this, event)
   }
   getInputOrTextarea() {
