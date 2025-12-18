@@ -18,6 +18,8 @@ export class DateTimePickerDialog extends LitElement {
     super()
     this.open = false
     this.value = ''
+    this.min = ''
+    this.max = ''
   }
 
   updated(changedProperties) {
