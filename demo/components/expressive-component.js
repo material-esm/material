@@ -103,9 +103,14 @@ class ExpressiveComponent extends LitElement {
             <div>
               <md-button type="button" @click=${this.save}>Save</md-button>
             </div>
-            <md-split-button id="split-button" .options=${[{ label: 'Schedule Send', icon: 'schedule' }]}
-              >Send</md-split-button
-            >
+            <md-split-button color="filled">
+              Send
+              <div slot="menu">
+                <!-- define your menu here -->
+                <md-menu-item>Option 1</md-menu-item>
+                <md-menu-item>Option 2</md-menu-item>
+              </div>
+            </md-split-button>
           </div>
         </form>
 

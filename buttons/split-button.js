@@ -1,253 +1,149 @@
-import { html, LitElement, css, nothing } from 'lit'
-import { classMap } from 'lit/directives/class-map.js'
-import 'material/menu/menu.js'
-import 'material/menu/menu-item.js'
+import { html, LitElement, css } from 'lit'
 
 export class SplitButton extends LitElement {
+  static styles = css`
+    :host {
+      display: inline-flex;
+      flex-direction: row;
+      vertical-align: middle;
+      position: relative;
+    }
+
+    /* Start button styling */
+    slot[name='start']::slotted(md-button),
+    .leading-button {
+      /* Generic shape flattening for Start Button (Right side flat) */
+      --md-button-container-shape-start-end: 0;
+      --md-button-container-shape-end-end: 0;
+
+      /* Variant specific shapes */
+      --md-filled-tonal-button-container-shape-start-end: 0;
+      --md-filled-tonal-button-container-shape-end-end: 0;
+      --md-elevated-button-container-shape-start-end: 0;
+      --md-elevated-button-container-shape-end-end: 0;
+      --md-outlined-button-container-shape-start-end: 0;
+      --md-outlined-button-container-shape-end-end: 0;
+
+      /* Force internal variables to ensure override (fix for Outlined variant) */
+      --_container-shape-start-end: 0;
+      --_container-shape-end-end: 0;
+
+      /* Explicit border radius as fallback */
+      border-start-end-radius: 0;
+      border-end-end-radius: 0;
+
+      margin-inline-end: 0;
+    }
+
+    /* End button styling */
+    slot[name='end']::slotted(md-button),
+    .trailing-button {
+      /* Generic shape flattening for End Button (Left side flat) */
+      --md-button-container-shape-start-start: 0;
+      --md-button-container-shape-end-start: 0;
+
+      /* Variant specific shapes */
+      --md-filled-tonal-button-container-shape-start-start: 0;
+      --md-filled-tonal-button-container-shape-end-start: 0;
+      --md-elevated-button-container-shape-start-start: 0;
+      --md-elevated-button-container-shape-end-start: 0;
+      --md-outlined-button-container-shape-start-start: 0;
+      --md-outlined-button-container-shape-end-start: 0;
+
+      /* Force internal variables */
+      --_container-shape-start-start: 0;
+      --_container-shape-end-start: 0;
+
+      /* Explicit border radius as fallback */
+      border-start-start-radius: 0;
+      border-end-start-radius: 0;
+
+      margin-inline-start: 0;
+    }
+
+    .trailing-button md-icon {
+      transition: transform 0.2s ease-in-out;
+    }
+
+    .trailing-button:is(:hover, :active) md-icon {
+      transform: rotate(180deg);
+    }
+
+    /* Outlined overlap */
+    slot[name='end']::slotted(md-button[color='outlined']) {
+      margin-inline-start: -1px;
+    }
+
+    /* Z-index management */
+    ::slotted(md-button:hover),
+    ::slotted(md-button:focus-within),
+    ::slotted(md-button:active) {
+      z-index: 1;
+      position: relative;
+    }
+
+    /* Separator element styling */
+    #separator {
+      width: 1px;
+      margin-inline-start: -1px;
+      z-index: 2;
+      pointer-events: none;
+      background-color: var(--_separator-color, transparent);
+      opacity: 0.3;
+      align-self: stretch;
+    }
+
+    /* Mapping separator colors based on inferred type set in JS */
+    :host([separator-type='filled']) {
+      --_separator-color: var(--md-sys-color-on-primary, #fff);
+    }
+    :host([separator-type='tonal']) {
+      --_separator-color: var(--md-sys-color-on-secondary-container, #1d192b);
+    }
+    :host([separator-type='elevated']) {
+      --_separator-color: var(--md-sys-color-primary, #6750a4);
+    }
+  `
+
   static properties = {
-    size: { type: String },
+    separatorType: { type: String, reflect: true, attribute: 'separator-type' },
     color: { type: String },
-    toggle: { type: Boolean },
-    disabled: { type: Boolean },
-    options: { type: Array },
+    size: { type: String },
   }
 
   constructor() {
     super()
-    this.toggle = false
-    this.size = 'small'
+    this.separatorType = 'filled'
     this.color = 'filled'
-    this.disabled = false
-    this.options = []
-    this._onDocumentClick = this._onDocumentClick.bind(this)
+    this.size = 'medium'
   }
 
-  async updated(changedProps) {
-    const menuEl = this.renderRoot.querySelector('md-menu')
-    const dropdownBtn = this.renderRoot.querySelector('#dropdown')
-    if (changedProps.has('toggle')) {
-      await this.updateComplete
+  get startSlot() {
+    return this.shadowRoot.querySelector('slot[name="start"]')
+  }
 
-      if (!menuEl || !dropdownBtn) return
-
-      menuEl.anchorElement = dropdownBtn
-      menuEl.anchorCorner = 'start-start'
-      menuEl.menuCorner = 'end-start'
-      menuEl.positioning = 'fixed'
-
-      if (this.toggle) {
-        menuEl.open = true
-        document.addEventListener('mousedown', this._onDocumentClick)
-      } else {
-        menuEl.open = false
-        document.removeEventListener('mousedown', this._onDocumentClick)
-      }
+  // Use arrow function to bind 'this'
+  handleSlotChange = () => {
+    const nodes = this.startSlot.assignedElements({ flatten: true })
+    const btn = nodes.find((n) => n.tagName === 'MD-BUTTON')
+    if (btn) {
+      const color = btn.getAttribute('color') || 'filled'
+      this.separatorType = color
     }
   }
-  _onDocumentClick(e) {
-    // Check if click is outside the split button
-    if (!this.contains(e.target)) {
-      this.toggle = false
-    }
-  }
-
-  static styles = [
-    css`
-      .wrapper.filled {
-        display: inline-flex;
-        align-items: center;
-        border-radius: 999px;
-        overflow: hidden;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
-        --_container-color: var(--md-button-container-color, var(--md-sys-color-primary, #6750a4));
-        --_container-elevation: var(--md-button-container-elevation, 0);
-        /* --_container-height: var(--_container-height, var(--md-button-container-height, 40px)); */
-        --_container-shadow-color: var(--md-button-container-shadow-color, var(--md-sys-color-shadow, #000));
-        --_disabled-container-color: var(--md-button-disabled-container-color, var(--md-sys-color-on-surface, #1d1b20));
-        --_disabled-container-elevation: var(--md-button-disabled-container-elevation, 0);
-        --_disabled-container-opacity: var(--md-button-disabled-container-opacity, 0.12);
-        --_disabled-label-text-color: var(
-          --md-button-disabled-label-text-color,
-          var(--md-sys-color-on-surface, #1d1b20)
-        );
-        --_disabled-label-text-opacity: var(--md-button-disabled-label-text-opacity, 0.38);
-        --_focus-container-elevation: var(--md-button-focus-container-elevation, 0);
-        --_focus-label-text-color: var(--md-button-focus-label-text-color, var(--md-sys-color-on-primary, #fff));
-        --_hover-container-elevation: var(--md-button-hover-container-elevation, 1);
-        --_hover-label-text-color: var(--md-button-hover-label-text-color, var(--md-sys-color-on-primary, #fff));
-        --_hover-state-layer-color: var(--md-button-hover-state-layer-color, var(--md-sys-color-on-primary, #fff));
-        --_hover-state-layer-opacity: var(--md-button-hover-state-layer-opacity, 0.08);
-        --_label-text-color: var(--md-button-label-text-color, var(--md-sys-color-on-primary, #fff));
-        --_label-text-font: var(
-          --md-button-label-text-font,
-          var(--md-sys-typescale-label-large-font, var(--md-ref-typeface-plain, Roboto))
-        );
-        --_label-text-line-height: var(
-          --md-button-label-text-line-height,
-          var(--md-sys-typescale-label-large-line-height, 1.25rem)
-        );
-        --_label-text-size: var(--md-button-label-text-size, var(--md-sys-typescale-label-large-size, 0.875rem));
-        --_label-text-weight: var(
-          --md-button-label-text-weight,
-          var(--md-sys-typescale-label-large-weight, var(--md-ref-typeface-weight-medium, 500))
-        );
-        --_pressed-container-elevation: var(--md-button-pressed-container-elevation, 0);
-        --_pressed-label-text-color: var(--md-button-pressed-label-text-color, var(--md-sys-color-on-primary, #fff));
-        --_pressed-state-layer-color: var(--md-button-pressed-state-layer-color, var(--md-sys-color-on-primary, #fff));
-        --_pressed-state-layer-opacity: var(--md-button-pressed-state-layer-opacity, 0.12);
-        --_disabled-icon-color: var(--md-button-disabled-icon-color, var(--md-sys-color-on-surface, #1d1b20));
-        --_disabled-icon-opacity: var(--md-button-disabled-icon-opacity, 0.38);
-        --_focus-icon-color: var(--md-button-focus-icon-color, var(--md-sys-color-on-primary, #fff));
-        --_hover-icon-color: var(--md-button-hover-icon-color, var(--md-sys-color-on-primary, #fff));
-        --_icon-color: var(--md-button-icon-color, var(--md-sys-color-on-primary, #fff));
-        --_icon-size: var(--md-button-icon-size, 18px);
-        --_pressed-icon-color: var(--md-button-pressed-icon-color, var(--md-sys-color-on-primary, #fff));
-        --_leading-space: var(--md-button-leading-space, 16px);
-        --_trailing-space: var(--md-button-trailing-space, 16px);
-        --_with-leading-icon-leading-space: var(--md-button-with-leading-icon-leading-space, 16px);
-        --_with-leading-icon-trailing-space: var(--md-button-with-leading-icon-trailing-space, 24px);
-        --_with-trailing-icon-leading-space: var(--md-button-with-trailing-icon-leading-space, 24px);
-        --_with-trailing-icon-trailing-space: var(--md-button-with-trailing-icon-trailing-space, 16px);
-      }
-      .wrapper(:hover) ::slotted([slot='icon']) {
-        color: var(--_hover-icon-color);
-      }
-      .wrapper(:active) md-elevation {
-        --md-elevation-level: var(--_pressed-container-elevation);
-      }
-      .wrapper.disabled polygon {
-        fill: light-dark;
-      }
-
-      .main-action {
-        background: var(--_container-color);
-        border: none;
-        padding: 0 24px;
-        font-size: 24px;
-        font-family: inherit;
-        border-radius: 999px 0 0 999px;
-        display: flex;
-        align-items: center;
-        cursor: pointer;
-        outline: none;
-        transition: background 0.2s;
-      }
-
-      .dropdown {
-        background: var(--_container-color);
-        border: none;
-        border-left: 2px solid var(--md-sys-color-on-primary);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 0 999px 999px 0;
-        cursor: pointer;
-        outline: none;
-        transition: background 0.2s;
-      }
-
-      .label {
-        margin-left: 8px;
-        margin-right: 8px;
-        font-weight: 500;
-      }
-      svg {
-        display: block;
-        margin: auto;
-      }
-      polygon {
-        fill: var(--md-sys-color-on-primary);
-      }
-    `,
-    css`
-      .extra-small {
-        height: 32px;
-        padding-left: 12px;
-        padding-right: 12px;
-        font-weight: 500;
-        font-size: 14px;
-        line-height: 20px;
-        border-width: 1px;
-      }
-      .small {
-        height: 40px;
-        padding-left: 16px;
-        padding-right: 16px;
-        font-weight: 500;
-        font-size: 14px;
-        line-height: 20px;
-        border-width: 1px;
-      }
-      .medium {
-        height: 56px;
-        padding-left: 24px;
-        padding-right: 24px;
-        font-weight: 500;
-        font-size: 16px;
-        line-height: 24px;
-        border-width: 1px;
-      }
-      .large {
-        height: 96px;
-        padding-left: 48px;
-        padding-right: 48px;
-        font-weight: 400;
-        font-size: 24px;
-        line-height: 32px;
-        border-width: 2px;
-      }
-      .extra-large {
-        height: 136px;
-        padding-left: 64px;
-        padding-right: 64px;
-        font-weight: 400;
-        font-size: 32px;
-        line-height: 40px;
-        border-width: 3px;
-      }
-    `,
-  ]
 
   render() {
-    return html`<div class="wrapper ${this.disabled ? 'disabled' : ''} ${this.color}">
-      <button id="main-action" class="main-action ${this.size}" ?disabled=${this.disabled}>
-        <slot name="icon"></slot>
-        <span class="label"><slot></slot></span>
-      </button>
-      <button
-        id="dropdown"
-        class="dropdown ${this.size}"
-        @click=${() => {
-          this.toggle = !this.toggle
-        }}
-        aria-haspopup="menu"
-        aria-expanded=${this.toggle}
-        ?disabled=${this.disabled}>
-        <svg height="5" viewBox="7 10 10 5" focusable="false">
-          <polygon
-            class=${classMap({
-              down: !this.toggle,
-              up: this.toggle,
-            })}
-            stroke="none"
-            fill-rule="evenodd"
-            points=${
-              this.toggle
-                ? '7 15 12 10 17 15' // up
-                : '7 10 12 15 17 10' // down
-            }></polygon>
-        </svg>
-      </button>
-      <md-menu>
-        ${this.options.map(
-          (option) => html`
-            <md-menu-item>
-              ${option.icon ? html`<md-icon slot="start">${option.icon}</md-icon>` : nothing} ${option.label}
-            </md-menu-item>
-          `,
-        )}
-      </md-menu>
-    </div>`
+    return html`
+      <slot name="start" @slotchange=${this.handleSlotChange}>
+        <md-button class="leading-button" color=${this.color} size=${this.size}>Medium</md-button>
+      </slot>
+      <!-- <slot name="start" @slotchange=${this.handleSlotChange}></slot> -->
+      <div id="separator"></div>
+      <!-- <slot name="end"></slot> -->
+      <md-icon-button class="trailing-button" color=${this.color} size=${this.size}>
+        <md-icon>keyboard_arrow_down</md-icon>
+      </md-icon-button>
+    `
   }
 }
 customElements.define('md-split-button', SplitButton)
