@@ -72,11 +72,6 @@ export class SplitButton extends LitElement {
       transform: rotate(180deg);
     }
 
-    /* Outlined overlap */
-    slot[name='end']::slotted(md-button[color='outlined']) {
-      margin-inline-start: -1px;
-    }
-
     /* Z-index management */
     ::slotted(md-button:hover),
     ::slotted(md-button:focus-within),
