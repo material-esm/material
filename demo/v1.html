@@ -1,287 +1,283 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
+  <head>
+    <title>Material 3 Demo</title>
 
-<head>
-  <title>Material 3 Demo</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="preload"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"
+      as="style"
+      onload="this.onload=null;this.rel='stylesheet'" />
+    <link
+      rel="preload"
+      href="https://fonts.googleapis.com/css2?family=Roboto+Flex:wght@400;500;700&family=Roboto+Serif:wght@400;500;700&display=swap"
+      as="style"
+      onload="this.onload=null;this.rel='stylesheet'" />
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preload"
-    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"
-    as="style" onload="this.onload=null;this.rel='stylesheet'" />
-  <link rel="preload"
-    href="https://fonts.googleapis.com/css2?family=Roboto+Flex:wght@400;500;700&family=Roboto+Serif:wght@400;500;700&display=swap"
-    as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="stylesheet" href="./css/styles.css" />
 
-  <link rel="stylesheet" href="./css/styles.css" />
-
-  <script type="importmap">
-        {
-          "imports": {
-            "lit": "https://cdn.jsdelivr.net/npm/lit@3/index.js",
-            "lit/": "https://cdn.jsdelivr.net/npm/lit@3/",
-            "@lit/localize": "https://cdn.jsdelivr.net/npm/@lit/localize/lit-localize.js",
-            "@lit/reactive-element": "https://cdn.jsdelivr.net/npm/@lit/reactive-element@1/reactive-element.js",
-            "@lit/reactive-element/": "https://cdn.jsdelivr.net/npm/@lit/reactive-element@1/",
-            "lit-element/lit-element.js": "https://cdn.jsdelivr.net/npm/lit-element@4/lit-element.js",
-            "lit-html": "https://cdn.jsdelivr.net/npm/lit-html@3/lit-html.js",
-            "lit-html/": "https://cdn.jsdelivr.net/npm/lit-html@3/",
-            "material/": "https://cdn.jsdelivr.net/gh/material-esm/material@1/"
-          }
+    <script type="importmap">
+      {
+        "imports": {
+          "lit": "https://cdn.jsdelivr.net/npm/lit@3/index.js",
+          "lit/": "https://cdn.jsdelivr.net/npm/lit@3/",
+          "@lit/localize": "https://cdn.jsdelivr.net/npm/@lit/localize/lit-localize.js",
+          "@lit/reactive-element": "https://cdn.jsdelivr.net/npm/@lit/reactive-element@1/reactive-element.js",
+          "@lit/reactive-element/": "https://cdn.jsdelivr.net/npm/@lit/reactive-element@1/",
+          "lit-element/lit-element.js": "https://cdn.jsdelivr.net/npm/lit-element@4/lit-element.js",
+          "lit-html": "https://cdn.jsdelivr.net/npm/lit-html@3/lit-html.js",
+          "lit-html/": "https://cdn.jsdelivr.net/npm/lit-html@3/",
+          "material/": "https://cdn.jsdelivr.net/gh/material-esm/material@1/"
         }
-      </script>
-</head>
+      }
+    </script>
+  </head>
 
-<body>
+  <body>
+    <script type="module">
+      import 'material/textfield/outlined-text-field.js'
+      import 'material/button/filled-button.js'
+      import 'material/icon/icon.js'
+      import 'material/iconbutton/icon-button.js'
+      import 'material/navigationbar/navigation-bar.js'
+      import 'material/navigationtab/navigation-tab.js'
+      import 'material/navigationrail/navigation-rail.js'
+      import 'material/badge/badge.js'
+      import 'material/navigationdrawer/navigation-drawer.js'
+      import 'material/navigationdrawer/navigation-drawer-modal.js'
+      import 'material/list/list-item.js'
+      import 'material/fab/fab.js'
+      import 'material/search/search.js'
+      import 'material/menu/menu.js'
+      import 'material/menu/menu-item.js'
+      import 'material/snackbar/snackbar.js'
+      import './components/demo-component.js'
+      import './components/top-nav.js'
+    </script>
 
-  <script type="module">
-    import 'material/textfield/outlined-text-field.js'
-    import 'material/button/filled-button.js'
-    import 'material/icon/icon.js'
-    import 'material/iconbutton/icon-button.js'
-    import 'material/navigationbar/navigation-bar.js'
-    import 'material/navigationtab/navigation-tab.js'
-    import 'material/navigationrail/navigation-rail.js'
-    import 'material/badge/badge.js'
-    import 'material/navigationdrawer/navigation-drawer.js'
-    import 'material/navigationdrawer/navigation-drawer-modal.js'
-    import 'material/list/list-item.js'
-    import 'material/fab/fab.js'
-    import 'material/search/search.js'
-    import 'material/menu/menu.js'
-    import 'material/menu/menu-item.js'
-    import 'material/snackbar/snackbar.js'
-    import './components/demo-component.js'
-    import './components/top-nav.js'
-  </script>
+    <!-- this is the modal drawer for small screens -->
+    <md-navigation-drawer-modal id="nav-drawer-modal">
+      <md-list-item href="/" style="width: 100%">
+        <md-icon slot="start">home</md-icon>
+        <div slot="headline">Home</div>
+      </md-list-item>
+      <md-list-item href="/inbox">
+        <md-icon slot="start">inbox</md-icon>
+        <div slot="headline">Inbox</div>
+        <div slot="end">24</div>
+      </md-list-item>
+      <md-list-item href="/outbox">
+        <md-icon slot="start">outbox</md-icon>
+        <div slot="headline">Outbox</div>
+      </md-list-item>
+    </md-navigation-drawer-modal>
 
-  <!-- this is the modal drawer for small screens -->
-  <md-navigation-drawer-modal id="nav-drawer-modal">
-    <md-list-item href="/" style="width: 100%;">
-      <md-icon slot="start">home</md-icon>
-      <div slot="headline">Home</div>
-    </md-list-item>
-    <md-list-item href="/inbox">
-      <md-icon slot="start">inbox</md-icon>
-      <div slot="headline">Inbox</div>
-      <div slot="end">24</div>
-    </md-list-item>
-    <md-list-item href="/outbox">
-      <md-icon slot="start">outbox</md-icon>
-      <div slot="headline">Outbox</div>
-    </md-list-item>
-  </md-navigation-drawer-modal>
+    <!-- layout is: { left nav rail/drawer, { header, content } } -->
+    <div class="flex g12">
+      <!-- left nav -->
+      <div class="gte-medium">
+        <div class="flex g4" style="position: sticky; top: 0; overflow-y: auto; height: 100vh">
+          <div class="" id="nav-rail-container">
+            <md-navigation-rail active-index="1">
+              <!-- todo: should maybe just change this slot to "top" or something then can add whatever to the top section -->
+              <md-icon-button slot="menu" id="rail-menu-button">
+                <md-icon>menu</md-icon>
+              </md-icon-button>
+              <md-fab slot="fab" variant="primary" href="/" lowered>
+                <md-icon slot="icon">search</md-icon>
+              </md-fab>
 
-  <!-- layout is: { left nav rail/drawer, { header, content } } -->
-  <div class="flex g12">
-
-    <!-- left nav -->
-    <div class="gte-medium">
-      <div class="flex g4" style="position: sticky; top: 0; overflow-y: auto; height: 100vh;">
-        <div class="" id="nav-rail-container">
-          <md-navigation-rail active-index="1">
-            <!-- todo: should maybe just change this slot to "top" or something then can add whatever to the top section -->
-            <md-icon-button slot="menu" id="rail-menu-button">
-              <md-icon>menu</md-icon>
-            </md-icon-button>
-            <md-fab slot="fab" variant="primary" href="/" lowered>
-              <md-icon slot="icon">search</md-icon>
-            </md-fab>
-
-            <md-navigation-tab label="Home">
-              <md-icon slot="active-icon">home</md-icon>
-              <md-icon slot="inactive-icon">home</md-icon>
-            </md-navigation-tab>
-            <md-navigation-tab label="Stuff" href="/">
-              <md-icon slot="active-icon">home</md-icon>
-              <md-icon slot="inactive-icon">home</md-icon>
-            </md-navigation-tab>
-            <md-navigation-tab label="Cart" badge-value="3" show-badge>
-              <md-icon slot="active-icon">shopping_cart</md-icon>
-              <md-icon slot="inactive-icon">shopping_cart</md-icon>
-              <md-badge value="3"></md-badge>
-            </md-navigation-tab>
-          </md-navigation-rail>
-        </div>
-
-
-
-
-        <!-- This one is non-modal, fixed menu, for bigger screens -->
-        <md-navigation-drawer id="nav-drawer">
-          <md-list-item href="/" style="width: 100%;">
-            <md-icon slot="start">home</md-icon>
-            <div slot="headline">Home</div>
-          </md-list-item>
-          <md-list-item href="/inbox">
-            <md-icon slot="start">inbox</md-icon>
-            <div slot="headline">Inbox</div>
-            <div slot="end">24</div>
-          </md-list-item>
-          <md-list-item href="/outbox">
-            <md-icon slot="start">outbox</md-icon>
-            <div slot="headline">Outbox</div>
-          </md-list-item>
-          <md-list-item href="/" style="width: 100%;">
-            <md-icon slot="start">home</md-icon>
-            <div slot="headline">Home</div>
-          </md-list-item>
-          <md-list-item href="/inbox">
-            <md-icon slot="start">inbox</md-icon>
-            <div slot="headline">Inbox</div>
-            <div slot="end">24</div>
-          </md-list-item>
-          <md-list-item href="/outbox">
-            <md-icon slot="start">outbox</md-icon>
-            <div slot="headline">Outbox</div>
-          </md-list-item>
-          <md-list-item href="/" style="width: 100%;">
-            <md-icon slot="start">home</md-icon>
-            <div slot="headline">Home</div>
-          </md-list-item>
-          <md-list-item href="/inbox">
-            <md-icon slot="start">inbox</md-icon>
-            <div slot="headline">Inbox</div>
-            <div slot="end">24</div>
-          </md-list-item>
-          <md-list-item href="/outbox">
-            <md-icon slot="start">outbox</md-icon>
-            <div slot="headline">Outbox</div>
-          </md-list-item>
-          <md-list-item href="/" style="width: 100%;">
-            <md-icon slot="start">home</md-icon>
-            <div slot="headline">Home</div>
-          </md-list-item>
-          <md-list-item href="/inbox">
-            <md-icon slot="start">inbox</md-icon>
-            <div slot="headline">Inbox</div>
-            <div slot="end">24</div>
-          </md-list-item>
-          <md-list-item href="/outbox">
-            <md-icon slot="start">outbox</md-icon>
-            <div slot="headline">Outbox</div>
-          </md-list-item>
-          <md-list-item href="/" style="width: 100%;">
-            <md-icon slot="start">home</md-icon>
-            <div slot="headline">Home</div>
-          </md-list-item>
-          <md-list-item href="/inbox">
-            <md-icon slot="start">inbox</md-icon>
-            <div slot="headline">Inbox</div>
-            <div slot="end">24</div>
-          </md-list-item>
-          <md-list-item href="/outbox">
-            <md-icon slot="start">outbox</md-icon>
-            <div slot="headline">Outbox</div>
-          </md-list-item>
-        </md-navigation-drawer>
-        <script>
-          if (window.matchMedia("(width >=840px)").matches) {
-            // expanded:
-            document.getElementById('nav-drawer').opened = true
-          } 
-        </script>
-      </div>
-    </div>
-
-    <div class="flex col g8">
-
-      <!-- top nav -->
-      <div>
-        <top-nav id="topNav"></top-nav>
-      </div>
-      <script>
-        document.getElementById('topNav').addEventListener('drawerButtonClicked', () => {
-          console.log('drawerButtonClicked')
-          // let display = document.getElementById('nav-drawer-container').style.display
-          // if (display == 'block') {
-          //   document.getElementById('nav-drawer-container').style.display = 'none'
-          //   document.getElementById('nav-drawer').opened = false
-          // } else {
-          //   document.getElementById('nav-drawer-container').style.display = 'block'
-          //   document.getElementById('nav-drawer').opened = true
-          // }
-
-          let opened = document.getElementById('nav-drawer-modal').opened
-          if (opened) {
-            document.getElementById('nav-drawer-modal').opened = false
-          } else {
-            document.getElementById('nav-drawer-modal').opened = true
-          }
-        })
-
-        document.getElementById('rail-menu-button').addEventListener('click', () => {
-          let nd = document.getElementById('nav-drawer')
-          nd.opened = !nd.opened
-        })
-      </script>
-
-      <!-- main content -->
-      <div class="main">
-
-        <div class="flex col g12">
-          <div class="p12">
-            This is a demo of material 3 components from: <a
-              href="https://github.com/treeder/material">https://github.com/treeder/material</a>
+              <md-navigation-tab label="Home">
+                <md-icon slot="active-icon">home</md-icon>
+                <md-icon slot="inactive-icon">home</md-icon>
+              </md-navigation-tab>
+              <md-navigation-tab label="Stuff" href="/">
+                <md-icon slot="active-icon">home</md-icon>
+                <md-icon slot="inactive-icon">home</md-icon>
+              </md-navigation-tab>
+              <md-navigation-tab label="Cart" badge-value="3" show-badge>
+                <md-icon slot="active-icon">shopping_cart</md-icon>
+                <md-icon slot="inactive-icon">shopping_cart</md-icon>
+                <md-badge value="3"></md-badge>
+              </md-navigation-tab>
+            </md-navigation-rail>
           </div>
 
-          <h2>Inputs</h2>
-
-          <md-outlined-text-field label="Name" required minlength="4"></md-outlined-text-field>
-          <md-outlined-text-field id="preferredDate" class="data" type="date" label="Preferred Date" required
-            minlength="4"></md-outlined-text-field>
-          <md-filled-button onclick="save()">Save</md-filled-button>
-
+          <!-- This one is non-modal, fixed menu, for bigger screens -->
+          <md-navigation-drawer id="nav-drawer">
+            <md-list-item href="/" style="width: 100%">
+              <md-icon slot="start">home</md-icon>
+              <div slot="headline">Home</div>
+            </md-list-item>
+            <md-list-item href="/inbox">
+              <md-icon slot="start">inbox</md-icon>
+              <div slot="headline">Inbox</div>
+              <div slot="end">24</div>
+            </md-list-item>
+            <md-list-item href="/outbox">
+              <md-icon slot="start">outbox</md-icon>
+              <div slot="headline">Outbox</div>
+            </md-list-item>
+            <md-list-item href="/" style="width: 100%">
+              <md-icon slot="start">home</md-icon>
+              <div slot="headline">Home</div>
+            </md-list-item>
+            <md-list-item href="/inbox">
+              <md-icon slot="start">inbox</md-icon>
+              <div slot="headline">Inbox</div>
+              <div slot="end">24</div>
+            </md-list-item>
+            <md-list-item href="/outbox">
+              <md-icon slot="start">outbox</md-icon>
+              <div slot="headline">Outbox</div>
+            </md-list-item>
+            <md-list-item href="/" style="width: 100%">
+              <md-icon slot="start">home</md-icon>
+              <div slot="headline">Home</div>
+            </md-list-item>
+            <md-list-item href="/inbox">
+              <md-icon slot="start">inbox</md-icon>
+              <div slot="headline">Inbox</div>
+              <div slot="end">24</div>
+            </md-list-item>
+            <md-list-item href="/outbox">
+              <md-icon slot="start">outbox</md-icon>
+              <div slot="headline">Outbox</div>
+            </md-list-item>
+            <md-list-item href="/" style="width: 100%">
+              <md-icon slot="start">home</md-icon>
+              <div slot="headline">Home</div>
+            </md-list-item>
+            <md-list-item href="/inbox">
+              <md-icon slot="start">inbox</md-icon>
+              <div slot="headline">Inbox</div>
+              <div slot="end">24</div>
+            </md-list-item>
+            <md-list-item href="/outbox">
+              <md-icon slot="start">outbox</md-icon>
+              <div slot="headline">Outbox</div>
+            </md-list-item>
+            <md-list-item href="/" style="width: 100%">
+              <md-icon slot="start">home</md-icon>
+              <div slot="headline">Home</div>
+            </md-list-item>
+            <md-list-item href="/inbox">
+              <md-icon slot="start">inbox</md-icon>
+              <div slot="headline">Inbox</div>
+              <div slot="end">24</div>
+            </md-list-item>
+            <md-list-item href="/outbox">
+              <md-icon slot="start">outbox</md-icon>
+              <div slot="headline">Outbox</div>
+            </md-list-item>
+          </md-navigation-drawer>
           <script>
-            function save() {
-              console.log("Save clicked")
+            if (window.matchMedia('(width >=840px)').matches) {
+              // expanded:
               document.getElementById('nav-drawer').opened = true
             }
           </script>
-
-          <div style="margin-top: 24px;">
-            <demo-component></demo-component>
-          </div>
-
-          <md-snackbar message="Hello World!" open></md-snackbar>
-
         </div>
+      </div>
 
+      <div class="flex col g8">
+        <!-- top nav -->
+        <div>
+          <top-nav id="topNav"></top-nav>
+        </div>
+        <script>
+          document.getElementById('topNav').addEventListener('drawerButtonClicked', () => {
+            console.log('drawerButtonClicked')
+            // let display = document.getElementById('nav-drawer-container').style.display
+            // if (display == 'block') {
+            //   document.getElementById('nav-drawer-container').style.display = 'none'
+            //   document.getElementById('nav-drawer').opened = false
+            // } else {
+            //   document.getElementById('nav-drawer-container').style.display = 'block'
+            //   document.getElementById('nav-drawer').opened = true
+            // }
 
+            let opened = document.getElementById('nav-drawer-modal').opened
+            if (opened) {
+              document.getElementById('nav-drawer-modal').opened = false
+            } else {
+              document.getElementById('nav-drawer-modal').opened = true
+            }
+          })
+
+          document.getElementById('rail-menu-button').addEventListener('click', () => {
+            let nd = document.getElementById('nav-drawer')
+            nd.opened = !nd.opened
+          })
+        </script>
+
+        <!-- main content -->
+        <div class="main">
+          <div class="flex col g12">
+            <div class="p12">
+              This is a demo of material 3 components from:
+              <a href="https://github.com/treeder/material">https://github.com/treeder/material</a>
+            </div>
+
+            <h2>Inputs</h2>
+
+            <md-outlined-text-field label="Name" required minlength="4"></md-outlined-text-field>
+            <md-outlined-text-field
+              id="preferredDate"
+              class="data"
+              type="date"
+              label="Preferred Date"
+              required
+              minlength="4"></md-outlined-text-field>
+            <md-filled-button onclick="save()">Save</md-filled-button>
+
+            <script>
+              function save() {
+                console.log('Save clicked')
+                document.getElementById('nav-drawer').opened = true
+              }
+            </script>
+
+            <div style="margin-top: 24px">
+              <demo-component></demo-component>
+            </div>
+
+            <md-snackbar message="Hello World!" open></md-snackbar>
+          </div>
+        </div>
       </div>
     </div>
 
-  </div>
+    <md-fab class="fabBottom" variant="primary" href="/">
+      <!-- label="New customer" -->
+      <md-icon slot="icon">add</md-icon>
+    </md-fab>
 
-  <md-fab class="fabBottom" variant="primary" href="/"> <!-- label="New customer" -->
-    <md-icon slot="icon">add</md-icon>
-  </md-fab>
+    <div class="compact" style="height: 80px">
+      <!-- this is to add some padding for the nav bar -->
+    </div>
 
-  <div class="compact" style="height: 80px;">
-    <!-- this is to add some padding for the nav bar -->
-  </div>
-
-  <div class="compact" style="position: fixed; bottom: 0; width: 100%;">
-    <md-navigation-bar active-index="1">
-      <md-navigation-tab label="Home">
-        <md-icon slot="active-icon">home</md-icon>
-        <md-icon slot="inactive-icon">home</md-icon>
-      </md-navigation-tab>
-      <md-navigation-tab label="Stuff">
-        <md-icon slot="active-icon">home</md-icon>
-        <md-icon slot="inactive-icon">home</md-icon>
-      </md-navigation-tab>
-      <md-navigation-tab label="Cart" badge-value="3" show-badge>
-        <md-icon slot="active-icon">shopping_cart</md-icon>
-        <md-icon slot="inactive-icon">shopping_cart</md-icon>
-        <md-badge value="3"></md-badge>
-      </md-navigation-tab>
-    </md-navigation-bar>
-  </div>
-
-</body>
-
+    <div class="compact" style="position: fixed; bottom: 0; width: 100%">
+      <md-navigation-bar active-index="1">
+        <md-navigation-tab label="Home">
+          <md-icon slot="active-icon">home</md-icon>
+          <md-icon slot="inactive-icon">home</md-icon>
+        </md-navigation-tab>
+        <md-navigation-tab label="Stuff">
+          <md-icon slot="active-icon">home</md-icon>
+          <md-icon slot="inactive-icon">home</md-icon>
+        </md-navigation-tab>
+        <md-navigation-tab label="Cart" badge-value="3" show-badge>
+          <md-icon slot="active-icon">shopping_cart</md-icon>
+          <md-icon slot="inactive-icon">shopping_cart</md-icon>
+          <md-badge value="3"></md-badge>
+        </md-navigation-tab>
+      </md-navigation-bar>
+    </div>
+  </body>
 </html>

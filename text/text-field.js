@@ -2,16 +2,12 @@ import { LitElement, css, html, nothing } from 'lit'
 import '../internal/field/field.js'
 import '../icon/icon.js'
 import '../buttons/icon-button.js'
-import '../pickers/date-picker-dialog.js'
-import '../pickers/time-picker-dialog.js'
-import '../pickers/date-time-picker-dialog.js'
-import { literal } from 'lit/static-html.js'
+import '../pickers/datetime-picker-dialog.js'
 import { classMap } from 'lit/directives/class-map.js'
 import { live } from 'lit/directives/live.js'
 import { styleMap } from 'lit/directives/style-map.js'
 import { html as staticHtml } from 'lit/static-html.js'
 import { requestUpdateOnAriaChange } from '../internal/aria/delegate.js'
-import { stringConverter } from '../internal/controller/string-converter.js'
 import { redispatchEvent } from '../internal/events/redispatch-event.js'
 import {
   createValidator,
@@ -214,7 +210,7 @@ export class TextField extends textFieldBaseClass {
     this.multiple = false
     /**
      * Returns or sets the element's step attribute, which works with min and max
-     * to limit the increments at which a numeric or date-time value can be set.
+     * to limit the increments at which a numeric or datetime value can be set.
      *
      * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#step
      */
@@ -487,55 +483,42 @@ export class TextField extends textFieldBaseClass {
     >`
   }
   renderDialog() {
-    // ${this.type === 'date' || this.type === 'datetime-local' ? this.renderDateDialog() : ''}
-    if (this.type == 'date') {
-      return this.renderDateDialog()
-    } else if (this.type == 'datetime-local') {
-      return this.renderDateTimeDialog()
-    } else if (this.type == 'time') {
-      return this.renderTimeDialog()
+    if (this.type === 'date' || this.type === 'datetime-local' || this.type === 'time') {
+      return html`
+        <md-datetime-picker-dialog
+          id="datetime-picker-dialog"
+          .type=${this.type}
+          .min=${this.min}
+          .max=${this.max}
+          .value=${this.value}></md-datetime-picker-dialog>
+      `
     }
     return nothing
   }
-  renderDateDialog() {
-    return html`<md-date-picker-dialog id="date-picker"></md-date-picker-dialog>`
-  }
-  renderTimeDialog() {
-    return html`<md-time-picker-dialog id="time-picker"></md-time-picker-dialog>`
-  }
-  renderDateTimeDialog() {
-    return html`<md-date-time-picker-dialog id="date-time-picker"></md-date-time-picker-dialog>`
-  }
 
   handleDatePickerRequest(e) {
-    // this.dispatchEvent(new Event('request-date-picker', { bubbles: true, composed: true }))
-    const fieldPicker = this.renderRoot.getElementById('date-picker')
-    fieldPicker.show()
-    fieldPicker.addEventListener('confirm', () => {
-      this.value = fieldPicker.value
-      this.dispatchEvent(new Event('input', { bubbles: true, composed: true }))
-      this.dispatchEvent(new Event('change', { bubbles: true }))
-    })
+    this.openPickerDialog()
   }
+
   handleDateTimePickerRequest(e) {
-    // this.dispatchEvent(new Event('request-date-picker', { bubbles: true, composed: true }))
-    const fieldPicker = this.renderRoot.getElementById('date-time-picker')
-    fieldPicker.show()
-    fieldPicker.addEventListener('confirm', () => {
-      this.value = fieldPicker.value
-      this.dispatchEvent(new Event('input', { bubbles: true, composed: true }))
-      this.dispatchEvent(new Event('change', { bubbles: true }))
-    })
+    this.openPickerDialog()
   }
+
   handleTimePickerRequest(e) {
-    // this.dispatchEvent(new Event('request-time-picker', { bubbles: true, composed: true }))
-    const fieldPicker = this.renderRoot.getElementById('time-picker')
-    fieldPicker.show()
-    fieldPicker.addEventListener('confirm', () => {
-      this.value = fieldPicker.value
-      this.dispatchEvent(new Event('input', { bubbles: true, composed: true }))
-      this.dispatchEvent(new Event('change', { bubbles: true }))
-    })
+    this.openPickerDialog()
+  }
+
+  openPickerDialog() {
+    const fieldPicker = this.renderRoot.getElementById('datetime-picker-dialog')
+    if (fieldPicker) {
+      fieldPicker.value = this.value // Ensure value is synced
+      fieldPicker.show()
+      fieldPicker.addEventListener('confirm', () => {
+        this.value = fieldPicker.value
+        this.dispatchEvent(new Event('input', { bubbles: true, composed: true }))
+        this.dispatchEvent(new Event('change', { bubbles: true }))
+      })
+    }
   }
   renderInputOrTextarea() {
     const style = { direction: this.textDirection }

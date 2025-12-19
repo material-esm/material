@@ -21,15 +21,17 @@ Please [consider sponsoring](https://github.com/sponsors/treeder) before creatin
 
 ## Material 3 Expressive 🔥
 
-Material 3 Expressive is in progress! [Follow along here](https://github.com/material-esm/material/issues/36).
+Material 3 Expressive is in progress! We recommend using this going forward.
 
 To start using it, see [this topic](https://github.com/orgs/material-esm/discussions/71).
 
-[Material 3 Expressive demo](https://material-esm.github.io/material/demo/expressive)
+[Follow along here](https://github.com/material-esm/material/issues/36).
 
-## Demo
+[Material 3 Expressive demo](https://material-esm.github.io/material/demo/)
 
-Demo is here: https://material-esm.github.io/material/demo/
+## V1 Demo
+
+This is the previous version [demo](https://material-esm.github.io/material/demo/v1.html)
 
 ## Documentation
 

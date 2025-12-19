@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Date Picker Demo</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -37,66 +37,54 @@
       }
     </script>
     <script type="module" src="/pickers/date-picker.js"></script>
-    <script type="module" src="/pickers/date-picker-dialog.js"></script>
+    <script type="module" src="/pickers/datetime-picker-dialog.js"></script>
     <script type="module" src="/buttons/button.js"></script>
     <script type="module" src="/text/text-field.js"></script>
-    
-</head>
-<body>
+  </head>
+  <body>
     <div class="demo-section">
-        <h2>Embedded Date Picker</h2>
-        <md-date-picker id="embedded-picker"></md-date-picker>
-        <p>Selected Value: <span id="embedded-value">None</span></p>
+      <h2>Embedded Date Picker</h2>
+      <md-date-picker id="embedded-picker"></md-date-picker>
+      <p>Selected Value: <span id="embedded-value">None</span></p>
     </div>
 
     <div class="demo-section">
-        <h2>Date Picker Dialog</h2>
-        <md-button id="dialog-trigger" color="filled">Open Date Picker</md-button>
-        <md-date-picker-dialog id="dialog-picker"></md-date-picker-dialog>
-        <p>Dialog Value: <span id="dialog-value">None</span></p>
+      <h2>Date Picker Dialog</h2>
+      <md-button id="dialog-trigger" color="filled">Open Date Picker</md-button>
+      <md-datetime-picker-dialog id="dialog-picker" type="date"></md-datetime-picker-dialog>
+      <p>Dialog Value: <span id="dialog-value">None</span></p>
     </div>
 
     <div class="demo-section">
-        <h2>Text Field with Date Picker</h2>
-        <md-text-field id="date-field" label="Birthday" type="date"></md-text-field>
-        <md-date-picker-dialog id="field-picker"></md-date-picker-dialog>
+      <h2>Text Field with Date Picker</h2>
+      <md-text-field id="date-field" label="Birthday" type="date"></md-text-field>
+      <!-- Picker is now internal to text-field -->
     </div>
-
 
     <script>
-        const embeddedPicker = document.getElementById('embedded-picker');
-        const embeddedValue = document.getElementById('embedded-value');
-        embeddedPicker.addEventListener('change', (e) => {
-            embeddedValue.textContent = e.target.value;
-        });
+      const embeddedPicker = document.getElementById('embedded-picker')
+      const embeddedValue = document.getElementById('embedded-value')
+      embeddedPicker.addEventListener('change', (e) => {
+        embeddedValue.textContent = e.target.value
+      })
 
-        const dialogTrigger = document.getElementById('dialog-trigger');
-        const dialogPicker = document.getElementById('dialog-picker');
-        const dialogValue = document.getElementById('dialog-value');
+      const dialogTrigger = document.getElementById('dialog-trigger')
+      const dialogPicker = document.getElementById('dialog-picker')
+      const dialogValue = document.getElementById('dialog-value')
 
-        dialogTrigger.addEventListener('click', () => {
-            dialogPicker.show();
-        });
+      dialogTrigger.addEventListener('click', () => {
+        dialogPicker.show()
+      })
 
-        dialogPicker.addEventListener('confirm', (e) => {
-            dialogValue.textContent = dialogPicker.value;
-        });
+      dialogPicker.addEventListener('confirm', (e) => {
+        dialogValue.textContent = dialogPicker.value
+      })
 
-        const dateField = document.getElementById('date-field');
-        const fieldPicker = document.getElementById('field-picker');
+      const dateField = document.getElementById('date-field')
 
-        // dateField.addEventListener('request-date-picker', () => {
-        //     fieldPicker.show();
-        // });
-
-        // fieldPicker.addEventListener('confirm', () => {
-        //     dateField.value = fieldPicker.value;
-        // });
-        dateField.addEventListener('change', () => {
-            console.log('data changed')
-        });
-
-
+      dateField.addEventListener('change', () => {
+        console.log('data changed', dateField.value)
+      })
     </script>
-</body>
+  </body>
 </html>
