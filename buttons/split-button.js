@@ -14,7 +14,6 @@ export class SplitButton extends LitElement {
     }
 
     /* Start button styling */
-    slot[name='start']::slotted(md-button),
     .leading-button {
       /* Generic shape flattening for Start Button (Right side flat) */
       --md-button-container-shape-start-end: 0;
