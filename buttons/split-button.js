@@ -90,17 +90,6 @@ export class SplitButton extends LitElement {
       opacity: 0.3;
       align-self: stretch;
     }
-
-    /* Mapping separator colors based on inferred type set in JS */
-    :host([separator-type='filled']) {
-      --_separator-color: var(--md-sys-color-on-primary, #fff);
-    }
-    :host([separator-type='tonal']) {
-      --_separator-color: var(--md-sys-color-on-secondary-container, #1d192b);
-    }
-    :host([separator-type='elevated']) {
-      --_separator-color: var(--md-sys-color-primary, #6750a4);
-    }
   `
 
   static properties = {
@@ -114,20 +103,6 @@ export class SplitButton extends LitElement {
     this.separatorType = 'filled'
     this.color = 'filled'
     this.size = 'medium'
-  }
-
-  get startSlot() {
-    return this.shadowRoot.querySelector('slot[name="start"]')
-  }
-
-  // Use arrow function to bind 'this'
-  handleSlotChange = () => {
-    const nodes = this.startSlot.assignedElements({ flatten: true })
-    const btn = nodes.find((n) => n.tagName === 'MD-BUTTON')
-    if (btn) {
-      const color = btn.getAttribute('color') || 'filled'
-      this.separatorType = color
-    }
   }
 
   render() {
@@ -151,7 +126,6 @@ export class SplitButton extends LitElement {
   }
 
   toggleMenu() {
-    console.log('toggleMenu')
     const menu = this.renderRoot.querySelector('#menu')
     menu.open = !menu.open
   }
