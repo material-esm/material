@@ -82,7 +82,7 @@ class ExpressiveComponent extends LitElement {
               label="What's on your mind?"
               rows="3"
               value=""></md-text-field>
-            <md-select required @change=${this.selected}>
+            <md-select label="Choose your fruit" required @change=${this.selected}>
               <md-select-option aria-label="blank"></md-select-option>
               <md-select-option selected value="apple">
                 <div slot="headline">Apple</div>
@@ -91,7 +91,7 @@ class ExpressiveComponent extends LitElement {
                 <div slot="headline">Orange</div>
               </md-select-option>
             </md-select>
-            <md-select color="filled" required @change=${this.selected}>
+            <md-select label="Choose your fruit" color="filled" required @change=${this.selected}>
               <md-select-option aria-label="blank"></md-select-option>
               <md-select-option selected value="apple">
                 <div slot="headline">Apple</div>
