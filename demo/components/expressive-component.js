@@ -2,6 +2,7 @@ import { html, css, LitElement } from 'lit'
 import 'material/text/text-field.js'
 import 'material/buttons/button.js'
 import 'material/buttons/icon-button.js'
+import 'material/buttons/split-button.js'
 import 'material/card/card.js'
 import 'material/chips/chip-set.js'
 import 'material/chips/chip.js'
@@ -102,6 +103,22 @@ class ExpressiveComponent extends LitElement {
             <div>
               <md-button type="button" @click=${this.save}>Save</md-button>
             </div>
+            <md-split-button color="filled">
+              Send
+              <div slot="menu">
+                <!-- define your menu here -->
+                <md-menu-item>Schedule send</md-menu-item>
+                <md-menu-item>Save template</md-menu-item>
+              </div>
+            </md-split-button>
+            <md-split-button color="outlined">
+              Send
+              <div slot="menu">
+                <!-- define your menu here -->
+                <md-menu-item>Schedule send</md-menu-item>
+                <md-menu-item>Save template</md-menu-item>
+              </div>
+            </md-split-button>
           </div>
         </form>
 

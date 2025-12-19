@@ -182,7 +182,7 @@ export class Menu extends LitElement {
      * - Your browser supports `popover`.
      * - Most cases. Once popover is in browsers, this will become the default.
      */
-    this.positioning = 'absolute'
+    this.positioning = 'popover'
     /**
      * Skips the opening and closing animations.
      */

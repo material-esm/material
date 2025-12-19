@@ -51,3 +51,16 @@ Extended FAB
   <md-icon slot="icon">add</md-icon>
 </md-fab>
 ```
+
+## Split Buttons
+
+```html
+<md-split-button color="filled">
+  Send
+  <div slot="menu">
+    <!-- define your menu here -->
+    <md-menu-item>Schedule send</md-menu-item>
+    <md-menu-item>Save template</md-menu-item>
+  </div>
+</md-split-button>
+```
