@@ -107,8 +107,16 @@ class ExpressiveComponent extends LitElement {
               Send
               <div slot="menu">
                 <!-- define your menu here -->
-                <md-menu-item>Option 1</md-menu-item>
-                <md-menu-item>Option 2</md-menu-item>
+                <md-menu-item>Schedule send</md-menu-item>
+                <md-menu-item>Save template</md-menu-item>
+              </div>
+            </md-split-button>
+            <md-split-button color="outlined">
+              Send
+              <div slot="menu">
+                <!-- define your menu here -->
+                <md-menu-item>Schedule send</md-menu-item>
+                <md-menu-item>Save template</md-menu-item>
               </div>
             </md-split-button>
           </div>

@@ -1,4 +1,8 @@
 import { html, LitElement, css } from 'lit'
+import '../buttons/button.js'
+import '../buttons/icon-button.js'
+import '../menu/menu.js'
+import '../menu/menu-item.js'
 
 export class SplitButton extends LitElement {
   static styles = css`
@@ -84,7 +88,7 @@ export class SplitButton extends LitElement {
 
     /* Separator element styling */
     #separator {
-      width: 1px;
+      width: 2px;
       margin-inline-start: -1px;
       z-index: 2;
       pointer-events: none;
@@ -134,16 +138,28 @@ export class SplitButton extends LitElement {
 
   render() {
     return html`
-      <slot name="start" @slotchange=${this.handleSlotChange}>
-        <md-button class="leading-button" color=${this.color} size=${this.size}>Medium</md-button>
-      </slot>
-      <!-- <slot name="start" @slotchange=${this.handleSlotChange}></slot> -->
+      <md-button class="leading-button" color=${this.color} size=${this.size}>
+        <slot></slot>
+      </md-button>
       <div id="separator"></div>
-      <!-- <slot name="end"></slot> -->
-      <md-icon-button class="trailing-button" color=${this.color} size=${this.size}>
+      <md-icon-button
+        class="trailing-button"
+        id="split-anchor"
+        color=${this.color}
+        size=${this.size}
+        @click=${this.toggleMenu}>
         <md-icon>keyboard_arrow_down</md-icon>
       </md-icon-button>
+      <md-menu id="menu" anchor="split-anchor" positioning="popover">
+        <slot name="menu"></slot>
+      </md-menu>
     `
+  }
+
+  toggleMenu() {
+    console.log('toggleMenu')
+    const menu = this.renderRoot.querySelector('#menu')
+    menu.open = !menu.open
   }
 }
 customElements.define('md-split-button', SplitButton)
