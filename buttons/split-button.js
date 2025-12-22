@@ -102,7 +102,7 @@ export class SplitButton extends LitElement {
     super()
     this.separatorType = 'filled'
     this.color = 'filled'
-    this.size = 'medium'
+    this.size = 'small'
   }
 
   render() {
