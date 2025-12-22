@@ -30,12 +30,19 @@ a:hover {
     display: none;
   }
 
+  .lt-medium {
+    display: block;
+  }
+
   .gte-medium {
     display: none;
   }
 }
 
 @media (width >=600px) {
+  .lt-medium {
+    display: none;
+  }
   .gte-medium {
     display: block;
   }
