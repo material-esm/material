@@ -119,15 +119,17 @@ export class SplitButton extends LitElement {
         @click=${this.toggleMenu}>
         <md-icon>keyboard_arrow_down</md-icon>
       </md-icon-button>
-      <md-menu id="menu" anchor="split-anchor" positioning="popover">
+      <md-menu id="menu" anchor="split-anchor" positioning="popover" @click=${(e) => e.stopPropagation()}>
         <slot name="menu"></slot>
       </md-menu>
     `
   }
 
-  toggleMenu() {
+  toggleMenu(e) {
+    e.stopPropagation()
     const menu = this.renderRoot.querySelector('#menu')
     menu.open = !menu.open
   }
 }
+
 customElements.define('md-split-button', SplitButton)
