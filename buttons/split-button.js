@@ -107,7 +107,7 @@ export class SplitButton extends LitElement {
 
   render() {
     return html`
-      <md-button class="leading-button" color=${this.color} size=${this.size}>
+      <md-button class="leading-button" color=${this.color} size=${this.size} @click=${this.handleLeadingClick}>
         <slot></slot>
       </md-button>
       <div id="separator"></div>
@@ -125,7 +125,18 @@ export class SplitButton extends LitElement {
     `
   }
 
-  toggleMenu() {
+  handleLeadingClick(e) {
+    e.stopPropagation()
+    this.dispatchEvent(
+      new MouseEvent('click', {
+        bubbles: true,
+        composed: true,
+      }),
+    )
+  }
+
+  toggleMenu(e) {
+    e.stopPropagation()
     const menu = this.renderRoot.querySelector('#menu')
     menu.open = !menu.open
   }
