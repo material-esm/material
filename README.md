@@ -132,8 +132,8 @@ In your CSS, set the default font family and sizes, set the following attributes
 @import url(dark.css) (prefers-color-scheme: dark);
 
 :root {
-  --md-ref-typeface-brand: 'Roboto Flex', sans-serif;
-  --md-ref-typeface-plain: 'Roboto Flex', sans-serif;
+  --md-ref-typeface-brand: 'Google Sans Flex', sans-serif;
+  --md-ref-typeface-plain: 'Google Sans Flex', sans-serif;
 
   font-family: var(--md-ref-typeface-plain);
   font-size: 14px;
@@ -155,7 +155,7 @@ Be sure to import the fonts you want to use along with Material Symbols:
   onload="this.onload=null;this.rel='stylesheet'" />
 <link
   rel="preload"
-  href="https://fonts.googleapis.com/css2?family=Roboto+Flex:wght@400;500;700&display=swap"
+  href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;700&display=swap"
   as="style"
   onload="this.onload=null;this.rel='stylesheet'" />
 ```

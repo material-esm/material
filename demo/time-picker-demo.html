@@ -1,8 +1,8 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Time Picker Demo</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -13,7 +13,7 @@
       onload="this.onload=null;this.rel='stylesheet'" />
     <link
       rel="preload"
-      href="https://fonts.googleapis.com/css2?family=Roboto+Flex:wght@400;500;700&family=Roboto+Serif:wght@400;500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;700&display=swap"
       as="style"
       onload="this.onload=null;this.rel='stylesheet'" />
 
@@ -39,45 +39,44 @@
     <script type="module" src="../pickers/time-picker.js"></script>
     <script type="module" src="../pickers/picker-dialog.js"></script>
     <script type="module" src="../buttons/button.js"></script>
-
-</head>
-<body>
+  </head>
+  <body>
     <div class="demo-section">
-        <h2>Embedded Time Picker</h2>
-        <md-time-picker id="embedded-picker"></md-time-picker>
-        <p>Selected Value: <span id="embedded-value">None</span></p>
+      <h2>Embedded Time Picker</h2>
+      <md-time-picker id="embedded-picker"></md-time-picker>
+      <p>Selected Value: <span id="embedded-value">None</span></p>
     </div>
 
     <div class="demo-section">
-        <h2>Time Picker Dialog</h2>
-        <md-button id="dialog-trigger" color="filled">Open Time Picker</md-button>
-        <md-datetime-picker-dialog id="dialog-picker" type="time"></md-datetime-picker-dialog>
-        <p>Dialog Value: <span id="dialog-value">None</span></p>
+      <h2>Time Picker Dialog</h2>
+      <md-button id="dialog-trigger" color="filled">Open Time Picker</md-button>
+      <md-datetime-picker-dialog id="dialog-picker" type="time"></md-datetime-picker-dialog>
+      <p>Dialog Value: <span id="dialog-value">None</span></p>
     </div>
 
     <script>
-        // Embedded
-        const embeddedPicker = document.getElementById('embedded-picker');
-        const embeddedValue = document.getElementById('embedded-value');
+      // Embedded
+      const embeddedPicker = document.getElementById('embedded-picker')
+      const embeddedValue = document.getElementById('embedded-value')
 
-        embeddedValue.textContent = embeddedPicker.value;
+      embeddedValue.textContent = embeddedPicker.value
 
-        embeddedPicker.addEventListener('change', (e) => {
-            embeddedValue.textContent = e.target.value;
-        });
+      embeddedPicker.addEventListener('change', (e) => {
+        embeddedValue.textContent = e.target.value
+      })
 
-        // Dialog
-        const dialogTrigger = document.getElementById('dialog-trigger');
-        const dialogPicker = document.getElementById('dialog-picker');
-        const dialogValue = document.getElementById('dialog-value');
+      // Dialog
+      const dialogTrigger = document.getElementById('dialog-trigger')
+      const dialogPicker = document.getElementById('dialog-picker')
+      const dialogValue = document.getElementById('dialog-value')
 
-        dialogTrigger.addEventListener('click', () => {
-            dialogPicker.show();
-        });
+      dialogTrigger.addEventListener('click', () => {
+        dialogPicker.show()
+      })
 
-        dialogPicker.addEventListener('confirm', (e) => {
-            dialogValue.textContent = dialogPicker.value;
-        });
+      dialogPicker.addEventListener('confirm', (e) => {
+        dialogValue.textContent = dialogPicker.value
+      })
     </script>
-</body>
+  </body>
 </html>

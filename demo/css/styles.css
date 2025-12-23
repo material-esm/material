@@ -7,8 +7,8 @@ body {
 }
 
 :root {
-  --md-ref-typeface-brand: 'Roboto Flex', sans-serif;
-  --md-ref-typeface-plain: 'Roboto Flex', sans-serif;
+  --md-ref-typeface-brand: 'Google Sans Flex', sans-serif;
+  --md-ref-typeface-plain: 'Google Sans Flex', sans-serif;
 
   background: var(--md-sys-color-background);
   color: var(--md-sys-color-on-background);
