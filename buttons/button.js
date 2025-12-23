@@ -794,10 +794,7 @@ export class Button extends LitElement {
         position: absolute;
         box-sizing: border-box;
         border-color: var(--_outline-color);
-        border-start-start-radius: var(--_container-shape-start-start);
-        border-start-end-radius: var(--_container-shape-start-end);
-        border-end-start-radius: var(--_container-shape-end-start);
-        border-end-end-radius: var(--_container-shape-end-end);
+        border-radius: inherit;
       }
 
       :host(:active) .outlined {
@@ -1072,19 +1069,24 @@ export class Button extends LitElement {
       :host([shape='square'][size='extra-large']) {
         border-radius: 28px;
       }
-      :host([pressed][size='extra-small']) {
+      :host([pressed][size='extra-small']),
+      :host([selected][size='extra-small']) {
         border-radius: 8px;
       }
-      :host([pressed][size='small']) {
+      :host([pressed][size='small']),
+      :host([selected][size='small']) {
         border-radius: 8px;
       }
-      :host([pressed][size='medium']) {
+      :host([pressed][size='medium']),
+      :host([selected][size='medium']) {
         border-radius: 12px;
       }
-      :host([pressed][size='large']) {
+      :host([pressed][size='large']),
+      :host([selected][size='large']) {
         border-radius: 16px;
       }
-      :host([pressed][size='extra-large']) {
+      :host([pressed][size='extra-large']),
+      :host([selected][size='extra-large']) {
         border-radius: 16px;
       }
     `,
