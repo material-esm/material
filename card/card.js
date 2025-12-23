@@ -5,7 +5,7 @@ import { html, LitElement, css } from 'lit'
  */
 export class Card extends LitElement {
   static properties = {
-    type: { type: String },
+    type: { type: String, reflect: true },
   }
 
   constructor() {
@@ -25,7 +25,7 @@ export class Card extends LitElement {
   static styles = [
     css`
       :host {
-        border-radius: var(--_container-shape);
+        border-radius: var(--_container-shape, 12px);
         box-sizing: border-box;
         display: flex;
         flex-direction: column;
