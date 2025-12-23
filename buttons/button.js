@@ -22,7 +22,6 @@ export class Button extends LitElement {
   }
 
   static properties = {
-    toggle: { type: Boolean, reflect: true },
     size: { type: String, reflect: true },
     shape: { type: String, reflect: true },
     color: { type: String, reflect: true }, // this is elevated, filled, etc. Not an actual color.
@@ -33,6 +32,8 @@ export class Button extends LitElement {
     trailingIcon: { type: Boolean, attribute: 'trailing-icon', reflect: true },
     hasIcon: { type: Boolean, attribute: 'has-icon', reflect: true },
     type: { type: String },
+    selected: { type: Boolean, reflect: true },
+    toggle: { type: Boolean, reflect: true },
   }
 
   get name() {
@@ -49,7 +50,6 @@ export class Button extends LitElement {
   constructor() {
     super()
 
-    this.toggle = false
     /**
      * Accepted values are 'small' (default), 'extra-small', 'medium', 'large', 'extra-large'.
      */
@@ -98,6 +98,16 @@ export class Button extends LitElement {
      * form.
      */
     this.value = ''
+
+    /**
+     * Whether or not the toggle button is selected.
+     */
+    this.selected = false
+    /**
+     * Set to turn this into a toggle button.
+     */
+    this.toggle = false
+
     this.handleActivationClick = (event) => {
       if (!isActivationClick(event) || !this.buttonElement) {
         return
@@ -162,9 +172,13 @@ export class Button extends LitElement {
     this.pressed = false
   }
   handleClick(event) {
-    // if (this.href) {
-    //   event.preventDefault()
-    // }
+    if (this.disabled || !this.toggle) {
+      return
+    }
+
+    this.selected = !this.selected
+    this.dispatchEvent(new InputEvent('input', { bubbles: true, composed: true }))
+    this.dispatchEvent(new Event('change', { bubbles: true }))
   }
   renderButton() {
     // Needed for closure conformance
@@ -175,7 +189,8 @@ export class Button extends LitElement {
       ?disabled=${this.disabled}
       aria-label="${ariaLabel || nothing}"
       aria-haspopup="${ariaHasPopup || nothing}"
-      aria-expanded="${ariaExpanded || nothing}">
+      aria-expanded="${ariaExpanded || nothing}"
+      aria-pressed="${this.toggle ? this.selected : nothing}">
       ${this.renderContent()}
     </button>`
   }
@@ -188,6 +203,7 @@ export class Button extends LitElement {
       aria-label="${ariaLabel || nothing}"
       aria-haspopup="${ariaHasPopup || nothing}"
       aria-expanded="${ariaExpanded || nothing}"
+      aria-pressed="${this.toggle ? this.selected : nothing}"
       href=${this.href}
       target=${this.target || nothing}
       >${this.renderContent()}
@@ -275,6 +291,35 @@ export class Button extends LitElement {
         --_with-leading-icon-trailing-space: var(--md-button-with-leading-icon-trailing-space, 24px);
         --_with-trailing-icon-leading-space: var(--md-button-with-trailing-icon-leading-space, 24px);
         --_with-trailing-icon-trailing-space: var(--md-button-with-trailing-icon-trailing-space, 16px);
+      }
+      :host([color='filled'][toggle]:not([selected])) {
+        --_container-color: var(
+          --md-button-unselected-container-color,
+          var(--md-sys-color-surface-container-highest, #e6e0e9)
+        );
+        --_label-text-color: var(--md-button-unselected-label-text-color, var(--md-sys-color-primary, #6750a4));
+        --_icon-color: var(--md-button-unselected-icon-color, var(--md-sys-color-primary, #6750a4));
+        --_hover-state-layer-color: var(
+          --md-button-unselected-hover-state-layer-color,
+          var(--md-sys-color-primary, #6750a4)
+        );
+        --_pressed-state-layer-color: var(
+          --md-button-unselected-pressed-state-layer-color,
+          var(--md-sys-color-primary, #6750a4)
+        );
+      }
+      :host([color='filled'][selected]) {
+        --_container-color: var(--md-button-selected-container-color, var(--md-sys-color-primary, #6750a4));
+        --_label-text-color: var(--md-button-selected-label-text-color, var(--md-sys-color-on-primary, #fff));
+        --_icon-color: var(--md-button-selected-icon-color, var(--md-sys-color-on-primary, #fff));
+        --_hover-state-layer-color: var(
+          --md-button-selected-hover-state-layer-color,
+          var(--md-sys-color-on-primary, #fff)
+        );
+        --_pressed-state-layer-color: var(
+          --md-button-selected-pressed-state-layer-color,
+          var(--md-sys-color-on-primary, #fff)
+        );
       }
     `,
     css`
@@ -386,6 +431,42 @@ export class Button extends LitElement {
         --_with-trailing-icon-leading-space: var(--md-filled-tonal-button-with-trailing-icon-leading-space, 24px);
         --_with-trailing-icon-trailing-space: var(--md-filled-tonal-button-with-trailing-icon-trailing-space, 16px);
       }
+      :host([color='tonal'][toggle]:not([selected])) {
+        --_container-color: var(
+          --md-filled-tonal-button-unselected-container-color,
+          var(--md-sys-color-surface-container-highest, #e6e0e9)
+        );
+        --_label-text-color: var(
+          --md-filled-tonal-button-unselected-label-text-color,
+          var(--md-sys-color-on-surface-variant, #49454f)
+        );
+        --_icon-color: var(
+          --md-filled-tonal-button-unselected-icon-color,
+          var(--md-sys-color-on-surface-variant, #49454f)
+        );
+        --_hover-state-layer-color: var(
+          --md-filled-tonal-button-unselected-hover-state-layer-color,
+          var(--md-sys-color-on-surface-variant, #49454f)
+        );
+        --_pressed-state-layer-color: var(
+          --md-filled-tonal-button-unselected-pressed-state-layer-color,
+          var(--md-sys-color-on-surface-variant, #49454f)
+        );
+      }
+      :host([color='tonal'][selected]) {
+        --_container-color: var(
+          --md-filled-tonal-button-selected-container-color,
+          var(--md-sys-color-secondary-container, #e8def8)
+        );
+        --_label-text-color: var(
+          --md-filled-tonal-button-selected-label-text-color,
+          var(--md-sys-color-on-secondary-container, #1d192b)
+        );
+        --_icon-color: var(
+          --md-filled-tonal-button-selected-icon-color,
+          var(--md-sys-color-on-secondary-container, #1d192b)
+        );
+      }
     `,
     // elevated
     css`
@@ -478,6 +559,37 @@ export class Button extends LitElement {
         --_with-leading-icon-trailing-space: var(--md-elevated-button-with-leading-icon-trailing-space, 24px);
         --_with-trailing-icon-leading-space: var(--md-elevated-button-with-trailing-icon-leading-space, 24px);
         --_with-trailing-icon-trailing-space: var(--md-elevated-button-with-trailing-icon-trailing-space, 16px);
+      }
+      :host([color='elevated'][toggle]:not([selected])) {
+        --_container-color: var(
+          --md-elevated-button-unselected-container-color,
+          var(--md-sys-color-surface-container-highest, #e6e0e9)
+        );
+        --_label-text-color: var(
+          --md-elevated-button-unselected-label-text-color,
+          var(--md-sys-color-primary, #6750a4)
+        );
+        --_icon-color: var(--md-elevated-button-unselected-icon-color, var(--md-sys-color-primary, #6750a4));
+      }
+
+      :host([color='elevated'][selected]) {
+        --_container-color: var(--md-elevated-button-selected-container-color, var(--md-sys-color-primary, #6750a4));
+        --_label-text-color: var(--md-elevated-button-selected-label-text-color, var(--md-sys-color-on-primary, #fff));
+        --_icon-color: var(--md-elevated-button-selected-icon-color, var(--md-sys-color-on-primary, #fff));
+      }
+
+      :host([color='elevated'][selected]) {
+        --_container-color: var(--md-elevated-button-selected-container-color, var(--md-sys-color-primary, #6750a4));
+        --_label-text-color: var(--md-elevated-button-selected-label-text-color, var(--md-sys-color-on-primary, #fff));
+        --_icon-color: var(--md-elevated-button-selected-icon-color, var(--md-sys-color-on-primary, #fff));
+        --_hover-state-layer-color: var(
+          --md-elevated-button-selected-hover-state-layer-color,
+          var(--md-sys-color-on-primary, #fff)
+        );
+        --_pressed-state-layer-color: var(
+          --md-elevated-button-selected-pressed-state-layer-color,
+          var(--md-sys-color-on-primary, #fff)
+        );
       }
 
       md-elevation {
@@ -577,6 +689,17 @@ export class Button extends LitElement {
       :host([color='text'].inverse) {
         --_label-text-color: var(--md-button-label-text-color, var(--md-sys-color-on-primary, #6750a4));
       }
+      :host([color='text'][selected]) {
+        --_container-color: var(
+          --md-text-button-selected-container-color,
+          var(--md-sys-color-secondary-container, #e8def8)
+        );
+        --_label-text-color: var(
+          --md-text-button-selected-label-text-color,
+          var(--md-sys-color-on-secondary-container, #1d192b)
+        );
+        --_icon-color: var(--md-text-button-selected-icon-color, var(--md-sys-color-on-secondary-container, #1d192b));
+      }
     `,
     css`
       :host([color='outlined']) {
@@ -666,16 +789,26 @@ export class Button extends LitElement {
         --_disabled-container-opacity: 0;
       }
 
+      :host([color='outlined'][selected]) {
+        --_container-color: var(
+          --md-outlined-button-selected-container-color,
+          var(--md-sys-color-inverse-surface, #313033)
+        );
+        --_label-text-color: var(
+          --md-outlined-button-selected-label-text-color,
+          var(--md-sys-color-inverse-on-surface, #f4eff4)
+        );
+        --_icon-color: var(--md-outlined-button-selected-icon-color, var(--md-sys-color-inverse-on-surface, #f4eff4));
+        --_outline-color: var(--md-outlined-button-selected-outline-color, transparent);
+      }
+
       .outlined {
         inset: 0;
         border-style: solid;
         position: absolute;
         box-sizing: border-box;
         border-color: var(--_outline-color);
-        border-start-start-radius: var(--_container-shape-start-start);
-        border-start-end-radius: var(--_container-shape-start-end);
-        border-end-start-radius: var(--_container-shape-end-start);
-        border-end-end-radius: var(--_container-shape-end-end);
+        border-radius: inherit;
       }
 
       :host(:active) .outlined {
@@ -950,19 +1083,24 @@ export class Button extends LitElement {
       :host([shape='square'][size='extra-large']) {
         border-radius: 28px;
       }
-      :host([pressed][size='extra-small']) {
+      :host([pressed][size='extra-small']),
+      :host([selected][size='extra-small']) {
         border-radius: 8px;
       }
-      :host([pressed][size='small']) {
+      :host([pressed][size='small']),
+      :host([selected][size='small']) {
         border-radius: 8px;
       }
-      :host([pressed][size='medium']) {
+      :host([pressed][size='medium']),
+      :host([selected][size='medium']) {
         border-radius: 12px;
       }
-      :host([pressed][size='large']) {
+      :host([pressed][size='large']),
+      :host([selected][size='large']) {
         border-radius: 16px;
       }
-      :host([pressed][size='extra-large']) {
+      :host([pressed][size='extra-large']),
+      :host([selected][size='extra-large']) {
         border-radius: 16px;
       }
     `,

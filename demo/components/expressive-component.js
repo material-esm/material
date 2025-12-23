@@ -232,6 +232,15 @@ class ExpressiveComponent extends LitElement {
           <md-button shape="square" size="extra-large">Extra large</md-button>
         </div>
 
+        <h3>Toggle buttons</h3>
+        <div class="flexw g12 aic">
+          <md-button toggle>Toggle me</md-button>
+          <md-button toggle color="elevated">Toggle me</md-button>
+          <md-button toggle color="tonal">Tonal</md-button>
+          <md-button toggle color="outlined">Outlined</md-button>
+          <md-button toggle shape="square">Toggle me</md-button>
+        </div>
+
         <h3>Chips</h3>
         <md-chip-set>
           <md-chip type="assist" label="Assist chip" @click=${this.clicked}>
