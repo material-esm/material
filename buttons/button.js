@@ -578,6 +578,20 @@ export class Button extends LitElement {
         --_icon-color: var(--md-elevated-button-selected-icon-color, var(--md-sys-color-on-primary, #fff));
       }
 
+      :host([color='elevated'][selected]) {
+        --_container-color: var(--md-elevated-button-selected-container-color, var(--md-sys-color-primary, #6750a4));
+        --_label-text-color: var(--md-elevated-button-selected-label-text-color, var(--md-sys-color-on-primary, #fff));
+        --_icon-color: var(--md-elevated-button-selected-icon-color, var(--md-sys-color-on-primary, #fff));
+        --_hover-state-layer-color: var(
+          --md-elevated-button-selected-hover-state-layer-color,
+          var(--md-sys-color-on-primary, #fff)
+        );
+        --_pressed-state-layer-color: var(
+          --md-elevated-button-selected-pressed-state-layer-color,
+          var(--md-sys-color-on-primary, #fff)
+        );
+      }
+
       md-elevation {
         transition-duration: 280ms;
         inset: 0;

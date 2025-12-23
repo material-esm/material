@@ -235,7 +235,10 @@ class ExpressiveComponent extends LitElement {
         <h3>Toggle buttons</h3>
         <div class="flexw g12 aic">
           <md-button toggle>Toggle me</md-button>
-          <md-button shape="square" toggle>Toggle me</md-button>
+          <md-button toggle color="elevated">Toggle me</md-button>
+          <md-button toggle color="tonal">Tonal</md-button>
+          <md-button toggle color="outlined">Outlined</md-button>
+          <md-button toggle shape="square">Toggle me</md-button>
         </div>
 
         <h3>Chips</h3>
