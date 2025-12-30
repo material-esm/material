@@ -48,6 +48,7 @@ import { FocusState, isElementInSubtree, isSelectableKey } from '../menu/control
 import { TYPEAHEAD_RECORD } from '../menu/controllers/typeaheadController.js'
 import { DEFAULT_TYPEAHEAD_BUFFER_TIME } from '../menu/menu.js'
 import { queryAssignedElements, queryAssignedNodes } from '../utils/query.js'
+import '../internal/field/field.js'
 
 const VALUE = Symbol('value')
 // Separate variable needed for closure.
