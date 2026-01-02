@@ -1058,6 +1058,7 @@ export class Button extends LitElement {
         font-size: 16px;
         line-height: 24px;
         border-width: 1px;
+        --_icon-size: 24px;
       }
       :host([size='large']) {
         height: 96px;
@@ -1067,6 +1068,7 @@ export class Button extends LitElement {
         font-size: 24px;
         line-height: 32px;
         border-width: 2px;
+        --_icon-size: 32px;
       }
       :host([size='extra-large']) {
         height: 136px;
@@ -1076,6 +1078,7 @@ export class Button extends LitElement {
         font-size: 32px;
         line-height: 40px;
         border-width: 3px;
+        --_icon-size: 40px;
       }
     `,
     // shapes

@@ -200,7 +200,7 @@ class ExpressiveComponent extends LitElement {
           <md-button size="extra-small">Extra small</md-button>
           <md-button size="small">Small</md-button>
           <md-button size="medium"><md-icon slot="icon">edit</md-icon>Medium</md-button>
-          <md-button size="large">Large</md-button>
+          <md-button size="large"><md-icon slot="icon">add</md-icon>Large</md-button>
           <md-button size="extra-large">Extra large</md-button>
         </div>
 
