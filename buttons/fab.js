@@ -49,7 +49,7 @@ export class Fab extends LitElement {
     /**
      * The size of the FAB.
      */
-    this.size = 'medium'
+    this.size = 'small'
     /**
      * The text to display on the FAB.
      */
@@ -503,8 +503,8 @@ export class Fab extends LitElement {
           --md-fab-secondary-pressed-state-layer-color,
           var(--md-sys-color-on-secondary-container, #1d192b)
         );
-        --_small-container-height: var(--md-fab-small-container-height, 40px);
-        --_small-container-width: var(--md-fab-small-container-width, 40px);
+        --_small-container-height: var(--md-fab-small-container-height, 56px);
+        --_small-container-width: var(--md-fab-small-container-width, 56px);
         --_small-icon-size: var(--md-fab-small-icon-size, 24px);
         --_tertiary-container-color: var(
           --md-fab-tertiary-container-color,
