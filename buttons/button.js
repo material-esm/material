@@ -844,12 +844,12 @@ export class Button extends LitElement {
 
       .outlined,
       md-ripple {
-        border-width: var(--_outline-width);
+        border-width: var(--_outline-width, 0px);
       }
 
       md-ripple {
-        inline-size: calc(100% - 2 * var(--_outline-width));
-        block-size: calc(100% - 2 * var(--_outline-width));
+        inline-size: calc(100% - 2 * var(--_outline-width, 0px));
+        block-size: calc(100% - 2 * var(--_outline-width, 0px));
         border-style: solid;
         border-color: rgba(0, 0, 0, 0);
       }
