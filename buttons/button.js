@@ -715,18 +715,21 @@ export class Button extends LitElement {
         --_disabled-outline-opacity: var(--md-outlined-button-disabled-outline-opacity, 0.12);
         --_focus-label-text-color: var(
           --md-outlined-button-focus-label-text-color,
-          var(--md-sys-color-primary, #6750a4)
+          var(--md-sys-color-on-surface-variant, #6750a4)
         );
         --_hover-label-text-color: var(
           --md-outlined-button-hover-label-text-color,
-          var(--md-sys-color-primary, #6750a4)
+          var(--md-sys-color-on-surface-variant, #6750a4)
         );
         --_hover-state-layer-color: var(
           --md-outlined-button-hover-state-layer-color,
           var(--md-sys-color-primary, #6750a4)
         );
         --_hover-state-layer-opacity: var(--md-outlined-button-hover-state-layer-opacity, 0.08);
-        --_label-text-color: var(--md-outlined-button-label-text-color, var(--md-sys-color-primary, #6750a4));
+        --_label-text-color: var(
+          --md-outlined-button-label-text-color,
+          var(--md-sys-color-on-surface-variant, #6750a4)
+        );
         --_label-text-font: var(
           --md-outlined-button-label-text-font,
           var(--md-sys-typescale-label-large-font, var(--md-ref-typeface-plain, Roboto))
@@ -747,7 +750,7 @@ export class Button extends LitElement {
         --_outline-width: var(--md-outlined-button-outline-width, 1px);
         --_pressed-label-text-color: var(
           --md-outlined-button-pressed-label-text-color,
-          var(--md-sys-color-primary, #6750a4)
+          var(--md-sys-color-on-surface-variant, #6750a4)
         );
         --_pressed-outline-color: var(--md-outlined-button-pressed-outline-color, var(--md-sys-color-outline, #79747e));
         --_pressed-state-layer-color: var(
@@ -757,11 +760,20 @@ export class Button extends LitElement {
         --_pressed-state-layer-opacity: var(--md-outlined-button-pressed-state-layer-opacity, 0.12);
         --_disabled-icon-color: var(--md-outlined-button-disabled-icon-color, var(--md-sys-color-on-surface, #1d1b20));
         --_disabled-icon-opacity: var(--md-outlined-button-disabled-icon-opacity, 0.38);
-        --_focus-icon-color: var(--md-outlined-button-focus-icon-color, var(--md-sys-color-primary, #6750a4));
-        --_hover-icon-color: var(--md-outlined-button-hover-icon-color, var(--md-sys-color-primary, #6750a4));
-        --_icon-color: var(--md-outlined-button-icon-color, var(--md-sys-color-primary, #6750a4));
+        --_focus-icon-color: var(
+          --md-outlined-button-focus-icon-color,
+          var(--md-sys-color-on-surface-variant, #6750a4)
+        );
+        --_hover-icon-color: var(
+          --md-outlined-button-hover-icon-color,
+          var(--md-sys-color-on-surface-variant, #6750a4)
+        );
+        --_icon-color: var(--md-outlined-button-icon-color, var(--md-sys-color-on-surface-variant, #6750a4));
         --_icon-size: var(--md-outlined-button-icon-size, 18px);
-        --_pressed-icon-color: var(--md-outlined-button-pressed-icon-color, var(--md-sys-color-primary, #6750a4));
+        --_pressed-icon-color: var(
+          --md-outlined-button-pressed-icon-color,
+          var(--md-sys-color-on-surface-variant, #6750a4)
+        );
         --_container-shape-start-start: var(
           --md-outlined-button-container-shape-start-start,
           var(--md-outlined-button-container-shape, var(--md-sys-shape-corner-full, 9999px))

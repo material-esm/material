@@ -211,6 +211,10 @@ class ExpressiveComponent extends LitElement {
             Elevated
           </md-button>
           <md-button color="outlined">Outlined</md-button>
+          <md-button color="outlined">
+            <md-icon slot="icon">archive</md-icon>
+            Outlined Icon
+          </md-button>
           <md-button color="filled">
             <md-icon slot="icon">edit</md-icon>
             Filled

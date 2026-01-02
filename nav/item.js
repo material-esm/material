@@ -69,10 +69,10 @@ export class NavigationItem extends LitElement {
   renderTab() {
     let flexDir = this.expanded ? 'expanded row aic jcc' : 'col'
     return html` <md-focus-ring part="focus-ring" inward></md-focus-ring>
-      <md-ripple ?disabled="${this.disabled}" class="md3-navigation-tab__ripple"></md-ripple>
       <div class="flex ${flexDir} g8 aic jcc">
         <div aria-hidden="true" class="md3-navigation-tab__icon-content">
           <span class="md3-navigation-tab__active-indicator"></span>
+          <md-ripple ?disabled="${this.disabled}" class="md3-navigation-tab__ripple"></md-ripple>
           <span class="md3-navigation-tab__icon">
             <slot name="inactive-icon"></slot>
           </span>
@@ -359,6 +359,7 @@ export class NavigationItem extends LitElement {
       .md3-navigation-tab__active-indicator,
       .md3-navigation-tab__icon-content {
         height: var(--_active-indicator-height);
+        border-radius: var(--_active-indicator-shape);
       }
 
       .md3-navigation-tab--active .md3-navigation-tab__active-indicator,
