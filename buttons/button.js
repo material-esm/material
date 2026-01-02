@@ -267,7 +267,7 @@ export class Button extends LitElement {
         --_focus-icon-color: var(--md-button-focus-icon-color, var(--md-sys-color-on-primary, #fff));
         --_hover-icon-color: var(--md-button-hover-icon-color, var(--md-sys-color-on-primary, #fff));
         --_icon-color: var(--md-button-icon-color, var(--md-sys-color-on-primary, #fff));
-        --_icon-size: var(--md-button-icon-size, 18px);
+        --_icon-size: var(--md-button-icon-size, 20px);
         --_pressed-icon-color: var(--md-button-pressed-icon-color, var(--md-sys-color-on-primary, #fff));
         --_container-shape-start-start: var(
           --md-button-container-shape-start-start,
@@ -403,7 +403,7 @@ export class Button extends LitElement {
           var(--md-sys-color-on-secondary-container, #1d192b)
         );
         --_icon-color: var(--md-filled-tonal-button-icon-color, var(--md-sys-color-on-secondary-container, #1d192b));
-        --_icon-size: var(--md-filled-tonal-button-icon-size, 18px);
+        --_icon-size: var(--md-filled-tonal-button-icon-size, 20px);
         --_pressed-icon-color: var(
           --md-filled-tonal-button-pressed-icon-color,
           var(--md-sys-color-on-secondary-container, #1d192b)
@@ -535,7 +535,7 @@ export class Button extends LitElement {
         --_focus-icon-color: var(--md-elevated-button-focus-icon-color, var(--md-sys-color-primary, #6750a4));
         --_hover-icon-color: var(--md-elevated-button-hover-icon-color, var(--md-sys-color-primary, #6750a4));
         --_icon-color: var(--md-elevated-button-icon-color, var(--md-sys-color-primary, #6750a4));
-        --_icon-size: var(--md-elevated-button-icon-size, 18px);
+        --_icon-size: var(--md-elevated-button-icon-size, 20px);
         --_pressed-icon-color: var(--md-elevated-button-pressed-icon-color, var(--md-sys-color-primary, #6750a4));
         --_container-shape-start-start: var(
           --md-elevated-button-container-shape-start-start,
@@ -657,7 +657,7 @@ export class Button extends LitElement {
         --_focus-icon-color: var(--md-button-focus-icon-color, var(--md-sys-color-primary, #6750a4));
         --_hover-icon-color: var(--md-button-hover-icon-color, var(--md-sys-color-primary, #6750a4));
         --_icon-color: var(--md-button-icon-color, var(--md-sys-color-primary, #6750a4));
-        --_icon-size: var(--md-button-icon-size, 18px);
+        --_icon-size: var(--md-button-icon-size, 20px);
         --_pressed-icon-color: var(--md-button-pressed-icon-color, var(--md-sys-color-primary, #6750a4));
         --_container-shape-start-start: var(
           --md-button-container-shape-start-start,
@@ -769,7 +769,7 @@ export class Button extends LitElement {
           var(--md-sys-color-on-surface-variant, #6750a4)
         );
         --_icon-color: var(--md-outlined-button-icon-color, var(--md-sys-color-on-surface-variant, #6750a4));
-        --_icon-size: var(--md-outlined-button-icon-size, 18px);
+        --_icon-size: var(--md-outlined-button-icon-size, 20px);
         --_pressed-icon-color: var(
           --md-outlined-button-pressed-icon-color,
           var(--md-sys-color-on-surface-variant, #6750a4)
