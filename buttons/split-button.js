@@ -96,6 +96,7 @@ export class SplitButton extends LitElement {
     separatorType: { type: String, reflect: true, attribute: 'separator-type' },
     color: { type: String },
     size: { type: String },
+    disabled: { type: Boolean, reflect: true },
   }
 
   constructor() {
@@ -103,11 +104,12 @@ export class SplitButton extends LitElement {
     this.separatorType = 'filled'
     this.color = 'filled'
     this.size = 'small'
+    this.disabled = false
   }
 
   render() {
     return html`
-      <md-button class="leading-button" color=${this.color} size=${this.size}>
+      <md-button class="leading-button" color=${this.color} size=${this.size} ?disabled=${this.disabled}>
         <slot></slot>
       </md-button>
       <div id="separator"></div>
@@ -116,6 +118,7 @@ export class SplitButton extends LitElement {
         id="split-anchor"
         color=${this.color}
         size=${this.size}
+        ?disabled=${this.disabled}
         @click=${this.toggleMenu}>
         <md-icon>keyboard_arrow_down</md-icon>
       </md-icon-button>
