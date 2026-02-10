@@ -123,7 +123,7 @@ export class SplitButton extends LitElement {
   }
 
   handleEvent(event) {
-    if (this.disabled && event.type === 'click') {
+    if (this.disabled) {
       event.stopPropagation()
       event.preventDefault()
     }
