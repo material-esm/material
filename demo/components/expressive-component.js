@@ -111,7 +111,15 @@ class ExpressiveComponent extends LitElement {
                 <md-menu-item @click=${this.clicked2}>Save template</md-menu-item>
               </div>
             </md-split-button>
-            <md-split-button color="outlined">
+            <md-split-button color="outlined" @click=${this.clicked}>
+              Send
+              <div slot="menu">
+                <!-- define your menu here -->
+                <md-menu-item>Schedule send</md-menu-item>
+                <md-menu-item>Save template</md-menu-item>
+              </div>
+            </md-split-button>
+            <md-split-button color="outlined" @click=${this.clicked} disabled>
               Send
               <div slot="menu">
                 <!-- define your menu here -->

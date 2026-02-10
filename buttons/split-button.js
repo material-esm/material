@@ -13,6 +13,10 @@ export class SplitButton extends LitElement {
       position: relative;
     }
 
+    :host([disabled]) {
+      cursor: default;
+    }
+
     /* Start button styling */
     .leading-button {
       /* Generic shape flattening for Start Button (Right side flat) */
@@ -105,6 +109,24 @@ export class SplitButton extends LitElement {
     this.color = 'filled'
     this.size = 'small'
     this.disabled = false
+    this.handleEvent = this.handleEvent.bind(this)
+  }
+
+  connectedCallback() {
+    super.connectedCallback()
+    this.addEventListener('click', this.handleEvent, { capture: true })
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback()
+    this.removeEventListener('click', this.handleEvent, { capture: true })
+  }
+
+  handleEvent(event) {
+    if (this.disabled) {
+      event.stopPropagation()
+      event.preventDefault()
+    }
   }
 
   render() {
