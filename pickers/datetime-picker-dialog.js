@@ -43,7 +43,7 @@ export class DateTimePickerDialog extends LitElement {
     } else if (this.type === 'time') {
       this._time = this.value || '00:00'
     } else if (this.type === 'datetime-local') {
-      if (this.value) {
+      if (this.value && typeof this.value === 'string') {
         const [d, t] = this.value.split('T')
         this._date = d || ''
         this._time = t || ''
