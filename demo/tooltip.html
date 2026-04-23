@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tooltip Demo</title>
+  <script type="importmap">
+    {
+      "imports": {
+        "lit": "https://cdn.jsdelivr.net/npm/lit@3/index.js",
+        "lit/": "https://cdn.jsdelivr.net/npm/lit@3/",
+        "@lit/localize": "https://cdn.jsdelivr.net/npm/@lit/localize/lit-localize.js",
+        "@lit/reactive-element": "https://cdn.jsdelivr.net/npm/@lit/reactive-element@1/reactive-element.js",
+        "@lit/reactive-element/": "https://cdn.jsdelivr.net/npm/@lit/reactive-element@1/",
+        "lit-element/lit-element.js": "https://cdn.jsdelivr.net/npm/lit-element@4/lit-element.js",
+        "lit-html": "https://cdn.jsdelivr.net/npm/lit-html@3/lit-html.js",
+        "lit-html/": "https://cdn.jsdelivr.net/npm/lit-html@3/"
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: Roboto, sans-serif;
+      padding: 50px;
+      display: flex;
+      gap: 50px;
+    }
+  </style>
+</head>
+<body>
+  <script type="module" src="../tooltip/tooltip.js"></script>
+
+  <md-tooltip title="This is a plain tooltip">
+    <button>Hover me</button>
+  </md-tooltip>
+
+  <md-tooltip variant="rich" title="This is a rich tooltip with more details and actions.">
+    <button>Hover me too</button>
+    <div slot="actions">
+      <button>Action 1</button>
+      <button>Action 2</button>
+    </div>
+  </md-tooltip>
+
+</body>
+</html>
