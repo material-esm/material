@@ -1,18 +1,19 @@
 import { html, LitElement, css } from 'lit'
-import { property } from 'lit/decorators.js'
 import { classMap } from 'lit/directives/class-map.js'
 
 export class Tooltip extends LitElement {
   static properties = {
-    title: { type: String },
-    variant: { type: String }, // 'plain' or 'rich'
-    open: { type: Boolean, reflect: true }
+    type: { type: String }, // 'plain' or 'rich'
+    headline: { type: String },
+    text: { type: String },
+    open: { type: Boolean, reflect: true },
   }
 
   constructor() {
-    super(...arguments)
-    this.title = ''
-    this.variant = 'plain'
+    super()
+    this.headline = ''
+    this.text = ''
+    this.type = 'plain'
     this.open = false
     this.showTimeout = null
     this.hideTimeout = null
@@ -66,8 +67,8 @@ export class Tooltip extends LitElement {
 
   render() {
     const classes = {
-      'md3-tooltip': true,
-      'md3-tooltip--rich': this.variant === 'rich'
+      'md-tooltip': true,
+      'md-tooltip--rich': this.type === 'rich',
     }
 
     return html`
@@ -75,8 +76,11 @@ export class Tooltip extends LitElement {
         <slot></slot>
       </div>
       <div class=${classMap(classes)} role="tooltip" aria-hidden=${!this.open}>
-        <div class="content">${this.title}<slot name="content"></slot></div>
-        ${this.variant === 'rich' ? html`<div class="actions"><slot name="actions"></slot></div>` : ''}
+        <div class="content">
+          ${this.type === 'rich' ? html`<div class="headline">${this.headline}<slot name="headline"></slot></div>` : ''}
+          ${this.text}<slot name="text"></slot>
+        </div>
+        ${this.type === 'rich' ? html`<div class="actions"><slot name="actions"></slot></div>` : ''}
       </div>
     `
   }
@@ -92,7 +96,7 @@ export class Tooltip extends LitElement {
         --_rich-text-color: var(--md-sys-color-on-surface-variant, #49454f);
       }
 
-      .md3-tooltip {
+      .md-tooltip {
         position: absolute;
         top: 100%;
         left: 50%;
@@ -108,19 +112,25 @@ export class Tooltip extends LitElement {
         font-weight: var(--md-sys-typescale-body-small-weight, 400);
         opacity: 0;
         visibility: hidden;
-        transition: opacity 0.2s, visibility 0.2s;
+        transition:
+          opacity 0.2s,
+          visibility 0.2s;
         z-index: 100;
         pointer-events: none;
         white-space: nowrap;
         box-sizing: border-box;
       }
 
-      :host([open]) .md3-tooltip {
+      :host([open]) .md-tooltip {
         opacity: 1;
         visibility: visible;
       }
 
-      .md3-tooltip.md3-tooltip--rich {
+      .headline {
+        font-weight: 500;
+      }
+
+      .md-tooltip.md-tooltip--rich {
         background-color: var(--_rich-container-color);
         color: var(--_rich-text-color);
         border-radius: 12px;
@@ -128,7 +138,9 @@ export class Tooltip extends LitElement {
         font-family: var(--md-sys-typescale-body-medium-font, var(--md-ref-typeface-plain, Roboto));
         font-size: var(--md-sys-typescale-body-medium-size, 14px);
         line-height: var(--md-sys-typescale-body-medium-line-height, 20px);
-        box-shadow: 0px 4px 8px 3px rgba(0, 0, 0, 0.15), 0px 1px 3px rgba(0, 0, 0, 0.3);
+        box-shadow:
+          0px 4px 8px 3px rgba(0, 0, 0, 0.15),
+          0px 1px 3px rgba(0, 0, 0, 0.3);
         pointer-events: auto;
         white-space: normal;
         min-width: 200px;
@@ -140,7 +152,7 @@ export class Tooltip extends LitElement {
         display: flex;
         gap: 8px;
       }
-    `
+    `,
   ]
 }
 

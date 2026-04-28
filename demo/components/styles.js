@@ -34,6 +34,9 @@ export const styles = css`
     width: 100%;
   }
 
+  .g4 {
+    gap: 4px;
+  }
   .g8 {
     gap: 8px;
   }
