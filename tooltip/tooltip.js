@@ -47,7 +47,7 @@ export class Tooltip extends LitElement {
     this.clearTimeouts()
     this.hideTimeout = setTimeout(() => {
       this.open = false
-    }, 100) // Plain tooltips often stay slightly after hover out
+    }, 500) // Increased delay to allow interaction with rich tooltips
   }
 
   handleFocus = () => {
@@ -73,9 +73,7 @@ export class Tooltip extends LitElement {
 
     // todo: only render headline div if this.headline or headline slot has content
     return html`
-      <div class="target">
-        <slot></slot>
-      </div>
+      <slot></slot>
       <div class=${classMap(classes)} role="tooltip" aria-hidden=${!this.open}>
         <div class="content">
           ${this.type === 'rich' ? html`<div class="headline">${this.headline}<slot name="headline"></slot></div>` : ''}
