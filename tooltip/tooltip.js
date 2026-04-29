@@ -71,6 +71,7 @@ export class Tooltip extends LitElement {
       'md-tooltip--rich': this.type === 'rich',
     }
 
+    // todo: only render headline div if this.headline or headline slot has content
     return html`
       <div class="target">
         <slot></slot>
