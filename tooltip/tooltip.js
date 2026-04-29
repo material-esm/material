@@ -47,7 +47,7 @@ export class Tooltip extends LitElement {
     this.clearTimeouts()
     this.hideTimeout = setTimeout(() => {
       this.open = false
-    }, 100) // Plain tooltips often stay slightly after hover out
+    }, 500) // Increased delay to allow interaction with rich tooltips
   }
 
   handleFocus = () => {
