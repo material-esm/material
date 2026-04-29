@@ -97,6 +97,12 @@ a:hover {
   flex-direction: column;
 }
 
+.g4 {
+  gap: 4px;
+}
+.g8 {
+  gap: 8px;
+}
 .g12 {
   gap: 12px;
 }

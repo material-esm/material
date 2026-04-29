@@ -20,8 +20,14 @@ export const sharedStyles = css`
     width: 100%;
   }
 
+  .g4 {
+    gap: 4px;
+  }
   .g8 {
     gap: 8px;
+  }
+  .g12 {
+    gap: 12px;
   }
   .g16 {
     gap: 16px;

@@ -15,6 +15,7 @@ import 'material/slider/slider.js'
 import 'material/switch/switch.js'
 import 'material/radio/radio.js'
 import 'material/checkbox/checkbox.js'
+import 'material/tooltip/tooltip.js'
 import { snack } from 'material/snackbar/snackbar.js'
 import { styles as sharedStyles } from './styles.js'
 import { styles as typography } from '../../typography/md-typescale-styles.js'
@@ -198,6 +199,22 @@ class ExpressiveComponent extends LitElement {
             style="--md-icon-button-icon-size: 16px; --md-icon-button-container-width: 24px; --md-icon-button-container-height: 24px;">
             <md-icon>content_copy</md-icon>
           </md-icon-button>
+        </div>
+        <div>
+          Tooltips:
+          <md-tooltip text="This is a plain tooltip">
+            <md-button>Hover me</md-button>
+          </md-tooltip>
+
+          <md-tooltip type="rich">
+            <md-button>Hover me too</md-button>
+            <div slot="headline">Headline</div>
+            <div slot="text">This is a rich tooltip with more details and actions.</div>
+            <div slot="actions" class="flex g12">
+              <md-button color="text" size="x-small">Action 1</md-button>
+              <md-button color="text" size="x-small">Action 2</md-button>
+            </div>
+          </md-tooltip>
         </div>
         <!-- Buttons -->
         <h3>Button sizes</h3>
