@@ -72,9 +72,7 @@ export class Tooltip extends LitElement {
     }
 
     return html`
-      <div class="target">
-        <slot></slot>
-      </div>
+      <slot></slot>
       <div class=${classMap(classes)} role="tooltip" aria-hidden=${!this.open}>
         <div class="content">
           ${this.type === 'rich' ? html`<div class="headline">${this.headline}<slot name="headline"></slot></div>` : ''}
