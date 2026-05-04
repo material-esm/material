@@ -282,6 +282,10 @@ export class ListItem extends LitElement {
       [slot='end'] {
         color: var(--md-list-item-trailing-icon-color, var(--md-sys-color-on-surface-variant, #49454f));
       }
+      ::slotted(div) {
+        display: flex;
+        align-items: center;
+      }
       @media (forced-colors: active) {
         .disabled slot {
           color: GrayText;
