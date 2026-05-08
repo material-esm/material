@@ -1,4 +1,5 @@
-import { Menu } from '../menu/menu.js'
+import { menuItemStyles } from '../menu/menu-item.js'
+
 /**
  * @summary
  * Select menus display a list of choices on temporary surfaces and display the
@@ -206,7 +207,7 @@ export class SelectOption extends LitElement {
     return queryAssignedNodes(this, { slot: '' })
   }
 
-  static styles = [Menu.styles]
+  static styles = [menuItemStyles]
 }
 ;(() => {
   requestUpdateOnAriaChange(SelectOption)
