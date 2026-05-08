@@ -1,4 +1,3 @@
-import { Menu } from '../menu/menu.js'
 /**
  * @summary
  * Select menus display a list of choices on temporary surfaces and display the
@@ -30,11 +29,7 @@ import { Menu } from '../menu/menu.js'
  * @suppress {visibility}
  */
 
-/**
- * @license
- * Copyright 2023 Google LLC
- * SPDX-License-Identifier: Apache-2.0
- */
+import { menuItemStyles } from '../menu/menu-item.js'
 import '../internal/focus/focus-ring.js'
 import '../labs/item/item.js'
 import '../internal/ripple/ripple.js'
@@ -82,8 +77,7 @@ export class SelectOption extends LitElement {
      */
     this.value = ''
     this.type = 'option'
-    // this.typeaheadText = ''
-    // this.displayText = ''
+
     this.selectOptionController = new SelectOptionController(this, {
       getHeadlineElements: () => {
         return this.headlineElements
@@ -106,7 +100,7 @@ export class SelectOption extends LitElement {
   }
   set typeaheadText(text) {
     this.selectOptionController.setTypeaheadText(text)
-    // this.requestUpdate()
+
   }
   /**
    * The text that is displayed in the select field when selected. If not set,
@@ -116,9 +110,7 @@ export class SelectOption extends LitElement {
     return this.selectOptionController.displayText
   }
   set displayText(text) {
-    console.log('SelectOptionEl set displayText', text)
     this.selectOptionController.setDisplayText(text)
-    // this.requestUpdate()
   }
   render() {
     return this.renderListItem(html`
@@ -196,7 +188,7 @@ export class SelectOption extends LitElement {
     return this.renderRoot.querySelector('.list-item')
   }
   get headlineElements() {
-    // console.log("headline elements:", this.renderRoot.querySelectorAll('slot[name="headline"]'))
+
     return queryAssignedElements(this, { slot: 'headline' })
   }
   get supportingTextElements() {
@@ -206,7 +198,7 @@ export class SelectOption extends LitElement {
     return queryAssignedNodes(this, { slot: '' })
   }
 
-  static styles = [Menu.styles]
+  static styles = [menuItemStyles]
 }
 ;(() => {
   requestUpdateOnAriaChange(SelectOption)
@@ -216,27 +208,6 @@ SelectOption.shadowRootOptions = {
   ...LitElement.shadowRootOptions,
   delegatesFocus: true,
 }
-
-/*
-__decorate([
-    query('.list-item')
-], SelectOptionEl.prototype, "listItemRoot", void 0);
-__decorate([
-    queryAssignedElements({ slot: 'headline' })
-], SelectOptionEl.prototype, "headlineElements", void 0);
-__decorate([
-    queryAssignedElements({ slot: 'supporting-text' })
-], SelectOptionEl.prototype, "supportingTextElements", void 0);
-__decorate([
-    queryAssignedNodes({ slot: '' })
-], SelectOptionEl.prototype, "defaultElements", void 0);
-__decorate([
-    property({ attribute: 'typeahead-text' })
-], SelectOptionEl.prototype, "typeaheadText", null);
-__decorate([
-    property({ attribute: 'display-text' })
-], SelectOptionEl.prototype, "displayText", null);
-*/
 
 /**
  * Creates an event fired by a SelectOption to request selection from md-select.
