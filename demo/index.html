@@ -58,6 +58,9 @@
       import 'material/snackbar/snackbar.js'
       import 'material/app/bar.js'
       import 'material/progress/progress.js'
+      import 'material/carousel/carousel.js'
+      import 'material/carousel/carousel-item.js'
+      import 'material/card/card.js'
       import './components/expressive-component.js'
     </script>
 
@@ -178,7 +181,36 @@
               <expressive-component></expressive-component>
             </div>
 
-            <h3>Progress</h3>
+
+            <h3>Carousel</h3>
+            <md-carousel style="margin-bottom: 24px;">
+              <md-carousel-item>
+                <md-card style="height: 200px; display: flex; align-items: center; justify-content: center; background-color: var(--md-sys-color-primary-container); color: var(--md-sys-color-on-primary-container);">
+                  <div style="padding: 24px;">Item 1</div>
+                </md-card>
+              </md-carousel-item>
+              <md-carousel-item>
+                <md-card style="height: 200px; display: flex; align-items: center; justify-content: center; background-color: var(--md-sys-color-secondary-container); color: var(--md-sys-color-on-secondary-container);">
+                  <div style="padding: 24px;">Item 2</div>
+                </md-card>
+              </md-carousel-item>
+              <md-carousel-item>
+                <md-card style="height: 200px; display: flex; align-items: center; justify-content: center; background-color: var(--md-sys-color-tertiary-container); color: var(--md-sys-color-on-tertiary-container);">
+                  <div style="padding: 24px;">Item 3</div>
+                </md-card>
+              </md-carousel-item>
+              <md-carousel-item>
+                <md-card style="height: 200px; display: flex; align-items: center; justify-content: center; background-color: var(--md-sys-color-error-container); color: var(--md-sys-color-on-error-container);">
+                  <div style="padding: 24px;">Item 4</div>
+                </md-card>
+              </md-carousel-item>
+              <md-carousel-item>
+                <md-card style="height: 200px; display: flex; align-items: center; justify-content: center; background-color: var(--md-sys-color-surface-variant); color: var(--md-sys-color-on-surface-variant);">
+                  <div style="padding: 24px;">Item 5</div>
+                </md-card>
+              </md-carousel-item>
+            </md-carousel>
+<h3>Progress</h3>
             <md-progress type="circular" indeterminate></md-progress>
             <md-progress type="linear" value="0.5" indeterminate></md-progress>
 
