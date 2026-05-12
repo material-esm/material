@@ -298,6 +298,50 @@ class ExpressiveComponent extends LitElement {
             value-end="75"></md-slider>
         </div>
 
+        <h3>Carousel</h3>
+        <md-carousel style="max-width: 600px; border-radius: 12px; background: var(--md-sys-color-surface-container);">
+          <md-carousel-item style="width: 300px;">
+            <md-card type="outlined">
+              <div class="flex col">
+                <img src="./images/img1.jpg" />
+              </div>
+              <div class="flex col g12 p16">
+                <div class="card-title">Carousel Item 1</div>
+              </div>
+            </md-card>
+          </md-carousel-item>
+          <md-carousel-item style="width: 300px;">
+            <md-card type="outlined">
+              <div class="flex col">
+                <img src="./images/img2.jpg" />
+              </div>
+              <div class="flex col g12 p16">
+                <div class="card-title">Carousel Item 2</div>
+              </div>
+            </md-card>
+          </md-carousel-item>
+          <md-carousel-item style="width: 300px;">
+            <md-card type="outlined">
+              <div class="flex col">
+                <img src="./images/img1.jpg" />
+              </div>
+              <div class="flex col g12 p16">
+                <div class="card-title">Carousel Item 3</div>
+              </div>
+            </md-card>
+          </md-carousel-item>
+          <md-carousel-item style="width: 300px;">
+            <md-card type="outlined">
+              <div class="flex col">
+                <img src="./images/img2.jpg" />
+              </div>
+              <div class="flex col g12 p16">
+                <div class="card-title">Carousel Item 4</div>
+              </div>
+            </md-card>
+          </md-carousel-item>
+        </md-carousel>
+
         <h3>Cards</h3>
         <div class="flexw g12">
           <md-card type="outlined">
