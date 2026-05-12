@@ -191,7 +191,7 @@ export class IconButton extends iconButtonBaseClass {
   }
 
   renderTouchTarget() {
-    return html`<span class="touch"></span>`
+    return nothing
   }
 
   async handleClick(event) {
@@ -306,16 +306,18 @@ export class IconButton extends iconButtonBaseClass {
         display: inline-flex;
       }
 
-      .touch {
+      .icon-button::before {
+        content: "";
         position: absolute;
-        height: 100%;
-        width: 100%;
         top: 50%;
         left: 50%;
+        width: max(48px, 100%);
+        height: max(48px, 100%);
         transform: translate(-50%, -50%);
+        background: transparent;
       }
 
-      :host([touch-target='none']) .touch {
+      :host([touch-target='none']) .icon-button::before {
         display: none;
       }
 
