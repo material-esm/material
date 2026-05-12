@@ -1,8 +1,3 @@
-/**
- * @license
- * Copyright 2021 Google LLC
- * SPDX-License-Identifier: Apache-2.0
- */
 import { LitElement, css, html, nothing } from 'lit'
 import 'material/icon/icon.js'
 import 'material/buttons/icon-button.js'
@@ -28,6 +23,10 @@ export class Rail extends NavigationBar {
     this.expanded = false
   }
 
+  connectedCallback() {
+    super.connectedCallback()
+  }
+
   render() {
     // Needed for closure conformance
     const { ariaLabel } = this
@@ -38,13 +37,11 @@ export class Rail extends NavigationBar {
       aria-label=${ariaLabel || nothing}
       @keydown="${this.handleKeydown}"
       @navigation-tab-interaction="${this.handleNavigationTabInteraction}"
-      @navigation-tab-rendered=${this.handleNavigationTabConnected}
-    >
+      @navigation-tab-rendered=${this.handleNavigationTabConnected}>
       <md-elevation part="elevation"></md-elevation>
       <div
         class="md3-navigation-bar__tabs-slot-container md3-navigation-rail__tabs-slot-container
-       ${this.expanded ? 'expanded' : ''}"
-      >
+       ${this.expanded ? 'expanded' : ''}">
         <div class="md3-navigation-rail-top ${this.expanded ? 'expanded' : ''}">
           <div class="menuSlot ${this.expanded ? 'expanded' : ''}">
             <slot name="menu">
@@ -54,10 +51,10 @@ export class Rail extends NavigationBar {
               </md-icon-button>
             </slot>
           </div>
-          <slot name="fab"></slot>
+          <slot name="fab" @slotchange=${this._updateChildren}></slot>
         </div>
         <div>
-          <slot></slot>
+          <slot @slotchange=${this._updateChildren}></slot>
         </div>
       </div>
     </div> `
@@ -65,9 +62,19 @@ export class Rail extends NavigationBar {
 
   toggleExpanded() {
     this.expanded = !this.expanded
+  }
+
+  updated(changedProperties) {
+    super.updated(changedProperties)
+    if (changedProperties.has('expanded')) {
+      this._updateChildren()
+    }
+  }
+
+  _updateChildren() {
     this.renderRoot
       .querySelector('slot[name="fab"]')
-      .assignedElements({ flatten: true })
+      ?.assignedElements({ flatten: true })
       .forEach((tab) => {
         console.log('fab slot item:', tab)
         if (tab.tagName === 'MD-FAB') {
@@ -76,7 +83,7 @@ export class Rail extends NavigationBar {
       })
     this.renderRoot
       .querySelector('slot:not([name])')
-      .assignedElements({ flatten: true })
+      ?.assignedElements({ flatten: true })
       .forEach((tab) => {
         console.log('slot item:', tab)
         if (tab.tagName === 'MD-NAV-ITEM') {
