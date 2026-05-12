@@ -89,13 +89,14 @@ export class Tooltip extends LitElement {
       :host {
         display: inline-block;
         position: relative;
+      }
+
+      .md-tooltip {
         --_container-color: var(--md-sys-color-inverse-surface, #313033);
         --_text-color: var(--md-sys-color-inverse-on-surface, #f4eff4);
         --_rich-container-color: var(--md-sys-color-surface-container, #f3edf7);
         --_rich-text-color: var(--md-sys-color-on-surface-variant, #49454f);
-      }
 
-      .md-tooltip {
         position: absolute;
         top: 100%;
         left: 50%;
