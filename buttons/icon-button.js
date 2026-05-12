@@ -308,8 +308,8 @@ export class IconButton extends iconButtonBaseClass {
 
       .touch {
         position: absolute;
-        height: max(48px, 100%);
-        width: max(48px, 100%);
+        height: 100%;
+        width: 100%;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
