@@ -1,8 +1,3 @@
-/**
- * @license
- * Copyright 2021 Google LLC
- * SPDX-License-Identifier: Apache-2.0
- */
 import '../internal/focus/focus-ring.js'
 import '../internal/ripple/ripple.js'
 import '../badge/badge.js'
@@ -41,8 +36,6 @@ export class NavigationItem extends LitElement {
     this.expanded = false
   }
   render() {
-    // Needed for closure conformance
-
     const { ariaLabel } = this
     // const tag = this.href ? literal`div` : literal`button`
     return staticHtml` <div
@@ -86,14 +79,10 @@ export class NavigationItem extends LitElement {
   }
 
   renderButton() {
-    // let button = document.createElement('md-button')
-    // button.color = 'tonal'
-    // button.size = 'medium'
-    // button.innerHTML = this.label
     let color = this.active ? 'tonal' : 'text'
     let style = this.active
-      ? '--md-button-label-text-color: var(--md-sys-color-secondary);'
-      : '--md-button-label-text-color: var(--md-sys-color-on-surface-variant);'
+      ? '--md-button-label-text-color: var(--md-navigation-bar-active-icon-color, --md-sys-color-secondary);'
+      : '--md-button-label-text-color: var(--md-navigation-bar-active-icon-color, --md-sys-color-on-surface-variant);'
     // todo: deal with active and inactive icons
     return html`
       <md-button color="${color}" size="medium" style="${style}">
