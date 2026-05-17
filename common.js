@@ -7,6 +7,7 @@
  * for production.
  */
 import './buttons/button.js'
+import './buttons/button-group.js'
 import './checkbox/checkbox.js'
 import './chips/chip.js'
 import './chips/chip-set.js'
@@ -27,6 +28,7 @@ import './tabs/tabs.js'
 import './text/text-field.js'
 
 export * from './buttons/button.js'
+export * from './buttons/button-group.js'
 export * from './checkbox/checkbox.js'
 export * from './chips/chip.js'
 export * from './chips/chip-set.js'
