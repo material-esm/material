@@ -6,6 +6,8 @@
  */
 import './buttons/elevated-button.js'
 import './buttons/button.js'
+import './carousel/carousel.js'
+import './carousel/carousel-item.js'
 import './buttons/filled-tonal-button.js'
 import './buttons/outlined-button.js'
 import './buttons/text-button.js'
@@ -48,6 +50,8 @@ import './text/text-field.js'
 // LINT.IfChange(exports)
 // go/keep-sorted start
 export * from './buttons/button.js'
+export * from './carousel/carousel.js'
+export * from './carousel/carousel-item.js'
 export * from './checkbox/checkbox.js'
 export * from './chips/chip.js'
 export * from './chips/chip-set.js'
