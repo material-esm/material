@@ -196,6 +196,7 @@ export class Progress extends LitElement {
     return html`
       <div class="dots" ?hidden=${hideDots}></div>
       <div class="inactive-track" style=${styleMap(dotStyles)}></div>
+      <div class="stop-indicator" ?hidden=${this.indeterminate}></div>
       <div class="bar primary-bar" style=${styleMap(progressStyles)}>
         <div class="bar-inner"></div>
       </div>
@@ -471,6 +472,15 @@ export class Progress extends LitElement {
         transition: transform 250ms cubic-bezier(0.4, 0, 0.6, 1);
         transform-origin: left center;
       }
+      .stop-indicator {
+        position: absolute;
+        right: 0;
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: var(--_active-indicator-color);
+        top: calc(50% - 2px);
+      }
       .dots {
         inset: 0;
         animation: linear infinite 250ms;
@@ -632,6 +642,7 @@ export class Progress extends LitElement {
       :host([wavy][type='linear']) {
         --_track-height: 12px;
         --_active-indicator-height: 12px;
+        --_track-shape: 6px;
       }
       :host([wavy][type='linear']) .inactive-track,
       :host([wavy][type='linear']) .dots {
