@@ -299,7 +299,7 @@ function setupCanvas(canvas, cssSize) {
 }
 
 // --- Web Component Implementation ---
-export class LoadingIndicator extends LitElement {
+export class Loading extends LitElement {
   static styles = css`
     :host {
       display: inline-flex;
@@ -309,8 +309,8 @@ export class LoadingIndicator extends LitElement {
       justify-content: center;
       contain: strict;
       content-visibility: auto;
-      width: var(--md-loading-indicator-size, 48px);
-      height: var(--md-loading-indicator-size, 48px);
+      width: var(--md-loading-size, 48px);
+      height: var(--md-loading-size, 48px);
     }
     canvas {
       display: block;
@@ -411,7 +411,7 @@ export class LoadingIndicator extends LitElement {
 
   updated(changedProperties) {
     if (changedProperties.has('size')) {
-      this.style.setProperty('--md-loading-indicator-size', `${this.size}px`)
+      this.style.setProperty('--md-loading-size', `${this.size}px`)
       const canvas = this.renderRoot.querySelector('#canvas')
       if (canvas) {
         this.ctx = setupCanvas(canvas, this.size)
@@ -450,4 +450,4 @@ export class LoadingIndicator extends LitElement {
   }
 }
 
-customElements.define('md-loading-indicator', LoadingIndicator)
+customElements.define('md-loading', Loading)

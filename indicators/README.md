@@ -3,7 +3,7 @@
 This directory contains progress and loading indicator components implementing the Material Design 3 specifications, including the M3 Expressive shape and physics extensions.
 
 - [Progress Indicators (`md-progress`)](#progress-indicators-md-progress)
-- [Loading Indicator (`md-loading-indicator`)](#loading-indicator-md-loading-indicator)
+- [Loading Component (`md-loading`)](#loading-component-md-loading)
 
 ---
 
@@ -62,27 +62,27 @@ Add the `wavy` attribute to enable the M3 Expressive waveform style:
 
 ---
 
-## Loading Indicator (`md-loading-indicator`)
+## Loading Component (`md-loading`)
 
-The `md-loading-indicator` is an expressive M3 component that uses a spring physics engine to morph between 7 different geometric shapes (soft burst, cookie, pentagon, rounded diamond/pill, sunny, oval, etc.) with a rotating canvas animation.
+The `md-loading` is an expressive M3 component that uses a spring physics engine to morph between 7 different geometric shapes (soft burst, cookie, pentagon, rounded diamond/pill, sunny, oval, etc.) with a rotating canvas animation.
 
 ### Import
 
 ```javascript
-import 'material/indicators/loading-indicator.js'
+import 'material/indicators/loading.js'
 ```
 
 ### Usage
 
 ```html
-<!-- Default Loading Indicator (48px) -->
-<md-loading-indicator></md-loading-indicator>
+<!-- Default Loading Component (48px) -->
+<md-loading></md-loading>
 
-<!-- Contained Indicator (adds a circular themed background container) -->
-<md-loading-indicator contained></md-loading-indicator>
+<!-- Contained Component (adds a circular themed background container) -->
+<md-loading contained></md-loading>
 
-<!-- Custom sized & themed contained indicator -->
-<md-loading-indicator size="64" contained></md-loading-indicator>
+<!-- Custom sized & themed contained component -->
+<md-loading size="64" contained></md-loading>
 ```
 
 ### Properties and Attributes
@@ -102,7 +102,7 @@ import 'material/indicators/loading-indicator.js'
 You can customize the size of the loading indicator using the CSS custom property:
 
 ```css
-md-loading-indicator {
-  --md-loading-indicator-size: 64px;
+md-loading {
+  --md-loading-size: 64px;
 }
 ```
