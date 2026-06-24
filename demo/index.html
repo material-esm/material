@@ -58,6 +58,7 @@
       import 'material/snackbar/snackbar.js'
       import 'material/app/bar.js'
       import 'material/progress/progress.js'
+      import 'material/loading-indicator/loading-indicator.js'
       import './components/expressive-component.js'
     </script>
 
@@ -181,6 +182,15 @@
             <h3>Progress</h3>
             <md-progress type="circular" indeterminate></md-progress>
             <md-progress type="linear" value="0.5" indeterminate></md-progress>
+
+            <h3>Loading Indicator (M3 Expressive)</h3>
+            <div class="flex g12 aic" style="margin-bottom: 24px;">
+              <md-loading-indicator></md-loading-indicator>
+              <md-loading-indicator contained></md-loading-indicator>
+              <md-loading-indicator color="var(--md-sys-color-tertiary, #7d5260)"></md-loading-indicator>
+              <md-loading-indicator contained color="white" container-color="var(--md-sys-color-primary, #6750a4)"></md-loading-indicator>
+              <md-loading-indicator size="64" contained></md-loading-indicator>
+            </div>
 
             <md-snackbar message="Hello World!" open></md-snackbar>
           </div>
