@@ -180,8 +180,19 @@
             </div>
 
             <h3>Progress</h3>
-            <md-progress type="circular" indeterminate></md-progress>
-            <md-progress type="linear" value="0.5" indeterminate></md-progress>
+            <div class="flex g12 aic" style="margin-bottom: 12px; flex-wrap: wrap;">
+              <md-progress type="circular" indeterminate></md-progress>
+              <md-progress type="circular" value="0.7"></md-progress>
+              <md-progress type="linear" value="0.5" style="width: 200px;"></md-progress>
+            </div>
+
+            <h4>Wavy Progress Indicators</h4>
+            <div class="flex g12 aic" style="margin-bottom: 24px; flex-wrap: wrap;">
+              <md-progress type="circular" indeterminate wavy></md-progress>
+              <md-progress type="circular" value="0.7" wavy></md-progress>
+              <md-progress type="linear" value="0.5" wavy style="width: 200px;"></md-progress>
+              <md-progress type="linear" indeterminate wavy style="width: 200px;"></md-progress>
+            </div>
 
             <h3>Loading Indicator (M3 Expressive)</h3>
             <div class="flex g12 aic" style="margin-bottom: 24px;">
