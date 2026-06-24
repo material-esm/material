@@ -63,7 +63,8 @@
       import 'material/menu/menu-item.js'
       import 'material/snackbar/snackbar.js'
       import 'material/app/bar.js'
-      import 'material/progress/progress.js'
+      import 'material/indicators/progress.js'
+      import 'material/indicators/loading.js'
       import './components/expressive-component.js'
     </script>
 
@@ -183,8 +184,28 @@
             </div>
 
             <h3>Progress</h3>
-            <md-progress type="circular" indeterminate></md-progress>
-            <md-progress type="linear" value="0.5" indeterminate></md-progress>
+            <div class="flex g12 aic" style="margin-bottom: 12px; flex-wrap: wrap;">
+              <md-progress type="circular" indeterminate shape="flat"></md-progress>
+              <md-progress type="circular" value="0.7"></md-progress>
+              <md-progress type="linear" value="0.5" style="width: 200px;"></md-progress>
+            </div>
+
+            <h4>Wavy Progress Indicators</h4>
+            <div class="flex g12 aic" style="margin-bottom: 24px; flex-wrap: wrap;">
+              <md-progress type="circular" indeterminate shape="wavy"></md-progress>
+              <md-progress type="circular" value="0.7" shape="wavy"></md-progress>
+              <md-progress type="linear" value="0.5" shape="wavy" style="width: 200px;"></md-progress>
+              <md-progress type="linear" indeterminate shape="wavy" style="width: 200px;"></md-progress>
+            </div>
+
+            <h3>Loading Indicator (M3 Expressive)</h3>
+            <div class="flex g12 aic" style="margin-bottom: 24px;">
+              <md-loading></md-loading>
+              <md-loading contained></md-loading>
+              <md-loading color="var(--md-sys-color-tertiary, #7d5260)"></md-loading>
+              <md-loading contained color="white" container-color="var(--md-sys-color-primary, #6750a4)"></md-loading>
+              <md-loading size="64" contained></md-loading>
+            </div>
 
             <md-snackbar message="Hello World!" open></md-snackbar>
           </div>
