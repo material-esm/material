@@ -633,6 +633,11 @@ export class Progress extends LitElement {
         --_track-height: 12px;
         --_active-indicator-height: 12px;
       }
+      :host([wavy][type='linear']) .inactive-track,
+      :host([wavy][type='linear']) .dots {
+        height: 4px;
+        top: 4px;
+      }
       :host([wavy][type='linear']) .bar-inner {
         background: var(--_active-indicator-color);
         -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='12' viewBox='0 0 24 12'%3E%3Cpath d='M 0 6 Q 6 -2 12 6 T 24 6' fill='none' stroke='black' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E");
