@@ -631,11 +631,12 @@ export class Progress extends LitElement {
       /* --- Wavy Progress Indicator Styling --- */
       :host([wavy][type='linear']) {
         --_track-height: 12px;
+        --_active-indicator-height: 12px;
       }
       :host([wavy][type='linear']) .bar-inner {
         background: var(--_active-indicator-color);
-        -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='12' viewBox='0 0 24 12'%3E%3Cpath d='M 0 6 Q 6 1 12 6 T 24 6' fill='none' stroke='black' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E");
-        mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='12' viewBox='0 0 24 12'%3E%3Cpath d='M 0 6 Q 6 1 12 6 T 24 6' fill='none' stroke='black' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E");
+        -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='12' viewBox='0 0 24 12'%3E%3Cpath d='M 0 6 Q 6 -2 12 6 T 24 6' fill='none' stroke='black' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E");
+        mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='12' viewBox='0 0 24 12'%3E%3Cpath d='M 0 6 Q 6 -2 12 6 T 24 6' fill='none' stroke='black' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E");
         -webkit-mask-repeat: repeat-x;
         mask-repeat: repeat-x;
         animation: wavy-linear-move 1s linear infinite;
