@@ -309,6 +309,8 @@ export class LoadingIndicator extends LitElement {
       justify-content: center;
       contain: strict;
       content-visibility: auto;
+      width: var(--md-loading-indicator-size, 48px);
+      height: var(--md-loading-indicator-size, 48px);
     }
     canvas {
       display: block;
@@ -335,12 +337,12 @@ export class LoadingIndicator extends LitElement {
     this.paused = false
     this.sizeRatio = 0.79
 
-    this.style.width = '48px'
-    this.style.height = '48px'
-
     this.rafId = 0
     this.ctx = null
     this.animator = new M3Animator()
+    this.resolvedColor = '#6750a4'
+    this.resolvedContainerColor = 'rgba(0, 0, 0, 0.08)'
+    this.frameCount = 0
   }
 
   render() {
@@ -349,42 +351,74 @@ export class LoadingIndicator extends LitElement {
     `
   }
 
-  firstUpdated() {
-    const canvas = this.renderRoot.querySelector('#canvas')
+  updateResolvedColors() {
+    this.resolvedColor = this._resolveColor(this.color)
+    this.resolvedContainerColor = this._resolveColor(this.containerColor)
+  }
+
+  startAnimation() {
+    if (this.rafId) return
+    const canvas = this.renderRoot?.querySelector('#canvas')
     if (!canvas) return
-    this.ctx = setupCanvas(canvas, this.size)
+    if (!this.ctx) {
+      this.ctx = setupCanvas(canvas, this.size)
+    }
+    this.animator.lastTs = 0
 
     const loop = (ts) => {
       this.animator.speed = this.speed
       this.animator.paused = this.paused
       this.animator.update(ts)
       const shape = getMorphedShape(this.animator.morph)
+
+      this.frameCount++
+      if (this.frameCount % 60 === 0) {
+        this.updateResolvedColors()
+      }
+
       drawIndicator(this.ctx, this.size, shape, this.animator.rotation, {
-        color: this._resolveColor(this.color),
+        color: this.resolvedColor,
         sizeRatio: this.sizeRatio,
         contained: this.contained,
-        containerColor: this._resolveColor(this.containerColor)
+        containerColor: this.resolvedContainerColor
       })
       this.rafId = requestAnimationFrame(loop)
     }
     this.rafId = requestAnimationFrame(loop)
   }
 
+  stopAnimation() {
+    if (this.rafId) {
+      cancelAnimationFrame(this.rafId)
+      this.rafId = 0
+    }
+  }
+
+  connectedCallback() {
+    super.connectedCallback()
+    this.startAnimation()
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback()
+    this.stopAnimation()
+  }
+
+  firstUpdated() {
+    this.updateResolvedColors()
+    this.startAnimation()
+  }
+
   updated(changedProperties) {
     if (changedProperties.has('size')) {
-      this.style.width = `${this.size}px`
-      this.style.height = `${this.size}px`
+      this.style.setProperty('--md-loading-indicator-size', `${this.size}px`)
       const canvas = this.renderRoot.querySelector('#canvas')
       if (canvas) {
         this.ctx = setupCanvas(canvas, this.size)
       }
     }
-  }
-
-  disconnectedCallback() {
-    super.disconnectedCallback()
-    if (this.rafId) {
-      cancelAnimationFrame(this.rafId)
+    if (changedProperties.has('color') || changedProperties.has('containerColor') || changedProperties.has('contained')) {
+      this.updateResolvedColors()
     }
   }
 
