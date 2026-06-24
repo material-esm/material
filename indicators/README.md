@@ -41,23 +41,23 @@ import 'material/indicators/progress.js'
 
 #### Wavy M3 Expressive Extension
 
-Add the `wavy` attribute to enable the M3 Expressive waveform style:
+Add the `shape="wavy"` attribute to enable the M3 Expressive waveform style (defaults to `flat`):
 
 *   **Wavy Circular**: Animates the active track as a circular wave with smooth phase propagation.
 *   **Wavy Linear**: Replaces the active bar with a smooth sine wave. Features a `12px` expanded track height, a centered `4px` straight inactive track, and a stop indicator dot at the end (for determinate mode).
 
 ```html
 <!-- Circular determinate wavy -->
-<md-progress type="circular" value="0.7" wavy></md-progress>
+<md-progress type="circular" value="0.7" shape="wavy"></md-progress>
 
 <!-- Circular indeterminate wavy -->
-<md-progress type="circular" indeterminate wavy></md-progress>
+<md-progress type="circular" indeterminate shape="wavy"></md-progress>
 
 <!-- Linear determinate wavy -->
-<md-progress type="linear" value="0.5" wavy></md-progress>
+<md-progress type="linear" value="0.5" shape="wavy"></md-progress>
 
 <!-- Linear indeterminate wavy -->
-<md-progress type="linear" indeterminate wavy></md-progress>
+<md-progress type="linear" indeterminate shape="wavy"></md-progress>
 ```
 
 ---

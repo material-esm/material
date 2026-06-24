@@ -13,7 +13,7 @@ export class Progress extends LitElement {
     indeterminate: { type: Boolean },
     fourColor: { type: Boolean, attribute: 'four-color' },
     buffer: { type: Number },
-    wavy: { type: Boolean, reflect: true },
+    shape: { type: String, reflect: true },
   }
   constructor() {
     super(...arguments)
@@ -40,7 +40,7 @@ export class Progress extends LitElement {
      * If the value is 0 or negative, the buffer is not displayed.
      */
     this.buffer = 0
-    this.wavy = false
+    this.shape = 'flat'
   }
 
   firstUpdated() {
@@ -48,7 +48,7 @@ export class Progress extends LitElement {
   }
 
   updated(changedProperties) {
-    if (changedProperties.has('wavy') || changedProperties.has('type')) {
+    if (changedProperties.has('shape') || changedProperties.has('type')) {
       this.updateWavyAnimationState()
     }
   }
@@ -59,7 +59,7 @@ export class Progress extends LitElement {
   }
 
   updateWavyAnimationState() {
-    if (this.wavy && this.type === 'circular') {
+    if (this.shape === 'wavy' && this.type === 'circular') {
       this.startWavyAnimation()
     } else {
       this.stopWavyAnimation()
@@ -75,7 +75,7 @@ export class Progress extends LitElement {
       this.wavyPhase += 0.08
       const path = this.renderRoot.querySelector('.active-track.wavy-circle')
       if (path) {
-        const isIndeterminateWavy = this.indeterminate && this.wavy
+        const isIndeterminateWavy = this.indeterminate && this.shape === 'wavy'
         const progress = isIndeterminateWavy ? 0.25 : (this.value / this.max)
         path.setAttribute('d', getWavyCirclePath(2400, 2400, 2160, 120, 12, this.wavyPhase, progress))
       }
@@ -112,7 +112,7 @@ export class Progress extends LitElement {
       'four-color': this.fourColor,
       circular: this.type === 'circular',
       linear: this.type === 'linear',
-      wavy: this.wavy,
+      wavy: this.shape === 'wavy',
     }
   }
   renderIndicator() {
@@ -123,7 +123,7 @@ export class Progress extends LitElement {
     }
   }
   renderCircularIndicator() {
-    if (this.indeterminate && !this.wavy) {
+    if (this.indeterminate && this.shape !== 'wavy') {
       return this.renderIndeterminateContainer()
     }
     return this.renderDeterminateContainer()
@@ -131,7 +131,7 @@ export class Progress extends LitElement {
   // Determinate mode is rendered with an svg so the progress arc can be
   // easily animated via stroke-dashoffset.
   renderDeterminateContainer() {
-    const isIndeterminateWavy = this.indeterminate && this.wavy
+    const isIndeterminateWavy = this.indeterminate && this.shape === 'wavy'
     const progress = isIndeterminateWavy ? 0.25 : (this.value / this.max)
     const dashOffset = (1 - this.value / this.max) * 100
     // note, dash-array/offset are relative to Setting `pathLength` but
@@ -139,7 +139,7 @@ export class Progress extends LitElement {
     return html`
       <svg viewBox="0 0 4800 4800" width="100%" height="100%">
         <circle class="track" cx="2400" cy="2400" r="2160" stroke="rgba(0,0,0,0)" stroke-width="480" fill="none"></circle>
-        ${this.wavy
+        ${this.shape === 'wavy'
           ? svg`<path class="active-track wavy-circle"
                        stroke="var(--_active-indicator-color)"
                        stroke-width="480"
@@ -639,17 +639,17 @@ export class Progress extends LitElement {
         }
       }
       /* --- Wavy Progress Indicator Styling --- */
-      :host([wavy][type='linear']) {
+      :host([shape='wavy'][type='linear']) {
         --_track-height: 12px;
         --_active-indicator-height: 12px;
         --_track-shape: 6px;
       }
-      :host([wavy][type='linear']) .inactive-track,
-      :host([wavy][type='linear']) .dots {
+      :host([shape='wavy'][type='linear']) .inactive-track,
+      :host([shape='wavy'][type='linear']) .dots {
         height: 4px;
         top: 4px;
       }
-      :host([wavy][type='linear']) .bar-inner {
+      :host([shape='wavy'][type='linear']) .bar-inner {
         background: var(--_active-indicator-color);
         -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='12' viewBox='0 0 24 12'%3E%3Cpath d='M 0 6 Q 6 -2 12 6 T 24 6' fill='none' stroke='black' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E");
         mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='12' viewBox='0 0 24 12'%3E%3Cpath d='M 0 6 Q 6 -2 12 6 T 24 6' fill='none' stroke='black' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E");
@@ -657,16 +657,16 @@ export class Progress extends LitElement {
         mask-repeat: repeat-x;
         animation: wavy-linear-move 1s linear infinite;
       }
-      :host([wavy][type='linear'].indeterminate) .primary-bar > .bar-inner {
+      :host([shape='wavy'][type='linear'].indeterminate) .primary-bar > .bar-inner {
         animation: primary-indeterminate-scale 2s linear infinite, wavy-linear-move 1s linear infinite;
       }
-      :host([wavy][type='linear'].indeterminate.four-color) .primary-bar > .bar-inner {
+      :host([shape='wavy'][type='linear'].indeterminate.four-color) .primary-bar > .bar-inner {
         animation: primary-indeterminate-scale 2s linear infinite, four-color 4s linear infinite, wavy-linear-move 1s linear infinite;
       }
-      :host([wavy][type='linear'].indeterminate) .secondary-bar > .bar-inner {
+      :host([shape='wavy'][type='linear'].indeterminate) .secondary-bar > .bar-inner {
         animation: secondary-indeterminate-scale 2s linear infinite, wavy-linear-move 1s linear infinite;
       }
-      :host([wavy][type='linear'].indeterminate.four-color) .secondary-bar > .bar-inner {
+      :host([shape='wavy'][type='linear'].indeterminate.four-color) .secondary-bar > .bar-inner {
         animation: secondary-indeterminate-scale 2s linear infinite, four-color 4s linear infinite, wavy-linear-move 1s linear infinite;
       }
       @keyframes wavy-linear-move {
