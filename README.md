@@ -19,19 +19,15 @@ don't want to stop using these material components we've grown to love.
 
 Please [consider sponsoring](https://github.com/sponsors/treeder) before creating issues for us.
 
-## Material 3 Expressive 🔥
+## Demo
+
+[Material 3 Expressive demo](https://material-esm.github.io/material/demo/)
 
 Material 3 Expressive is in progress! We recommend using this going forward.
 
 To start using it, see [this topic](https://github.com/orgs/material-esm/discussions/71).
 
 [Follow along here](https://github.com/material-esm/material/issues/36).
-
-[Material 3 Expressive demo](https://material-esm.github.io/material/demo/)
-
-## V1 Demo
-
-This is the previous version [demo](https://material-esm.github.io/material/demo/v1.html)
 
 ## Documentation
 

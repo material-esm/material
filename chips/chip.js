@@ -451,6 +451,13 @@ export class Chip extends LitElement {
         pointer-events: none;
         position: absolute;
       }
+      .container:not(.selected):not(.elevated):not(.disabled)::before {
+        background: var(--_container-color, none);
+      }
+      .container.disabled:not(.selected):not(.elevated)::before {
+        background: var(--_disabled-container-color, none);
+        opacity: var(--_disabled-container-opacity, 1);
+      }
       .container:not(.disabled) {
         cursor: pointer;
       }
@@ -618,6 +625,15 @@ export class Chip extends LitElement {
     `,
     css`
       :host([type='assist']) {
+        --_container-color: var(--md-assist-chip-container-color, var(--md-chip-container-color, none));
+        --_disabled-container-color: var(
+          --md-assist-chip-disabled-container-color,
+          var(--md-chip-disabled-container-color, none)
+        );
+        --_disabled-container-opacity: var(
+          --md-assist-chip-disabled-container-opacity,
+          var(--md-chip-disabled-container-opacity, 1)
+        );
         --_container-height: var(--md-assist-chip-container-height, 32px);
         --_disabled-label-text-color: var(
           --md-assist-chip-disabled-label-text-color,
@@ -734,6 +750,15 @@ export class Chip extends LitElement {
     `,
     css`
       :host([type='suggestion']) {
+        --_container-color: var(--md-suggestion-chip-container-color, var(--md-chip-container-color, none));
+        --_disabled-container-color: var(
+          --md-suggestion-chip-disabled-container-color,
+          var(--md-chip-disabled-container-color, none)
+        );
+        --_disabled-container-opacity: var(
+          --md-suggestion-chip-disabled-container-opacity,
+          var(--md-chip-disabled-container-opacity, 1)
+        );
         --_container-height: var(--md-suggestion-chip-container-height, 32px);
         --_disabled-label-text-color: var(
           --md-suggestion-chip-disabled-label-text-color,
@@ -859,6 +884,15 @@ export class Chip extends LitElement {
     `,
     css`
       :host([type='filter']) {
+        --_container-color: var(--md-filter-chip-container-color, var(--md-chip-container-color, none));
+        --_disabled-container-color: var(
+          --md-filter-chip-disabled-container-color,
+          var(--md-chip-disabled-container-color, none)
+        );
+        --_disabled-container-opacity: var(
+          --md-filter-chip-disabled-container-opacity,
+          var(--md-chip-disabled-container-opacity, 1)
+        );
         --_container-height: var(--md-filter-chip-container-height, 32px);
         --_disabled-label-text-color: var(
           --md-filter-chip-disabled-label-text-color,
@@ -1190,6 +1224,15 @@ export class Chip extends LitElement {
     `,
     css`
       :host([type='input']) {
+        --_container-color: var(--md-input-chip-container-color, var(--md-chip-container-color, none));
+        --_disabled-container-color: var(
+          --md-input-chip-disabled-container-color,
+          var(--md-chip-disabled-container-color, none)
+        );
+        --_disabled-container-opacity: var(
+          --md-input-chip-disabled-container-opacity,
+          var(--md-chip-disabled-container-opacity, 1)
+        );
         --_container-height: var(--md-input-chip-container-height, 32px);
         --_disabled-label-text-color: var(
           --md-input-chip-disabled-label-text-color,
