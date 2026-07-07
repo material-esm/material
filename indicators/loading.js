@@ -357,6 +357,7 @@ export class Loading extends LitElement {
   }
 
   startAnimation() {
+    if (this.paused) return
     if (this.rafId) return
     const canvas = this.renderRoot?.querySelector('#canvas')
     if (!canvas) return
