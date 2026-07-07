@@ -41,6 +41,7 @@ export class Progress extends LitElement {
      */
     this.buffer = 0
     this.shape = 'flat'
+    this.wavyCirclePath = null
   }
 
   firstUpdated() {
@@ -49,6 +50,7 @@ export class Progress extends LitElement {
 
   updated(changedProperties) {
     if (changedProperties.has('shape') || changedProperties.has('type')) {
+      this.wavyCirclePath = null
       this.updateWavyAnimationState()
     }
   }
@@ -73,7 +75,10 @@ export class Progress extends LitElement {
     const loop = (ts) => {
       if (!this.wavyAnimationActive) return
       this.wavyPhase += 0.08
-      const path = this.renderRoot.querySelector('.active-track.wavy-circle')
+      if (!this.wavyCirclePath) {
+        this.wavyCirclePath = this.renderRoot.querySelector('.active-track.wavy-circle')
+      }
+      const path = this.wavyCirclePath
       if (path) {
         const isIndeterminateWavy = this.indeterminate && this.shape === 'wavy'
         const progress = isIndeterminateWavy ? 0.25 : (this.value / this.max)
@@ -696,6 +701,10 @@ export class Progress extends LitElement {
 customElements.define('md-progress', Progress)
 
 function getWavyCirclePath(cx, cy, r, amplitude, frequency, phase, progress = 1.0) {
+  if (isNaN(progress) || !isFinite(progress)) {
+    progress = 0
+  }
+  progress = Math.max(0, Math.min(1, progress))
   const points = []
   const steps = Math.max(10, Math.round(180 * progress))
   for (let i = 0; i <= steps; i++) {

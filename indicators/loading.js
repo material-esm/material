@@ -227,7 +227,7 @@ class M3Animator {
     const rawDt = Math.min((ts - this.lastTs) / 1e3, 0.1)
     const dt = rawDt * this.speed
     this.lastTs = ts
-    if (dt <= 0) return
+    if (isNaN(dt) || !isFinite(dt) || dt <= 0) return
     this.elapsed += dt * 1e3
     const cycle = Math.floor(this.elapsed / DURATION_PER_SHAPE_MS)
     if (cycle > this.prevCycle) {
@@ -294,7 +294,9 @@ function setupCanvas(canvas, cssSize) {
   canvas.style.width = `${cssSize}px`
   canvas.style.height = `${cssSize}px`
   const ctx = canvas.getContext("2d")
-  ctx.scale(dpr, dpr)
+  if (ctx) {
+    ctx.scale(dpr, dpr)
+  }
   return ctx
 }
 
@@ -357,6 +359,7 @@ export class Loading extends LitElement {
   }
 
   startAnimation() {
+    if (this.paused) return
     if (this.rafId) return
     const canvas = this.renderRoot?.querySelector('#canvas')
     if (!canvas) return
@@ -420,31 +423,40 @@ export class Loading extends LitElement {
     if (changedProperties.has('color') || changedProperties.has('containerColor') || changedProperties.has('contained')) {
       this.updateResolvedColors()
     }
+    if (changedProperties.has('paused')) {
+      if (this.paused) {
+        this.stopAnimation()
+      } else {
+        this.startAnimation()
+      }
+    }
   }
 
-  _resolveColor(colorString) {
+  _resolveColor(colorString, depth = 0) {
+    if (depth > 5) return '#6750a4'
     if (!colorString) return '#6750a4'
     const trimmed = colorString.trim()
+    const windowExists = typeof window !== 'undefined'
     if (trimmed === 'currentColor') {
-      return window.getComputedStyle(this).color || '#6750a4'
+      return (windowExists ? window.getComputedStyle(this).color : '') || '#6750a4'
     }
     if (trimmed.startsWith('var(') && trimmed.endsWith(')')) {
       const content = trimmed.substring(4, trimmed.length - 1).trim()
       const commaIdx = content.indexOf(',')
       if (commaIdx === -1) {
         const varName = content.trim()
-        const val = window.getComputedStyle(this).getPropertyValue(varName).trim()
-        return val ? this._resolveColor(val) : '#6750a4'
+        const val = windowExists ? window.getComputedStyle(this).getPropertyValue(varName).trim() : ''
+        return val ? this._resolveColor(val, depth + 1) : '#6750a4'
       } else {
         const varName = content.substring(0, commaIdx).trim()
         const fallback = content.substring(commaIdx + 1).trim()
-        const val = window.getComputedStyle(this).getPropertyValue(varName).trim()
-        return val ? this._resolveColor(val) : this._resolveColor(fallback)
+        const val = windowExists ? window.getComputedStyle(this).getPropertyValue(varName).trim() : ''
+        return val ? this._resolveColor(val, depth + 1) : this._resolveColor(fallback, depth + 1)
       }
     }
     if (trimmed.startsWith('--')) {
-      const val = window.getComputedStyle(this).getPropertyValue(trimmed).trim()
-      return val ? this._resolveColor(val) : '#6750a4'
+      const val = windowExists ? window.getComputedStyle(this).getPropertyValue(trimmed).trim() : ''
+      return val ? this._resolveColor(val, depth + 1) : '#6750a4'
     }
     return trimmed
   }
