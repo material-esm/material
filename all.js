@@ -44,6 +44,8 @@ import './tabs/primary-tab.js'
 import './tabs/secondary-tab.js'
 import './tabs/tabs.js'
 import './text/text-field.js'
+import './carousel/carousel.js'
+import './carousel/carousel-item.js'
 // go/keep-sorted end
 // LINT.ThenChange(:exports)
 // LINT.IfChange(exports)
@@ -76,3 +78,5 @@ export * from './switch/switch.js'
 export * from './tabs/tab.js'
 export * from './tabs/tabs.js'
 export * from './text/text-field.js'
+export * from './carousel/carousel.js'
+export * from './carousel/carousel-item.js'
