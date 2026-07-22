@@ -3,7 +3,6 @@
  * Copyright 2023 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
-import { styles } from './internal/submenu/sub-menu-styles.js'
 /**
  * @summary Menus display a list of choices on a temporary surface.
  *
@@ -59,7 +58,7 @@ import {
   createRequestActivationEvent,
   deactivateActiveItem,
   getFirstActivatableItem,
-} from '../list/list-navigation-helpers.js'
+} from '../list/internal/list-navigation-helpers.js'
 import {
   CloseReason,
   createActivateTypeaheadEvent,

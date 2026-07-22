@@ -22,7 +22,7 @@ import './menu/sub-menu.js'
 import './radio/radio.js'
 import './select/select.js'
 import './select/select-option.js'
-import './tabs/primary-tab.js'
+import './tabs/tab.js'
 import './tabs/tabs.js'
 import './text/text-field.js'
 

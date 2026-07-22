@@ -1,6 +1,6 @@
 import { LitElement, css, html, nothing } from 'lit'
-import 'material/icon/icon.js'
-import 'material/buttons/icon-button.js'
+import '../icon/icon.js'
+import '../buttons/icon-button.js'
 import { NavigationBar } from './bar.js'
 /**
  * New expandable rail.
