@@ -7,6 +7,7 @@ export class Tooltip extends LitElement {
     headline: { type: String },
     text: { type: String },
     open: { type: Boolean, reflect: true },
+    for: { type: String },
   }
 
   constructor() {
@@ -15,30 +16,79 @@ export class Tooltip extends LitElement {
     this.text = ''
     this.type = 'plain'
     this.open = false
+    this.for = ''
     this.showTimeout = null
     this.hideTimeout = null
   }
 
   connectedCallback() {
     super.connectedCallback()
-    this.addEventListener('mouseenter', this.handleMouseEnter)
-    this.addEventListener('mouseleave', this.handleMouseLeave)
-    this.addEventListener('focus', this.handleFocus, true)
-    this.addEventListener('blur', this.handleBlur, true)
+    this.targetElement = this
+
+    // Defer finding the external target to ensure it is rendered
+    requestAnimationFrame(() => {
+      if (this.for) {
+        const root = this.getRootNode()
+        const el = root.getElementById ? root.getElementById(this.for) : document.getElementById(this.for)
+        if (el) {
+          this.targetElement = el
+        }
+      }
+
+      this.targetElement.addEventListener('mouseenter', this.handleMouseEnter)
+      this.targetElement.addEventListener('mouseleave', this.handleMouseLeave)
+      this.targetElement.addEventListener('focus', this.handleFocus, true)
+      this.targetElement.addEventListener('blur', this.handleBlur, true)
+
+      // Also listen on the tooltip itself so users can interact with rich tooltips
+      if (this.targetElement !== this) {
+        this.addEventListener('mouseenter', this.handleMouseEnter)
+        this.addEventListener('mouseleave', this.handleMouseLeave)
+      }
+    })
+
+    window.addEventListener('scroll', this.handleScroll, true)
   }
 
   disconnectedCallback() {
     super.disconnectedCallback()
+    if (this.targetElement) {
+      this.targetElement.removeEventListener('mouseenter', this.handleMouseEnter)
+      this.targetElement.removeEventListener('mouseleave', this.handleMouseLeave)
+      this.targetElement.removeEventListener('focus', this.handleFocus, true)
+      this.targetElement.removeEventListener('blur', this.handleBlur, true)
+    }
     this.removeEventListener('mouseenter', this.handleMouseEnter)
     this.removeEventListener('mouseleave', this.handleMouseLeave)
-    this.removeEventListener('focus', this.handleFocus, true)
-    this.removeEventListener('blur', this.handleBlur, true)
+    window.removeEventListener('scroll', this.handleScroll, true)
     this.clearTimeouts()
+  }
+
+  handleScroll = () => {
+    if (this.open && this.for && this.targetElement !== this) {
+      this.open = false
+      this.clearTimeouts()
+    }
+  }
+
+  updatePosition() {
+    if (!this.for || this.targetElement === this) return
+
+    const tooltipElement = this.shadowRoot.querySelector('.md-tooltip')
+    if (!tooltipElement) return
+
+    const targetRect = this.targetElement.getBoundingClientRect()
+
+    tooltipElement.style.position = 'fixed'
+    tooltipElement.style.top = `${targetRect.bottom + 4}px`
+    tooltipElement.style.left = `${targetRect.left + (targetRect.width / 2)}px`
+    // Note: transform: translateX(-50%) from CSS will handle the horizontal centering
   }
 
   handleMouseEnter = () => {
     this.clearTimeouts()
     this.showTimeout = setTimeout(() => {
+      this.updatePosition()
       this.open = true
     }, 500)
   }
@@ -52,6 +102,7 @@ export class Tooltip extends LitElement {
 
   handleFocus = () => {
     this.clearTimeouts()
+    this.updatePosition()
     this.open = true
   }
 
