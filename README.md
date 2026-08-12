@@ -23,11 +23,9 @@ Please [consider sponsoring](https://github.com/sponsors/treeder) before creatin
 
 [Material 3 Expressive demo](https://material-esm.github.io/material/demo/)
 
-Material 3 Expressive is in progress! We recommend using this going forward.
+We recommend using this going forward.
 
 To start using it, see [this topic](https://github.com/orgs/material-esm/discussions/71).
-
-[Follow along here](https://github.com/material-esm/material/issues/36).
 
 ## Documentation
 
@@ -54,12 +52,12 @@ Add this importmap to the `<head>` section of your app/site:
       "lit": "https://cdn.jsdelivr.net/npm/lit@3/index.js",
       "lit/": "https://cdn.jsdelivr.net/npm/lit@3/",
       "@lit/localize": "https://cdn.jsdelivr.net/npm/@lit/localize/lit-localize.js",
-      "@lit/reactive-element": "https://cdn.jsdelivr.net/npm/@lit/reactive-element@1/reactive-element.js",
-      "@lit/reactive-element/": "https://cdn.jsdelivr.net/npm/@lit/reactive-element@1/",
+      "@lit/reactive-element": "https://cdn.jsdelivr.net/npm/@lit/reactive-element@2/reactive-element.js",
+      "@lit/reactive-element/": "https://cdn.jsdelivr.net/npm/@lit/reactive-element@2/",
       "lit-element/lit-element.js": "https://cdn.jsdelivr.net/npm/lit-element@4/lit-element.js",
       "lit-html": "https://cdn.jsdelivr.net/npm/lit-html@3/lit-html.js",
       "lit-html/": "https://cdn.jsdelivr.net/npm/lit-html@3/",
-      "material/": "https://cdn.jsdelivr.net/gh/material-esm/material@1/"
+      "material/": "https://cdn.jsdelivr.net/gh/material-esm/material@3/"
     }
   }
 </script>
