@@ -150,11 +150,11 @@
     </script>
 
     <div style="margin-bottom: 24px">
-      <a href="./index.html" style="display: inline-flex; align-items: center; gap: 4px; font-weight: 500;">
+      <a href="./index.html" style="display: inline-flex; align-items: center; gap: 4px; font-weight: 500">
         <md-icon>arrow_back</md-icon> Back to Main Demo
       </a>
-      <h1 style="margin-top: 12px; margin-bottom: 8px;">Material 3 Carousel</h1>
-      <p style="color: var(--md-sys-color-on-surface-variant, #49454f); margin: 0;">
+      <h1 style="margin-top: 12px; margin-bottom: 8px">Material 3 Carousel</h1>
+      <p style="color: var(--md-sys-color-on-surface-variant, #49454f); margin: 0">
         Interactive implementation of Google's Material Design 3 Carousel specification.
       </p>
     </div>
@@ -163,17 +163,17 @@
     <div class="demo-section">
       <div class="section-header">
         <h2 class="section-title">Interactive Playground</h2>
-        <span id="activeSlideStatus" style="font-weight: 500; color: var(--md-sys-color-primary, #6750a4);">
+        <span id="activeSlideStatus" style="font-weight: 500; color: var(--md-sys-color-primary, #6750a4)">
           Active Slide: 1 / 6
         </span>
       </div>
-      <p class="section-desc">
-        Change the layout strategy, toggle indicators, autoplay, or navigate programmatically.
-      </p>
+      <p class="section-desc">Change the layout strategy, toggle indicators, autoplay, or navigate programmatically.</p>
 
       <div class="controls-bar">
         <label><strong>Layout:</strong></label>
-        <select id="layoutSelect" style="padding: 8px 12px; border-radius: 8px; border: 1px solid #ccc; background: white;">
+        <select
+          id="layoutSelect"
+          style="padding: 8px 12px; border-radius: 8px; border: 1px solid #ccc; background: white">
           <option value="multi-browse" selected>Multi-Browse</option>
           <option value="uncontained">Uncontained</option>
           <option value="hero">Hero (Start-aligned)</option>
@@ -181,25 +181,34 @@
           <option value="full-screen">Full-Screen</option>
         </select>
 
-        <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+        <label style="display: flex; align-items: center; gap: 6px; cursor: pointer">
           <input type="checkbox" id="indicatorsToggle" checked /> Indicators
         </label>
 
-        <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+        <label style="display: flex; align-items: center; gap: 6px; cursor: pointer">
           <input type="checkbox" id="loopToggle" checked /> Loop
         </label>
 
-        <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+        <label style="display: flex; align-items: center; gap: 6px; cursor: pointer">
           <input type="checkbox" id="autoplayToggle" /> Autoplay (3s)
         </label>
 
-        <div style="margin-left: auto; display: flex; gap: 8px;">
+        <label style="display: flex; align-items: center; gap: 8px; font-size: 0.9rem">
+          <strong>Container Width:</strong>
+          <input type="range" id="widthSlider" min="320" max="952" value="952" style="cursor: pointer; width: 120px" />
+          <span id="widthValue" style="min-width: 48px; font-variant-numeric: tabular-nums">100%</span>
+        </label>
+
+        <div style="margin-left: auto; display: flex; gap: 8px">
           <md-button color="outlined" id="prevBtn">Previous</md-button>
           <md-button color="filled" id="nextBtn">Next</md-button>
         </div>
       </div>
 
-      <div class="carousel-wrapper tall">
+      <div
+        id="playgroundWrapper"
+        class="carousel-wrapper tall"
+        style="transition: width 0.3s cubic-bezier(0.2, 0, 0, 1)">
         <md-carousel id="playgroundCarousel" layout="multi-browse" indicators loop>
           <md-carousel-item interactive headline="Mountain Vista" subhead="Rocky Peaks National Park">
             <span class="badge-tag">Featured</span>
@@ -229,7 +238,8 @@
     <div class="demo-section">
       <h2 class="section-title">1. Multi-Browse Layout (Default)</h2>
       <p class="section-desc">
-        Displays items of varying sizes (large, medium, and small peek). Dynamically recalculates item widths as the container resizes.
+        Displays items of varying sizes (large, medium, and small peek). Dynamically recalculates item widths as the
+        container resizes.
       </p>
 
       <div class="carousel-wrapper">
@@ -257,7 +267,8 @@
     <div class="demo-section">
       <h2 class="section-title">2. Uncontained Layout with Custom Cards</h2>
       <p class="section-desc">
-        Displays uniform width items scrolling across the container boundary. Excellent for cards, articles, and text-heavy items.
+        Displays uniform width items scrolling across the container boundary. Excellent for cards, articles, and
+        text-heavy items.
       </p>
 
       <div class="carousel-wrapper">
@@ -265,12 +276,12 @@
           <md-carousel-item type="elevated" interactive>
             <div class="custom-card">
               <div>
-                <h3 style="margin-top: 0; margin-bottom: 8px;">Explore Components</h3>
-                <p style="color: var(--md-sys-color-on-surface-variant, #49454f); font-size: 0.9rem; line-height: 1.4;">
+                <h3 style="margin-top: 0; margin-bottom: 8px">Explore Components</h3>
+                <p style="color: var(--md-sys-color-on-surface-variant, #49454f); font-size: 0.9rem; line-height: 1.4">
                   Discover Material 3 Expressive buttons, pickers, cards, navigation, and carousels.
                 </p>
               </div>
-              <div style="display: flex; justify-content: flex-end;">
+              <div style="display: flex; justify-content: flex-end">
                 <md-button color="tonal">Learn more</md-button>
               </div>
             </div>
@@ -279,12 +290,12 @@
           <md-carousel-item type="filled" interactive>
             <div class="custom-card">
               <div>
-                <h3 style="margin-top: 0; margin-bottom: 8px;">Design Tokens</h3>
-                <p style="color: var(--md-sys-color-on-surface-variant, #49454f); font-size: 0.9rem; line-height: 1.4;">
+                <h3 style="margin-top: 0; margin-bottom: 8px">Design Tokens</h3>
+                <p style="color: var(--md-sys-color-on-surface-variant, #49454f); font-size: 0.9rem; line-height: 1.4">
                   Full support for dynamic color schemes, shape tokens, and typography scales.
                 </p>
               </div>
-              <div style="display: flex; justify-content: flex-end;">
+              <div style="display: flex; justify-content: flex-end">
                 <md-button color="tonal">Customize</md-button>
               </div>
             </div>
@@ -293,12 +304,12 @@
           <md-carousel-item type="outlined" interactive>
             <div class="custom-card">
               <div>
-                <h3 style="margin-top: 0; margin-bottom: 8px;">Web Components</h3>
-                <p style="color: var(--md-sys-color-on-surface-variant, #49454f); font-size: 0.9rem; line-height: 1.4;">
+                <h3 style="margin-top: 0; margin-bottom: 8px">Web Components</h3>
+                <p style="color: var(--md-sys-color-on-surface-variant, #49454f); font-size: 0.9rem; line-height: 1.4">
                   Standards-compliant Lit web components with seamless framework compatibility.
                 </p>
               </div>
-              <div style="display: flex; justify-content: flex-end;">
+              <div style="display: flex; justify-content: flex-end">
                 <md-button color="tonal">Get Started</md-button>
               </div>
             </div>
@@ -307,12 +318,12 @@
           <md-carousel-item type="elevated" interactive>
             <div class="custom-card">
               <div>
-                <h3 style="margin-top: 0; margin-bottom: 8px;">Responsive Layouts</h3>
-                <p style="color: var(--md-sys-color-on-surface-variant, #49454f); font-size: 0.9rem; line-height: 1.4;">
+                <h3 style="margin-top: 0; margin-bottom: 8px">Responsive Layouts</h3>
+                <p style="color: var(--md-sys-color-on-surface-variant, #49454f); font-size: 0.9rem; line-height: 1.4">
                   Auto-adapting layouts with smooth touch, trackpad, and mouse drag interactions.
                 </p>
               </div>
-              <div style="display: flex; justify-content: flex-end;">
+              <div style="display: flex; justify-content: flex-end">
                 <md-button color="tonal">View Docs</md-button>
               </div>
             </div>
@@ -324,17 +335,21 @@
     <!-- 3. Hero Layout (Start-aligned) -->
     <div class="demo-section">
       <h2 class="section-title">3. Hero Layout (Start-aligned)</h2>
-      <p class="section-desc">
-        Spotlights one dominant large item with a smaller peek item on the trailing side.
-      </p>
+      <p class="section-desc">Spotlights one dominant large item with a smaller peek item on the trailing side.</p>
 
       <div class="carousel-wrapper tall">
         <md-carousel layout="hero" indicators loop>
-          <md-carousel-item interactive headline="Summer Spotlight Series" subhead="Curated collections from top photographers">
+          <md-carousel-item
+            interactive
+            headline="Summer Spotlight Series"
+            subhead="Curated collections from top photographers">
             <span class="badge-tag">Editor's Pick</span>
             <img src="./images/img3.jpg" alt="Summer Spotlight" />
           </md-carousel-item>
-          <md-carousel-item interactive headline="Pacific Northwest" subhead="Scenic coastal highways & ancient forests">
+          <md-carousel-item
+            interactive
+            headline="Pacific Northwest"
+            subhead="Scenic coastal highways & ancient forests">
             <span class="badge-tag">Popular</span>
             <img src="./images/img4.jpg" alt="Pacific Northwest" />
           </md-carousel-item>
@@ -348,9 +363,7 @@
     <!-- 4. Centered Hero Layout -->
     <div class="demo-section">
       <h2 class="section-title">4. Centered Hero Layout</h2>
-      <p class="section-desc">
-        Centers one large focal item flanked by peek items on both the left and right edges.
-      </p>
+      <p class="section-desc">Centers one large focal item flanked by peek items on both the left and right edges.</p>
 
       <div class="carousel-wrapper tall">
         <md-carousel layout="centered-hero" indicators loop>
@@ -373,19 +386,23 @@
     <!-- 5. Full-Screen Layout with Autoplay -->
     <div class="demo-section">
       <h2 class="section-title">5. Full-Screen Layout with Autoplay (4s)</h2>
-      <p class="section-desc">
-        Edge-to-edge full width slide presentation with pagination and hover-pause autoplay.
-      </p>
+      <p class="section-desc">Edge-to-edge full width slide presentation with pagination and hover-pause autoplay.</p>
 
       <div class="carousel-wrapper full">
         <md-carousel layout="full-screen" indicators loop autoplay="4000">
-          <md-carousel-item headline="Design Systems Reimagined" subhead="Building cohesive, accessible experiences across web & mobile">
+          <md-carousel-item
+            headline="Design Systems Reimagined"
+            subhead="Building cohesive, accessible experiences across web & mobile">
             <img src="./images/img1.jpg" alt="Slide 1" />
           </md-carousel-item>
-          <md-carousel-item headline="Fluid Responsive Components" subhead="Seamlessly scaling from compact smartphones to desktop displays">
+          <md-carousel-item
+            headline="Fluid Responsive Components"
+            subhead="Seamlessly scaling from compact smartphones to desktop displays">
             <img src="./images/img2.jpg" alt="Slide 2" />
           </md-carousel-item>
-          <md-carousel-item headline="Material 3 Expressive Power" subhead="Modern shapes, dynamic color schemes, and tactile motion">
+          <md-carousel-item
+            headline="Material 3 Expressive Power"
+            subhead="Modern shapes, dynamic color schemes, and tactile motion">
             <img src="./images/img4.jpg" alt="Slide 3" />
           </md-carousel-item>
         </md-carousel>
@@ -403,6 +420,10 @@
       const nextBtn = document.getElementById('nextBtn')
       const statusSpan = document.getElementById('activeSlideStatus')
 
+      const widthSlider = document.getElementById('widthSlider')
+      const widthValue = document.getElementById('widthValue')
+      const playgroundWrapper = document.getElementById('playgroundWrapper')
+
       layoutSelect.addEventListener('change', (e) => {
         carousel.layout = e.target.value
       })
@@ -417,6 +438,17 @@
 
       autoplayToggle.addEventListener('change', (e) => {
         carousel.autoplay = e.target.checked ? 3000 : 0
+      })
+
+      widthSlider.addEventListener('input', (e) => {
+        const val = Number(e.target.value)
+        if (val >= 940) {
+          playgroundWrapper.style.width = '100%'
+          widthValue.textContent = '100%'
+        } else {
+          playgroundWrapper.style.width = `${val}px`
+          widthValue.textContent = `${val}px`
+        }
       })
 
       prevBtn.addEventListener('click', () => carousel.previous())

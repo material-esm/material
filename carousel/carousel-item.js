@@ -73,7 +73,9 @@ export class CarouselItem extends LitElement {
       `
     }
 
-    return html`<div class="item-container" tabindex=${this.isInteractive && !this.disabled ? 0 : nothing}>${content}</div>`
+    return html`<div class="item-container" tabindex=${this.isInteractive && !this.disabled ? 0 : nothing}>
+      ${content}
+    </div>`
   }
 
   renderElevation() {
@@ -94,15 +96,10 @@ export class CarouselItem extends LitElement {
   }
 
   renderTextContent() {
-    const hasText = this.headline || this.subhead
     return html`
       <div class="content-overlay">
-        <slot name="headline">
-          ${this.headline ? html`<div class="headline">${this.headline}</div>` : nothing}
-        </slot>
-        <slot name="subhead">
-          ${this.subhead ? html`<div class="subhead">${this.subhead}</div>` : nothing}
-        </slot>
+        <slot name="headline"> ${this.headline ? html`<div class="headline">${this.headline}</div>` : nothing} </slot>
+        <slot name="subhead"> ${this.subhead ? html`<div class="subhead">${this.subhead}</div>` : nothing} </slot>
         <slot name="action"></slot>
       </div>
     `
@@ -123,15 +120,40 @@ export class CarouselItem extends LitElement {
         position: relative;
         box-sizing: border-box;
         border-radius: var(--_item-shape);
+        clip-path: inset(0 round var(--_item-shape));
         overflow: hidden;
+        isolation: isolate;
         user-select: none;
         flex-shrink: 0;
         height: 100%;
         scroll-snap-align: start;
-        transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1),
-                    opacity 0.25s cubic-bezier(0.2, 0, 0, 1),
-                    filter 0.25s cubic-bezier(0.2, 0, 0, 1);
+        transition:
+          width 0.35s cubic-bezier(0.2, 0, 0, 1),
+          min-width 0.35s cubic-bezier(0.2, 0, 0, 1),
+          max-width 0.35s cubic-bezier(0.2, 0, 0, 1),
+          flex-basis 0.35s cubic-bezier(0.2, 0, 0, 1),
+          transform 0.25s cubic-bezier(0.2, 0, 0, 1),
+          opacity 0.25s cubic-bezier(0.2, 0, 0, 1),
+          filter 0.25s cubic-bezier(0.2, 0, 0, 1);
         -webkit-tap-highlight-color: transparent;
+      }
+
+      :host([data-size='small']) .content-overlay,
+      :host([data-size='small']) .scrim {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      :host([data-size='medium']) .subhead {
+        display: none;
+      }
+
+      :host([data-size='medium']) .headline {
+        font-size: var(--md-carousel-item-medium-headline-size, 0.95rem);
+      }
+
+      :host([data-size='medium']) .content-overlay {
+        padding: 12px;
       }
 
       :host([shape='small']) {

@@ -123,11 +123,7 @@ export class Carousel extends LitElement {
   }
 
   updated(changedProperties) {
-    if (
-      changedProperties.has('layout') ||
-      changedProperties.has('itemWidth') ||
-      changedProperties.has('itemSpacing')
-    ) {
+    if (changedProperties.has('layout') || changedProperties.has('itemWidth') || changedProperties.has('itemSpacing')) {
       this._updateLayout()
       this._updateScrollState()
     }
@@ -137,6 +133,7 @@ export class Carousel extends LitElement {
     }
 
     if (changedProperties.has('activeIndex') && changedProperties.get('activeIndex') !== undefined) {
+      this._applyItemSizes()
       this._syncActiveItem()
     }
   }
@@ -254,12 +251,16 @@ export class Carousel extends LitElement {
     if (!items.length || !this.scrollerElement) return
 
     const boundedIndex = Math.max(0, Math.min(index, items.length - 1))
-    const targetItem = items[boundedIndex]
-    if (!targetItem) return
+    this.activeIndex = boundedIndex
+    this._applyItemSizes()
+    this._syncActiveItem()
+
+    // Wait a frame for CSS transitions / layout to settle
+    await new Promise((r) => requestAnimationFrame(r))
 
     const scroller = this.scrollerElement
-    const scrollerRect = scroller.getBoundingClientRect()
-    const itemRect = targetItem.getBoundingClientRect()
+    const targetItem = items[boundedIndex]
+    if (!targetItem || !scroller) return
 
     let scrollTarget
     if (this.layout === 'centered-hero') {
@@ -275,44 +276,189 @@ export class Carousel extends LitElement {
       behavior,
     })
 
-    this.activeIndex = boundedIndex
-    this._syncActiveItem()
+    this._updateScrollState()
+    this.dispatchEvent(
+      new CustomEvent('change', {
+        detail: { index: boundedIndex, item: targetItem },
+        bubbles: true,
+        composed: true,
+      }),
+    )
   }
 
   _updateLayout() {
     const scroller = this.scrollerElement
     if (!scroller) return
 
-    const containerWidth = this.offsetWidth || scroller.clientWidth || 360
     const spacing = Number(this.itemSpacing) || 8
-
     scroller.style.setProperty('--_item-spacing', `${spacing}px`)
 
-    if (this.itemWidth) {
-      const widthVal = isNaN(Number(this.itemWidth)) ? this.itemWidth : `${this.itemWidth}px`
-      scroller.style.setProperty('--_custom-item-width', widthVal)
-    } else {
-      scroller.style.removeProperty('--_custom-item-width')
-    }
+    this._applyItemSizes()
+  }
 
-    if (this.layout === 'multi-browse') {
-      // Dynamic M3 Multi-browse item calculations
-      const smallWidth = 48
-      const availableWidth = containerWidth - smallWidth - spacing
+  _applyItemSizes() {
+    const items = this.items
+    if (!items.length) return
 
-      let largeWidth
-      if (containerWidth < 480) {
-        // Compact: 1 large + 1 small peek
-        largeWidth = Math.max(220, availableWidth)
-      } else if (containerWidth < 768) {
-        // Medium: 1 large (~65%) + 1 medium (~30%) + 1 small peek
-        largeWidth = Math.min(360, Math.floor(availableWidth * 0.65))
-      } else {
-        // Expanded: 2 or more large + medium + small peek
-        largeWidth = Math.min(400, Math.floor(availableWidth * 0.42))
+    const scroller = this.scrollerElement
+    const containerWidth = this.offsetWidth || scroller?.clientWidth || 360
+    const spacing = Number(this.itemSpacing) || 8
+    const activeIndex = this.activeIndex
+
+    if (this.layout === 'multi-browse' || !this.layout) {
+      if (scroller) {
+        scroller.style.paddingLeft = '0px'
+        scroller.style.paddingRight = '0px'
       }
 
-      scroller.style.setProperty('--_large-item-width', `${largeWidth}px`)
+      const isCompact = containerWidth < 520
+      const isMedium = containerWidth >= 520 && containerWidth < 840
+      const isExpanded = containerWidth >= 840
+
+      let numLarge = isExpanded ? 2 : 1
+      const smallWidth = isCompact ? 48 : 56
+      let mediumWidth
+      let largeWidth
+
+      if (isCompact) {
+        if (containerWidth < 360) {
+          numLarge = 1
+          mediumWidth = 0
+          largeWidth = Math.max(180, containerWidth - smallWidth - spacing)
+        } else {
+          const remaining = containerWidth - smallWidth - 2 * spacing
+          mediumWidth = Math.max(72, Math.min(120, Math.round(remaining * 0.28)))
+          largeWidth = Math.max(180, remaining - mediumWidth)
+        }
+      } else if (isMedium) {
+        const remaining = containerWidth - smallWidth - 2 * spacing
+        mediumWidth = Math.max(120, Math.min(180, Math.round(remaining * 0.3)))
+        largeWidth = Math.max(260, remaining - mediumWidth)
+      } else {
+        const remaining = containerWidth - smallWidth - 3 * spacing
+        mediumWidth = Math.max(140, Math.min(220, Math.round(remaining * 0.22)))
+        largeWidth = Math.max(280, Math.floor((remaining - mediumWidth) / 2))
+      }
+
+      items.forEach((item, i) => {
+        let sizeType = 'large'
+        let width = largeWidth
+
+        if (i < activeIndex) {
+          sizeType = 'small'
+          width = smallWidth
+        } else if (i < activeIndex + numLarge) {
+          sizeType = 'large'
+          width = largeWidth
+        } else if (mediumWidth > 0 && i === activeIndex + numLarge) {
+          sizeType = 'medium'
+          width = mediumWidth
+        } else if (i === activeIndex + numLarge + (mediumWidth > 0 ? 1 : 0)) {
+          sizeType = 'small'
+          width = smallWidth
+        } else {
+          sizeType = 'large'
+          width = largeWidth
+        }
+
+        item.setAttribute('data-size', sizeType)
+        item.style.flex = `0 0 ${width}px`
+        item.style.width = `${width}px`
+        item.style.minWidth = `${width}px`
+        item.style.maxWidth = `${width}px`
+      })
+    } else if (this.layout === 'hero') {
+      if (scroller) {
+        scroller.style.paddingLeft = '0px'
+        scroller.style.paddingRight = '0px'
+      }
+
+      const smallWidth = containerWidth < 480 ? 48 : 56
+      const largeWidth = Math.max(240, containerWidth - smallWidth - spacing)
+
+      items.forEach((item, i) => {
+        let sizeType = 'large'
+        let width = largeWidth
+
+        if (i < activeIndex) {
+          sizeType = 'small'
+          width = smallWidth
+        } else if (i === activeIndex) {
+          sizeType = 'large'
+          width = largeWidth
+        } else if (i === activeIndex + 1) {
+          sizeType = 'small'
+          width = smallWidth
+        } else {
+          sizeType = 'large'
+          width = largeWidth
+        }
+
+        item.setAttribute('data-size', sizeType)
+        item.style.flex = `0 0 ${width}px`
+        item.style.width = `${width}px`
+        item.style.minWidth = `${width}px`
+        item.style.maxWidth = `${width}px`
+      })
+    } else if (this.layout === 'centered-hero') {
+      const peekWidth = containerWidth < 480 ? 40 : 56
+      const largeWidth = Math.max(220, containerWidth - 2 * peekWidth - 2 * spacing)
+
+      if (scroller) {
+        scroller.style.paddingLeft = `${peekWidth + spacing}px`
+        scroller.style.paddingRight = `${peekWidth + spacing}px`
+      }
+
+      items.forEach((item, i) => {
+        let sizeType = 'large'
+        let width = largeWidth
+
+        if (i === activeIndex) {
+          sizeType = 'large'
+          width = largeWidth
+        } else if (i === activeIndex - 1 || i === activeIndex + 1) {
+          sizeType = 'small'
+          width = peekWidth
+        } else {
+          sizeType = 'large'
+          width = largeWidth
+        }
+
+        item.setAttribute('data-size', sizeType)
+        item.style.flex = `0 0 ${width}px`
+        item.style.width = `${width}px`
+        item.style.minWidth = `${width}px`
+        item.style.maxWidth = `${width}px`
+      })
+    } else if (this.layout === 'uncontained') {
+      if (scroller) {
+        scroller.style.paddingLeft = '0px'
+        scroller.style.paddingRight = '0px'
+      }
+      const customWidth = this.itemWidth
+        ? isNaN(Number(this.itemWidth))
+          ? this.itemWidth
+          : `${this.itemWidth}px`
+        : '280px'
+      items.forEach((item) => {
+        item.setAttribute('data-size', 'large')
+        item.style.flex = `0 0 ${customWidth}`
+        item.style.width = customWidth
+        item.style.minWidth = customWidth
+        item.style.maxWidth = customWidth
+      })
+    } else if (this.layout === 'full-screen') {
+      if (scroller) {
+        scroller.style.paddingLeft = '0px'
+        scroller.style.paddingRight = '0px'
+      }
+      items.forEach((item) => {
+        item.setAttribute('data-size', 'large')
+        item.style.flex = '0 0 100%'
+        item.style.width = '100%'
+        item.style.minWidth = '100%'
+        item.style.maxWidth = '100%'
+      })
     }
   }
 
@@ -334,20 +480,19 @@ export class Carousel extends LitElement {
     const items = this.items
     if (!scroller || !items.length) return
 
-    const scrollerRect = scroller.getBoundingClientRect()
-    const scrollerCenter = scrollerRect.left + scrollerRect.width / 2
+    const scrollerLeft = scroller.scrollLeft
+    const scrollerCenter = scrollerLeft + scroller.clientWidth / 2
 
     let closestIndex = 0
     let minDistance = Infinity
 
     items.forEach((item, index) => {
-      const rect = item.getBoundingClientRect()
       let distance
       if (this.layout === 'centered-hero') {
-        const itemCenter = rect.left + rect.width / 2
+        const itemCenter = item.offsetLeft + item.offsetWidth / 2
         distance = Math.abs(itemCenter - scrollerCenter)
       } else {
-        distance = Math.abs(rect.left - scrollerRect.left)
+        distance = Math.abs(item.offsetLeft - scrollerLeft)
       }
 
       if (distance < minDistance) {
@@ -358,6 +503,7 @@ export class Carousel extends LitElement {
 
     if (this.activeIndex !== closestIndex) {
       this.activeIndex = closestIndex
+      this._applyItemSizes()
       this._syncActiveItem()
       this.dispatchEvent(
         new CustomEvent('change', {
@@ -387,6 +533,8 @@ export class Carousel extends LitElement {
   }
 
   _handleKeyDown(event) {
+    if (event.defaultPrevented) return
+
     const isRtlMode = isRtl(this, false)
     const isLeft = event.key === 'ArrowLeft'
     const isRight = event.key === 'ArrowRight'
@@ -422,6 +570,10 @@ export class Carousel extends LitElement {
     this._startX = e.pageX - scroller.offsetLeft
     this._startScrollLeft = scroller.scrollLeft
     this._hasDragged = false
+
+    try {
+      scroller.setPointerCapture?.(e.pointerId)
+    } catch {}
   }
 
   _onPointerMove(e) {
@@ -439,13 +591,18 @@ export class Carousel extends LitElement {
     }
   }
 
-  _onPointerUp() {
+  _onPointerUp(e) {
     if (!this._isPointerDown) return
     this._isPointerDown = false
 
     const scroller = this.scrollerElement
     if (scroller) {
       scroller.classList.remove('is-dragging')
+      try {
+        if (e && scroller.hasPointerCapture?.(e.pointerId)) {
+          scroller.releasePointerCapture?.(e.pointerId)
+        }
+      } catch {}
     }
 
     if (this._hasDragged) {
@@ -453,11 +610,16 @@ export class Carousel extends LitElement {
     }
   }
 
-  _onPointerCancel() {
+  _onPointerCancel(e) {
     this._isPointerDown = false
     const scroller = this.scrollerElement
     if (scroller) {
       scroller.classList.remove('is-dragging')
+      try {
+        if (e && scroller.hasPointerCapture?.(e.pointerId)) {
+          scroller.releasePointerCapture?.(e.pointerId)
+        }
+      } catch {}
     }
   }
 
@@ -558,53 +720,17 @@ export class Carousel extends LitElement {
         pointer-events: none;
       }
 
-      /* Layout: Multi-Browse */
-      :host([layout='multi-browse']) ::slotted([md-carousel-item]),
-      :host([layout='multi-browse']) ::slotted(md-carousel-item),
-      :host(:not([layout])) ::slotted([md-carousel-item]),
-      :host(:not([layout])) ::slotted(md-carousel-item) {
-        flex: 0 0 var(--_large-item-width, 280px);
-        width: var(--_large-item-width, 280px);
+      /* Layout alignments */
+      ::slotted([md-carousel-item]),
+      ::slotted(md-carousel-item) {
+        height: 100%;
+        min-height: 0;
         scroll-snap-align: start;
       }
 
-      /* Layout: Uncontained */
-      :host([layout='uncontained']) ::slotted([md-carousel-item]),
-      :host([layout='uncontained']) ::slotted(md-carousel-item) {
-        flex: 0 0 var(--_custom-item-width, 280px);
-        width: var(--_custom-item-width, 280px);
-        scroll-snap-align: start;
-      }
-
-      /* Layout: Hero (Start-aligned) */
-      :host([layout='hero']) ::slotted([md-carousel-item]),
-      :host([layout='hero']) ::slotted(md-carousel-item) {
-        flex: 0 0 calc(100% - 64px);
-        max-width: 600px;
-        width: calc(100% - 64px);
-        scroll-snap-align: start;
-      }
-
-      /* Layout: Centered Hero */
-      :host([layout='centered-hero']) .scroller {
-        padding-left: 56px;
-        padding-right: 56px;
-      }
       :host([layout='centered-hero']) ::slotted([md-carousel-item]),
       :host([layout='centered-hero']) ::slotted(md-carousel-item) {
-        flex: 0 0 calc(100% - 112px);
-        max-width: 600px;
-        width: calc(100% - 112px);
         scroll-snap-align: center;
-      }
-
-      /* Layout: Full-Screen */
-      :host([layout='full-screen']) ::slotted([md-carousel-item]),
-      :host([layout='full-screen']) ::slotted(md-carousel-item) {
-        flex: 0 0 100%;
-        width: 100%;
-        height: 100%;
-        scroll-snap-align: start;
       }
 
       /* Navigation Buttons */
@@ -625,9 +751,10 @@ export class Carousel extends LitElement {
         cursor: pointer;
         z-index: 10;
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-        transition: opacity 0.2s cubic-bezier(0.2, 0, 0, 1),
-                    transform 0.2s cubic-bezier(0.2, 0, 0, 1),
-                    background-color 0.2s cubic-bezier(0.2, 0, 0, 1);
+        transition:
+          opacity 0.2s cubic-bezier(0.2, 0, 0, 1),
+          transform 0.2s cubic-bezier(0.2, 0, 0, 1),
+          background-color 0.2s cubic-bezier(0.2, 0, 0, 1);
         -webkit-tap-highlight-color: transparent;
       }
 
@@ -696,8 +823,9 @@ export class Carousel extends LitElement {
         outline: none;
         padding: 0;
         cursor: pointer;
-        transition: width 0.3s cubic-bezier(0.2, 0, 0, 1),
-                    background-color 0.3s cubic-bezier(0.2, 0, 0, 1);
+        transition:
+          width 0.3s cubic-bezier(0.2, 0, 0, 1),
+          background-color 0.3s cubic-bezier(0.2, 0, 0, 1);
       }
 
       .indicator-dot.active {
