@@ -1,0 +1,9 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "material-demo",
+  "compatibility_date": "2026-08-22",
+  "assets": {
+    "directory": ".",
+    "binding": "ASSETS"
+  }
+}
