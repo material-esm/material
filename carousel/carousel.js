@@ -311,34 +311,11 @@ export class Carousel extends LitElement {
         scroller.style.paddingRight = '0px'
       }
 
-      const isCompact = containerWidth < 520
-      const isMedium = containerWidth >= 520 && containerWidth < 840
-      const isExpanded = containerWidth >= 840
-
-      let numLarge = isExpanded ? 2 : 1
-      const smallWidth = isCompact ? 48 : 56
-      let mediumWidth
-      let largeWidth
-
-      if (isCompact) {
-        if (containerWidth < 360) {
-          numLarge = 1
-          mediumWidth = 0
-          largeWidth = Math.max(180, containerWidth - smallWidth - spacing)
-        } else {
-          const remaining = containerWidth - smallWidth - 2 * spacing
-          mediumWidth = Math.max(72, Math.min(120, Math.round(remaining * 0.28)))
-          largeWidth = Math.max(180, remaining - mediumWidth)
-        }
-      } else if (isMedium) {
-        const remaining = containerWidth - smallWidth - 2 * spacing
-        mediumWidth = Math.max(120, Math.min(180, Math.round(remaining * 0.3)))
-        largeWidth = Math.max(260, remaining - mediumWidth)
-      } else {
-        const remaining = containerWidth - smallWidth - 3 * spacing
-        mediumWidth = Math.max(140, Math.min(220, Math.round(remaining * 0.22)))
-        largeWidth = Math.max(280, Math.floor((remaining - mediumWidth) / 2))
-      }
+      const smallWidth = containerWidth < 400 ? 40 : containerWidth < 600 ? 48 : 56
+      const remaining = Math.max(120, containerWidth - smallWidth - 2 * spacing)
+      const mediumRatio = containerWidth < 400 ? 0.3 : 0.32
+      const mediumWidth = Math.max(60, Math.round(remaining * mediumRatio))
+      const largeWidth = Math.max(120, remaining - mediumWidth)
 
       items.forEach((item, i) => {
         let sizeType = 'large'
@@ -347,13 +324,13 @@ export class Carousel extends LitElement {
         if (i < activeIndex) {
           sizeType = 'small'
           width = smallWidth
-        } else if (i < activeIndex + numLarge) {
+        } else if (i === activeIndex) {
           sizeType = 'large'
           width = largeWidth
-        } else if (mediumWidth > 0 && i === activeIndex + numLarge) {
+        } else if (i === activeIndex + 1) {
           sizeType = 'medium'
           width = mediumWidth
-        } else if (i === activeIndex + numLarge + (mediumWidth > 0 ? 1 : 0)) {
+        } else if (i === activeIndex + 2) {
           sizeType = 'small'
           width = smallWidth
         } else {
