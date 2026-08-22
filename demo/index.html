@@ -65,6 +65,8 @@
       import 'material/app/bar.js'
       import 'material/indicators/progress.js'
       import 'material/indicators/loading.js'
+      import 'material/carousel/carousel.js'
+      import 'material/carousel/carousel-item.js'
       import './components/expressive-component.js'
     </script>
 
@@ -156,6 +158,7 @@
               Other demo pages:
               <ul>
                 <li><a href="./list-demo.html">List Demo</a></li>
+                <li><a href="./carousel-demo.html">Carousel Demo</a></li>
               </ul>
             </div>
 
@@ -184,27 +187,52 @@
             </div>
 
             <h3>Progress</h3>
-            <div class="flex g12 aic" style="margin-bottom: 12px; flex-wrap: wrap;">
+            <div class="flex g12 aic" style="margin-bottom: 12px; flex-wrap: wrap">
               <md-progress type="circular" indeterminate shape="flat"></md-progress>
               <md-progress type="circular" value="0.7"></md-progress>
-              <md-progress type="linear" value="0.5" style="width: 200px;"></md-progress>
+              <md-progress type="linear" value="0.5" style="width: 200px"></md-progress>
             </div>
 
             <h4>Wavy Progress Indicators</h4>
-            <div class="flex g12 aic" style="margin-bottom: 24px; flex-wrap: wrap;">
+            <div class="flex g12 aic" style="margin-bottom: 24px; flex-wrap: wrap">
               <md-progress type="circular" indeterminate shape="wavy"></md-progress>
               <md-progress type="circular" value="0.7" shape="wavy"></md-progress>
-              <md-progress type="linear" value="0.5" shape="wavy" style="width: 200px;"></md-progress>
-              <md-progress type="linear" indeterminate shape="wavy" style="width: 200px;"></md-progress>
+              <md-progress type="linear" value="0.5" shape="wavy" style="width: 200px"></md-progress>
+              <md-progress type="linear" indeterminate shape="wavy" style="width: 200px"></md-progress>
             </div>
 
             <h3>Loading Indicator (M3 Expressive)</h3>
-            <div class="flex g12 aic" style="margin-bottom: 24px;">
+            <div class="flex g12 aic" style="margin-bottom: 24px">
               <md-loading></md-loading>
               <md-loading contained></md-loading>
               <md-loading color="var(--md-sys-color-tertiary, #7d5260)"></md-loading>
               <md-loading contained color="white" container-color="var(--md-sys-color-primary, #6750a4)"></md-loading>
               <md-loading size="64" contained></md-loading>
+            </div>
+
+            <div class="flex aic" style="justify-content: space-between; align-items: center">
+              <h3 style="margin: 0">Carousel (M3 Multi-Browse)</h3>
+              <a
+                href="./carousel-demo.html"
+                style="display: inline-flex; align-items: center; gap: 4px; font-weight: 500">
+                View Full Carousel Demo <md-icon style="font-size: 18px">arrow_forward</md-icon>
+              </a>
+            </div>
+            <div style="margin-bottom: 24px; margin-top: 12px">
+              <md-carousel layout="multi-browse" indicators loop style="height: 220px">
+                <md-carousel-item interactive headline="Mountain Vista" subhead="National Park">
+                  <img src="./images/img1.jpg" alt="Mountain" />
+                </md-carousel-item>
+                <md-carousel-item interactive headline="Ocean Coast" subhead="Golden sunset">
+                  <img src="./images/img2.jpg" alt="Ocean" />
+                </md-carousel-item>
+                <md-carousel-item interactive headline="Redwood Forest" subhead="Misty trees">
+                  <img src="./images/img3.jpg" alt="Forest" />
+                </md-carousel-item>
+                <md-carousel-item interactive headline="Desert Valley" subhead="Sahara dunes">
+                  <img src="./images/img4.jpg" alt="Desert" />
+                </md-carousel-item>
+              </md-carousel>
             </div>
 
             <md-snackbar message="Hello World!" open></md-snackbar>

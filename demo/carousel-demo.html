@@ -1,0 +1,463 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Material 3 Carousel Demo</title>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="preload"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"
+      as="style"
+      onload="
+        this.onload = null
+        this.rel = 'stylesheet'
+      " />
+    <link
+      rel="preload"
+      href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;700&display=swap"
+      as="style"
+      onload="
+        this.onload = null
+        this.rel = 'stylesheet'
+      " />
+
+    <link rel="icon" href="./images/material.jpeg" />
+    <link rel="stylesheet" href="./css/styles.css" />
+
+    <script type="importmap">
+      {
+        "imports": {
+          "lit": "https://cdn.jsdelivr.net/npm/lit@3/index.js",
+          "lit/": "https://cdn.jsdelivr.net/npm/lit@3/",
+          "@lit/localize": "https://cdn.jsdelivr.net/npm/@lit/localize/lit-localize.js",
+          "@lit/reactive-element": "https://cdn.jsdelivr.net/npm/@lit/reactive-element@2/reactive-element.js",
+          "@lit/reactive-element/": "https://cdn.jsdelivr.net/npm/@lit/reactive-element@2/",
+          "lit-element/lit-element.js": "https://cdn.jsdelivr.net/npm/lit-element@4/lit-element.js",
+          "lit-html": "https://cdn.jsdelivr.net/npm/lit-html@3/lit-html.js",
+          "lit-html/": "https://cdn.jsdelivr.net/npm/lit-html@3/",
+          "material/": "../"
+        }
+      }
+    </script>
+
+    <style>
+      body {
+        background: var(--md-sys-color-background, #fef7ff);
+        color: var(--md-sys-color-on-background, #1d1b20);
+        padding: 24px;
+        max-width: 1000px;
+        margin: 0 auto;
+        box-sizing: border-box;
+      }
+
+      .demo-section {
+        margin-bottom: 48px;
+        background: var(--md-sys-color-surface-container, #f3edf7);
+        border-radius: 24px;
+        padding: 24px;
+        box-sizing: border-box;
+      }
+
+      .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+      }
+
+      .section-title {
+        font-size: 1.25rem;
+        font-weight: 500;
+        margin: 0;
+      }
+
+      .section-desc {
+        color: var(--md-sys-color-on-surface-variant, #49454f);
+        margin-top: 4px;
+        margin-bottom: 16px;
+        font-size: 0.9rem;
+      }
+
+      .carousel-wrapper {
+        height: 240px;
+        margin-bottom: 12px;
+        position: relative;
+      }
+
+      .carousel-wrapper md-carousel {
+        height: 100%;
+      }
+
+      .carousel-wrapper.tall {
+        height: 340px;
+      }
+
+      .carousel-wrapper.full {
+        height: 380px;
+      }
+
+      .badge-tag {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        background: rgba(0, 0, 0, 0.6);
+        color: #fff;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        backdrop-filter: blur(4px);
+        z-index: 4;
+      }
+
+      .controls-bar {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 24px;
+        padding: 16px;
+        background: var(--md-sys-color-surface-container-high, #ece6f0);
+        border-radius: 16px;
+      }
+
+      .custom-card {
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100%;
+        box-sizing: border-box;
+      }
+    </style>
+  </head>
+
+  <body>
+    <script type="module">
+      import 'material/carousel/carousel.js'
+      import 'material/carousel/carousel-item.js'
+      import 'material/card/card.js'
+      import 'material/buttons/button.js'
+      import 'material/buttons/icon-button.js'
+      import 'material/chips/chip.js'
+      import 'material/chips/chip-set.js'
+      import 'material/icon/icon.js'
+      import 'material/badge/badge.js'
+    </script>
+
+    <div style="margin-bottom: 24px">
+      <a href="./index.html" style="display: inline-flex; align-items: center; gap: 4px; font-weight: 500">
+        <md-icon>arrow_back</md-icon> Back to Main Demo
+      </a>
+      <h1 style="margin-top: 12px; margin-bottom: 8px">Material 3 Carousel</h1>
+      <p style="color: var(--md-sys-color-on-surface-variant, #49454f); margin: 0">
+        Interactive implementation of Google's Material Design 3 Carousel specification.
+      </p>
+    </div>
+
+    <!-- Interactive Playground -->
+    <div class="demo-section">
+      <div class="section-header">
+        <h2 class="section-title">Interactive Playground</h2>
+        <span id="activeSlideStatus" style="font-weight: 500; color: var(--md-sys-color-primary, #6750a4)">
+          Active Slide: 1 / 6
+        </span>
+      </div>
+      <p class="section-desc">Change the layout strategy, toggle indicators, autoplay, or navigate programmatically.</p>
+
+      <div class="controls-bar">
+        <label><strong>Layout:</strong></label>
+        <select
+          id="layoutSelect"
+          style="padding: 8px 12px; border-radius: 8px; border: 1px solid #ccc; background: white">
+          <option value="multi-browse" selected>Multi-Browse</option>
+          <option value="uncontained">Uncontained</option>
+          <option value="hero">Hero (Start-aligned)</option>
+          <option value="centered-hero">Centered Hero</option>
+          <option value="full-screen">Full-Screen</option>
+        </select>
+
+        <label style="display: flex; align-items: center; gap: 6px; cursor: pointer">
+          <input type="checkbox" id="indicatorsToggle" checked /> Indicators
+        </label>
+
+        <label style="display: flex; align-items: center; gap: 6px; cursor: pointer">
+          <input type="checkbox" id="loopToggle" checked /> Loop
+        </label>
+
+        <label style="display: flex; align-items: center; gap: 6px; cursor: pointer">
+          <input type="checkbox" id="autoplayToggle" /> Autoplay (3s)
+        </label>
+
+        <label style="display: flex; align-items: center; gap: 8px; font-size: 0.9rem">
+          <strong>Container Width:</strong>
+          <input type="range" id="widthSlider" min="320" max="952" value="952" style="cursor: pointer; width: 120px" />
+          <span id="widthValue" style="min-width: 48px; font-variant-numeric: tabular-nums">100%</span>
+        </label>
+
+        <div style="margin-left: auto; display: flex; gap: 8px">
+          <md-button color="outlined" id="prevBtn">Previous</md-button>
+          <md-button color="filled" id="nextBtn">Next</md-button>
+        </div>
+      </div>
+
+      <div
+        id="playgroundWrapper"
+        class="carousel-wrapper tall"
+        style="transition: width 0.3s cubic-bezier(0.2, 0, 0, 1)">
+        <md-carousel id="playgroundCarousel" layout="multi-browse" indicators loop>
+          <md-carousel-item interactive headline="Mountain Vista" subhead="Rocky Peaks National Park">
+            <span class="badge-tag">Featured</span>
+            <img src="./images/img1.jpg" alt="Mountain Vista" />
+          </md-carousel-item>
+          <md-carousel-item interactive headline="Ocean Sunset" subhead="Golden hour at Pacific Coast">
+            <span class="badge-tag">New</span>
+            <img src="./images/img2.jpg" alt="Ocean Sunset" />
+          </md-carousel-item>
+          <md-carousel-item interactive headline="Forest Trail" subhead="Misty Redwood Sanctuary">
+            <img src="./images/img3.jpg" alt="Forest Trail" />
+          </md-carousel-item>
+          <md-carousel-item interactive headline="Desert Dunes" subhead="Sahara Twilight Expedition">
+            <img src="./images/img4.jpg" alt="Desert Dunes" />
+          </md-carousel-item>
+          <md-carousel-item interactive headline="Alpine Valley" subhead="Spring Blooms & Snow Peaks">
+            <img src="./images/img1.jpg" alt="Alpine Valley" />
+          </md-carousel-item>
+          <md-carousel-item interactive headline="Island Lagoon" subhead="Crystal Blue Waters">
+            <img src="./images/img2.jpg" alt="Island Lagoon" />
+          </md-carousel-item>
+        </md-carousel>
+      </div>
+    </div>
+
+    <!-- 1. Multi-Browse Layout -->
+    <div class="demo-section">
+      <h2 class="section-title">1. Multi-Browse Layout (Default)</h2>
+      <p class="section-desc">
+        Displays items of varying sizes (large, medium, and small peek). Dynamically recalculates item widths as the
+        container resizes.
+      </p>
+
+      <div class="carousel-wrapper">
+        <md-carousel layout="multi-browse" indicators>
+          <md-carousel-item interactive headline="Architecture" subhead="Modern structures">
+            <img src="./images/img1.jpg" alt="Architecture" />
+          </md-carousel-item>
+          <md-carousel-item interactive headline="Nature" subhead="Wildlife and wilderness">
+            <img src="./images/img2.jpg" alt="Nature" />
+          </md-carousel-item>
+          <md-carousel-item interactive headline="Travel" subhead="Scenic journeys">
+            <img src="./images/img3.jpg" alt="Travel" />
+          </md-carousel-item>
+          <md-carousel-item interactive headline="Cuisine" subhead="Culinary arts">
+            <img src="./images/img4.jpg" alt="Cuisine" />
+          </md-carousel-item>
+          <md-carousel-item interactive headline="Culture" subhead="Heritage and traditions">
+            <img src="./images/img1.jpg" alt="Culture" />
+          </md-carousel-item>
+        </md-carousel>
+      </div>
+    </div>
+
+    <!-- 2. Uncontained Layout with Cards -->
+    <div class="demo-section">
+      <h2 class="section-title">2. Uncontained Layout with Custom Cards</h2>
+      <p class="section-desc">
+        Displays uniform width items scrolling across the container boundary. Excellent for cards, articles, and
+        text-heavy items.
+      </p>
+
+      <div class="carousel-wrapper">
+        <md-carousel layout="uncontained" item-width="300px" indicators>
+          <md-carousel-item type="elevated" interactive>
+            <div class="custom-card">
+              <div>
+                <h3 style="margin-top: 0; margin-bottom: 8px">Explore Components</h3>
+                <p style="color: var(--md-sys-color-on-surface-variant, #49454f); font-size: 0.9rem; line-height: 1.4">
+                  Discover Material 3 Expressive buttons, pickers, cards, navigation, and carousels.
+                </p>
+              </div>
+              <div style="display: flex; justify-content: flex-end">
+                <md-button color="tonal">Learn more</md-button>
+              </div>
+            </div>
+          </md-carousel-item>
+
+          <md-carousel-item type="filled" interactive>
+            <div class="custom-card">
+              <div>
+                <h3 style="margin-top: 0; margin-bottom: 8px">Design Tokens</h3>
+                <p style="color: var(--md-sys-color-on-surface-variant, #49454f); font-size: 0.9rem; line-height: 1.4">
+                  Full support for dynamic color schemes, shape tokens, and typography scales.
+                </p>
+              </div>
+              <div style="display: flex; justify-content: flex-end">
+                <md-button color="tonal">Customize</md-button>
+              </div>
+            </div>
+          </md-carousel-item>
+
+          <md-carousel-item type="outlined" interactive>
+            <div class="custom-card">
+              <div>
+                <h3 style="margin-top: 0; margin-bottom: 8px">Web Components</h3>
+                <p style="color: var(--md-sys-color-on-surface-variant, #49454f); font-size: 0.9rem; line-height: 1.4">
+                  Standards-compliant Lit web components with seamless framework compatibility.
+                </p>
+              </div>
+              <div style="display: flex; justify-content: flex-end">
+                <md-button color="tonal">Get Started</md-button>
+              </div>
+            </div>
+          </md-carousel-item>
+
+          <md-carousel-item type="elevated" interactive>
+            <div class="custom-card">
+              <div>
+                <h3 style="margin-top: 0; margin-bottom: 8px">Responsive Layouts</h3>
+                <p style="color: var(--md-sys-color-on-surface-variant, #49454f); font-size: 0.9rem; line-height: 1.4">
+                  Auto-adapting layouts with smooth touch, trackpad, and mouse drag interactions.
+                </p>
+              </div>
+              <div style="display: flex; justify-content: flex-end">
+                <md-button color="tonal">View Docs</md-button>
+              </div>
+            </div>
+          </md-carousel-item>
+        </md-carousel>
+      </div>
+    </div>
+
+    <!-- 3. Hero Layout (Start-aligned) -->
+    <div class="demo-section">
+      <h2 class="section-title">3. Hero Layout (Start-aligned)</h2>
+      <p class="section-desc">Spotlights one dominant large item with a smaller peek item on the trailing side.</p>
+
+      <div class="carousel-wrapper tall">
+        <md-carousel layout="hero" indicators loop>
+          <md-carousel-item
+            interactive
+            headline="Summer Spotlight Series"
+            subhead="Curated collections from top photographers">
+            <span class="badge-tag">Editor's Pick</span>
+            <img src="./images/img3.jpg" alt="Summer Spotlight" />
+          </md-carousel-item>
+          <md-carousel-item
+            interactive
+            headline="Pacific Northwest"
+            subhead="Scenic coastal highways & ancient forests">
+            <span class="badge-tag">Popular</span>
+            <img src="./images/img4.jpg" alt="Pacific Northwest" />
+          </md-carousel-item>
+          <md-carousel-item interactive headline="Urban Horizons" subhead="Modern architectural marvels">
+            <img src="./images/img1.jpg" alt="Urban Horizons" />
+          </md-carousel-item>
+        </md-carousel>
+      </div>
+    </div>
+
+    <!-- 4. Centered Hero Layout -->
+    <div class="demo-section">
+      <h2 class="section-title">4. Centered Hero Layout</h2>
+      <p class="section-desc">Centers one large focal item flanked by peek items on both the left and right edges.</p>
+
+      <div class="carousel-wrapper tall">
+        <md-carousel layout="centered-hero" indicators loop>
+          <md-carousel-item interactive headline="Episode I: Origins" subhead="The Journey Begins">
+            <img src="./images/img2.jpg" alt="Episode 1" />
+          </md-carousel-item>
+          <md-carousel-item interactive headline="Episode II: Discovery" subhead="Exploring Uncharted Realms">
+            <img src="./images/img3.jpg" alt="Episode 2" />
+          </md-carousel-item>
+          <md-carousel-item interactive headline="Episode III: Convergence" subhead="The Ultimate Destination">
+            <img src="./images/img4.jpg" alt="Episode 3" />
+          </md-carousel-item>
+          <md-carousel-item interactive headline="Episode IV: Horizon" subhead="Into the Sunrise">
+            <img src="./images/img1.jpg" alt="Episode 4" />
+          </md-carousel-item>
+        </md-carousel>
+      </div>
+    </div>
+
+    <!-- 5. Full-Screen Layout with Autoplay -->
+    <div class="demo-section">
+      <h2 class="section-title">5. Full-Screen Layout with Autoplay (4s)</h2>
+      <p class="section-desc">Edge-to-edge full width slide presentation with pagination and hover-pause autoplay.</p>
+
+      <div class="carousel-wrapper full">
+        <md-carousel layout="full-screen" indicators loop autoplay="4000">
+          <md-carousel-item
+            headline="Design Systems Reimagined"
+            subhead="Building cohesive, accessible experiences across web & mobile">
+            <img src="./images/img1.jpg" alt="Slide 1" />
+          </md-carousel-item>
+          <md-carousel-item
+            headline="Fluid Responsive Components"
+            subhead="Seamlessly scaling from compact smartphones to desktop displays">
+            <img src="./images/img2.jpg" alt="Slide 2" />
+          </md-carousel-item>
+          <md-carousel-item
+            headline="Material 3 Expressive Power"
+            subhead="Modern shapes, dynamic color schemes, and tactile motion">
+            <img src="./images/img4.jpg" alt="Slide 3" />
+          </md-carousel-item>
+        </md-carousel>
+      </div>
+    </div>
+
+    <script>
+      // Interactive playground controls logic
+      const carousel = document.getElementById('playgroundCarousel')
+      const layoutSelect = document.getElementById('layoutSelect')
+      const indicatorsToggle = document.getElementById('indicatorsToggle')
+      const loopToggle = document.getElementById('loopToggle')
+      const autoplayToggle = document.getElementById('autoplayToggle')
+      const prevBtn = document.getElementById('prevBtn')
+      const nextBtn = document.getElementById('nextBtn')
+      const statusSpan = document.getElementById('activeSlideStatus')
+
+      const widthSlider = document.getElementById('widthSlider')
+      const widthValue = document.getElementById('widthValue')
+      const playgroundWrapper = document.getElementById('playgroundWrapper')
+
+      layoutSelect.addEventListener('change', (e) => {
+        carousel.layout = e.target.value
+      })
+
+      indicatorsToggle.addEventListener('change', (e) => {
+        carousel.indicators = e.target.checked
+      })
+
+      loopToggle.addEventListener('change', (e) => {
+        carousel.loop = e.target.checked
+      })
+
+      autoplayToggle.addEventListener('change', (e) => {
+        carousel.autoplay = e.target.checked ? 3000 : 0
+      })
+
+      widthSlider.addEventListener('input', (e) => {
+        const val = Number(e.target.value)
+        if (val >= 940) {
+          playgroundWrapper.style.width = '100%'
+          widthValue.textContent = '100%'
+        } else {
+          playgroundWrapper.style.width = `${val}px`
+          widthValue.textContent = `${val}px`
+        }
+      })
+
+      prevBtn.addEventListener('click', () => carousel.previous())
+      nextBtn.addEventListener('click', () => carousel.next())
+
+      carousel.addEventListener('change', (e) => {
+        const total = carousel.items.length
+        statusSpan.textContent = `Active Slide: ${e.detail.index + 1} / ${total}`
+      })
+    </script>
+  </body>
+</html>
