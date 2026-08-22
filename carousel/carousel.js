@@ -252,15 +252,17 @@ export class Carousel extends LitElement {
 
     const boundedIndex = Math.max(0, Math.min(index, items.length - 1))
     this.activeIndex = boundedIndex
+    this._isScrollingProgrammatically = true
+
     this._applyItemSizes()
     this._syncActiveItem()
 
-    // Wait a frame for CSS transitions / layout to settle
-    await new Promise((r) => requestAnimationFrame(r))
-
     const scroller = this.scrollerElement
     const targetItem = items[boundedIndex]
-    if (!targetItem || !scroller) return
+    if (!targetItem || !scroller) {
+      this._isScrollingProgrammatically = false
+      return
+    }
 
     let scrollTarget
     if (this.layout === 'centered-hero') {
@@ -284,6 +286,15 @@ export class Carousel extends LitElement {
         composed: true,
       }),
     )
+
+    if (behavior === 'smooth') {
+      setTimeout(() => {
+        this._isScrollingProgrammatically = false
+        this._updateScrollState()
+      }, 400)
+    } else {
+      this._isScrollingProgrammatically = false
+    }
   }
 
   _updateLayout() {
@@ -321,10 +332,7 @@ export class Carousel extends LitElement {
         let sizeType = 'large'
         let width = largeWidth
 
-        if (i < activeIndex) {
-          sizeType = 'small'
-          width = smallWidth
-        } else if (i === activeIndex) {
+        if (i === activeIndex) {
           sizeType = 'large'
           width = largeWidth
         } else if (i === activeIndex + 1) {
@@ -357,10 +365,7 @@ export class Carousel extends LitElement {
         let sizeType = 'large'
         let width = largeWidth
 
-        if (i < activeIndex) {
-          sizeType = 'small'
-          width = smallWidth
-        } else if (i === activeIndex) {
+        if (i === activeIndex) {
           sizeType = 'large'
           width = largeWidth
         } else if (i === activeIndex + 1) {
@@ -452,6 +457,7 @@ export class Carousel extends LitElement {
 
   _handleScroll() {
     this._updateScrollState()
+    if (this._isScrollingProgrammatically) return
 
     const scroller = this.scrollerElement
     const items = this.items
