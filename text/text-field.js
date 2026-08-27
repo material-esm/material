@@ -229,6 +229,7 @@ export class TextField extends textFieldBaseClass {
      * - search
      * - tel
      * - url
+     * - color
      *
      * See
      * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#input_types
@@ -432,7 +433,7 @@ export class TextField extends textFieldBaseClass {
       ?has-start=${this.hasLeadingIcon}
       label=${this.label}
       max=${this.maxLength}
-      ?populated=${!!this.value}
+      ?populated=${!!this.value || this.type === 'color'}
       ?required=${this.required}
       ?resizable=${this.type === 'textarea'}
       supporting-text=${this.supportingText}
@@ -751,6 +752,10 @@ __decorate([
         resize: inherit;
       }
 
+      :host([type='color']) .field {
+        cursor: pointer;
+      }
+
       .icon {
         color: currentColor;
         display: flex;
@@ -815,6 +820,43 @@ __decorate([
 
       :host([no-spinner]) .input[type='number'] {
         -moz-appearance: textfield;
+      }
+
+      .input[type='color'] {
+        appearance: auto;
+        -webkit-appearance: auto;
+        box-sizing: border-box;
+        cursor: pointer;
+        height: 28px;
+        min-height: 28px;
+        width: 100%;
+        border: none;
+        background: none;
+        padding: 0;
+        margin: 0;
+        vertical-align: middle;
+      }
+
+      .input[type='color']::-webkit-color-swatch-wrapper {
+        padding: 0;
+      }
+
+      .input[type='color']::-webkit-color-swatch {
+        border: 1px solid var(--_outline-color, rgba(0, 0, 0, 0.2));
+        border-radius: var(--md-sys-shape-corner-extra-small, 4px);
+        box-sizing: border-box;
+      }
+
+      .input[type='color']::-moz-color-swatch {
+        border: 1px solid var(--_outline-color, rgba(0, 0, 0, 0.2));
+        border-radius: var(--md-sys-shape-corner-extra-small, 4px);
+        box-sizing: border-box;
+      }
+
+      :host([disabled]) .input[type='color'] {
+        cursor: default;
+        pointer-events: none;
+        opacity: var(--_disabled-input-text-opacity, 0.38);
       }
 
       :focus-within .input {
