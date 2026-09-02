@@ -358,13 +358,6 @@ ${classesCssString}
 `
 
 export const typescaleStyles = css`
-  :host {
-    --md-ref-typeface-brand: Roboto;
-    --md-ref-typeface-plain: Roboto;
-    --md-ref-typeface-weight-regular: 400;
-    --md-ref-typeface-weight-medium: 500;
-    --md-ref-typeface-weight-bold: 700;
-  }
   ${unsafeCSS(classesCssString)}
 `
 
