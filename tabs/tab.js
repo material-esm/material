@@ -93,24 +93,33 @@ export class Tab extends LitElement {
 
   render() {
     const indicator = html`<div class="indicator"></div>`
-    const content = html`
-      <md-focus-ring part="focus-ring" inward .control=${this}></md-focus-ring>
-      <md-elevation part="elevation"></md-elevation>
-      <md-ripple .control=${this}></md-ripple>
-      <div class="content ${classMap(this.getContentClasses())}" role="presentation">
-        <slot name="icon" @slotchange=${this.handleIconSlotChange}></slot>
-        <slot @slotchange=${this.handleSlotChange}></slot>
-        ${this.fullWidthIndicator ? nothing : indicator}
-      </div>
-      ${this.fullWidthIndicator ? indicator : nothing}
-    `
     return html` <div class="wrapper ${this.type}">
-      ${
-        this.href
-          ? html`<a class="button" href=${this.href} target=${this.target || nothing} tabindex="-1">${content}</a>`
-          : html`<div class="button" role="presentation" @click=${this.handleContentClick}>${content}</div>`
-      }
+      <div class="button" role="presentation" @click=${this.handleContentClick}>
+        <md-focus-ring part="focus-ring" inward .control=${this}></md-focus-ring>
+        <md-elevation part="elevation"></md-elevation>
+        <md-ripple .control=${this}></md-ripple>
+        <div class="content ${classMap(this.getContentClasses())}" role="presentation">
+          <slot name="icon" @slotchange=${this.handleIconSlotChange}></slot>
+          <slot @slotchange=${this.handleSlotChange}></slot>
+          ${this.fullWidthIndicator ? nothing : indicator}
+        </div>
+        ${this.fullWidthIndicator ? indicator : nothing}
+        ${this.href ? this.renderLink() : nothing}
+      </div>
     </div>`
+  }
+
+  renderLink() {
+    const { ariaLabel } = this
+    return html`
+      <a
+        class="link"
+        id="link"
+        href=${this.href}
+        target=${this.target || nothing}
+        tabindex="-1"
+        aria-label=${ariaLabel || nothing}></a>
+    `
   }
   getContentClasses() {
     let cc = {
@@ -145,7 +154,7 @@ export class Tab extends LitElement {
       // Prevent default behavior such as scrolling when pressing spacebar.
       event.preventDefault()
       if (this.href) {
-        const link = this.renderRoot.querySelector('a.button')
+        const link = this.renderRoot.querySelector('a.link')
         link?.click()
       } else {
         this.click()
@@ -153,6 +162,9 @@ export class Tab extends LitElement {
     }
   }
   handleContentClick(event) {
+    if (this.href) {
+      return
+    }
     // Ensure the "click" target is always the tab, and not content, by stopping
     // propagation of content clicks and re-clicking the host.
     event.stopPropagation()
@@ -247,14 +259,13 @@ export class Tab extends LitElement {
       :host([active]) md-focus-ring {
         margin-bottom: calc(var(--_active-indicator-height) + 1px);
       }
-      .button {
-        display: inline-flex;
-        position: relative;
-        align-items: center;
-        justify-content: center;
-        text-decoration: none;
-        color: inherit;
+      .link {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
         outline: none;
+        z-index: 1;
       }
       .button::before {
         background: var(--_container-color);
