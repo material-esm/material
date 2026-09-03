@@ -1,45 +1,51 @@
-# App bars
+# App Bar
 
-This is a material 3 navigation rail. See demo for what it looks like.
+A Material 3 top app bar component with an integrated search field.
 
-Import:
+## Import
 
 ```html
 <script type="module">
-  import 'material/navigationrail/navigation-rail.js'
-  import 'material/navigationtab/navigation-tab.js'
+  import 'material/app/bar.js'
+  import 'material/buttons/icon-button.js'
+  import 'material/icon/icon.js'
 </script>
 ```
 
-Usage:
+Or in JavaScript:
+
+```js
+import 'material/app/bar.js'
+import 'material/buttons/icon-button.js'
+import 'material/icon/icon.js'
+```
+
+## Usage
 
 ```html
-<div class="gte-medium">
-  <div class="flex g4" style="position: sticky; top: 0; overflow-y: auto; height: 100vh;">
-    <div class="" id="nav-rail-container">
-      <md-nav-rail active-index="1">
-        <!-- <md-icon-button slot="menu" id="rail-menu-button">
-              <md-icon>menu</md-icon>
-            </md-icon-button> -->
-        <md-fab slot="fab" variant="primary" lowered label="Search">
-          <md-icon slot="icon">search</md-icon>
-        </md-fab>
-
-        <md-nav-item label="Home">
-          <md-icon slot="active-icon">home</md-icon>
-          <md-icon slot="inactive-icon">home</md-icon>
-        </md-nav-item>
-        <md-nav-item label="Organizations" href="/">
-          <md-icon slot="active-icon">groups</md-icon>
-          <md-icon slot="inactive-icon">groups</md-icon>
-        </md-nav-item>
-        <md-nav-item label="Cart" badge-value="3" show-badge>
-          <md-icon slot="active-icon">shopping_cart</md-icon>
-          <md-icon slot="inactive-icon">shopping_cart</md-icon>
-          <md-badge value="3"></md-badge>
-        </md-nav-item>
-      </md-nav-rail>
-    </div>
+<md-app-bar id="appBar" label="Search">
+  <md-icon-button slot="leading-icon">
+    <md-icon>menu</md-icon>
+  </md-icon-button>
+  <div slot="trailing-icon">
+    <md-icon-button>
+      <md-icon>more_vert</md-icon>
+    </md-icon-button>
   </div>
-</div>
+</md-app-bar>
 ```
+
+### Properties and Attributes
+
+| Property      | Attribute     | Type     | Default    | Description                                           |
+| ------------- | ------------- | -------- | ---------- | ----------------------------------------------------- |
+| `label`       | `label`       | `string` | `'Search'` | The label for the inner search text field.            |
+| `placeholder` | `placeholder` | `string` | `'Search'` | The placeholder text for the inner search text field. |
+| `type`        | `type`        | `string` | `'search'` | Input type for the inner search text field.           |
+
+### Slots
+
+- `leading-icon`: Element placed before the search bar (e.g. navigation drawer menu button).
+- `trailing-icon`: Element placed after the search bar (e.g. profile avatar, action buttons).
+- `leading-icon-text-field`: Leading icon inside the search text field.
+- `trailing-icon-text-field`: Trailing icon inside the search text field.
