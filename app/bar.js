@@ -341,8 +341,8 @@ export class AppBar extends LitElement {
                 ${
                   this._hasSearchValue
                     ? html`
-                        <slot name="trailing-icon-text-field" slot="trailing-icon" @click=${this._clearSearch}>
-                          <md-icon class="md3-app-bar__clear-icon">close</md-icon>
+                        <slot name="trailing-icon-text-field" slot="trailing-icon">
+                          <md-icon class="md3-app-bar__clear-icon" @click=${this._clearSearch}>close</md-icon>
                         </slot>
                       `
                     : html`<slot name="trailing-icon-text-field" slot="trailing-icon"></slot>`
@@ -434,9 +434,9 @@ export class AppBar extends LitElement {
       align-items: center;
       justify-content: flex-end;
       min-width: 48px;
-      margin-left: auto;
+      margin-inline-start: auto;
       gap: 4px;
-      padding-right: 4px;
+      padding-inline-end: 4px;
       color: var(--_trailing-icon-color);
       flex-shrink: 0;
     }
@@ -447,8 +447,7 @@ export class AppBar extends LitElement {
       flex-direction: column;
       justify-content: center;
       flex: 1;
-      padding-left: 12px;
-      padding-right: 12px;
+      padding-inline: 12px;
       min-width: 0;
       overflow: hidden;
     }
