@@ -144,6 +144,11 @@ export class AppBar extends LitElement {
     if (!this.scrollTarget || this.scrollTarget === 'window') {
       return window
     }
+    const root = this.getRootNode()
+    if (root && typeof root.querySelector === 'function') {
+      const el = root.querySelector(this.scrollTarget)
+      if (el) return el
+    }
     return document.querySelector(this.scrollTarget) || window
   }
 
@@ -189,13 +194,11 @@ export class AppBar extends LitElement {
     const input = e.target
     this.value = input.value
     this._hasSearchValue = Boolean(input.value)
-    this.dispatchEvent(new CustomEvent('input', { bubbles: true, composed: true }))
   }
 
   _handleSearchChange(e) {
     const input = e.target
     this.value = input.value
-    this.dispatchEvent(new CustomEvent('change', { bubbles: true, composed: true }))
   }
 
   _handleSearchKeyDown(e) {
@@ -250,9 +253,11 @@ export class AppBar extends LitElement {
           <div
             class="md3-app-bar__headline-container ${isCenterAligned ? 'center-aligned' : ''} ${isFlexible ? 'flexible-top-headline' : ''}">
             <div class="md3-app-bar__headline" part="headline">
-              <slot name="headline">
-                <slot name="title">${this._headlineText}</slot>
-              </slot>
+              ${
+                !isFlexible || isCollapsed
+                  ? html`<slot name="headline"><slot name="title">${this._headlineText}</slot></slot>`
+                  : this._headlineText
+              }
             </div>
             ${
               !isFlexible && this._hasSubtitle
@@ -279,9 +284,11 @@ export class AppBar extends LitElement {
             ? html`
                 <div class="md3-app-bar__flexible-row" part="flexible-container">
                   <div class="md3-app-bar__flexible-headline" part="headline">
-                    <slot name="headline">
-                      <slot name="title">${this._headlineText}</slot>
-                    </slot>
+                    ${
+                      !isCollapsed
+                        ? html`<slot name="headline"><slot name="title">${this._headlineText}</slot></slot>`
+                        : this._headlineText
+                    }
                   </div>
                   ${
                     this._hasSubtitle
