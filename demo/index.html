@@ -105,19 +105,20 @@
 
       <div class="flex col g8 mt8 content-container">
         <!-- top nav -->
-        <!-- 
-        <md-app-bar id="appBar">
-          <md-icon-button slot="leading-icon"><md-icon>menu</md-icon></md-icon-button>
-          <div slot="trailing-icon">
+        <md-app-bar id="appBar" headline="Material 3 Demo">
+          <md-icon-button slot="navigation-icon" id="top-nav-menu-button">
+            <md-icon>menu</md-icon>
+          </md-icon-button>
+          <div slot="action-items" class="flex aic">
             <img
               id="profile-pic"
               src="./images/avatar2.png"
               class="circle"
-              style="height: 40px"
-              @click="${this.toggleMenu}" />
+              style="height: 36px; width: 36px; cursor: pointer"
+              alt="Avatar" />
           </div>
         </md-app-bar>
-        -->
+
         <div class="search-container">
           <md-search></md-search>
         </div>
@@ -158,6 +159,7 @@
             <div>
               Other demo pages:
               <ul>
+                <li><a href="./app-bar-demo.html">App Bar Demo</a></li>
                 <li><a href="./list-demo.html">List Demo</a></li>
                 <li><a href="./carousel-demo.html">Carousel Demo</a></li>
                 <li><a href="./date-picker-demo.html">Date Picker Demo</a></li>
