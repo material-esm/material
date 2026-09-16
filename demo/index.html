@@ -73,79 +73,113 @@
 
     <!-- layout is: { left nav rail/drawer, { header, content } } -->
     <div class="flex g12 layout-container">
-      <!-- left nav -->
-      <div class="gte-medium">
-        <div class="flex g4" style="position: sticky; top: 0; overflow-y: auto; height: 100vh">
-          <div class="" id="nav-rail-container">
-            <md-nav-rail active-index="1">
-              <!-- <md-icon-button slot="menu" id="rail-menu-button">
-              <md-icon>menu</md-icon>
-            </md-icon-button> -->
-              <md-fab slot="fab" variant="primary" lowered label="Search">
-                <md-icon slot="icon">search</md-icon>
-              </md-fab>
+      <!-- nav rail / modal drawer -->
+      <div id="nav-scrim" class="nav-scrim" aria-hidden="true"></div>
+      <div id="nav-drawer-container" class="nav-drawer-container">
+        <md-nav-rail id="nav-rail" active-index="1">
+          <md-fab slot="fab" variant="primary" lowered label="Search">
+            <md-icon slot="icon">search</md-icon>
+          </md-fab>
 
-              <md-nav-item label="Home">
-                <md-icon slot="active-icon">home</md-icon>
-                <md-icon slot="inactive-icon">home</md-icon>
-              </md-nav-item>
-              <md-nav-item label="Organizations" href="/">
-                <md-icon slot="active-icon">groups</md-icon>
-                <md-icon slot="inactive-icon">groups</md-icon>
-              </md-nav-item>
-              <md-nav-item label="Cart" badge-value="3" show-badge>
-                <md-icon slot="active-icon">shopping_cart</md-icon>
-                <md-icon slot="inactive-icon">shopping_cart</md-icon>
-                <md-badge value="3"></md-badge>
-              </md-nav-item>
-            </md-nav-rail>
-          </div>
-        </div>
+          <md-nav-item label="Home">
+            <md-icon slot="active-icon">home</md-icon>
+            <md-icon slot="inactive-icon">home</md-icon>
+          </md-nav-item>
+          <md-nav-item label="Organizations" href="/">
+            <md-icon slot="active-icon">groups</md-icon>
+            <md-icon slot="inactive-icon">groups</md-icon>
+          </md-nav-item>
+          <md-nav-item label="Cart" badge-value="3" show-badge>
+            <md-icon slot="active-icon">shopping_cart</md-icon>
+            <md-icon slot="inactive-icon">shopping_cart</md-icon>
+            <md-badge value="3"></md-badge>
+          </md-nav-item>
+        </md-nav-rail>
       </div>
 
       <div class="flex col g8 mt8 content-container">
         <!-- top nav -->
-        <!-- 
-        <md-app-bar id="appBar">
-          <md-icon-button slot="leading-icon"><md-icon>menu</md-icon></md-icon-button>
-          <div slot="trailing-icon">
+        <md-app-bar id="appBar" headline="Material 3 Demo">
+          <md-icon-button slot="navigation-icon" id="top-nav-menu-button">
+            <md-icon>menu</md-icon>
+          </md-icon-button>
+          <div slot="action-items" class="flex aic">
             <img
               id="profile-pic"
               src="./images/avatar2.png"
               class="circle"
-              style="height: 40px"
-              @click="${this.toggleMenu}" />
+              style="height: 36px; width: 36px; cursor: pointer"
+              alt="Avatar" />
           </div>
         </md-app-bar>
-        -->
+
         <div class="search-container">
           <md-search></md-search>
         </div>
 
         <script>
-          // document.getElementById('topNav').addEventListener('drawerButtonClicked', () => {
-          //   console.log('drawerButtonClicked')
-          //   // let display = document.getElementById('nav-drawer-container').style.display
-          //   // if (display == 'block') {
-          //   //   document.getElementById('nav-drawer-container').style.display = 'none'
-          //   //   document.getElementById('nav-drawer').opened = false
-          //   // } else {
-          //   //   document.getElementById('nav-drawer-container').style.display = 'block'
-          //   //   document.getElementById('nav-drawer').opened = true
-          //   // }
+          const topNavMenuButton = document.getElementById('top-nav-menu-button')
+          const navRail = document.getElementById('nav-rail')
+          const navDrawerContainer = document.getElementById('nav-drawer-container')
+          const navScrim = document.getElementById('nav-scrim')
 
-          //   let opened = document.getElementById('nav-drawer-modal').opened
-          //   if (opened) {
-          //     document.getElementById('nav-drawer-modal').opened = false
-          //   } else {
-          //     document.getElementById('nav-drawer-modal').opened = true
-          //   }
-          // })
+          function isMobile() {
+            return window.innerWidth < 600
+          }
 
-          // document.getElementById('rail-menu-button').addEventListener('click', () => {
-          //   let nd = document.getElementById('nav-drawer')
-          //   nd.opened = !nd.opened
-          // })
+          function openModalDrawer() {
+            if (navDrawerContainer && navScrim) {
+              navDrawerContainer.classList.add('open')
+              navScrim.classList.add('open')
+              if (navRail) {
+                navRail.expanded = true
+              }
+            }
+          }
+
+          function closeModalDrawer() {
+            if (navDrawerContainer && navScrim) {
+              navDrawerContainer.classList.remove('open')
+              navScrim.classList.remove('open')
+            }
+          }
+
+          function toggleNav() {
+            if (isMobile()) {
+              const isOpen = navDrawerContainer?.classList.contains('open')
+              if (isOpen) {
+                closeModalDrawer()
+              } else {
+                openModalDrawer()
+              }
+            } else {
+              navRail?.toggleExpanded()
+            }
+          }
+
+          topNavMenuButton?.addEventListener('click', toggleNav)
+          navScrim?.addEventListener('click', closeModalDrawer)
+
+          // Close modal drawer on Escape key
+          window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && navDrawerContainer?.classList.contains('open')) {
+              closeModalDrawer()
+            }
+          })
+
+          // Close modal drawer when navigating to an item on mobile
+          navRail?.addEventListener('click', (e) => {
+            if (isMobile() && e.target.closest('md-nav-item')) {
+              closeModalDrawer()
+            }
+          })
+
+          // When rail's own menu button toggles collapse on mobile, close the drawer
+          navRail?.addEventListener('expanded-change', (e) => {
+            if (isMobile() && !e.detail.expanded) {
+              closeModalDrawer()
+            }
+          })
         </script>
 
         <!-- main content -->
@@ -158,6 +192,7 @@
             <div>
               Other demo pages:
               <ul>
+                <li><a href="./app-bar-demo.html">App Bar Demo</a></li>
                 <li><a href="./list-demo.html">List Demo</a></li>
                 <li><a href="./carousel-demo.html">Carousel Demo</a></li>
                 <li><a href="./date-picker-demo.html">Date Picker Demo</a></li>
@@ -213,7 +248,9 @@
               <md-loading size="64" contained></md-loading>
             </div>
 
-            <div class="flex aic" style="justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px">
+            <div
+              class="flex aic"
+              style="justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px">
               <h3 style="margin: 0">Carousel (M3 Multi-Browse)</h3>
               <a
                 href="./carousel-demo.html"

@@ -1,0 +1,324 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Material 3 App Bar Demo</title>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="preload"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"
+      as="style"
+      onload="
+        this.onload = null
+        this.rel = 'stylesheet'
+      " />
+    <link
+      rel="preload"
+      href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;700&display=swap"
+      as="style"
+      onload="
+        this.onload = null
+        this.rel = 'stylesheet'
+      " />
+
+    <link rel="icon" href="./images/material.jpeg" />
+    <link rel="stylesheet" href="./css/styles.css" />
+
+    <script type="importmap">
+      {
+        "imports": {
+          "lit": "https://cdn.jsdelivr.net/npm/lit@3/index.js",
+          "lit/": "https://cdn.jsdelivr.net/npm/lit@3/",
+          "@lit/localize": "https://cdn.jsdelivr.net/npm/@lit/localize/lit-localize.js",
+          "@lit/reactive-element": "https://cdn.jsdelivr.net/npm/@lit/reactive-element@2/reactive-element.js",
+          "@lit/reactive-element/": "https://cdn.jsdelivr.net/npm/@lit/reactive-element@2/",
+          "lit-element/lit-element.js": "https://cdn.jsdelivr.net/npm/lit-element@4/lit-element.js",
+          "lit-html": "https://cdn.jsdelivr.net/npm/lit-html@3/lit-html.js",
+          "lit-html/": "https://cdn.jsdelivr.net/npm/lit-html@3/",
+          "material/": "../"
+        }
+      }
+    </script>
+
+    <script type="module">
+      import 'material/app/bar.js'
+      import 'material/buttons/icon-button.js'
+      import 'material/buttons/button.js'
+      import 'material/icon/icon.js'
+    </script>
+
+    <style>
+      body {
+        background: var(--md-sys-color-background, #fef7ff);
+        color: var(--md-sys-color-on-background, #1d1b20);
+        padding: 24px;
+        max-width: 960px;
+        margin: 0 auto;
+        box-sizing: border-box;
+      }
+
+      .demo-section {
+        margin-bottom: 40px;
+        border: 1px solid var(--md-sys-color-outline-variant, #cac4d0);
+        border-radius: 16px;
+        overflow: hidden;
+        background: var(--md-sys-color-surface, #fff);
+      }
+
+      .demo-section-header {
+        padding: 16px 20px;
+        background: var(--md-sys-color-surface-container-low, #f7f2fa);
+        border-bottom: 1px solid var(--md-sys-color-outline-variant, #cac4d0);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .demo-section-header h3 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 500;
+      }
+
+      .demo-section-body {
+        padding: 0;
+      }
+
+      .demo-controls {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .scroll-container {
+        height: 240px;
+        overflow-y: auto;
+        position: relative;
+        background: var(--md-sys-color-surface-container-lowest, #fff);
+      }
+
+      .scroll-content {
+        padding: 16px 24px;
+        line-height: 1.6;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 16px;
+        margin-bottom: 24px;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="nav-links">
+      <a href="./index.html">← Back to Main Demo</a>
+      <a href="./carousel-demo.html">Carousel Demo</a>
+      <a href="./date-picker-demo.html">Date Picker Demo</a>
+    </div>
+
+    <h1>Material 3 App Bar Demo</h1>
+    <p style="color: var(--md-sys-color-on-surface-variant); margin-bottom: 32px">
+      Top app bars display information and actions related to the current screen according to the
+      <a href="https://m3.material.io/components/app-bars/overview" target="_blank"
+        >Material Design 3 App Bar specification</a
+      >.
+    </p>
+
+    <!-- 1. Small App Bar -->
+    <div class="demo-section">
+      <div class="demo-section-header">
+        <div>
+          <h3>1. Small App Bar (Default)</h3>
+          <span style="font-size: 13px; color: var(--md-sys-color-on-surface-variant)"
+            >Standard 64px height with left-aligned headline and subtitle</span
+          >
+        </div>
+        <div class="demo-controls">
+          <md-button onclick="toggleScrolled('bar-small')">Toggle Scrolled</md-button>
+        </div>
+      </div>
+      <div class="demo-section-body">
+        <md-app-bar id="bar-small" headline="Page Title" subtitle="Subtitle details">
+          <md-icon-button slot="navigation-icon">
+            <md-icon>menu</md-icon>
+          </md-icon-button>
+          <div slot="action-items" style="display: flex">
+            <md-icon-button><md-icon>search</md-icon></md-icon-button>
+            <md-icon-button><md-icon>favorite</md-icon></md-icon-button>
+            <md-icon-button><md-icon>more_vert</md-icon></md-icon-button>
+          </div>
+        </md-app-bar>
+      </div>
+    </div>
+
+    <!-- 2. Center-Aligned App Bar -->
+    <div class="demo-section">
+      <div class="demo-section-header">
+        <div>
+          <h3>2. Center-Aligned App Bar</h3>
+          <span style="font-size: 13px; color: var(--md-sys-color-on-surface-variant)"
+            >64px height with headline and subtitle centered</span
+          >
+        </div>
+        <div class="demo-controls">
+          <md-button onclick="toggleScrolled('bar-center')">Toggle Scrolled</md-button>
+        </div>
+      </div>
+      <div class="demo-section-body">
+        <md-app-bar id="bar-center" type="center-aligned" headline="Center Aligned" subtitle="Optional subtitle">
+          <md-icon-button slot="navigation-icon">
+            <md-icon>arrow_back</md-icon>
+          </md-icon-button>
+          <div slot="action-items" style="display: flex">
+            <md-icon-button><md-icon>attach_file</md-icon></md-icon-button>
+            <md-icon-button><md-icon>more_vert</md-icon></md-icon-button>
+          </div>
+        </md-app-bar>
+      </div>
+    </div>
+
+    <!-- 3. Medium Flexible App Bar -->
+    <div class="demo-section">
+      <div class="demo-section-header">
+        <div>
+          <h3>3. Medium Flexible App Bar</h3>
+          <span style="font-size: 13px; color: var(--md-sys-color-on-surface-variant)"
+            >112px–136px expanded height with lower headline, collapses to 64px</span
+          >
+        </div>
+        <div class="demo-controls">
+          <md-button onclick="toggleCollapsed('bar-medium')">Toggle Collapsed</md-button>
+          <md-button onclick="toggleScrolled('bar-medium')">Toggle Scrolled</md-button>
+        </div>
+      </div>
+      <div class="demo-section-body">
+        <md-app-bar id="bar-medium" type="medium-flexible" headline="Medium Flexible" subtitle="Flexible subtitle line">
+          <md-icon-button slot="navigation-icon">
+            <md-icon>menu</md-icon>
+          </md-icon-button>
+          <div slot="action-items" style="display: flex">
+            <md-icon-button><md-icon>filter_list</md-icon></md-icon-button>
+            <md-icon-button><md-icon>more_vert</md-icon></md-icon-button>
+          </div>
+        </md-app-bar>
+      </div>
+    </div>
+
+    <!-- 4. Large Flexible App Bar -->
+    <div class="demo-section">
+      <div class="demo-section-header">
+        <div>
+          <h3>4. Large Flexible App Bar</h3>
+          <span style="font-size: 13px; color: var(--md-sys-color-on-surface-variant)"
+            >120px–152px expanded height with prominent headline</span
+          >
+        </div>
+        <div class="demo-controls">
+          <md-button onclick="toggleCollapsed('bar-large')">Toggle Collapsed</md-button>
+          <md-button onclick="toggleScrolled('bar-large')">Toggle Scrolled</md-button>
+        </div>
+      </div>
+      <div class="demo-section-body">
+        <md-app-bar
+          id="bar-large"
+          type="large-flexible"
+          headline="Large Flexible"
+          subtitle="Prominent headline with descriptive text">
+          <md-icon-button slot="navigation-icon">
+            <md-icon>arrow_back</md-icon>
+          </md-icon-button>
+          <div slot="action-items" style="display: flex">
+            <md-icon-button><md-icon>bookmark</md-icon></md-icon-button>
+            <md-icon-button><md-icon>share</md-icon></md-icon-button>
+            <md-icon-button><md-icon>more_vert</md-icon></md-icon-button>
+          </div>
+        </md-app-bar>
+      </div>
+    </div>
+
+    <!-- 5. Search App Bar -->
+    <div class="demo-section">
+      <div class="demo-section-header">
+        <div>
+          <h3>5. Search App Bar</h3>
+          <span style="font-size: 13px; color: var(--md-sys-color-on-surface-variant)"
+            >Full top app bar containing an embedded search input and actions</span
+          >
+        </div>
+      </div>
+      <div class="demo-section-body">
+        <md-app-bar type="search" placeholder="Search contacts, messages...">
+          <md-icon-button slot="navigation-icon">
+            <md-icon>menu</md-icon>
+          </md-icon-button>
+          <div slot="action-items" style="display: flex">
+            <md-icon-button><md-icon>mic</md-icon></md-icon-button>
+            <md-icon-button><md-icon>more_vert</md-icon></md-icon-button>
+          </div>
+        </md-app-bar>
+      </div>
+    </div>
+
+    <!-- 6. Scroll-Driven Collapse Simulation -->
+    <div class="demo-section">
+      <div class="demo-section-header">
+        <div>
+          <h3>6. Interactive Scroll Collapse (`scroll-behavior="collapse"`)</h3>
+          <span style="font-size: 13px; color: var(--md-sys-color-on-surface-variant)"
+            >Scroll the container below to see automatic collapse and elevation changes</span
+          >
+        </div>
+      </div>
+      <div class="demo-section-body">
+        <div id="scroll-box" class="scroll-container">
+          <md-app-bar
+            style="position: sticky; top: 0; z-index: 10"
+            type="medium-flexible"
+            headline="Scrollable List"
+            subtitle="Scroll down to compress"
+            scroll-behavior="collapse"
+            scroll-target="#scroll-box">
+            <md-icon-button slot="navigation-icon">
+              <md-icon>menu</md-icon>
+            </md-icon-button>
+            <div slot="action-items" style="display: flex">
+              <md-icon-button><md-icon>refresh</md-icon></md-icon-button>
+              <md-icon-button><md-icon>more_vert</md-icon></md-icon-button>
+            </div>
+          </md-app-bar>
+
+          <div class="scroll-content">
+            <p>
+              <strong>Scroll down</strong> to see the medium flexible app bar automatically collapse into a small 64px
+              app bar and raise elevation with the container surface color.
+            </p>
+            <p>Item 1: Material Design 3 Expressive typography and colors.</p>
+            <p>Item 2: Seamless transitions between expanded and collapsed states.</p>
+            <p>Item 3: Fully responsive across desktop, tablet, and mobile devices.</p>
+            <p>Item 4: Accessible keyboard navigation and aria landmarks.</p>
+            <p>Item 5: Automatic scroll listeners support either the window or custom container selectors.</p>
+            <p>Item 6: Scroll back up to expand again!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function toggleScrolled(id) {
+        const el = document.getElementById(id)
+        el.scrolled = !el.scrolled
+      }
+
+      function toggleCollapsed(id) {
+        const el = document.getElementById(id)
+        el.collapsed = !el.collapsed
+      }
+    </script>
+  </body>
+</html>

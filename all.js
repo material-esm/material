@@ -4,6 +4,7 @@
  * WARNING: This import is intended for prototyping and development builds only.
  * Import only the individual components used for production.
  */
+import './app/bar.js'
 import './buttons/button.js'
 import './buttons/button-group.js'
 import './carousel/carousel.js'
@@ -39,6 +40,7 @@ import './text/text-field.js'
 // LINT.ThenChange(:exports)
 // LINT.IfChange(exports)
 // go/keep-sorted start
+export * from './app/bar.js'
 export * from './buttons/button.js'
 export * from './buttons/button-group.js'
 export * from './carousel/carousel.js'
