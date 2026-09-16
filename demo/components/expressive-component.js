@@ -28,6 +28,7 @@ class ExpressiveComponent extends LitElement {
     css`
       md-card {
         width: 300px;
+        max-width: 100%;
         background: var(--md-sys-color-surface);
         overflow: hidden;
       }
@@ -130,7 +131,7 @@ class ExpressiveComponent extends LitElement {
           </div>
         </form>
 
-        <div class="flex g20 aic">
+        <div class="flexw g20 aic">
           <md-switch
             value="something"
             @change=${(e) => console.log('Switch changed', e.target.selected, e.target.value)}></md-switch>
@@ -161,7 +162,7 @@ class ExpressiveComponent extends LitElement {
           >
         </div>
 
-        <div class="flex g12 aic">
+        <div class="flexw g12 aic">
           <md-icon-button>
             <md-icon>search</md-icon>
           </md-icon-button>

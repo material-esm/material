@@ -72,7 +72,7 @@
     </script>
 
     <!-- layout is: { left nav rail/drawer, { header, content } } -->
-    <div class="flex g12">
+    <div class="flex g12 layout-container">
       <!-- left nav -->
       <div class="gte-medium">
         <div class="flex g4" style="position: sticky; top: 0; overflow-y: auto; height: 100vh">
@@ -103,7 +103,7 @@
         </div>
       </div>
 
-      <div class="flex col g8 mt8">
+      <div class="flex col g8 mt8 content-container">
         <!-- top nav -->
         <!-- 
         <md-app-bar id="appBar">
@@ -118,7 +118,7 @@
           </div>
         </md-app-bar>
         -->
-        <div>
+        <div class="search-container">
           <md-search></md-search>
         </div>
 
@@ -213,7 +213,7 @@
               <md-loading size="64" contained></md-loading>
             </div>
 
-            <div class="flex aic" style="justify-content: space-between; align-items: center">
+            <div class="flex aic" style="justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px">
               <h3 style="margin: 0">Carousel (M3 Multi-Browse)</h3>
               <a
                 href="./carousel-demo.html"

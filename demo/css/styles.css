@@ -1,9 +1,16 @@
 @import url(light.css);
 @import url(dark.css) (prefers-color-scheme: dark);
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 html,
 body {
   margin: 0;
+  overflow-x: hidden;
 }
 
 :root {
@@ -19,6 +26,8 @@ body {
 a {
   color: var(--md-sys-color-primary);
   text-decoration: none;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 a:hover {
@@ -36,6 +45,10 @@ a:hover {
 
   .gte-medium {
     display: none;
+  }
+
+  md-snackbar {
+    --md-snackbar-bottom: 96px;
   }
 }
 
@@ -70,11 +83,42 @@ a:hover {
   }
 }
 
+.layout-container {
+  width: 100%;
+  min-width: 0;
+}
+
+.content-container {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+}
+
+.search-container {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
 .main {
   margin: 0 auto;
   max-width: 1200px;
+  width: 100%;
+  min-width: 0;
   padding: 1rem;
   /* overflow-y: auto; */
+}
+
+.main > .flex.col {
+  width: 100%;
+  min-width: 0;
+}
+
+md-carousel {
+  max-width: 100%;
+  min-width: 0;
 }
 
 .circle {

@@ -44,7 +44,7 @@ class SnackBar extends LitElement {
       position: fixed;
       z-index: 1000;
       left: 50%;
-      bottom: 30px;
+      bottom: var(--md-snackbar-bottom, 30px);
       height: 48px;
     }
 
@@ -75,14 +75,14 @@ class SnackBar extends LitElement {
         opacity: 0;
       }
       to {
-        bottom: 30px;
+        bottom: var(--md-snackbar-bottom, 30px);
         opacity: 1;
       }
     }
 
     @keyframes fadeout {
       from {
-        bottom: 30px;
+        bottom: var(--md-snackbar-bottom, 30px);
         opacity: 1;
       }
       to {
