@@ -55,6 +55,8 @@ export class AppBar extends LitElement {
     value: { type: String },
     /** Internal state indicating whether search field has text */
     _hasSearchValue: { state: true },
+    /** Internal state indicating whether custom subtitle markup is slotted */
+    _hasSlottedSubtitle: { state: true },
   }
 
   constructor() {
@@ -73,6 +75,7 @@ export class AppBar extends LitElement {
     this.placeholder = 'Search'
     this.value = ''
     this._hasSearchValue = false
+    this._hasSlottedSubtitle = false
 
     this._onScroll = this._handleScroll.bind(this)
     this._currentTarget = null
@@ -137,7 +140,14 @@ export class AppBar extends LitElement {
   }
 
   get _hasSubtitle() {
-    return Boolean(this.subtitle)
+    return Boolean(this.subtitle || this._hasSlottedSubtitle)
+  }
+
+  _handleSubtitleSlotChange(e) {
+    const assigned = e.target.assignedNodes({ flatten: true })
+    this._hasSlottedSubtitle = assigned.some(
+      (n) => n.nodeType === Node.ELEMENT_NODE || (n.textContent || '').trim().length > 0,
+    )
   }
 
   _getScrollTargetElement() {
@@ -260,10 +270,10 @@ export class AppBar extends LitElement {
               }
             </div>
             ${
-              !isFlexible && this._hasSubtitle
+              !isFlexible
                 ? html`
-                    <div class="md3-app-bar__subtitle" part="subtitle">
-                      <slot name="subtitle">${this.subtitle}</slot>
+                    <div class="md3-app-bar__subtitle" part="subtitle" ?hidden=${!this._hasSubtitle}>
+                      <slot name="subtitle" @slotchange=${this._handleSubtitleSlotChange}>${this.subtitle}</slot>
                     </div>
                   `
                 : nothing
@@ -290,15 +300,9 @@ export class AppBar extends LitElement {
                         : this._headlineText
                     }
                   </div>
-                  ${
-                    this._hasSubtitle
-                      ? html`
-                          <div class="md3-app-bar__subtitle" part="subtitle">
-                            <slot name="subtitle">${this.subtitle}</slot>
-                          </div>
-                        `
-                      : nothing
-                  }
+                  <div class="md3-app-bar__subtitle" part="subtitle" ?hidden=${!this._hasSubtitle}>
+                    <slot name="subtitle" @slotchange=${this._handleSubtitleSlotChange}>${this.subtitle}</slot>
+                  </div>
                 </div>
               `
             : nothing
@@ -476,12 +480,15 @@ export class AppBar extends LitElement {
       transition: opacity 200ms cubic-bezier(0.2, 0, 0, 1);
     }
 
+    .md3-app-bar__subtitle[hidden] {
+      display: none;
+    }
+
     /* Center-aligned variant */
     .md3-app-bar--center-aligned .md3-app-bar__headline-container.center-aligned {
       align-items: center;
       text-align: center;
-      padding-left: 0;
-      padding-right: 0;
+      padding-inline: 0;
     }
 
     /* Medium & Large Flexible App Bars */
