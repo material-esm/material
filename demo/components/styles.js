@@ -1,6 +1,17 @@
 import { css } from 'lit'
 
 export const styles = css`
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+  :host {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
   .circle {
     border-radius: 50%;
   }
