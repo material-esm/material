@@ -1551,7 +1551,7 @@ export class Field extends LitElement {
           margin-top: calc(var(--_with-label-top-space) + var(--_label-text-populated-line-height));
         }
 
-        :hover .filled .active-indicator::before {
+        .filled:hover .active-indicator::before {
           border-bottom-color: var(--_hover-active-indicator-color);
           border-bottom-width: var(--_hover-active-indicator-height);
         }

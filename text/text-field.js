@@ -44,8 +44,8 @@ export class TextField extends textFieldBaseClass {
     value: { type: String },
     prefixText: { type: String, attribute: 'prefix-text' },
     suffixText: { type: String, attribute: 'suffix-text' },
-    hasLeadingIcon: { type: Boolean, attribute: 'hast-leading-icon' },
-    hasTrailingIcon: { type: Boolean, attribute: 'hast-trailing-icon' },
+    hasLeadingIcon: { type: Boolean, attribute: 'has-leading-icon' },
+    hasTrailingIcon: { type: Boolean, attribute: 'has-trailing-icon' },
     supportingText: { type: String, attribute: 'supporting-text' },
     textDirection: { type: String, attribute: 'text-direction' },
     rows: { type: Number },
@@ -67,7 +67,7 @@ export class TextField extends textFieldBaseClass {
     nativeError: { type: Boolean, attribute: 'native-error' },
     nativeErrorText: { type: String, attribute: 'native-error-text' },
     dirty: { type: Boolean },
-    color: { type: String },
+    color: { type: String, reflect: true },
   }
   constructor() {
     super(...arguments)
@@ -393,6 +393,12 @@ export class TextField extends textFieldBaseClass {
     this.nativeError = false
     this.nativeErrorText = ''
   }
+  connectedCallback() {
+    super.connectedCallback()
+    if (!this.hasAttribute('color')) {
+      this.setAttribute('color', this.color || 'outlined')
+    }
+  }
   attributeChangedCallback(attribute, newValue, oldValue) {
     if (attribute === 'value' && this.dirty) {
       // After user input, changing the value attribute no longer updates the
@@ -415,11 +421,23 @@ export class TextField extends textFieldBaseClass {
       // before checking its value.
       this.value = value
     }
-    if (changedProperties.has('type')) {
+    if (
+      changedProperties.has('type') ||
+      changedProperties.has('error') ||
+      changedProperties.has('nativeError')
+    ) {
       this.handleIconChange()
     }
   }
   renderField() {
+    const hasTrailing =
+      this.hasTrailingIcon ||
+      this.trailingIcons.length > 0 ||
+      this.type === 'date' ||
+      this.type === 'datetime-local' ||
+      this.type === 'time' ||
+      this.hasError
+
     return staticHtml`<md-field
       color=${this.color}
       class="field"
@@ -428,7 +446,7 @@ export class TextField extends textFieldBaseClass {
       ?error=${this.hasError}
       error-text=${this.getErrorText()}
       ?focused=${this.focused}
-      ?has-end=${this.hasTrailingIcon}
+      ?has-end=${hasTrailing}
       ?has-start=${this.hasLeadingIcon}
       label=${this.label}
       max=${this.maxLength}
@@ -458,6 +476,9 @@ export class TextField extends textFieldBaseClass {
     `
   }
   renderDefaultIcon() {
+    if (this.hasError) {
+      return this.renderErrorIcon()
+    }
     if (this.type === 'date') {
       return this.renderDefaultDateIcon()
     } else if (this.type === 'datetime-local') {
@@ -466,6 +487,9 @@ export class TextField extends textFieldBaseClass {
       return this.renderDefaultTimeIcon()
     }
     return nothing
+  }
+  renderErrorIcon() {
+    return html`<md-icon class="error-icon" aria-hidden="true">error</md-icon>`
   }
   renderDefaultDateIcon() {
     return html`<md-icon-button type="button" @click=${this.handleDatePickerRequest}
@@ -654,7 +678,11 @@ export class TextField extends textFieldBaseClass {
   handleIconChange() {
     this.hasLeadingIcon = this.leadingIcons.length > 0
     this.hasTrailingIcon =
-      this.trailingIcons.length > 0 || this.type === 'date' || this.type === 'datetime-local' || this.type === 'time'
+      this.trailingIcons.length > 0 ||
+      this.type === 'date' ||
+      this.type === 'datetime-local' ||
+      this.type === 'time' ||
+      this.hasError
   }
   [getFormValue]() {
     return this.value
@@ -757,20 +785,29 @@ __decorate([
         fill: currentColor;
       }
 
+      .icon md-icon,
       .icon ::slotted(*) {
         display: flex;
       }
 
-      [hasstart] .icon.leading {
+      [has-start] .icon.leading,
+      [hasstart] .icon.leading,
+      :host([has-leading-icon]) .icon.leading {
         font-size: var(--_leading-icon-size);
         height: var(--_leading-icon-size);
         width: var(--_leading-icon-size);
       }
 
-      [hasend] .icon.trailing {
+      [has-end] .icon.trailing,
+      [hasend] .icon.trailing,
+      :host([has-trailing-icon]) .icon.trailing {
         font-size: var(--_trailing-icon-size);
         height: var(--_trailing-icon-size);
         width: var(--_trailing-icon-size);
+      }
+
+      .error-icon {
+        pointer-events: none;
       }
 
       .input-wrapper {
@@ -853,7 +890,8 @@ __decorate([
       }
     `,
     css`
-      :host([color='outlined']) {
+      :host([color='outlined']),
+      :host(:not([color='filled'])) {
         --_caret-color: var(--md-text-field-caret-color, var(--md-sys-color-primary, #6750a4));
         --_disabled-input-text-color: var(
           --md-text-field-disabled-input-text-color,
