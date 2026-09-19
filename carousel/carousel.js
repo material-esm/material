@@ -52,12 +52,12 @@ export class Carousel extends LitElement {
     this.hideScrollbar = true
     this.ariaLabel = 'Carousel'
     this._canScrollPrev = false
-    this._canScrollPrev = false
     this._canScrollNext = true
 
     this._resizeObserver = null
     this._autoplayTimer = null
     this._programmaticScrollTimer = null
+    this._scrollEndHandler = null
     this._isPointerDown = false
     this._startX = 0
     this._startScrollLeft = 0
@@ -123,6 +123,11 @@ export class Carousel extends LitElement {
     if (this._programmaticScrollTimer) {
       clearTimeout(this._programmaticScrollTimer)
       this._programmaticScrollTimer = null
+    }
+
+    if (this._scrollEndHandler && this.scrollerElement) {
+      this.scrollerElement.removeEventListener('scrollend', this._scrollEndHandler)
+      this._scrollEndHandler = null
     }
 
     this.removeEventListener('keydown', this._handleKeyDown)
@@ -272,11 +277,17 @@ export class Carousel extends LitElement {
     const targetItem = items[boundedIndex]
     if (!targetItem) return
 
+    const prevIndex = this.activeIndex
     this.activeIndex = boundedIndex
     this._isScrollingProgrammatically = true
     if (this._programmaticScrollTimer) {
       clearTimeout(this._programmaticScrollTimer)
       this._programmaticScrollTimer = null
+    }
+
+    if (this._scrollEndHandler) {
+      scroller.removeEventListener('scrollend', this._scrollEndHandler)
+      this._scrollEndHandler = null
     }
 
     if (behavior === 'smooth') {
@@ -310,15 +321,21 @@ export class Carousel extends LitElement {
     })
 
     this._updateScrollState()
-    this.dispatchEvent(
-      new CustomEvent('change', {
-        detail: { index: boundedIndex, item: targetItem },
-        bubbles: true,
-        composed: true,
-      }),
-    )
+    if (prevIndex !== boundedIndex) {
+      this.dispatchEvent(
+        new CustomEvent('change', {
+          detail: { index: boundedIndex, item: targetItem },
+          bubbles: true,
+          composed: true,
+        }),
+      )
+    }
 
     const endProgrammaticScroll = () => {
+      if (this._scrollEndHandler) {
+        scroller.removeEventListener('scrollend', this._scrollEndHandler)
+        this._scrollEndHandler = null
+      }
       if (this._programmaticScrollTimer) {
         clearTimeout(this._programmaticScrollTimer)
         this._programmaticScrollTimer = null
@@ -329,12 +346,11 @@ export class Carousel extends LitElement {
     }
 
     if (behavior === 'smooth') {
-      const onScrollEnd = () => {
-        scroller.removeEventListener('scrollend', onScrollEnd)
+      this._scrollEndHandler = () => {
         endProgrammaticScroll()
       }
       if ('onscrollend' in window) {
-        scroller.addEventListener('scrollend', onScrollEnd, { once: true })
+        scroller.addEventListener('scrollend', this._scrollEndHandler, { once: true })
       }
       this._programmaticScrollTimer = setTimeout(endProgrammaticScroll, 450)
     } else {
@@ -468,26 +484,26 @@ export class Carousel extends LitElement {
     }
   }
 
-  _handleScroll() {
-    this._updateScrollState()
-    if (this._isScrollingProgrammatically) return
-
+  _getClosestIndex() {
     const scroller = this.scrollerElement
     const items = this.items
-    if (!scroller || !items.length) return
+    if (!scroller || !items.length) return 0
 
     const scrollerLeft = scroller.scrollLeft
     const maxScroll = Math.max(0, scroller.scrollWidth - scroller.clientWidth)
 
-    let closestIndex = 0
-
     if (scrollerLeft <= 2) {
-      closestIndex = 0
-    } else if (maxScroll > 0 && scrollerLeft >= maxScroll - 4) {
-      closestIndex = items.length - 1
-    } else if (this.layout === 'centered-hero') {
+      return 0
+    }
+    if (maxScroll > 0 && scrollerLeft >= maxScroll - 4) {
+      return items.length - 1
+    }
+
+    let closestIndex = 0
+    let minDistance = Infinity
+
+    if (this.layout === 'centered-hero') {
       const scrollerCenter = scrollerLeft + scroller.clientWidth / 2
-      let minDistance = Infinity
       items.forEach((item, index) => {
         const itemCenter = item.offsetLeft + item.offsetWidth / 2
         const distance = Math.abs(itemCenter - scrollerCenter)
@@ -497,7 +513,6 @@ export class Carousel extends LitElement {
         }
       })
     } else {
-      let minDistance = Infinity
       items.forEach((item, index) => {
         const itemLeft = item.offsetLeft - scroller.offsetLeft
         const distance = Math.abs(itemLeft - scrollerLeft)
@@ -507,6 +522,19 @@ export class Carousel extends LitElement {
         }
       })
     }
+
+    return closestIndex
+  }
+
+  _handleScroll() {
+    this._updateScrollState()
+    if (this._isScrollingProgrammatically) return
+
+    const scroller = this.scrollerElement
+    const items = this.items
+    if (!scroller || !items.length) return
+
+    const closestIndex = this._getClosestIndex()
 
     if (this.activeIndex !== closestIndex) {
       this.activeIndex = closestIndex
@@ -649,37 +677,7 @@ export class Carousel extends LitElement {
     const items = this.items
     if (!scroller || !items.length) return
 
-    const scrollerLeft = scroller.scrollLeft
-    const maxScroll = Math.max(0, scroller.scrollWidth - scroller.clientWidth)
-
-    let closestIndex = 0
-    if (scrollerLeft <= 2) {
-      closestIndex = 0
-    } else if (maxScroll > 0 && scrollerLeft >= maxScroll - 4) {
-      closestIndex = items.length - 1
-    } else if (this.layout === 'centered-hero') {
-      const scrollerCenter = scrollerLeft + scroller.clientWidth / 2
-      let minDistance = Infinity
-      items.forEach((item, index) => {
-        const itemCenter = item.offsetLeft + item.offsetWidth / 2
-        const distance = Math.abs(itemCenter - scrollerCenter)
-        if (distance < minDistance) {
-          minDistance = distance
-          closestIndex = index
-        }
-      })
-    } else {
-      let minDistance = Infinity
-      items.forEach((item, index) => {
-        const itemLeft = item.offsetLeft - scroller.offsetLeft
-        const distance = Math.abs(itemLeft - scrollerLeft)
-        if (distance < minDistance) {
-          minDistance = distance
-          closestIndex = index
-        }
-      })
-    }
-
+    const closestIndex = this._getClosestIndex()
     this.scrollToIndex(closestIndex, 'smooth')
   }
 
