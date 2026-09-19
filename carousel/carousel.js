@@ -373,18 +373,34 @@ export class Carousel extends LitElement {
 
     if (behavior === 'smooth') {
       const scrollDistance = Math.abs(clampedTarget - scroller.scrollLeft)
-      if (scrollDistance <= 1) {
-        endProgrammaticScroll()
-      } else {
-        this._scrollEndHandler = () => {
+      const minTransitionMs = 380
+      const timeoutMs = Math.max(minTransitionMs, Math.min(1200, Math.round(scrollDistance * 0.5 + 350)))
+
+      let scrollEnded = false
+      let timerEnded = false
+
+      const tryFinish = () => {
+        if (scrollEnded && timerEnded) {
           endProgrammaticScroll()
         }
-        if ('onscrollend' in window) {
-          scroller.addEventListener('scrollend', this._scrollEndHandler, { once: true })
-        }
-        const timeoutMs = Math.max(400, Math.min(1000, Math.round(scrollDistance * 0.5 + 350)))
-        this._programmaticScrollTimer = setTimeout(endProgrammaticScroll, timeoutMs)
       }
+
+      this._scrollEndHandler = () => {
+        scrollEnded = true
+        tryFinish()
+      }
+
+      if ('onscrollend' in window) {
+        scroller.addEventListener('scrollend', this._scrollEndHandler, { once: true })
+      } else {
+        scrollEnded = true
+      }
+
+      this._programmaticScrollTimer = setTimeout(() => {
+        timerEnded = true
+        scrollEnded = true
+        tryFinish()
+      }, timeoutMs)
     } else {
       endProgrammaticScroll()
       requestAnimationFrame(() => {
@@ -453,16 +469,17 @@ export class Carousel extends LitElement {
         let sizeType = 'large'
         let width = largeWidth
 
+        const hasAheadPreview = items.length - activeIndex >= 3
         if (i < activeIndex) {
           sizeType = 'large'
           width = largeWidth
         } else if (i === activeIndex) {
           sizeType = 'large'
           width = largeWidth
-        } else if (i === activeIndex + 1 && items.length > 1) {
+        } else if (i === activeIndex + 1 && hasAheadPreview) {
           sizeType = 'medium'
           width = mediumWidth
-        } else if (i === activeIndex + 2 && items.length > 2) {
+        } else if (i === activeIndex + 2 && hasAheadPreview) {
           sizeType = 'small'
           width = smallWidth
         } else {
@@ -495,7 +512,7 @@ export class Carousel extends LitElement {
         } else if (i === activeIndex) {
           sizeType = 'large'
           width = largeWidth
-        } else if (i === activeIndex + 1) {
+        } else if (i === activeIndex + 1 && items.length - activeIndex >= 2) {
           sizeType = 'small'
           width = smallWidth
         } else {
@@ -589,11 +606,6 @@ export class Carousel extends LitElement {
 
     if (scrollerLeft <= 2) {
       return 0
-    }
-
-    const maxScroll = Math.max(0, scroller.scrollWidth - scroller.clientWidth)
-    if (maxScroll > 0 && scrollerLeft >= maxScroll - 8) {
-      return items.length - 1
     }
 
     let closestIndex = 0
@@ -783,6 +795,13 @@ export class Carousel extends LitElement {
     const scroller = this.scrollerElement
     const items = this.items
     if (!scroller || !items.length) return
+
+    const scrollerLeft = scroller.scrollLeft
+    const maxScroll = Math.max(0, scroller.scrollWidth - scroller.clientWidth)
+    if (maxScroll > 0 && scrollerLeft >= maxScroll - 16) {
+      this.scrollToIndex(items.length - 1, 'smooth')
+      return
+    }
 
     const closestIndex = this._getClosestIndex()
     this.scrollToIndex(closestIndex, 'smooth')
