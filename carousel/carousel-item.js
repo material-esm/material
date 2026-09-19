@@ -139,9 +139,7 @@ export class CarouselItem extends LitElement {
       }
 
       :host(.no-transition),
-      :host([no-transition]),
-      :host-context(.scroller.is-dragging),
-      :host-context(.scroller.is-instant-scrolling) {
+      :host([no-transition]) {
         transition: none !important;
       }
 
