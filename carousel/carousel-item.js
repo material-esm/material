@@ -128,10 +128,6 @@ export class CarouselItem extends LitElement {
         height: 100%;
         scroll-snap-align: start;
         transition:
-          width 0.35s cubic-bezier(0.2, 0, 0, 1),
-          min-width 0.35s cubic-bezier(0.2, 0, 0, 1),
-          max-width 0.35s cubic-bezier(0.2, 0, 0, 1),
-          flex-basis 0.35s cubic-bezier(0.2, 0, 0, 1),
           transform 0.25s cubic-bezier(0.2, 0, 0, 1),
           opacity 0.25s cubic-bezier(0.2, 0, 0, 1),
           filter 0.25s cubic-bezier(0.2, 0, 0, 1);
