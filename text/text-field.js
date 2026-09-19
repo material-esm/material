@@ -421,21 +421,12 @@ export class TextField extends textFieldBaseClass {
       // before checking its value.
       this.value = value
     }
-    if (
-      changedProperties.has('type') ||
-      changedProperties.has('error') ||
-      changedProperties.has('nativeError')
-    ) {
+    if (changedProperties.has('type')) {
       this.handleIconChange()
     }
   }
   renderField() {
-    const hasTrailing =
-      this.hasTrailingIcon ||
-      this.type === 'date' ||
-      this.type === 'datetime-local' ||
-      this.type === 'time' ||
-      this.hasError
+    const hasTrailing = this.hasTrailingIcon || this.hasError
 
     return staticHtml`<md-field
       color=${this.color}
@@ -475,15 +466,15 @@ export class TextField extends textFieldBaseClass {
     `
   }
   renderDefaultIcon() {
-    if (this.hasError) {
-      return this.renderErrorIcon()
-    }
     if (this.type === 'date') {
       return this.renderDefaultDateIcon()
     } else if (this.type === 'datetime-local') {
       return this.renderDefaultDateTimeIcon()
     } else if (this.type === 'time') {
       return this.renderDefaultTimeIcon()
+    }
+    if (this.hasError) {
+      return this.renderErrorIcon()
     }
     return nothing
   }
@@ -680,8 +671,7 @@ export class TextField extends textFieldBaseClass {
       this.trailingIcons.length > 0 ||
       this.type === 'date' ||
       this.type === 'datetime-local' ||
-      this.type === 'time' ||
-      this.hasError
+      this.type === 'time'
   }
   [getFormValue]() {
     return this.value
