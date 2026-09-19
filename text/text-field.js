@@ -432,7 +432,6 @@ export class TextField extends textFieldBaseClass {
   renderField() {
     const hasTrailing =
       this.hasTrailingIcon ||
-      this.trailingIcons.length > 0 ||
       this.type === 'date' ||
       this.type === 'datetime-local' ||
       this.type === 'time' ||
@@ -489,7 +488,7 @@ export class TextField extends textFieldBaseClass {
     return nothing
   }
   renderErrorIcon() {
-    return html`<md-icon class="error-icon" aria-hidden="true">error</md-icon>`
+    return html`<slot name="error-icon"><md-icon class="error-icon" aria-hidden="true">error</md-icon></slot>`
   }
   renderDefaultDateIcon() {
     return html`<md-icon-button type="button" @click=${this.handleDatePickerRequest}
