@@ -57,6 +57,7 @@ export class Carousel extends LitElement {
     this._resizeObserver = null
     this._autoplayTimer = null
     this._programmaticScrollTimer = null
+    this._minTransitionTimer = null
     this._scrollEndHandler = null
     this._isPointerDown = false
     this._startX = 0
@@ -130,6 +131,11 @@ export class Carousel extends LitElement {
     if (this._programmaticScrollTimer) {
       clearTimeout(this._programmaticScrollTimer)
       this._programmaticScrollTimer = null
+    }
+
+    if (this._minTransitionTimer) {
+      clearTimeout(this._minTransitionTimer)
+      this._minTransitionTimer = null
     }
 
     if (this._scrollEndHandler && this.scrollerElement) {
@@ -299,6 +305,11 @@ export class Carousel extends LitElement {
       this._programmaticScrollTimer = null
     }
 
+    if (this._minTransitionTimer) {
+      clearTimeout(this._minTransitionTimer)
+      this._minTransitionTimer = null
+    }
+
     if (this._scrollEndHandler) {
       scroller.removeEventListener('scrollend', this._scrollEndHandler)
       this._scrollEndHandler = null
@@ -364,6 +375,10 @@ export class Carousel extends LitElement {
         clearTimeout(this._programmaticScrollTimer)
         this._programmaticScrollTimer = null
       }
+      if (this._minTransitionTimer) {
+        clearTimeout(this._minTransitionTimer)
+        this._minTransitionTimer = null
+      }
       scroller.classList.remove('is-programmatic-scrolling')
       scroller.classList.remove('is-instant-scrolling')
       items.forEach(it => it.classList.remove('no-transition'))
@@ -373,14 +388,13 @@ export class Carousel extends LitElement {
 
     if (behavior === 'smooth') {
       const scrollDistance = Math.abs(clampedTarget - scroller.scrollLeft)
-      const minTransitionMs = 380
-      const timeoutMs = Math.max(minTransitionMs, Math.min(1200, Math.round(scrollDistance * 0.5 + 350)))
+      const timeoutMs = Math.max(450, Math.min(1200, Math.round(scrollDistance * 0.5 + 350)))
 
       let scrollEnded = false
-      let timerEnded = false
+      let minTransitionEnded = false
 
       const tryFinish = () => {
-        if (scrollEnded && timerEnded) {
+        if (scrollEnded && minTransitionEnded) {
           endProgrammaticScroll()
         }
       }
@@ -396,8 +410,13 @@ export class Carousel extends LitElement {
         scrollEnded = true
       }
 
+      this._minTransitionTimer = setTimeout(() => {
+        minTransitionEnded = true
+        tryFinish()
+      }, 360)
+
       this._programmaticScrollTimer = setTimeout(() => {
-        timerEnded = true
+        minTransitionEnded = true
         scrollEnded = true
         tryFinish()
       }, timeoutMs)
@@ -469,22 +488,70 @@ export class Carousel extends LitElement {
         let sizeType = 'large'
         let width = largeWidth
 
-        const hasAheadPreview = items.length - activeIndex >= 3
-        if (i < activeIndex) {
+        if (items.length === 1) {
           sizeType = 'large'
           width = largeWidth
-        } else if (i === activeIndex) {
-          sizeType = 'large'
-          width = largeWidth
-        } else if (i === activeIndex + 1 && hasAheadPreview) {
-          sizeType = 'medium'
-          width = mediumWidth
-        } else if (i === activeIndex + 2 && hasAheadPreview) {
-          sizeType = 'small'
-          width = smallWidth
+        } else if (items.length === 2) {
+          if (activeIndex === 0) {
+            sizeType = i === 0 ? 'large' : 'medium'
+            width = i === 0 ? largeWidth : mediumWidth
+          } else {
+            sizeType = i === 0 ? 'medium' : 'large'
+            width = i === 0 ? mediumWidth : largeWidth
+          }
+        } else if (activeIndex >= items.length - 2) {
+          // Shifting focal keylines at the end of multi-browse:
+          // Penultimate slide: [N-3: Medium, N-2: Large (focal), N-1: Small]
+          // Final slide:       [N-3: Small,  N-2: Medium,        N-1: Large (focal)]
+          if (activeIndex === items.length - 2) {
+            if (i === items.length - 3) {
+              sizeType = 'medium'
+              width = mediumWidth
+            } else if (i === items.length - 2) {
+              sizeType = 'large'
+              width = largeWidth
+            } else if (i === items.length - 1) {
+              sizeType = 'small'
+              width = smallWidth
+            } else {
+              sizeType = 'large'
+              width = largeWidth
+            }
+          } else {
+            // activeIndex === items.length - 1
+            if (i === items.length - 3) {
+              sizeType = 'small'
+              width = smallWidth
+            } else if (i === items.length - 2) {
+              sizeType = 'medium'
+              width = mediumWidth
+            } else if (i === items.length - 1) {
+              sizeType = 'large'
+              width = largeWidth
+            } else {
+              sizeType = 'large'
+              width = largeWidth
+            }
+          }
         } else {
-          sizeType = 'large'
-          width = largeWidth
+          // Normal start / middle keylines:
+          // activeIndex: Large (focal)
+          // activeIndex + 1: Medium
+          // activeIndex + 2: Small
+          // all other items: Large
+          if (i === activeIndex) {
+            sizeType = 'large'
+            width = largeWidth
+          } else if (i === activeIndex + 1) {
+            sizeType = 'medium'
+            width = mediumWidth
+          } else if (i === activeIndex + 2) {
+            sizeType = 'small'
+            width = smallWidth
+          } else {
+            sizeType = 'large'
+            width = largeWidth
+          }
         }
 
         item.setAttribute('data-size', sizeType)
@@ -506,18 +573,33 @@ export class Carousel extends LitElement {
         let sizeType = 'large'
         let width = largeWidth
 
-        if (i < activeIndex) {
+        if (items.length === 1) {
           sizeType = 'large'
-          width = largeWidth
-        } else if (i === activeIndex) {
-          sizeType = 'large'
-          width = largeWidth
-        } else if (i === activeIndex + 1 && items.length - activeIndex >= 2) {
-          sizeType = 'small'
-          width = smallWidth
+          width = containerWidth
+        } else if (activeIndex >= items.length - 1) {
+          // End state of hero layout: [N-2: Small, N-1: Large (focal)]
+          if (i === items.length - 2) {
+            sizeType = 'small'
+            width = smallWidth
+          } else if (i === items.length - 1) {
+            sizeType = 'large'
+            width = largeWidth
+          } else {
+            sizeType = 'large'
+            width = largeWidth
+          }
         } else {
-          sizeType = 'large'
-          width = largeWidth
+          // Normal start / middle hero keylines: [activeIndex: Large, activeIndex + 1: Small]
+          if (i === activeIndex) {
+            sizeType = 'large'
+            width = largeWidth
+          } else if (i === activeIndex + 1) {
+            sizeType = 'small'
+            width = smallWidth
+          } else {
+            sizeType = 'large'
+            width = largeWidth
+          }
         }
 
         item.setAttribute('data-size', sizeType)
@@ -647,7 +729,8 @@ export class Carousel extends LitElement {
 
     // When at the scroll boundary at the end, don't revert higher activeIndex
     const maxScroll = Math.max(0, scroller.scrollWidth - scroller.clientWidth)
-    if (maxScroll > 0 && scroller.scrollLeft >= maxScroll - 4 && this.activeIndex >= closestIndex) {
+    const boundaryIndex = this.layout === 'hero' ? items.length - 2 : items.length - 3
+    if (maxScroll > 0 && scroller.scrollLeft >= maxScroll - 4 && this.activeIndex >= boundaryIndex) {
       return
     }
 
@@ -729,6 +812,7 @@ export class Carousel extends LitElement {
     this._startScrollLeft = scroller.scrollLeft
     this._hasDragged = false
     this._pointerId = e.pointerId
+    this._dragDeltaX = 0
   }
 
   _onPointerMove(e) {
@@ -737,6 +821,7 @@ export class Carousel extends LitElement {
     if (!scroller) return
 
     const deltaX = e.clientX - this._startX
+    this._dragDeltaX = deltaX
     if (!this._hasDragged && Math.abs(deltaX) > 5) {
       this._hasDragged = true
       scroller.classList.add('is-dragging')
@@ -768,9 +853,25 @@ export class Carousel extends LitElement {
     this._pointerId = null
 
     if (this._hasDragged) {
-      this._snapToNearest()
+      const deltaX = this._dragDeltaX || 0
+      if (deltaX < -40) {
+        if (this.canScrollNext) {
+          this.next()
+        } else {
+          this._snapToNearest()
+        }
+      } else if (deltaX > 40) {
+        if (this.canScrollPrev) {
+          this.previous()
+        } else {
+          this._snapToNearest()
+        }
+      } else {
+        this._snapToNearest()
+      }
       setTimeout(() => {
         this._hasDragged = false
+        this._dragDeltaX = 0
       }, 60)
     }
   }
@@ -789,6 +890,7 @@ export class Carousel extends LitElement {
     }
     this._pointerId = null
     this._hasDragged = false
+    this._dragDeltaX = 0
   }
 
   _snapToNearest() {
@@ -799,7 +901,12 @@ export class Carousel extends LitElement {
     const scrollerLeft = scroller.scrollLeft
     const maxScroll = Math.max(0, scroller.scrollWidth - scroller.clientWidth)
     if (maxScroll > 0 && scrollerLeft >= maxScroll - 16) {
-      this.scrollToIndex(items.length - 1, 'smooth')
+      const boundaryIndex = this.layout === 'hero' ? items.length - 2 : items.length - 3
+      if (this.activeIndex >= boundaryIndex) {
+        this.scrollToIndex(this.activeIndex, 'smooth')
+      } else {
+        this.scrollToIndex(Math.max(0, boundaryIndex), 'smooth')
+      }
       return
     }
 
