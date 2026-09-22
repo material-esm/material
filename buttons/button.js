@@ -32,7 +32,7 @@ export class Button extends buttonBaseClass {
     shape: { type: String, reflect: true },
     color: { type: String, reflect: true }, // this is elevated, filled, etc. Not an actual color.
     pressed: { type: Boolean, reflect: true },
-    disabled: { type: Boolean, reflect: true },
+    disabled: { type: Boolean, noAccessor: true },
     href: { type: String },
     target: { type: String },
     trailingIcon: { type: Boolean, attribute: 'trailing-icon', reflect: true },
@@ -59,6 +59,32 @@ export class Button extends buttonBaseClass {
     return this[internals].labels
   }
 
+  #formDisabled = false
+
+  get disabled() {
+    return this.hasAttribute('disabled') || this.#formDisabled
+  }
+  set disabled(disabled) {
+    const oldValue = this.disabled
+    this.toggleAttribute('disabled', Boolean(disabled))
+    this.requestUpdate('disabled', oldValue)
+  }
+
+  formDisabledCallback(disabled) {
+    const oldValue = this.disabled
+    this.#formDisabled = disabled
+    this.requestUpdate('disabled', oldValue)
+  }
+
+  attributeChangedCallback(name, old, value) {
+    if (name === 'disabled') {
+      const oldValue = old !== null
+      this.requestUpdate(name, oldValue)
+      return
+    }
+    super.attributeChangedCallback(name, old, value)
+  }
+
   get buttonElement() {
     return this.shadowRoot.querySelector('#button') || this.shadowRoot.querySelector('#link')
   }
@@ -80,10 +106,7 @@ export class Button extends buttonBaseClass {
     this.color = 'filled'
 
     this.pressed = false
-    /**
-     * Whether or not the button is disabled.
-     */
-    this.disabled = false
+
     /**
      * The URL that the link button points to.
      */
