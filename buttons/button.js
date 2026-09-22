@@ -1186,7 +1186,5 @@ export class Button extends buttonBaseClass {
   requestUpdateOnAriaChange(Button)
   setupFormSubmitter(Button)
 })()
-/** @nocollapse */
-Button.formAssociated = true
 
 customElements.define('md-button', Button)

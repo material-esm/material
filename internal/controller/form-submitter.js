@@ -65,11 +65,15 @@ export function setupFormSubmitter(ctor) {
         },
         { capture: true, once: true },
       )
-      elementInternals.setFormValue(submitter.value)
+      if (submitter.name) {
+        elementInternals.setFormValue(submitter.value)
+      }
       try {
         form.requestSubmit()
       } finally {
-        elementInternals.setFormValue(null)
+        if (submitter.name) {
+          elementInternals.setFormValue(null)
+        }
       }
     })
   })
