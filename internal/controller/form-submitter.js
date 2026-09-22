@@ -54,17 +54,14 @@ export function setupFormSubmitter(ctor) {
       // elements. This patches the dispatched submit event to add the correct
       // `submitter`.
       // See https://github.com/WICG/webcomponents/issues/814
-      form.addEventListener(
-        'submit',
-        (submitEvent) => {
-          Object.defineProperty(submitEvent, 'submitter', {
-            configurable: true,
-            enumerable: true,
-            get: () => submitter,
-          })
-        },
-        { capture: true, once: true },
-      )
+      const submitListener = (submitEvent) => {
+        Object.defineProperty(submitEvent, 'submitter', {
+          configurable: true,
+          enumerable: true,
+          get: () => submitter,
+        })
+      }
+      form.addEventListener('submit', submitListener, { capture: true, once: true })
       if (submitter.name) {
         elementInternals.setFormValue(submitter.value)
       }
@@ -74,6 +71,7 @@ export function setupFormSubmitter(ctor) {
         if (submitter.name) {
           elementInternals.setFormValue(null)
         }
+        form.removeEventListener('submit', submitListener, { capture: true })
       }
     })
   })
