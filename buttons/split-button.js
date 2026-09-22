@@ -138,6 +138,7 @@ export class SplitButton extends LitElement {
       <md-icon-button
         class="trailing-button"
         id="split-anchor"
+        type="button"
         color=${this.color}
         size=${this.size}
         ?disabled=${this.disabled}
