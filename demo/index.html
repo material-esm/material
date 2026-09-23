@@ -202,15 +202,22 @@
 
             <h2>Inputs</h2>
 
-            <md-text-field color="outlined" label="Name" required minlength="4"></md-text-field>
-            <md-text-field
-              color="outlined"
-              id="preferredDate"
-              class="data"
-              type="date"
-              label="Preferred Date"
-              required
-              minlength="4"></md-text-field>
+            <div class="flex col g16" style="max-width: 400px; margin-bottom: 16px;">
+              <md-text-field label="Name" required minlength="4"></md-text-field>
+              <md-text-field
+                label="Error state"
+                error
+                error-text="Please enter a valid value"
+                value="Invalid input"></md-text-field>
+              <md-text-field color="filled" label="Filled text field" supporting-text="Supporting text"></md-text-field>
+              <md-text-field
+                id="preferredDate"
+                class="data"
+                type="date"
+                label="Preferred Date"
+                required
+                minlength="4"></md-text-field>
+            </div>
             <md-button onclick="save()">Save</md-button>
 
             <script>
