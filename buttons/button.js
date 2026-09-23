@@ -1,15 +1,21 @@
 import { html, LitElement, nothing, css } from 'lit'
 import { dispatchActivationClick, isActivationClick } from '../internal/events/form-label-activation.js'
+import { requestUpdateOnAriaChange } from '../internal/aria/delegate.js'
+import { setupFormSubmitter } from '../internal/controller/form-submitter.js'
+import { internals, mixinElementInternals } from '../labs/behaviors/element-internals.js'
 import '../internal/elevation/elevation.js'
 import '../internal/focus/focus-ring.js'
 import '../internal/ripple/ripple.js'
+
+const buttonBaseClass = mixinElementInternals(LitElement)
 
 /**
  * A material 3 expressive button component.
  *
  * https://m3.material.io/components/buttons/overview
  */
-export class Button extends LitElement {
+export class Button extends buttonBaseClass {
+  static formAssociated = true
   static shadowRootOptions = { ...LitElement.shadowRootOptions, delegatesFocus: true }
 
   renderElevationOrOutline() {
@@ -26,12 +32,13 @@ export class Button extends LitElement {
     shape: { type: String, reflect: true },
     color: { type: String, reflect: true }, // this is elevated, filled, etc. Not an actual color.
     pressed: { type: Boolean, reflect: true },
-    disabled: { type: Boolean, reflect: true },
+    disabled: { type: Boolean, noAccessor: true },
     href: { type: String },
     target: { type: String },
     trailingIcon: { type: Boolean, attribute: 'trailing-icon', reflect: true },
     hasIcon: { type: Boolean, attribute: 'has-icon', reflect: true },
     type: { type: String },
+    value: { type: String },
     selected: { type: Boolean, reflect: true },
     toggle: { type: Boolean, reflect: true },
     checkmark: { type: Boolean, reflect: true },
@@ -42,6 +49,40 @@ export class Button extends LitElement {
   }
   set name(name) {
     this.setAttribute('name', name)
+  }
+
+  get form() {
+    return this[internals].form
+  }
+
+  get labels() {
+    return this[internals].labels
+  }
+
+  #formDisabled = false
+
+  get disabled() {
+    return this.hasAttribute('disabled') || this.#formDisabled
+  }
+  set disabled(disabled) {
+    const oldValue = this.disabled
+    this.toggleAttribute('disabled', Boolean(disabled))
+    this.requestUpdate('disabled', oldValue)
+  }
+
+  formDisabledCallback(disabled) {
+    const oldValue = this.disabled
+    this.#formDisabled = disabled
+    this.requestUpdate('disabled', oldValue)
+  }
+
+  attributeChangedCallback(name, old, value) {
+    if (name === 'disabled') {
+      const oldValue = old !== null
+      this.requestUpdate(name, oldValue)
+      return
+    }
+    super.attributeChangedCallback(name, old, value)
   }
 
   get buttonElement() {
@@ -65,10 +106,7 @@ export class Button extends LitElement {
     this.color = 'filled'
 
     this.pressed = false
-    /**
-     * Whether or not the button is disabled.
-     */
-    this.disabled = false
+
     /**
      * The URL that the link button points to.
      */
@@ -1167,4 +1205,9 @@ export class Button extends LitElement {
     `,
   ]
 }
+;(() => {
+  requestUpdateOnAriaChange(Button)
+  setupFormSubmitter(Button)
+})()
+
 customElements.define('md-button', Button)

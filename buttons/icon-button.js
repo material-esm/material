@@ -18,7 +18,7 @@ const iconButtonBaseClass = mixinElementInternals(LitElement)
  */
 export class IconButton extends iconButtonBaseClass {
   static properties = {
-    disabled: { type: Boolean, reflect: true },
+    disabled: { type: Boolean, noAccessor: true },
     flipIconInRtl: { type: Boolean, attribute: 'flip-icon-in-rtl' },
     href: { type: String },
     target: { type: String },
@@ -34,10 +34,7 @@ export class IconButton extends iconButtonBaseClass {
 
   constructor() {
     super()
-    /**
-     * Disables the icon button and makes it non-interactive.
-     */
-    this.disabled = false
+
     /**
      * Flips the icon if it is in an RTL context at startup.
      */
@@ -99,6 +96,32 @@ export class IconButton extends iconButtonBaseClass {
 
   get labels() {
     return this[internals].labels
+  }
+
+  #formDisabled = false
+
+  get disabled() {
+    return this.hasAttribute('disabled') || this.#formDisabled
+  }
+  set disabled(disabled) {
+    const oldValue = this.disabled
+    this.toggleAttribute('disabled', Boolean(disabled))
+    this.requestUpdate('disabled', oldValue)
+  }
+
+  formDisabledCallback(disabled) {
+    const oldValue = this.disabled
+    this.#formDisabled = disabled
+    this.requestUpdate('disabled', oldValue)
+  }
+
+  attributeChangedCallback(name, old, value) {
+    if (name === 'disabled') {
+      const oldValue = old !== null
+      this.requestUpdate(name, oldValue)
+      return
+    }
+    super.attributeChangedCallback(name, old, value)
   }
 
   get buttonElement() {
@@ -307,7 +330,7 @@ export class IconButton extends iconButtonBaseClass {
       }
 
       .icon-button::before {
-        content: "";
+        content: '';
         position: absolute;
         top: 50%;
         left: 50%;
