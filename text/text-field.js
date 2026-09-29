@@ -771,7 +771,22 @@ __decorate([
       .icon {
         color: currentColor;
         display: flex;
+        align-items: center;
+        justify-content: center;
         fill: currentColor;
+      }
+
+      .icon slot {
+        display: flex;
+        height: 100%;
+        width: 100%;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .icon md-icon-button,
+      .icon ::slotted(md-icon-button) {
+        flex-shrink: 0;
       }
 
       .icon md-icon,
