@@ -204,13 +204,34 @@ md-carousel {
 .g12 {
   gap: 12px;
 }
+.g16 {
+  gap: 16px;
+}
+.g20 {
+  gap: 20px;
+}
+.g24 {
+  gap: 24px;
+}
+.g32 {
+  gap: 32px;
+}
 
+.p4 {
+  padding: 4px;
+}
 .p12 {
   padding: 12px;
+}
+.p16 {
+  padding: 16px;
 }
 
 .mt8 {
   margin-top: 8px;
+}
+.mt12 {
+  margin-top: 12px;
 }
 
 .fabBottom {

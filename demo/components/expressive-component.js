@@ -63,7 +63,7 @@ class ExpressiveComponent extends LitElement {
     return html`
       <div class="flex col g12">
         <form id="form1">
-          <div class="flex col g12">
+          <div class="flex col g16">
             <md-text-field color="filled" label="Name in filled text field" required minlength="4"></md-text-field>
             <md-text-field color="outlined" label="Name" required minlength="4"></md-text-field>
             <md-text-field color="outlined" label="Email" type="email" required></md-text-field>
