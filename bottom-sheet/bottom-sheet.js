@@ -614,6 +614,12 @@ export class BottomSheet extends LitElement {
       color: var(--md-bottom-sheet-content-color, var(--md-sys-color-on-surface, #1d1b20));
     }
 
+    ::slotted(md-list) {
+      --md-list-container-color: transparent;
+      background: transparent;
+      margin: 0 -24px;
+    }
+
     .actions {
       display: none;
       position: relative;

@@ -251,16 +251,56 @@
     <!-- Long Scrollable Sheet -->
     <md-bottom-sheet id="sheet-scroll" headline="Select an Option">
       <md-list>
-        <md-list-item headline="Option 1" supporting-text="Supporting details for option 1"></md-list-item>
-        <md-list-item headline="Option 2" supporting-text="Supporting details for option 2"></md-list-item>
-        <md-list-item headline="Option 3" supporting-text="Supporting details for option 3"></md-list-item>
-        <md-list-item headline="Option 4" supporting-text="Supporting details for option 4"></md-list-item>
-        <md-list-item headline="Option 5" supporting-text="Supporting details for option 5"></md-list-item>
-        <md-list-item headline="Option 6" supporting-text="Supporting details for option 6"></md-list-item>
-        <md-list-item headline="Option 7" supporting-text="Supporting details for option 7"></md-list-item>
-        <md-list-item headline="Option 8" supporting-text="Supporting details for option 8"></md-list-item>
-        <md-list-item headline="Option 9" supporting-text="Supporting details for option 9"></md-list-item>
-        <md-list-item headline="Option 10" supporting-text="Supporting details for option 10"></md-list-item>
+        <md-list-item type="button" onclick="logEvent('Selected Option 1')">
+          <md-icon slot="start">star</md-icon>
+          <div slot="headline">Option 1</div>
+          <div slot="supporting-text">Supporting details for option 1</div>
+        </md-list-item>
+        <md-list-item type="button" onclick="logEvent('Selected Option 2')">
+          <md-icon slot="start">favorite</md-icon>
+          <div slot="headline">Option 2</div>
+          <div slot="supporting-text">Supporting details for option 2</div>
+        </md-list-item>
+        <md-list-item type="button" onclick="logEvent('Selected Option 3')">
+          <md-icon slot="start">bookmark</md-icon>
+          <div slot="headline">Option 3</div>
+          <div slot="supporting-text">Supporting details for option 3</div>
+        </md-list-item>
+        <md-list-item type="button" onclick="logEvent('Selected Option 4')">
+          <md-icon slot="start">label</md-icon>
+          <div slot="headline">Option 4</div>
+          <div slot="supporting-text">Supporting details for option 4</div>
+        </md-list-item>
+        <md-list-item type="button" onclick="logEvent('Selected Option 5')">
+          <md-icon slot="start">schedule</md-icon>
+          <div slot="headline">Option 5</div>
+          <div slot="supporting-text">Supporting details for option 5</div>
+        </md-list-item>
+        <md-list-item type="button" onclick="logEvent('Selected Option 6')">
+          <md-icon slot="start">folder</md-icon>
+          <div slot="headline">Option 6</div>
+          <div slot="supporting-text">Supporting details for option 6</div>
+        </md-list-item>
+        <md-list-item type="button" onclick="logEvent('Selected Option 7')">
+          <md-icon slot="start">description</md-icon>
+          <div slot="headline">Option 7</div>
+          <div slot="supporting-text">Supporting details for option 7</div>
+        </md-list-item>
+        <md-list-item type="button" onclick="logEvent('Selected Option 8')">
+          <md-icon slot="start">group</md-icon>
+          <div slot="headline">Option 8</div>
+          <div slot="supporting-text">Supporting details for option 8</div>
+        </md-list-item>
+        <md-list-item type="button" onclick="logEvent('Selected Option 9')">
+          <md-icon slot="start">share</md-icon>
+          <div slot="headline">Option 9</div>
+          <div slot="supporting-text">Supporting details for option 9</div>
+        </md-list-item>
+        <md-list-item type="button" onclick="logEvent('Selected Option 10')">
+          <md-icon slot="start">settings</md-icon>
+          <div slot="headline">Option 10</div>
+          <div slot="supporting-text">Supporting details for option 10</div>
+        </md-list-item>
       </md-list>
       <div slot="actions">
         <md-button color="text" id="btn-scroll-close">Close</md-button>
@@ -327,6 +367,19 @@
         }
       }
       document.getElementById('btn-standard-close').onclick = () => standardSheet.close('dismiss')
+
+      // Auto-open via ?open=sheet-id
+      const urlParams = new URLSearchParams(window.location.search)
+      const autoOpen = urlParams.get('open')
+      if (autoOpen) {
+        customElements.whenDefined('md-bottom-sheet').then(() => {
+          const el = document.getElementById(autoOpen)
+          if (el) {
+            el.quick = true
+            el.show()
+          }
+        })
+      }
     </script>
   </body>
 </html>
