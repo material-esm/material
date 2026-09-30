@@ -16,14 +16,32 @@ import 'material/bottom-sheet/bottom-sheet.js'
 <md-bottom-sheet id="sheet" headline="Share Sheet">
   <p>Select an option to share this content with friends.</p>
   <div slot="actions">
-    <md-button color="text" @click="${()" =""> this.renderRoot.querySelector('#sheet').close()}>Cancel</md-button>
-    <md-button color="filled" @click="${this.onShare}">Share</md-button>
+    <md-button color="text" onclick="document.querySelector('#sheet').close()">Cancel</md-button>
+    <md-button color="filled" id="share-btn">Share</md-button>
   </div>
 </md-bottom-sheet>
 
-<md-button color="filled" @click="${()" ="">
-  this.renderRoot.querySelector('#sheet').show()}> Open Bottom Sheet
-</md-button>
+<md-button color="filled" onclick="document.querySelector('#sheet').show()"> Open Bottom Sheet </md-button>
+```
+
+Or within a Lit component:
+
+```js
+render() {
+  return html`
+    <md-bottom-sheet id="sheet" headline="Share Sheet">
+      <p>Select an option to share this content with friends.</p>
+      <div slot="actions">
+        <md-button color="text" @click=${() => this.renderRoot.querySelector('#sheet').close()}>Cancel</md-button>
+        <md-button color="filled" @click=${this.onShare}>Share</md-button>
+      </div>
+    </md-bottom-sheet>
+
+    <md-button color="filled" @click=${() => this.renderRoot.querySelector('#sheet').show()}>
+      Open Bottom Sheet
+    </md-button>
+  `
+}
 ```
 
 ### Standard (Non-Modal) Bottom Sheet

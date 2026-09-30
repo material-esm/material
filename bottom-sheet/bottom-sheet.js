@@ -129,7 +129,7 @@ export class BottomSheet extends LitElement {
    * @return A Promise that resolves after the animation finishes and `opened` is fired.
    */
   async show() {
-    if (this.isOpening) return
+    if (this.isOpening || this.isOpen) return
     this.isOpening = true
     this.isClosing = false
 
@@ -151,6 +151,7 @@ export class BottomSheet extends LitElement {
         this.prevBodyOverflow = document.body.style.overflow
         document.body.style.overflow = 'hidden'
       }
+      window.removeEventListener('keydown', this.handleKeydown)
       window.addEventListener('keydown', this.handleKeydown)
     }
 
@@ -277,9 +278,7 @@ export class BottomSheet extends LitElement {
     if (this.prevActiveElement && typeof this.prevActiveElement.focus === 'function') {
       try {
         this.prevActiveElement.focus()
-      } catch (_) {
-        // Ignore focus failures
-      }
+      } catch {}
       this.prevActiveElement = null
     }
 
@@ -344,9 +343,7 @@ export class BottomSheet extends LitElement {
 
     try {
       e.currentTarget.setPointerCapture(e.pointerId)
-    } catch (_) {
-      // In case pointer capture fails
-    }
+    } catch {}
 
     sheet.style.transition = 'none'
     if (this.scrim) {
@@ -386,7 +383,7 @@ export class BottomSheet extends LitElement {
 
     try {
       handle.releasePointerCapture(e.pointerId)
-    } catch (_) {}
+    } catch {}
 
     const sheet = this.sheet
     if (!sheet) return
