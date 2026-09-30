@@ -130,6 +130,7 @@ export class BottomSheet extends LitElement {
     this.isClosing = false
 
     await this.updateComplete
+    if (!this.isOpening) return
 
     const preventOpen = !this.dispatchEvent(new Event('open', { cancelable: true }))
     if (preventOpen) {
@@ -307,6 +308,7 @@ export class BottomSheet extends LitElement {
   }
 
   handleKeydown(e) {
+    if (e.defaultPrevented) return
     if (e.key === 'Escape') {
       const cancelEvent = new Event('cancel', { cancelable: true })
       this.dispatchEvent(cancelEvent)
@@ -444,7 +446,7 @@ export class BottomSheet extends LitElement {
         class=${classMap(sheetClasses)}
         role=${this.isModal ? 'dialog' : 'region'}
         aria-modal=${this.isModal ? 'true' : nothing}
-        aria-label=${this.headline || nothing}
+        aria-label=${this.headline || this.getAttribute('aria-label') || nothing}
         tabindex="-1">
         <md-elevation></md-elevation>
         ${
