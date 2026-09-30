@@ -28,8 +28,8 @@ export class BottomSheet extends LitElement {
       type: Boolean,
       reflect: true,
       converter: {
-        fromAttribute: (value) => value !== 'false' && value !== null,
-        toAttribute: (value) => (value ? '' : null),
+        fromAttribute: (value) => (value === null ? true : value !== 'false'),
+        toAttribute: (value) => (value ? '' : 'false'),
       },
     },
     hasDragHandle: {
@@ -37,8 +37,8 @@ export class BottomSheet extends LitElement {
       attribute: 'has-drag-handle',
       reflect: true,
       converter: {
-        fromAttribute: (value) => value !== 'false' && value !== null,
-        toAttribute: (value) => (value ? '' : null),
+        fromAttribute: (value) => (value === null ? true : value !== 'false'),
+        toAttribute: (value) => (value ? '' : 'false'),
       },
     },
     quick: { type: Boolean, reflect: true },
@@ -59,12 +59,9 @@ export class BottomSheet extends LitElement {
     if (boolValue === this.isOpen) {
       return
     }
-    this.isOpen = boolValue
     if (boolValue) {
-      this.setAttribute('open', '')
       this.show()
     } else {
-      this.removeAttribute('open')
       this.close()
     }
   }
@@ -112,7 +109,6 @@ export class BottomSheet extends LitElement {
   connectedCallback() {
     super.connectedCallback()
     if (this.hasAttribute('open') && !this.isOpen) {
-      this.isOpen = true
       this.show()
     }
   }
@@ -500,8 +496,7 @@ export class BottomSheet extends LitElement {
     }
 
     :host([type='standard']),
-    :host([modal='false']),
-    :host(:not([modal])) {
+    :host([modal='false']) {
       inset: auto 0 0 0;
       pointer-events: none;
     }
@@ -587,11 +582,11 @@ export class BottomSheet extends LitElement {
       box-sizing: border-box;
     }
 
-    :host(:not([has-drag-handle])) .headline {
+    :host([has-drag-handle='false']) .headline {
       padding-top: 24px;
     }
 
-    :host(:not([has-drag-handle])) .sheet:not(.has-headline) .content-scroller {
+    :host([has-drag-handle='false']) .sheet:not(.has-headline) .content-scroller {
       padding-top: 24px;
     }
 
