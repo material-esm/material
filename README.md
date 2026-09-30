@@ -29,6 +29,7 @@ See the README in each component's directory for how to use them:
 
 - [App Bar](app/README.md)
 - [Badge](badge/README.md)
+- [Bottom Sheet](bottom-sheet/README.md)
 - [Buttons](buttons/README.md)
 - [Card](card/README.md)
 - [Carousel](carousel/README.md)
