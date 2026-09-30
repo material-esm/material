@@ -1504,7 +1504,7 @@ import 'material/indicators/progress.js'</code></pre>
           </div>
           <div class="showcase-preview">
             <div class="preview-row">
-              <md-fab variant="primary" label="New Item">
+              <md-fab variant="primary" label="New Item" extended>
                 <md-icon slot="icon">edit</md-icon>
               </md-fab>
               <md-fab variant="secondary" lowered>
@@ -1519,7 +1519,7 @@ import 'material/indicators/progress.js'</code></pre>
             </div>
           </div>
           <div class="showcase-code">
-            <code>&lt;md-fab variant="primary" label="New Item"&gt;
+            <code>&lt;md-fab variant="primary" label="New Item" extended&gt;
   &lt;md-icon slot="icon"&gt;edit&lt;/md-icon&gt;
 &lt;/md-fab&gt;</code>
           </div>
@@ -1713,21 +1713,27 @@ import 'material/indicators/progress.js'</code></pre>
           </div>
           <div class="showcase-preview" style="width: 100%">
             <md-list style="width: 100%; background: var(--md-sys-color-surface-container); border-radius: 12px">
-              <md-list-item headline="Components Library" supporting-text="23 production-ready modules">
+              <md-list-item>
                 <md-icon slot="start">widgets</md-icon>
+                <div slot="headline">Components Library</div>
+                <div slot="supporting-text">23 production-ready modules</div>
                 <md-icon slot="end">chevron_right</md-icon>
               </md-list-item>
               <md-divider></md-divider>
-              <md-list-item headline="Material Expressive" supporting-text="Full motion & wave indicators">
-                <md-icon slot="start">sparkles</md-icon>
+              <md-list-item>
+                <md-icon slot="start">auto_awesome</md-icon>
+                <div slot="headline">Material Expressive</div>
+                <div slot="supporting-text">Full motion & wave indicators</div>
                 <md-icon slot="end">chevron_right</md-icon>
               </md-list-item>
             </md-list>
           </div>
           <div class="showcase-code">
             <code>&lt;md-list&gt;
-  &lt;md-list-item headline="Title" supporting-text="Subhead"&gt;
+  &lt;md-list-item&gt;
     &lt;md-icon slot="start"&gt;widgets&lt;/md-icon&gt;
+    &lt;div slot="headline"&gt;Title&lt;/div&gt;
+    &lt;div slot="supporting-text"&gt;Subhead&lt;/div&gt;
   &lt;/md-list-item&gt;
 &lt;/md-list&gt;</code>
           </div>
@@ -2093,7 +2099,7 @@ import 'material/indicators/progress.js'</code></pre>
         const snackbar = document.getElementById('globalSnackbar')
         if (snackbar) {
           snackbar.message = '⚡ Live Material 3 snackbar activated!'
-          snackbar.open = true
+          snackbar.show()
         }
       }
 
@@ -2101,7 +2107,7 @@ import 'material/indicators/progress.js'</code></pre>
         const snackbar = document.getElementById('globalSnackbar')
         if (snackbar) {
           snackbar.message = '🚀 Material 3 Expressive motion in pure ESM!'
-          snackbar.open = true
+          snackbar.show()
         }
       }
     </script>
