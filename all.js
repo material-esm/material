@@ -5,6 +5,7 @@
  * Import only the individual components used for production.
  */
 import './app/bar.js'
+import './bottom-sheet/bottom-sheet.js'
 import './buttons/button.js'
 import './buttons/button-group.js'
 import './carousel/carousel.js'
@@ -41,6 +42,7 @@ import './text/text-field.js'
 // LINT.IfChange(exports)
 // go/keep-sorted start
 export * from './app/bar.js'
+export * from './bottom-sheet/bottom-sheet.js'
 export * from './buttons/button.js'
 export * from './buttons/button-group.js'
 export * from './carousel/carousel.js'
