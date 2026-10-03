@@ -191,7 +191,9 @@
         font-size: 16px;
         line-height: 1.5;
         overflow-x: hidden;
-        transition: background-color 0.25s ease, color 0.25s ease;
+        transition:
+          background-color 0.25s ease,
+          color 0.25s ease;
       }
 
       /* Ensure custom elements inherit font properly */
@@ -221,7 +223,9 @@
         -webkit-backdrop-filter: blur(16px);
         background: var(--nav-bg);
         border-bottom: 1px solid var(--md-sys-color-surface-container-high);
-        transition: background 0.25s ease, border-color 0.25s ease;
+        transition:
+          background 0.25s ease,
+          border-color 0.25s ease;
       }
 
       .nav-container {
@@ -300,7 +304,9 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        transition: background 0.2s, color 0.2s;
+        transition:
+          background 0.2s,
+          color 0.2s;
       }
       .theme-btn:hover {
         background: var(--md-sys-color-surface-container-highest);
@@ -598,7 +604,9 @@
         border: 1px solid var(--card-border);
         border-radius: 20px;
         padding: 2rem;
-        transition: transform 0.2s, box-shadow 0.2s;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
       }
       .feature-card:hover {
         transform: translateY(-4px);
@@ -1063,11 +1071,7 @@
           </button>
 
           <!-- GitHub repo link -->
-          <md-button
-            color="outlined"
-            href="https://github.com/material-esm/material"
-            target="_blank"
-            class="btn-text">
+          <md-button color="outlined" href="https://github.com/material-esm/material" target="_blank" class="btn-text">
             <md-icon slot="icon">code</md-icon>
             GitHub
           </md-button>
@@ -1105,13 +1109,11 @@
             Material 3 Expressive • Pure ESM
           </div>
 
-          <h1>
-            Material 3 Web Components for <span class="gradient-text">Pure ESM</span>
-          </h1>
+          <h1>Material 3 Web Components for <span class="gradient-text">Pure ESM</span></h1>
 
           <p class="hero-subtitle">
-            A comprehensive, pure ESM library of Google Material Design 3 components.
-            Zero build step required, completely framework-agnostic, and beautifully expressive.
+            A comprehensive, pure ESM library of Google Material Design 3 components. Zero build step required,
+            completely framework-agnostic, and beautifully expressive.
           </p>
 
           <div class="hero-ctas">
@@ -1258,8 +1260,8 @@
         <div class="section-eyebrow">Engineered For Modern Browsers</div>
         <h2>Why Developers Choose Material ESM</h2>
         <p>
-          A pure, standalone implementation continuing Google's Material Web project,
-          optimized for the modern ECMAScript module ecosystem.
+          A pure, standalone implementation continuing Google's Material Web project, optimized for the modern
+          ECMAScript module ecosystem.
         </p>
       </div>
 
@@ -1270,8 +1272,8 @@
           </div>
           <h3>Native ESM & No Tooling</h3>
           <p>
-            Drop in a single importmap in your HTML and start writing custom elements right away.
-            No webpack, Vite, or Node compilation required for rapid prototyping or production apps.
+            Drop in a single importmap in your HTML and start writing custom elements right away. No webpack, Vite, or
+            Node compilation required for rapid prototyping or production apps.
           </p>
         </div>
 
@@ -1281,8 +1283,8 @@
           </div>
           <h3>Material 3 Expressive Motion</h3>
           <p>
-            Features the cutting-edge Material 3 Expressive spec: dynamic waveform progress indicators,
-            shape-morphing loaders, spring physics, and modern button group corner radii.
+            Features the cutting-edge Material 3 Expressive spec: dynamic waveform progress indicators, shape-morphing
+            loaders, spring physics, and modern button group corner radii.
           </p>
         </div>
 
@@ -1292,8 +1294,8 @@
           </div>
           <h3>Dynamic Theming & Dark Mode</h3>
           <p>
-            CSS custom property token system allows one-line color customization, seamless system dark
-            mode adaptability, and full Material 3 tonal palette integration.
+            CSS custom property token system allows one-line color customization, seamless system dark mode
+            adaptability, and full Material 3 tonal palette integration.
           </p>
         </div>
 
@@ -1303,8 +1305,8 @@
           </div>
           <h3>Universal Compatibility</h3>
           <p>
-            Works flawlessly across all frontends: vanilla JS, React, Vue, Angular, Svelte, Solid,
-            Astro, or server-rendered frameworks like Go, Ruby on Rails, Django, and PHP.
+            Works flawlessly across all frontends: vanilla JS, React, Vue, Angular, Svelte, Solid, Astro, or
+            server-rendered frameworks like Go, Ruby on Rails, Django, and PHP.
           </p>
         </div>
 
@@ -1314,8 +1316,8 @@
           </div>
           <h3>Fine-Grained Tree-Shaking</h3>
           <p>
-            Import only the individual elements you use—such as <code>material/buttons/button.js</code>—keeping
-            your page weight featherlight with zero unnecessary bundle bloat.
+            Import only the individual elements you use—such as <code>material/buttons/button.js</code>—keeping your
+            page weight featherlight with zero unnecessary bundle bloat.
           </p>
         </div>
 
@@ -1325,8 +1327,8 @@
           </div>
           <h3>Actively Maintained Fork</h3>
           <p>
-            While the original Google repository paused updates, Material ESM continues active
-            development, resolving issues, supporting forms, and implementing new M3 specifications.
+            While the original Google repository paused updates, Material ESM continues active development, resolving
+            issues, supporting forms, and implementing new M3 specifications.
           </p>
         </div>
       </div>
@@ -1454,15 +1456,75 @@ import 'material/indicators/progress.js'</code></pre>
       <!-- Filter Chips -->
       <div class="filter-chips">
         <button class="filter-chip active" onclick="filterShowcase('all', this)">All Components</button>
+        <button class="filter-chip" onclick="filterShowcase('carousel', this)">Carousel</button>
+        <button class="filter-chip" onclick="filterShowcase('indicators', this)">Progress & Indicators</button>
         <button class="filter-chip" onclick="filterShowcase('buttons', this)">Buttons & FAB</button>
         <button class="filter-chip" onclick="filterShowcase('inputs', this)">Inputs & Fields</button>
-        <button class="filter-chip" onclick="filterShowcase('indicators', this)">Progress & Feedback</button>
         <button class="filter-chip" onclick="filterShowcase('surfaces', this)">Surfaces & Navigation</button>
         <button class="filter-chip" onclick="filterShowcase('chips', this)">Chips & Badges</button>
       </div>
 
       <div class="showcase-grid">
-        <!-- 1. Buttons Showcase -->
+        <!-- 1. Carousel Showcase (Cooler stuff at top) -->
+        <div class="showcase-card" data-category="carousel">
+          <div class="showcase-header">
+            <h3>Multi-Browse Carousel</h3>
+            <a href="carousel/README.md" class="showcase-docs-link">
+              Docs <span class="material-symbols-outlined" style="font-size: 16px">arrow_forward</span>
+            </a>
+          </div>
+          <div class="showcase-preview" style="width: 100%; padding: 10px">
+            <md-carousel layout="multi-browse" indicators loop style="width: 100%; height: 160px">
+              <md-carousel-item interactive headline="Mountain Vista">
+                <img src="./demo/images/img1.jpg" alt="Mountain" style="width: 100%; height: 100%; object-fit: cover" />
+              </md-carousel-item>
+              <md-carousel-item interactive headline="Ocean Coast">
+                <img src="./demo/images/img2.jpg" alt="Ocean" style="width: 100%; height: 100%; object-fit: cover" />
+              </md-carousel-item>
+              <md-carousel-item interactive headline="Redwood Forest">
+                <img src="./demo/images/img3.jpg" alt="Forest" style="width: 100%; height: 100%; object-fit: cover" />
+              </md-carousel-item>
+            </md-carousel>
+          </div>
+          <div class="showcase-code">
+            <code
+              >&lt;md-carousel layout="multi-browse" indicators loop&gt; &lt;md-carousel-item headline="Mountain
+              Vista"&gt; &lt;img src="photo.jpg" /&gt; &lt;/md-carousel-item&gt; &lt;/md-carousel&gt;</code
+            >
+          </div>
+        </div>
+
+        <!-- 2. Indicators & M3 Expressive Showcase (Cooler stuff at top) -->
+        <div class="showcase-card" data-category="indicators">
+          <div class="showcase-header">
+            <h3>Expressive Progress & Loading</h3>
+            <a href="indicators/README.md" class="showcase-docs-link">
+              Docs <span class="material-symbols-outlined" style="font-size: 16px">arrow_forward</span>
+            </a>
+          </div>
+          <div class="showcase-preview" style="width: 100%">
+            <div style="width: 100%; display: flex; flex-direction: column; gap: 12px">
+              <span style="font-size: 0.85rem; font-weight: 500">Wavy Linear Track (Expressive)</span>
+              <md-progress type="linear" shape="wavy" indeterminate></md-progress>
+              <div style="display: flex; align-items: center; gap: 16px; margin-top: 6px">
+                <md-progress type="circular" shape="wavy" indeterminate></md-progress>
+                <md-loading contained size="40"></md-loading>
+                <md-loading size="40"></md-loading>
+                <md-button color="tonal" onclick="triggerToast()">
+                  <md-icon slot="icon">chat</md-icon> Show Toast
+                </md-button>
+              </div>
+            </div>
+          </div>
+          <div class="showcase-code">
+            <code
+              >&lt;md-progress type="linear" shape="wavy" indeterminate&gt;&lt;/md-progress&gt; &lt;md-loading
+              contained&gt;&lt;/md-loading&gt;</code
+            >
+          </div>
+        </div>
+
+        <!-- 3. Buttons Showcase -->
         <div class="showcase-card" data-category="buttons">
           <div class="showcase-header">
             <h3>Buttons & Button Groups</h3>
@@ -1487,14 +1549,14 @@ import 'material/indicators/progress.js'</code></pre>
             </div>
           </div>
           <div class="showcase-code">
-            <code>&lt;md-button color="filled"&gt;Filled&lt;/md-button&gt;
-&lt;md-button-group connected checkmark&gt;
-  &lt;md-button color="tonal" selected&gt;Option 1&lt;/md-button&gt;
-&lt;/md-button-group&gt;</code>
+            <code
+              >&lt;md-button color="filled"&gt;Filled&lt;/md-button&gt; &lt;md-button-group connected checkmark&gt;
+              &lt;md-button color="tonal" selected&gt;Option 1&lt;/md-button&gt; &lt;/md-button-group&gt;</code
+            >
           </div>
         </div>
 
-        <!-- 2. FABs & Icon Buttons -->
+        <!-- 4. FABs & Icon Buttons -->
         <div class="showcase-card" data-category="buttons">
           <div class="showcase-header">
             <h3>FAB & Icon Buttons</h3>
@@ -1519,13 +1581,14 @@ import 'material/indicators/progress.js'</code></pre>
             </div>
           </div>
           <div class="showcase-code">
-            <code>&lt;md-fab variant="primary" label="New Item" extended&gt;
-  &lt;md-icon slot="icon"&gt;edit&lt;/md-icon&gt;
-&lt;/md-fab&gt;</code>
+            <code
+              >&lt;md-fab variant="primary" label="New Item" extended&gt; &lt;md-icon
+              slot="icon"&gt;edit&lt;/md-icon&gt; &lt;/md-fab&gt;</code
+            >
           </div>
         </div>
 
-        <!-- 3. Text Fields -->
+        <!-- 5. Text Fields -->
         <div class="showcase-card" data-category="inputs">
           <div class="showcase-header">
             <h3>Text Fields</h3>
@@ -1539,19 +1602,18 @@ import 'material/indicators/progress.js'</code></pre>
                 label="Full Name"
                 value="Alex Chen"
                 supporting-text="Your display username"></md-text-field>
-              <md-text-field
-                color="filled"
-                label="Email Address"
-                value="alex@example.com"></md-text-field>
+              <md-text-field color="filled" label="Email Address" value="alex@example.com"></md-text-field>
             </div>
           </div>
           <div class="showcase-code">
-            <code>&lt;md-text-field label="Full Name" supporting-text="..."&gt;&lt;/md-text-field&gt;
-&lt;md-text-field color="filled" label="Email"&gt;&lt;/md-text-field&gt;</code>
+            <code
+              >&lt;md-text-field label="Full Name" supporting-text="..."&gt;&lt;/md-text-field&gt; &lt;md-text-field
+              color="filled" label="Email"&gt;&lt;/md-text-field&gt;</code
+            >
           </div>
         </div>
 
-        <!-- 4. Selection Controls -->
+        <!-- 6. Selection Controls -->
         <div class="showcase-card" data-category="inputs">
           <div class="showcase-header">
             <h3>Switches, Checkboxes & Sliders</h3>
@@ -1577,41 +1639,35 @@ import 'material/indicators/progress.js'</code></pre>
             </div>
           </div>
           <div class="showcase-code">
-            <code>&lt;md-switch selected icons&gt;&lt;/md-switch&gt;
-&lt;md-checkbox checked&gt;&lt;/md-checkbox&gt;
-&lt;md-slider value="65" labeled&gt;&lt;/md-slider&gt;</code>
+            <code
+              >&lt;md-switch selected icons&gt;&lt;/md-switch&gt; &lt;md-checkbox checked&gt;&lt;/md-checkbox&gt;
+              &lt;md-slider value="65" labeled&gt;&lt;/md-slider&gt;</code
+            >
           </div>
         </div>
 
-        <!-- 5. Indicators & M3 Expressive -->
-        <div class="showcase-card" data-category="indicators">
+        <!-- 7. Surfaces & Cards -->
+        <div class="showcase-card" data-category="surfaces">
           <div class="showcase-header">
-            <h3>Expressive Progress & Loading</h3>
-            <a href="indicators/README.md" class="showcase-docs-link">
+            <h3>Cards & Surfaces</h3>
+            <a href="card/README.md" class="showcase-docs-link">
               Docs <span class="material-symbols-outlined" style="font-size: 16px">arrow_forward</span>
             </a>
           </div>
           <div class="showcase-preview" style="width: 100%">
-            <div style="width: 100%; display: flex; flex-direction: column; gap: 12px">
-              <span style="font-size: 0.85rem; font-weight: 500">Wavy Linear Track (Expressive)</span>
-              <md-progress type="linear" shape="wavy" indeterminate></md-progress>
-              <div style="display: flex; align-items: center; gap: 16px; margin-top: 6px">
-                <md-progress type="circular" shape="wavy" indeterminate></md-progress>
-                <md-loading contained size="40"></md-loading>
-                <md-loading size="40"></md-loading>
-                <md-button color="tonal" onclick="triggerToast()">
-                  <md-icon slot="icon">chat</md-icon> Show Toast
-                </md-button>
+            <md-card type="outlined" style="width: 100%; padding: 14px">
+              <div style="font-weight: 600; margin-bottom: 4px">Outlined Card Container</div>
+              <div style="font-size: 0.85rem; color: var(--md-sys-color-on-surface-variant)">
+                Supports filled, elevated, and outlined container styles with Material 3 elevation.
               </div>
-            </div>
+            </md-card>
           </div>
           <div class="showcase-code">
-            <code>&lt;md-progress type="linear" shape="wavy" indeterminate&gt;&lt;/md-progress&gt;
-&lt;md-loading contained&gt;&lt;/md-loading&gt;</code>
+            <code>&lt;md-card type="outlined"&gt; &lt;h4&gt;Card Header&lt;/h4&gt; &lt;/md-card&gt;</code>
           </div>
         </div>
 
-        <!-- 6. Chips & Badges -->
+        <!-- 8. Chips & Badges -->
         <div class="showcase-card" data-category="chips">
           <div class="showcase-header">
             <h3>Chips & Badges</h3>
@@ -1645,61 +1701,10 @@ import 'material/indicators/progress.js'</code></pre>
             </div>
           </div>
           <div class="showcase-code">
-            <code>&lt;md-chip type="filter" label="Filter" selected&gt;&lt;/md-chip&gt;
-&lt;md-badge value="5"&gt;&lt;/md-badge&gt;</code>
-          </div>
-        </div>
-
-        <!-- 7. Surfaces & Cards -->
-        <div class="showcase-card" data-category="surfaces">
-          <div class="showcase-header">
-            <h3>Cards & Surfaces</h3>
-            <a href="card/README.md" class="showcase-docs-link">
-              Docs <span class="material-symbols-outlined" style="font-size: 16px">arrow_forward</span>
-            </a>
-          </div>
-          <div class="showcase-preview" style="width: 100%">
-            <md-card type="outlined" style="width: 100%; padding: 14px">
-              <div style="font-weight: 600; margin-bottom: 4px">Outlined Card Container</div>
-              <div style="font-size: 0.85rem; color: var(--md-sys-color-on-surface-variant)">
-                Supports filled, elevated, and outlined container styles with Material 3 elevation.
-              </div>
-            </md-card>
-          </div>
-          <div class="showcase-code">
-            <code>&lt;md-card type="outlined"&gt;
-  &lt;h4&gt;Card Header&lt;/h4&gt;
-&lt;/md-card&gt;</code>
-          </div>
-        </div>
-
-        <!-- 8. Carousel Showcase -->
-        <div class="showcase-card" data-category="surfaces">
-          <div class="showcase-header">
-            <h3>Multi-Browse Carousel</h3>
-            <a href="carousel/README.md" class="showcase-docs-link">
-              Docs <span class="material-symbols-outlined" style="font-size: 16px">arrow_forward</span>
-            </a>
-          </div>
-          <div class="showcase-preview" style="width: 100%; padding: 10px">
-            <md-carousel layout="multi-browse" indicators loop style="width: 100%; height: 160px">
-              <md-carousel-item interactive headline="Mountain Vista">
-                <img src="./demo/images/img1.jpg" alt="Mountain" style="width: 100%; height: 100%; object-fit: cover;" />
-              </md-carousel-item>
-              <md-carousel-item interactive headline="Ocean Coast">
-                <img src="./demo/images/img2.jpg" alt="Ocean" style="width: 100%; height: 100%; object-fit: cover;" />
-              </md-carousel-item>
-              <md-carousel-item interactive headline="Redwood Forest">
-                <img src="./demo/images/img3.jpg" alt="Forest" style="width: 100%; height: 100%; object-fit: cover;" />
-              </md-carousel-item>
-            </md-carousel>
-          </div>
-          <div class="showcase-code">
-            <code>&lt;md-carousel layout="multi-browse" indicators loop&gt;
-  &lt;md-carousel-item headline="Mountain Vista"&gt;
-    &lt;img src="photo.jpg" /&gt;
-  &lt;/md-carousel-item&gt;
-&lt;/md-carousel&gt;</code>
+            <code
+              >&lt;md-chip type="filter" label="Filter" selected&gt;&lt;/md-chip&gt; &lt;md-badge
+              value="5"&gt;&lt;/md-badge&gt;</code
+            >
           </div>
         </div>
 
@@ -1729,13 +1734,11 @@ import 'material/indicators/progress.js'</code></pre>
             </md-list>
           </div>
           <div class="showcase-code">
-            <code>&lt;md-list&gt;
-  &lt;md-list-item&gt;
-    &lt;md-icon slot="start"&gt;widgets&lt;/md-icon&gt;
-    &lt;div slot="headline"&gt;Title&lt;/div&gt;
-    &lt;div slot="supporting-text"&gt;Subhead&lt;/div&gt;
-  &lt;/md-list-item&gt;
-&lt;/md-list&gt;</code>
+            <code
+              >&lt;md-list&gt; &lt;md-list-item&gt; &lt;md-icon slot="start"&gt;widgets&lt;/md-icon&gt; &lt;div
+              slot="headline"&gt;Title&lt;/div&gt; &lt;div slot="supporting-text"&gt;Subhead&lt;/div&gt;
+              &lt;/md-list-item&gt; &lt;/md-list&gt;</code
+            >
           </div>
         </div>
       </div>
@@ -1757,7 +1760,9 @@ import 'material/indicators/progress.js'</code></pre>
             </div>
             <div>
               <h3>Expressive Demo</h3>
-              <p>The full kitchen-sink sandbox showcasing responsive navigation rail, app bar, search, and form inputs.</p>
+              <p>
+                The full kitchen-sink sandbox showcasing responsive navigation rail, app bar, search, and form inputs.
+              </p>
             </div>
           </div>
           <span class="demo-cta">
@@ -1772,7 +1777,9 @@ import 'material/indicators/progress.js'</code></pre>
             </div>
             <div>
               <h3>Carousel Showcase</h3>
-              <p>Multi-browse, uncontained, and hero carousel layouts with touch/drag snapping and pagination indicators.</p>
+              <p>
+                Multi-browse, uncontained, and hero carousel layouts with touch/drag snapping and pagination indicators.
+              </p>
             </div>
           </div>
           <span class="demo-cta">
@@ -1832,7 +1839,9 @@ import 'material/indicators/progress.js'</code></pre>
             </div>
             <div>
               <h3>List & Items</h3>
-              <p>Single-line, two-line, and three-line lists with leading avatars, icons, badges, and trailing controls.</p>
+              <p>
+                Single-line, two-line, and three-line lists with leading avatars, icons, badges, and trailing controls.
+              </p>
             </div>
           </div>
           <span class="demo-cta">
@@ -1966,11 +1975,7 @@ import 'material/indicators/progress.js'</code></pre>
             framework-independent, and fully open-source.
           </p>
           <div style="display: flex; gap: 8px">
-            <md-button
-              color="tonal"
-              size="small"
-              href="https://github.com/sponsors/treeder"
-              target="_blank">
+            <md-button color="tonal" size="small" href="https://github.com/sponsors/treeder" target="_blank">
               <md-icon slot="icon">favorite</md-icon>
               Sponsor Project
             </md-button>
@@ -2003,7 +2008,9 @@ import 'material/indicators/progress.js'</code></pre>
             <li><a href="https://github.com/material-esm/material" target="_blank">GitHub Repository</a></li>
             <li><a href="https://github.com/material-esm/material/issues" target="_blank">Issue Tracker</a></li>
             <li><a href="https://github.com/material-esm/material/releases" target="_blank">Releases</a></li>
-            <li><a href="https://www.jsdelivr.com/package/gh/material-esm/material" target="_blank">jsDelivr CDN</a></li>
+            <li>
+              <a href="https://www.jsdelivr.com/package/gh/material-esm/material" target="_blank">jsDelivr CDN</a>
+            </li>
           </ul>
         </div>
       </div>
