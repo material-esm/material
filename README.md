@@ -5,7 +5,7 @@
   alt="A collection of Material web components"
   style="border-radius: 32px">
 
-[![jsDelivr hits (npm)](https://img.shields.io/jsdelivr/gh/hm/material-esm/material)](https://www.jsdelivr.com/package/gh/material-esm/material?tab=stats)
+[![](https://data.jsdelivr.com/v1/package/gh/material-esm/material/badge)](https://www.jsdelivr.com/package/gh/material-esm/material)
 
 `material` is a library of
 [web components](https://developer.mozilla.org/en-US/docs/Web/Web_Components)
@@ -23,15 +23,35 @@ Please [consider sponsoring](https://github.com/sponsors/treeder) before creatin
 
 [Material 3 Expressive demo](https://material-esm.github.io/material/demo/)
 
-We recommend using this going forward.
-
-To start using it, see [this topic](https://github.com/orgs/material-esm/discussions/71).
-
 ## Documentation
 
-All the documentation here still applies: https://material-web.dev/
+See the README in each component's directory for how to use them:
 
-And we are adding README's in this repository for the new components that aren't in those docs.
+- [App Bar](app/README.md)
+- [Badge](badge/README.md)
+- [Bottom Sheet](bottom-sheet/README.md)
+- [Buttons](buttons/README.md)
+- [Card](card/README.md)
+- [Carousel](carousel/README.md)
+- [Checkbox](checkbox/README.md)
+- [Chips](chips/README.md)
+- [Dialog](dialog/README.md)
+- [Divider](divider/README.md)
+- [Icon](icon/README.md)
+- [Indicators](indicators/README.md)
+- [List](list/README.md)
+- [Menu](menu/README.md)
+- [Navigation](nav/README.md)
+- [Pickers](pickers/README.md)
+- [Radio](radio/README.md)
+- [Search](search/README.md)
+- [Select](select/README.md)
+- [Slider](slider/README.md)
+- [Snackbar](snackbar/README.md)
+- [Switch](switch/README.md)
+- [Tabs](tabs/README.md)
+- [Text Field](text/README.md)
+- [Tooltip](tooltip/README.md)
 
 ## Quick start
 
@@ -45,7 +65,7 @@ npm install material-esm/material
 
 Add this importmap to the `<head>` section of your app/site:
 
-```js
+```html
 <script type="importmap">
   {
     "imports": {
@@ -69,12 +89,12 @@ Then you can start using all the components like this:
 
 ```html
 <script type="module">
-  import 'material/text-field/text-field.js'
+  import 'material/text/text-field.js'
   import 'material/buttons/button.js'
 </script>
 
 <div>
-  <md-text-field type="outlined" label="Name" required minlength="4"></md-text-field>
+  <md-text-field color="outlined" label="Name" required minlength="4"></md-text-field>
   <md-button color="filled">Save</md-button>
 </div>
 ```
@@ -85,8 +105,8 @@ Create a component with the material components in it:
 
 ```js
 import { html, css, LitElement } from 'lit'
-import 'material/text-field/text-field.js'
-import 'material/buttons/filled-button.js'
+import 'material/text/text-field.js'
+import 'material/buttons/button.js'
 
 class DemoComponent extends LitElement {
   static styles = css`
@@ -95,7 +115,7 @@ class DemoComponent extends LitElement {
 
   render() {
     return html`<div style="display: flex; flex-direction: column; gap: 12px;">
-      <md-text-field type="outlined" label="Name" required minlength="4"></md-text-field>
+      <md-text-field color="outlined" label="Name" required minlength="4"></md-text-field>
       <md-button color="filled" @click=${this.save}>Save</md-button>
     </div>`
   }
@@ -122,7 +142,7 @@ Then in your HTML:
 In your CSS, set the default font family and sizes, set the following attributes in your CSS:
 
 ```css
-@import url(light.css) (prefers-color-scheme: light);
+@import url(light.css);
 @import url(dark.css) (prefers-color-scheme: dark);
 
 :root {
@@ -166,6 +186,6 @@ Demo code is here: https://github.com/material-esm/material/tree/main/demo
 
 You can run it locally by checking out this repo and:
 
-```js
+```sh
 make run
 ```

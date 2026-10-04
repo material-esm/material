@@ -1,9 +1,16 @@
-@import url(light.css) (prefers-color-scheme: light);
+@import url(light.css);
 @import url(dark.css) (prefers-color-scheme: dark);
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
 
 html,
 body {
   margin: 0;
+  overflow-x: hidden;
 }
 
 :root {
@@ -19,6 +26,8 @@ body {
 a {
   color: var(--md-sys-color-primary);
   text-decoration: none;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 a:hover {
@@ -36,6 +45,10 @@ a:hover {
 
   .gte-medium {
     display: none;
+  }
+
+  md-snackbar {
+    --md-snackbar-bottom: 96px;
   }
 }
 
@@ -70,11 +83,96 @@ a:hover {
   }
 }
 
+/* Nav Rail & Modal Drawer */
+.nav-scrim {
+  display: none;
+}
+
+.nav-drawer-container {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+
+@media (width < 600px) {
+  .nav-scrim {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 998;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 250ms cubic-bezier(0.2, 0, 0, 1),
+      visibility 250ms;
+  }
+
+  .nav-scrim.open {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .nav-drawer-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    height: 100vh;
+    z-index: 999;
+    transform: translateX(-100%);
+    visibility: hidden;
+    transition:
+      transform 250ms cubic-bezier(0.2, 0, 0, 1),
+      visibility 250ms;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    background-color: var(--md-sys-color-surface);
+  }
+
+  .nav-drawer-container.open {
+    transform: translateX(0);
+    visibility: visible;
+  }
+}
+
+.layout-container {
+  width: 100%;
+  min-width: 0;
+}
+
+.content-container {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+}
+
+.search-container {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
 .main {
   margin: 0 auto;
   max-width: 1200px;
+  width: 100%;
+  min-width: 0;
   padding: 1rem;
   /* overflow-y: auto; */
+}
+
+.main > .flex.col {
+  width: 100%;
+  min-width: 0;
+}
+
+md-carousel {
+  max-width: 100%;
+  min-width: 0;
 }
 
 .circle {
@@ -106,13 +204,34 @@ a:hover {
 .g12 {
   gap: 12px;
 }
+.g16 {
+  gap: 16px;
+}
+.g20 {
+  gap: 20px;
+}
+.g24 {
+  gap: 24px;
+}
+.g32 {
+  gap: 32px;
+}
 
+.p4 {
+  padding: 4px;
+}
 .p12 {
   padding: 12px;
+}
+.p16 {
+  padding: 16px;
 }
 
 .mt8 {
   margin-top: 8px;
+}
+.mt12 {
+  margin-top: 12px;
 }
 
 .fabBottom {

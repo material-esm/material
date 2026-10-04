@@ -12,7 +12,7 @@ export class DatePicker extends LitElement {
     open: { type: Boolean, reflect: true },
     displayDate: { state: true }, // Date object
     view: { state: true }, // 'day' | 'year' | 'month'
-    hideHeader: { type: Boolean, attribute: 'hide-header' }
+    hideHeader: { type: Boolean, attribute: 'hide-header' },
   }
 
   constructor() {
@@ -44,9 +44,7 @@ export class DatePicker extends LitElement {
   render() {
     return html`
       <div class="container">
-        ${this.hideHeader ? nothing : this.renderHeader()}
-        ${this.renderContent()}
-        ${this.renderActions()}
+        ${this.hideHeader ? nothing : this.renderHeader()} ${this.renderContent()} ${this.renderActions()}
       </div>
     `
   }
@@ -61,12 +59,13 @@ export class DatePicker extends LitElement {
     const selectedDate = this.value ? new Date(this.value) : null
     // Adjust for timezone offset to display correctly
     if (selectedDate) {
-        selectedDate.setMinutes(selectedDate.getMinutes() + selectedDate.getTimezoneOffset())
+      selectedDate.setMinutes(selectedDate.getMinutes() + selectedDate.getTimezoneOffset())
     }
 
-    const dateString = selectedDate && !isNaN(selectedDate.getTime())
-      ? new Intl.DateTimeFormat('en-US', { weekday: 'short', month: 'short', day: 'numeric' }).format(selectedDate)
-      : 'Select date'
+    const dateString =
+      selectedDate && !isNaN(selectedDate.getTime())
+        ? new Intl.DateTimeFormat('en-US', { weekday: 'short', month: 'short', day: 'numeric' }).format(selectedDate)
+        : 'Select date'
 
     return html`
       <div class="header">
@@ -79,8 +78,7 @@ export class DatePicker extends LitElement {
   renderContent() {
     return html`
       <div class="content">
-        ${this.renderControls()}
-        ${this.view === 'day' ? this.renderCalendar() : this.renderYearList()}
+        ${this.renderControls()} ${this.view === 'day' ? this.renderCalendar() : this.renderYearList()}
       </div>
     `
   }
@@ -136,26 +134,18 @@ export class DatePicker extends LitElement {
         day: true,
         selected: isSelected,
         today: isToday,
-        disabled: isDisabled
+        disabled: isDisabled,
       }
 
-      days.push(html`
-        <div class=${classMap(classes)} @click=${() => !isDisabled && this.selectDate(date)}>
-          ${i}
-        </div>
-      `)
+      days.push(html` <div class=${classMap(classes)} @click=${() => !isDisabled && this.selectDate(date)}>${i}</div> `)
     }
 
     const weekdays = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
 
     return html`
       <div class="calendar">
-        <div class="weekdays">
-          ${weekdays.map(d => html`<div class="weekday">${d}</div>`)}
-        </div>
-        <div class="days">
-          ${days}
-        </div>
+        <div class="weekdays">${weekdays.map((d) => html`<div class="weekday">${d}</div>`)}</div>
+        <div class="days">${days}</div>
       </div>
     `
   }
@@ -168,12 +158,10 @@ export class DatePicker extends LitElement {
     const endYear = currentYear + 100
 
     for (let y = startYear; y <= endYear; y++) {
-        const isSelected = this._displayDate.getFullYear() === y
-        years.push(html`
-            <div class="year ${isSelected ? 'selected' : ''}" @click=${() => this.selectYear(y)}>
-                ${y}
-            </div>
-        `)
+      const isSelected = this._displayDate.getFullYear() === y
+      years.push(html`
+        <div class="year ${isSelected ? 'selected' : ''}" @click=${() => this.selectYear(y)}>${y}</div>
+      `)
     }
 
     // We should scroll to the selected year.
@@ -183,9 +171,9 @@ export class DatePicker extends LitElement {
 
   renderActions() {
     return html`
-        <div class="actions">
-            <slot name="actions"></slot>
-        </div>
+      <div class="actions">
+        <slot name="actions"></slot>
+      </div>
     `
   }
 
@@ -208,8 +196,8 @@ export class DatePicker extends LitElement {
   selectDate(date) {
     if (this.isDateDisabled(date)) return
     this.value = this.formatDate(date)
-    this.dispatchEvent(new Event('change', { bubbles: true }))
-    this.dispatchEvent(new Event('input', { bubbles: true }))
+    this.dispatchEvent(new Event('input', { bubbles: true, composed: true }))
+    this.dispatchEvent(new Event('change', { bubbles: true, composed: true }))
   }
 
   selectYear(year) {
@@ -228,9 +216,11 @@ export class DatePicker extends LitElement {
 
   isToday(date) {
     const today = new Date()
-    return date.getDate() === today.getDate() &&
+    return (
+      date.getDate() === today.getDate() &&
       date.getMonth() === today.getMonth() &&
       date.getFullYear() === today.getFullYear()
+    )
   }
 
   isDateDisabled(date) {
@@ -261,7 +251,7 @@ export class DatePicker extends LitElement {
     }
 
     .subhead {
-      font-size: 12px; // label-medium
+      font-size: 12px; /* label-medium */
       line-height: 16px;
       letter-spacing: 0.5px;
       font-weight: 500;
@@ -269,7 +259,7 @@ export class DatePicker extends LitElement {
     }
 
     .headline {
-      font-size: 32px; // headline-large
+      font-size: 32px; /* headline-large */
       line-height: 40px;
       color: var(--md-sys-color-on-surface);
       margin-top: 4px;
@@ -288,27 +278,27 @@ export class DatePicker extends LitElement {
     }
 
     .period-selector {
-        display: flex;
-        align-items: center;
-        cursor: pointer;
-        padding: 8px;
-        border-radius: 24px; // Full
-        font-weight: 500;
-        font-size: 14px; // label-large
-        color: var(--md-sys-color-on-surface-variant);
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 24px; /* Full */
+      font-weight: 500;
+      font-size: 14px; /* label-large */
+      color: var(--md-sys-color-on-surface-variant);
     }
 
     .period-selector:hover {
-        background-color: var(--md-sys-color-surface-variant); // slightly darker
+      background-color: var(--md-sys-color-surface-variant); /* slightly darker */
     }
 
     .dropdown-icon {
-        font-size: 18px;
-        margin-left: 4px;
+      font-size: 18px;
+      margin-left: 4px;
     }
 
     .arrows {
-        display: flex;
+      display: flex;
     }
 
     .calendar {
@@ -376,38 +366,38 @@ export class DatePicker extends LitElement {
     }
 
     .day.selected:hover {
-        background-color: var(--md-sys-color-primary); /* Keep it primary on hover if selected */
+      background-color: var(--md-sys-color-primary); /* Keep it primary on hover if selected */
     }
 
     .year-list {
-        height: 250px;
-        overflow-y: auto;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+      height: 250px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     .year {
-        padding: 12px 24px;
-        cursor: pointer;
-        border-radius: 16px;
-        font-size: 16px;
+      padding: 12px 24px;
+      cursor: pointer;
+      border-radius: 16px;
+      font-size: 16px;
     }
 
     .year:hover {
-        background-color: var(--md-sys-color-surface-variant);
+      background-color: var(--md-sys-color-surface-variant);
     }
 
     .year.selected {
-        background-color: var(--md-sys-color-primary);
-        color: var(--md-sys-color-on-primary);
+      background-color: var(--md-sys-color-primary);
+      color: var(--md-sys-color-on-primary);
     }
 
     .actions {
-        display: flex;
-        justify-content: flex-end;
-        padding: 8px 12px;
-        gap: 8px;
+      display: flex;
+      justify-content: flex-end;
+      padding: 8px 12px;
+      gap: 8px;
     }
   `
 }

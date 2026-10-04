@@ -1,15 +1,21 @@
 import { html, LitElement, nothing, css } from 'lit'
 import { dispatchActivationClick, isActivationClick } from '../internal/events/form-label-activation.js'
+import { requestUpdateOnAriaChange } from '../internal/aria/delegate.js'
+import { setupFormSubmitter } from '../internal/controller/form-submitter.js'
+import { internals, mixinElementInternals } from '../labs/behaviors/element-internals.js'
 import '../internal/elevation/elevation.js'
 import '../internal/focus/focus-ring.js'
 import '../internal/ripple/ripple.js'
+
+const buttonBaseClass = mixinElementInternals(LitElement)
 
 /**
  * A material 3 expressive button component.
  *
  * https://m3.material.io/components/buttons/overview
  */
-export class Button extends LitElement {
+export class Button extends buttonBaseClass {
+  static formAssociated = true
   static shadowRootOptions = { ...LitElement.shadowRootOptions, delegatesFocus: true }
 
   renderElevationOrOutline() {
@@ -26,14 +32,16 @@ export class Button extends LitElement {
     shape: { type: String, reflect: true },
     color: { type: String, reflect: true }, // this is elevated, filled, etc. Not an actual color.
     pressed: { type: Boolean, reflect: true },
-    disabled: { type: Boolean, reflect: true },
+    disabled: { type: Boolean, noAccessor: true },
     href: { type: String },
     target: { type: String },
     trailingIcon: { type: Boolean, attribute: 'trailing-icon', reflect: true },
     hasIcon: { type: Boolean, attribute: 'has-icon', reflect: true },
     type: { type: String },
+    value: { type: String },
     selected: { type: Boolean, reflect: true },
     toggle: { type: Boolean, reflect: true },
+    checkmark: { type: Boolean, reflect: true },
   }
 
   get name() {
@@ -41,6 +49,40 @@ export class Button extends LitElement {
   }
   set name(name) {
     this.setAttribute('name', name)
+  }
+
+  get form() {
+    return this[internals].form
+  }
+
+  get labels() {
+    return this[internals].labels
+  }
+
+  #formDisabled = false
+
+  get disabled() {
+    return this.hasAttribute('disabled') || this.#formDisabled
+  }
+  set disabled(disabled) {
+    const oldValue = this.disabled
+    this.toggleAttribute('disabled', Boolean(disabled))
+    this.requestUpdate('disabled', oldValue)
+  }
+
+  formDisabledCallback(disabled) {
+    const oldValue = this.disabled
+    this.#formDisabled = disabled
+    this.requestUpdate('disabled', oldValue)
+  }
+
+  attributeChangedCallback(name, old, value) {
+    if (name === 'disabled') {
+      const oldValue = old !== null
+      this.requestUpdate(name, oldValue)
+      return
+    }
+    super.attributeChangedCallback(name, old, value)
   }
 
   get buttonElement() {
@@ -64,10 +106,7 @@ export class Button extends LitElement {
     this.color = 'filled'
 
     this.pressed = false
-    /**
-     * Whether or not the button is disabled.
-     */
-    this.disabled = false
+
     /**
      * The URL that the link button points to.
      */
@@ -107,6 +146,10 @@ export class Button extends LitElement {
      * Set to turn this into a toggle button.
      */
     this.toggle = false
+    /**
+     * Whether to show a checkmark icon when selected.
+     */
+    this.checkmark = false
 
     this.handleActivationClick = (event) => {
       if (!isActivationClick(event) || !this.buttonElement) {
@@ -211,9 +254,15 @@ export class Button extends LitElement {
   }
   renderContent() {
     const icon = html`<slot name="icon" @slotchange="${this.handleSlotChange}"></slot>`
+    const checkmark =
+      this.checkmark && this.selected
+        ? html`<svg class="checkmark" viewBox="0 0 18 18" aria-hidden="true">
+            <path d="M6.75 12.127L3.623 9l-1.06 1.057L6.75 14.25l9-9-1.057-1.06z"></path>
+          </svg>`
+        : nothing
     return html`
       <span class="touch"></span>
-      ${this.trailingIcon ? nothing : icon}
+      ${this.trailingIcon ? nothing : checkmark || icon}
       <span class="label"><slot></slot></span>
       ${this.trailingIcon ? icon : nothing}
     `
@@ -1013,6 +1062,33 @@ export class Button extends LitElement {
         opacity: var(--_disabled-icon-opacity);
       }
 
+      .checkmark {
+        writing-mode: horizontal-tb;
+        fill: currentColor;
+        flex-shrink: 0;
+        color: var(--_icon-color);
+        font-size: var(--_icon-size, 18px);
+        inline-size: var(--_icon-size, 18px);
+        block-size: var(--_icon-size, 18px);
+      }
+
+      :host(:hover) .checkmark {
+        color: var(--_hover-icon-color);
+      }
+
+      :host(:focus-within) .checkmark {
+        color: var(--_focus-icon-color);
+      }
+
+      :host(:active) .checkmark {
+        color: var(--_pressed-icon-color);
+      }
+
+      :host([disabled]) .checkmark {
+        color: var(--_disabled-icon-color);
+        opacity: var(--_disabled-icon-opacity);
+      }
+
       .touch {
         position: absolute;
         top: 50%;
@@ -1083,42 +1159,55 @@ export class Button extends LitElement {
     `,
     // shapes
     css`
-      :host([shape='square'][size='extra-small']) {
+      :host(:not([group-position])[shape='square'][size='extra-small']) {
         border-radius: 12px;
       }
-      :host([shape='square'][size='small']) {
+      :host(:not([group-position])[shape='square'][size='small']) {
         border-radius: 12px;
       }
-      :host([shape='square'][size='medium']) {
+      :host(:not([group-position])[shape='square'][size='medium']) {
         border-radius: 16px;
       }
-      :host([shape='square'][size='large']) {
+      :host(:not([group-position])[shape='square'][size='large']) {
         border-radius: 28px;
       }
-      :host([shape='square'][size='extra-large']) {
+      :host(:not([group-position])[shape='square'][size='extra-large']) {
         border-radius: 28px;
       }
-      :host([pressed][size='extra-small']),
-      :host([selected][size='extra-small']) {
+      :host(:not([group-position])[pressed][size='extra-small']),
+      :host(:not([group-position])[selected][size='extra-small']) {
         border-radius: 8px;
       }
-      :host([pressed][size='small']),
-      :host([selected][size='small']) {
+      :host(:not([group-position])[pressed][size='small']),
+      :host(:not([group-position])[selected][size='small']) {
         border-radius: 8px;
       }
-      :host([pressed][size='medium']),
-      :host([selected][size='medium']) {
+      :host(:not([group-position])[pressed][size='medium']),
+      :host(:not([group-position])[selected][size='medium']) {
         border-radius: 12px;
       }
-      :host([pressed][size='large']),
-      :host([selected][size='large']) {
+      :host(:not([group-position])[pressed][size='large']),
+      :host(:not([group-position])[selected][size='large']) {
         border-radius: 16px;
       }
-      :host([pressed][size='extra-large']),
-      :host([selected][size='extra-large']) {
+      :host(:not([group-position])[pressed][size='extra-large']),
+      :host(:not([group-position])[selected][size='extra-large']) {
         border-radius: 16px;
+      }
+
+      :host([group-position]),
+      :host([group-position][selected]) {
+        border-start-start-radius: var(--_container-shape-start-start);
+        border-start-end-radius: var(--_container-shape-start-end);
+        border-end-start-radius: var(--_container-shape-end-start);
+        border-end-end-radius: var(--_container-shape-end-end);
       }
     `,
   ]
 }
+;(() => {
+  requestUpdateOnAriaChange(Button)
+  setupFormSubmitter(Button)
+})()
+
 customElements.define('md-button', Button)

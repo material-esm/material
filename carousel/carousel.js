@@ -56,13 +56,18 @@ export class Carousel extends LitElement {
 
     this._resizeObserver = null
     this._autoplayTimer = null
+    this._programmaticScrollTimer = null
+    this._minTransitionTimer = null
+    this._scrollEndHandler = null
     this._isPointerDown = false
     this._startX = 0
     this._startScrollLeft = 0
     this._hasDragged = false
+    this._pointerId = null
 
     this._handleScroll = this._handleScroll.bind(this)
     this._handleKeyDown = this._handleKeyDown.bind(this)
+    this._handleClickCapture = this._handleClickCapture.bind(this)
     this._onPointerDown = this._onPointerDown.bind(this)
     this._onPointerMove = this._onPointerMove.bind(this)
     this._onPointerUp = this._onPointerUp.bind(this)
@@ -82,11 +87,11 @@ export class Carousel extends LitElement {
   }
 
   get canScrollPrev() {
-    return this.loop || this._canScrollPrev
+    return this._canScrollPrev
   }
 
   get canScrollNext() {
-    return this.loop || this._canScrollNext
+    return this._canScrollNext
   }
 
   connectedCallback() {
@@ -94,13 +99,24 @@ export class Carousel extends LitElement {
 
     if (typeof ResizeObserver !== 'undefined') {
       this._resizeObserver = new ResizeObserver(() => {
+        const scroller = this.scrollerElement
+        scroller?.classList.add('is-instant-scrolling')
+        this.items.forEach(it => it.classList.add('no-transition'))
         this._updateLayout()
         this._updateScrollState()
+        if (!this._isPointerDown && !this._isScrollingProgrammatically) {
+          this.scrollToIndex(this.activeIndex, 'instant')
+        }
+        requestAnimationFrame(() => {
+          scroller?.classList.remove('is-instant-scrolling')
+          this.items.forEach(it => it.classList.remove('no-transition'))
+        })
       })
       this._resizeObserver.observe(this)
     }
 
     this.addEventListener('keydown', this._handleKeyDown)
+    this.addEventListener('click', this._handleClickCapture, true)
     this._startAutoplay()
   }
 
@@ -112,14 +128,40 @@ export class Carousel extends LitElement {
       this._resizeObserver = null
     }
 
+    if (this._programmaticScrollTimer) {
+      clearTimeout(this._programmaticScrollTimer)
+      this._programmaticScrollTimer = null
+    }
+
+    if (this._minTransitionTimer) {
+      clearTimeout(this._minTransitionTimer)
+      this._minTransitionTimer = null
+    }
+
+    if (this._scrollEndHandler && this.scrollerElement) {
+      this.scrollerElement.removeEventListener('scrollend', this._scrollEndHandler)
+      this._scrollEndHandler = null
+    }
+
     this.removeEventListener('keydown', this._handleKeyDown)
+    this.removeEventListener('click', this._handleClickCapture, true)
     this._stopAutoplay()
   }
 
   firstUpdated() {
+    const scroller = this.scrollerElement
+    scroller?.classList.add('is-instant-scrolling')
+    this.items.forEach(it => it.classList.add('no-transition'))
     this._updateLayout()
     this._updateScrollState()
     this._syncActiveItem()
+    if (this.activeIndex > 0) {
+      this.scrollToIndex(this.activeIndex, 'instant')
+    }
+    requestAnimationFrame(() => {
+      scroller?.classList.remove('is-instant-scrolling')
+      this.items.forEach(it => it.classList.remove('no-transition'))
+    })
   }
 
   updated(changedProperties) {
@@ -133,8 +175,8 @@ export class Carousel extends LitElement {
     }
 
     if (changedProperties.has('activeIndex') && changedProperties.get('activeIndex') !== undefined) {
-      this._applyItemSizes()
       this._syncActiveItem()
+      this._updateScrollState()
     }
   }
 
@@ -248,53 +290,156 @@ export class Carousel extends LitElement {
   async scrollToIndex(index, behavior = 'smooth') {
     await this.updateComplete
     const items = this.items
-    if (!items.length || !this.scrollerElement) return
+    const scroller = this.scrollerElement
+    if (!items.length || !scroller) return
 
     const boundedIndex = Math.max(0, Math.min(index, items.length - 1))
+    const targetItem = items[boundedIndex]
+    if (!targetItem) return
+
+    const prevIndex = this.activeIndex
     this.activeIndex = boundedIndex
     this._isScrollingProgrammatically = true
+    if (this._programmaticScrollTimer) {
+      clearTimeout(this._programmaticScrollTimer)
+      this._programmaticScrollTimer = null
+    }
+
+    if (this._minTransitionTimer) {
+      clearTimeout(this._minTransitionTimer)
+      this._minTransitionTimer = null
+    }
+
+    if (this._scrollEndHandler) {
+      scroller.removeEventListener('scrollend', this._scrollEndHandler)
+      this._scrollEndHandler = null
+    }
+
+    if (behavior === 'instant') {
+      scroller.classList.add('is-instant-scrolling')
+      items.forEach(it => it.classList.add('no-transition'))
+    } else if (behavior === 'smooth') {
+      scroller.classList.add('is-programmatic-scrolling')
+      items.forEach(it => it.classList.remove('no-transition'))
+    }
 
     this._applyItemSizes()
     this._syncActiveItem()
 
-    const scroller = this.scrollerElement
-    const targetItem = items[boundedIndex]
-    if (!targetItem || !scroller) {
-      this._isScrollingProgrammatically = false
-      return
-    }
-
+    const targetScrollWidth = Math.max(scroller.scrollWidth, this._getTargetScrollWidth())
+    const maxScroll = Math.max(0, targetScrollWidth - scroller.clientWidth)
     let scrollTarget
+
     if (this.layout === 'centered-hero') {
       const itemCenter = targetItem.offsetLeft + targetItem.offsetWidth / 2
       const scrollerCenter = scroller.offsetWidth / 2
       scrollTarget = itemCenter - scrollerCenter
     } else {
-      scrollTarget = targetItem.offsetLeft - scroller.offsetLeft
+      if (boundedIndex === items.length - 1) {
+        scrollTarget = maxScroll
+      } else if (boundedIndex === 0) {
+        scrollTarget = 0
+      } else if (this.layout === 'multi-browse' || !this.layout) {
+        const spacing = Number(this.itemSpacing) || 8
+        const targetLargeWidth = parseFloat(targetItem.style.width) || targetItem.offsetWidth
+        scrollTarget = boundedIndex * (targetLargeWidth + spacing)
+      } else {
+        scrollTarget = targetItem.offsetLeft - scroller.offsetLeft
+      }
     }
 
+    const clampedTarget = Math.max(0, Math.min(scrollTarget, maxScroll))
+
     scroller.scrollTo({
-      left: Math.max(0, scrollTarget),
+      left: clampedTarget,
       behavior,
     })
 
     this._updateScrollState()
-    this.dispatchEvent(
-      new CustomEvent('change', {
-        detail: { index: boundedIndex, item: targetItem },
-        bubbles: true,
-        composed: true,
-      }),
-    )
+    if (prevIndex !== boundedIndex) {
+      this.dispatchEvent(
+        new CustomEvent('change', {
+          detail: { index: boundedIndex, item: targetItem },
+          bubbles: true,
+          composed: true,
+        }),
+      )
+    }
+
+    const endProgrammaticScroll = () => {
+      if (this._scrollEndHandler) {
+        scroller.removeEventListener('scrollend', this._scrollEndHandler)
+        this._scrollEndHandler = null
+      }
+      if (this._programmaticScrollTimer) {
+        clearTimeout(this._programmaticScrollTimer)
+        this._programmaticScrollTimer = null
+      }
+      if (this._minTransitionTimer) {
+        clearTimeout(this._minTransitionTimer)
+        this._minTransitionTimer = null
+      }
+      scroller.classList.remove('is-programmatic-scrolling')
+      scroller.classList.remove('is-instant-scrolling')
+      items.forEach(it => it.classList.remove('no-transition'))
+      this._isScrollingProgrammatically = false
+      this._updateScrollState()
+    }
 
     if (behavior === 'smooth') {
-      setTimeout(() => {
-        this._isScrollingProgrammatically = false
-        this._updateScrollState()
-      }, 400)
+      const scrollDistance = Math.abs(clampedTarget - scroller.scrollLeft)
+      const timeoutMs = Math.max(450, Math.min(1200, Math.round(scrollDistance * 0.5 + 350)))
+
+      let scrollEnded = false
+      let minTransitionEnded = false
+
+      const tryFinish = () => {
+        if (scrollEnded && minTransitionEnded) {
+          endProgrammaticScroll()
+        }
+      }
+
+      this._scrollEndHandler = () => {
+        scrollEnded = true
+        tryFinish()
+      }
+
+      if ('onscrollend' in window) {
+        scroller.addEventListener('scrollend', this._scrollEndHandler, { once: true })
+      } else {
+        scrollEnded = true
+      }
+
+      this._minTransitionTimer = setTimeout(() => {
+        minTransitionEnded = true
+        tryFinish()
+      }, 360)
+
+      this._programmaticScrollTimer = setTimeout(() => {
+        minTransitionEnded = true
+        scrollEnded = true
+        tryFinish()
+      }, timeoutMs)
     } else {
-      this._isScrollingProgrammatically = false
+      endProgrammaticScroll()
+      requestAnimationFrame(() => {
+        scroller.classList.remove('is-instant-scrolling')
+        items.forEach(it => it.classList.remove('no-transition'))
+      })
     }
+  }
+
+  _getTargetScrollWidth() {
+    const items = this.items
+    const scroller = this.scrollerElement
+    if (!items.length || !scroller) return 0
+    const spacing = Number(this.itemSpacing) || 8
+    let total = (items.length - 1) * spacing
+    for (const item of items) {
+      const w = parseFloat(item.style.width) || item.offsetWidth || 0
+      total += w
+    }
+    return total
   }
 
   _updateLayout() {
@@ -322,28 +467,91 @@ export class Carousel extends LitElement {
         scroller.style.paddingRight = '0px'
       }
 
-      const smallWidth = containerWidth < 400 ? 40 : containerWidth < 600 ? 48 : 56
-      const remaining = Math.max(120, containerWidth - smallWidth - 2 * spacing)
-      const mediumRatio = containerWidth < 400 ? 0.3 : 0.32
-      const mediumWidth = Math.max(60, Math.round(remaining * mediumRatio))
-      const largeWidth = Math.max(120, remaining - mediumWidth)
+      let largeWidth, mediumWidth, smallWidth
+      if (items.length === 1) {
+        largeWidth = containerWidth
+        mediumWidth = containerWidth
+        smallWidth = containerWidth
+      } else if (items.length === 2) {
+        smallWidth = containerWidth < 480 ? 44 : 56
+        largeWidth = Math.max(160, Math.round((containerWidth - spacing) * 0.68))
+        mediumWidth = Math.max(80, containerWidth - spacing - largeWidth)
+      } else {
+        smallWidth = containerWidth < 480 ? 44 : 56
+        const remaining = Math.max(160, containerWidth - smallWidth - 2 * spacing)
+        const mediumRatio = containerWidth < 480 ? 0.3 : 0.32
+        mediumWidth = Math.max(80, Math.round(remaining * mediumRatio))
+        largeWidth = Math.max(160, remaining - mediumWidth)
+      }
 
       items.forEach((item, i) => {
         let sizeType = 'large'
         let width = largeWidth
 
-        if (i === activeIndex) {
+        if (items.length === 1) {
           sizeType = 'large'
           width = largeWidth
-        } else if (i === activeIndex + 1) {
-          sizeType = 'medium'
-          width = mediumWidth
-        } else if (i === activeIndex + 2) {
-          sizeType = 'small'
-          width = smallWidth
+        } else if (items.length === 2) {
+          if (activeIndex === 0) {
+            sizeType = i === 0 ? 'large' : 'medium'
+            width = i === 0 ? largeWidth : mediumWidth
+          } else {
+            sizeType = i === 0 ? 'medium' : 'large'
+            width = i === 0 ? mediumWidth : largeWidth
+          }
+        } else if (activeIndex >= items.length - 2) {
+          // Shifting focal keylines at the end of multi-browse:
+          // Penultimate slide: [N-3: Medium, N-2: Large (focal), N-1: Small]
+          // Final slide:       [N-3: Small,  N-2: Medium,        N-1: Large (focal)]
+          if (activeIndex === items.length - 2) {
+            if (i === items.length - 3) {
+              sizeType = 'medium'
+              width = mediumWidth
+            } else if (i === items.length - 2) {
+              sizeType = 'large'
+              width = largeWidth
+            } else if (i === items.length - 1) {
+              sizeType = 'small'
+              width = smallWidth
+            } else {
+              sizeType = 'large'
+              width = largeWidth
+            }
+          } else {
+            // activeIndex === items.length - 1
+            if (i === items.length - 3) {
+              sizeType = 'small'
+              width = smallWidth
+            } else if (i === items.length - 2) {
+              sizeType = 'medium'
+              width = mediumWidth
+            } else if (i === items.length - 1) {
+              sizeType = 'large'
+              width = largeWidth
+            } else {
+              sizeType = 'large'
+              width = largeWidth
+            }
+          }
         } else {
-          sizeType = 'large'
-          width = largeWidth
+          // Normal start / middle keylines:
+          // activeIndex: Large (focal)
+          // activeIndex + 1: Medium
+          // activeIndex + 2: Small
+          // all other items: Large
+          if (i === activeIndex) {
+            sizeType = 'large'
+            width = largeWidth
+          } else if (i === activeIndex + 1) {
+            sizeType = 'medium'
+            width = mediumWidth
+          } else if (i === activeIndex + 2) {
+            sizeType = 'small'
+            width = smallWidth
+          } else {
+            sizeType = 'large'
+            width = largeWidth
+          }
         }
 
         item.setAttribute('data-size', sizeType)
@@ -359,21 +567,39 @@ export class Carousel extends LitElement {
       }
 
       const smallWidth = containerWidth < 480 ? 48 : 56
-      const largeWidth = Math.max(240, containerWidth - smallWidth - spacing)
+      const largeWidth = Math.max(200, Math.round(containerWidth - smallWidth - spacing))
 
       items.forEach((item, i) => {
         let sizeType = 'large'
         let width = largeWidth
 
-        if (i === activeIndex) {
+        if (items.length === 1) {
           sizeType = 'large'
-          width = largeWidth
-        } else if (i === activeIndex + 1) {
-          sizeType = 'small'
-          width = smallWidth
+          width = containerWidth
+        } else if (activeIndex >= items.length - 1) {
+          // End state of hero layout: [N-2: Small, N-1: Large (focal)]
+          if (i === items.length - 2) {
+            sizeType = 'small'
+            width = smallWidth
+          } else if (i === items.length - 1) {
+            sizeType = 'large'
+            width = largeWidth
+          } else {
+            sizeType = 'large'
+            width = largeWidth
+          }
         } else {
-          sizeType = 'large'
-          width = largeWidth
+          // Normal start / middle hero keylines: [activeIndex: Large, activeIndex + 1: Small]
+          if (i === activeIndex) {
+            sizeType = 'large'
+            width = largeWidth
+          } else if (i === activeIndex + 1) {
+            sizeType = 'small'
+            width = smallWidth
+          } else {
+            sizeType = 'large'
+            width = largeWidth
+          }
         }
 
         item.setAttribute('data-size', sizeType)
@@ -384,33 +610,19 @@ export class Carousel extends LitElement {
       })
     } else if (this.layout === 'centered-hero') {
       const peekWidth = containerWidth < 480 ? 40 : 56
-      const largeWidth = Math.max(220, containerWidth - 2 * peekWidth - 2 * spacing)
+      const largeWidth = Math.max(200, Math.round(containerWidth - 2 * peekWidth - 2 * spacing))
 
       if (scroller) {
         scroller.style.paddingLeft = `${peekWidth + spacing}px`
         scroller.style.paddingRight = `${peekWidth + spacing}px`
       }
 
-      items.forEach((item, i) => {
-        let sizeType = 'large'
-        let width = largeWidth
-
-        if (i === activeIndex) {
-          sizeType = 'large'
-          width = largeWidth
-        } else if (i === activeIndex - 1 || i === activeIndex + 1) {
-          sizeType = 'small'
-          width = peekWidth
-        } else {
-          sizeType = 'large'
-          width = largeWidth
-        }
-
-        item.setAttribute('data-size', sizeType)
-        item.style.flex = `0 0 ${width}px`
-        item.style.width = `${width}px`
-        item.style.minWidth = `${width}px`
-        item.style.maxWidth = `${width}px`
+      items.forEach((item) => {
+        item.setAttribute('data-size', 'large')
+        item.style.flex = `0 0 ${largeWidth}px`
+        item.style.width = `${largeWidth}px`
+        item.style.minWidth = `${largeWidth}px`
+        item.style.maxWidth = `${largeWidth}px`
       })
     } else if (this.layout === 'uncontained') {
       if (scroller) {
@@ -449,45 +661,84 @@ export class Carousel extends LitElement {
     if (!scroller) return
 
     const { scrollLeft, scrollWidth, clientWidth } = scroller
-    const maxScroll = scrollWidth - clientWidth
+    const maxScroll = Math.max(0, scrollWidth - clientWidth)
+    const total = this.items.length
 
-    this._canScrollPrev = scrollLeft > 4
-    this._canScrollNext = scrollLeft < maxScroll - 4
+    if (maxScroll <= 2 || total <= 1) {
+      this._canScrollPrev = false
+      this._canScrollNext = false
+      return
+    }
+
+    if (this.loop) {
+      this._canScrollPrev = true
+      this._canScrollNext = true
+    } else {
+      this._canScrollPrev = this.activeIndex > 0
+      this._canScrollNext = this.activeIndex < total - 1
+    }
+  }
+
+  _getClosestIndex() {
+    const scroller = this.scrollerElement
+    const items = this.items
+    if (!scroller || !items.length) return 0
+
+    const scrollerLeft = scroller.scrollLeft
+
+    if (scrollerLeft <= 2) {
+      return 0
+    }
+
+    let closestIndex = 0
+    let minDistance = Infinity
+
+    if (this.layout === 'centered-hero') {
+      const scrollerCenter = scrollerLeft + scroller.clientWidth / 2
+      items.forEach((item, index) => {
+        const itemCenter = item.offsetLeft + item.offsetWidth / 2
+        const distance = Math.abs(itemCenter - scrollerCenter)
+        if (distance < minDistance) {
+          minDistance = distance
+          closestIndex = index
+        }
+      })
+    } else {
+      items.forEach((item, index) => {
+        const itemLeft = item.offsetLeft - scroller.offsetLeft
+        const distance = Math.abs(itemLeft - scrollerLeft)
+        if (distance < minDistance) {
+          minDistance = distance
+          closestIndex = index
+        }
+      })
+    }
+
+    return closestIndex
   }
 
   _handleScroll() {
     this._updateScrollState()
-    if (this._isScrollingProgrammatically) return
+    if (this._isScrollingProgrammatically || this._isPointerDown) return
 
     const scroller = this.scrollerElement
     const items = this.items
     if (!scroller || !items.length) return
 
-    const scrollerLeft = scroller.scrollLeft
-    const scrollerCenter = scrollerLeft + scroller.clientWidth / 2
+    const closestIndex = this._getClosestIndex()
 
-    let closestIndex = 0
-    let minDistance = Infinity
-
-    items.forEach((item, index) => {
-      let distance
-      if (this.layout === 'centered-hero') {
-        const itemCenter = item.offsetLeft + item.offsetWidth / 2
-        distance = Math.abs(itemCenter - scrollerCenter)
-      } else {
-        distance = Math.abs(item.offsetLeft - scrollerLeft)
-      }
-
-      if (distance < minDistance) {
-        minDistance = distance
-        closestIndex = index
-      }
-    })
+    // When at the scroll boundary at the end, don't revert higher activeIndex
+    const maxScroll = Math.max(0, scroller.scrollWidth - scroller.clientWidth)
+    const boundaryIndex = this.layout === 'hero' ? items.length - 2 : items.length - 3
+    if (maxScroll > 0 && scroller.scrollLeft >= maxScroll - 4 && this.activeIndex >= boundaryIndex) {
+      return
+    }
 
     if (this.activeIndex !== closestIndex) {
       this.activeIndex = closestIndex
       this._applyItemSizes()
       this._syncActiveItem()
+      this._updateScrollState()
       this.dispatchEvent(
         new CustomEvent('change', {
           detail: { index: closestIndex, item: items[closestIndex] },
@@ -544,19 +795,24 @@ export class Carousel extends LitElement {
     }
   }
 
+  _handleClickCapture(e) {
+    if (this._hasDragged) {
+      e.preventDefault()
+      e.stopPropagation()
+    }
+  }
+
   _onPointerDown(e) {
     if (e.button !== 0) return // Left-click only
     const scroller = this.scrollerElement
     if (!scroller) return
 
     this._isPointerDown = true
-    this._startX = e.pageX - scroller.offsetLeft
+    this._startX = e.clientX
     this._startScrollLeft = scroller.scrollLeft
     this._hasDragged = false
-
-    try {
-      scroller.setPointerCapture?.(e.pointerId)
-    } catch {}
+    this._pointerId = e.pointerId
+    this._dragDeltaX = 0
   }
 
   _onPointerMove(e) {
@@ -564,46 +820,98 @@ export class Carousel extends LitElement {
     const scroller = this.scrollerElement
     if (!scroller) return
 
-    const x = e.pageX - scroller.offsetLeft
-    const walk = (x - this._startX) * 1.2
-
-    if (Math.abs(walk) > 5) {
+    const deltaX = e.clientX - this._startX
+    this._dragDeltaX = deltaX
+    if (!this._hasDragged && Math.abs(deltaX) > 5) {
       this._hasDragged = true
       scroller.classList.add('is-dragging')
-      scroller.scrollLeft = this._startScrollLeft - walk
+      this.items.forEach(it => it.classList.add('no-transition'))
+      try {
+        scroller.setPointerCapture?.(e.pointerId)
+      } catch {}
+    }
+
+    if (this._hasDragged) {
+      scroller.scrollLeft = this._startScrollLeft - deltaX
     }
   }
 
-  _onPointerUp(e) {
+  _onPointerUp() {
     if (!this._isPointerDown) return
     this._isPointerDown = false
 
     const scroller = this.scrollerElement
     if (scroller) {
       scroller.classList.remove('is-dragging')
+      this.items.forEach(it => it.classList.remove('no-transition'))
       try {
-        if (e && scroller.hasPointerCapture?.(e.pointerId)) {
-          scroller.releasePointerCapture?.(e.pointerId)
+        if (this._pointerId !== null && scroller.hasPointerCapture?.(this._pointerId)) {
+          scroller.releasePointerCapture?.(this._pointerId)
         }
       } catch {}
     }
+    this._pointerId = null
 
     if (this._hasDragged) {
-      this._handleScroll()
+      const deltaX = this._dragDeltaX || 0
+      if (deltaX < -40) {
+        if (this.canScrollNext) {
+          this.next()
+        } else {
+          this._snapToNearest()
+        }
+      } else if (deltaX > 40) {
+        if (this.canScrollPrev) {
+          this.previous()
+        } else {
+          this._snapToNearest()
+        }
+      } else {
+        this._snapToNearest()
+      }
+      setTimeout(() => {
+        this._hasDragged = false
+        this._dragDeltaX = 0
+      }, 60)
     }
   }
 
-  _onPointerCancel(e) {
+  _onPointerCancel() {
     this._isPointerDown = false
     const scroller = this.scrollerElement
     if (scroller) {
       scroller.classList.remove('is-dragging')
+      this.items.forEach(it => it.classList.remove('no-transition'))
       try {
-        if (e && scroller.hasPointerCapture?.(e.pointerId)) {
-          scroller.releasePointerCapture?.(e.pointerId)
+        if (this._pointerId !== null && scroller.hasPointerCapture?.(this._pointerId)) {
+          scroller.releasePointerCapture?.(this._pointerId)
         }
       } catch {}
     }
+    this._pointerId = null
+    this._hasDragged = false
+    this._dragDeltaX = 0
+  }
+
+  _snapToNearest() {
+    const scroller = this.scrollerElement
+    const items = this.items
+    if (!scroller || !items.length) return
+
+    const scrollerLeft = scroller.scrollLeft
+    const maxScroll = Math.max(0, scroller.scrollWidth - scroller.clientWidth)
+    if (maxScroll > 0 && scrollerLeft >= maxScroll - 16) {
+      const boundaryIndex = this.layout === 'hero' ? items.length - 2 : items.length - 3
+      if (this.activeIndex >= boundaryIndex) {
+        this.scrollToIndex(this.activeIndex, 'smooth')
+      } else {
+        this.scrollToIndex(Math.max(0, boundaryIndex), 'smooth')
+      }
+      return
+    }
+
+    const closestIndex = this._getClosestIndex()
+    this.scrollToIndex(closestIndex, 'smooth')
   }
 
   _startAutoplay() {
@@ -683,7 +991,7 @@ export class Carousel extends LitElement {
         min-height: 0;
       }
 
-      :host([scroll-snap]) .scroller:not(.is-dragging) {
+      :host([scroll-snap]) .scroller:not(.is-dragging):not(.is-programmatic-scrolling):not(.is-instant-scrolling) {
         scroll-snap-type: x mandatory;
       }
 
@@ -695,11 +1003,23 @@ export class Carousel extends LitElement {
         display: none;
       }
 
+      .scroller.is-programmatic-scrolling {
+        scroll-snap-type: none;
+      }
+
+      .scroller.is-instant-scrolling,
       .scroller.is-dragging {
-        scroll-behavior: auto;
+        scroll-behavior: auto !important;
+        scroll-snap-type: none !important;
+      }
+
+      .scroller.is-dragging {
         cursor: grabbing;
       }
+
+      .scroller.is-instant-scrolling ::slotted(*),
       .scroller.is-dragging ::slotted(*) {
+        transition: none !important;
         pointer-events: none;
       }
 

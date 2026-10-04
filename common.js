@@ -7,6 +7,7 @@
  * for production.
  */
 import './buttons/button.js'
+import './buttons/button-group.js'
 import './carousel/carousel.js'
 import './carousel/carousel-item.js'
 import './checkbox/checkbox.js'
@@ -29,6 +30,7 @@ import './tabs/tabs.js'
 import './text/text-field.js'
 
 export * from './buttons/button.js'
+export * from './buttons/button-group.js'
 export * from './carousel/carousel.js'
 export * from './carousel/carousel-item.js'
 export * from './checkbox/checkbox.js'

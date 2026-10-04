@@ -12,7 +12,7 @@ export class Rail extends NavigationBar {
     activeIndex: { type: Number, attribute: 'active-index' },
     hideInactiveLabels: { type: Boolean, attribute: 'hide-inactive-labels' },
     tabs: { type: Array },
-    expanded: { type: Boolean },
+    expanded: { type: Boolean, reflect: true },
   }
 
   constructor() {
@@ -68,6 +68,13 @@ export class Rail extends NavigationBar {
     super.updated(changedProperties)
     if (changedProperties.has('expanded')) {
       this._updateChildren()
+      this.dispatchEvent(
+        new CustomEvent('expanded-change', {
+          detail: { expanded: this.expanded },
+          bubbles: true,
+          composed: true,
+        }),
+      )
     }
   }
 

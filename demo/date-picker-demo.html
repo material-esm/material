@@ -13,12 +13,11 @@
       onload="this.onload=null;this.rel='stylesheet'" />
     <link
       rel="preload"
-      href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;700&&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;700&display=swap"
       as="style"
       onload="this.onload=null;this.rel='stylesheet'" />
 
     <link rel="icon" href="./images/material.jpeg" />
-
     <link rel="stylesheet" href="./css/styles.css" />
 
     <script type="importmap">
@@ -36,36 +35,117 @@
         }
       }
     </script>
-    <script type="module" src="/pickers/date-picker.js"></script>
-    <script type="module" src="/pickers/datetime-picker-dialog.js"></script>
-    <script type="module" src="/buttons/button.js"></script>
-    <script type="module" src="/text/text-field.js"></script>
+    <script type="module">
+      import 'material/pickers/date-picker.js'
+      import 'material/pickers/datetime-picker-dialog.js'
+      import 'material/buttons/button.js'
+      import 'material/text/text-field.js'
+      import 'material/icon/icon.js'
+    </script>
+
+    <style>
+      body {
+        background: var(--md-sys-color-background, #fef7ff);
+        color: var(--md-sys-color-on-background, #1d1b20);
+        padding: 24px;
+        max-width: 800px;
+        margin: 0 auto;
+        box-sizing: border-box;
+      }
+
+      .header-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .demo-section {
+        margin-bottom: 32px;
+        background: var(--md-sys-color-surface-container, #f3edf7);
+        border-radius: 24px;
+        padding: 24px;
+        box-sizing: border-box;
+      }
+
+      .demo-section h2 {
+        margin-top: 0;
+        margin-bottom: 16px;
+        font-size: 1.25rem;
+        font-weight: 500;
+      }
+
+      .value-display {
+        margin-top: 16px;
+        font-weight: 500;
+        color: var(--md-sys-color-primary, #6750a4);
+      }
+
+      @media (max-width: 600px) {
+        body {
+          padding: 16px 12px;
+        }
+        .demo-section {
+          padding: 16px 12px;
+          border-radius: 16px;
+        }
+      }
+    </style>
   </head>
   <body>
+    <div class="header-nav">
+      <a href="./index.html" style="display: inline-flex; align-items: center; gap: 4px">
+        <md-icon style="font-size: 18px">arrow_back</md-icon> Back to Material 3 Demo
+      </a>
+      <a href="./time-picker-demo.html" style="display: inline-flex; align-items: center; gap: 4px">
+        Time Picker Demo <md-icon style="font-size: 18px">arrow_forward</md-icon>
+      </a>
+    </div>
+
+    <h1>Date Picker Demo</h1>
+
     <div class="demo-section">
       <h2>Embedded Date Picker</h2>
       <md-date-picker id="embedded-picker"></md-date-picker>
-      <p>Selected Value: <span id="embedded-value">None</span></p>
+      <p class="value-display">Selected Value: <span id="embedded-value">None</span></p>
     </div>
 
     <div class="demo-section">
       <h2>Date Picker Dialog</h2>
       <md-button id="dialog-trigger" color="filled">Open Date Picker</md-button>
       <md-datetime-picker-dialog id="dialog-picker" type="date"></md-datetime-picker-dialog>
-      <p>Dialog Value: <span id="dialog-value">None</span></p>
+      <p class="value-display">Dialog Value: <span id="dialog-value">None</span></p>
     </div>
 
     <div class="demo-section">
       <h2>Text Field with Date Picker</h2>
-      <md-text-field id="date-field" label="Birthday" type="date"></md-text-field>
-      <!-- Picker is now internal to text-field -->
+      <p style="margin-top: 0; color: var(--md-sys-color-on-surface-variant)">
+        Click the calendar icon to open the picker dialog:
+      </p>
+      <md-text-field id="date-field" label="Birthday" type="date" style="max-width: 320px"></md-text-field>
+      <p class="value-display">Field Value: <span id="date-field-value">None</span></p>
     </div>
 
-    <script>
+    <div class="demo-section">
+      <h2>Text Field with Date &amp; Time Picker</h2>
+      <p style="margin-top: 0; color: var(--md-sys-color-on-surface-variant)">
+        Supports <code>type="datetime-local"</code> for selecting both date and time:
+      </p>
+      <md-text-field
+        id="datetime-field"
+        label="Appointment"
+        type="datetime-local"
+        style="max-width: 320px"></md-text-field>
+      <p class="value-display">Datetime Value: <span id="datetime-field-value">None</span></p>
+    </div>
+
+    <script type="module">
       const embeddedPicker = document.getElementById('embedded-picker')
       const embeddedValue = document.getElementById('embedded-value')
-      embeddedPicker.addEventListener('change', (e) => {
-        embeddedValue.textContent = e.target.value
+      embeddedPicker.addEventListener('change', () => {
+        embeddedValue.textContent = embeddedPicker.value || 'None'
       })
 
       const dialogTrigger = document.getElementById('dialog-trigger')
@@ -76,14 +156,20 @@
         dialogPicker.show()
       })
 
-      dialogPicker.addEventListener('confirm', (e) => {
-        dialogValue.textContent = dialogPicker.value
+      dialogPicker.addEventListener('confirm', () => {
+        dialogValue.textContent = dialogPicker.value || 'None'
       })
 
       const dateField = document.getElementById('date-field')
-
+      const dateFieldValue = document.getElementById('date-field-value')
       dateField.addEventListener('change', () => {
-        console.log('data changed', dateField.value)
+        dateFieldValue.textContent = dateField.value || 'None'
+      })
+
+      const datetimeField = document.getElementById('datetime-field')
+      const datetimeFieldValue = document.getElementById('datetime-field-value')
+      datetimeField.addEventListener('change', () => {
+        datetimeFieldValue.textContent = datetimeField.value || 'None'
       })
     </script>
   </body>

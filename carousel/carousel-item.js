@@ -128,14 +128,19 @@ export class CarouselItem extends LitElement {
         height: 100%;
         scroll-snap-align: start;
         transition:
+          flex-basis 0.35s cubic-bezier(0.2, 0, 0, 1),
           width 0.35s cubic-bezier(0.2, 0, 0, 1),
           min-width 0.35s cubic-bezier(0.2, 0, 0, 1),
           max-width 0.35s cubic-bezier(0.2, 0, 0, 1),
-          flex-basis 0.35s cubic-bezier(0.2, 0, 0, 1),
           transform 0.25s cubic-bezier(0.2, 0, 0, 1),
           opacity 0.25s cubic-bezier(0.2, 0, 0, 1),
           filter 0.25s cubic-bezier(0.2, 0, 0, 1);
         -webkit-tap-highlight-color: transparent;
+      }
+
+      :host(.no-transition),
+      :host([no-transition]) {
+        transition: none !important;
       }
 
       :host([data-size='small']) .content-overlay,
@@ -145,7 +150,10 @@ export class CarouselItem extends LitElement {
       }
 
       :host([data-size='medium']) .subhead {
-        display: none;
+        opacity: 0;
+        max-height: 0;
+        overflow: hidden;
+        margin: 0;
       }
 
       :host([data-size='medium']) .headline {
@@ -243,6 +251,7 @@ export class CarouselItem extends LitElement {
         z-index: 2;
         pointer-events: none;
         border-radius: inherit;
+        transition: opacity 0.25s cubic-bezier(0.2, 0, 0, 1);
       }
 
       .content-overlay {
@@ -257,6 +266,9 @@ export class CarouselItem extends LitElement {
         flex-direction: column;
         gap: 4px;
         pointer-events: none;
+        transition:
+          opacity 0.25s cubic-bezier(0.2, 0, 0, 1),
+          padding 0.25s cubic-bezier(0.2, 0, 0, 1);
       }
 
       .headline {
@@ -265,6 +277,10 @@ export class CarouselItem extends LitElement {
         font-weight: 500;
         line-height: 1.35;
         color: var(--_headline-color);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        transition: font-size 0.25s cubic-bezier(0.2, 0, 0, 1);
       }
 
       .subhead {
@@ -273,6 +289,10 @@ export class CarouselItem extends LitElement {
         font-weight: 400;
         line-height: 1.25;
         color: var(--_subhead-color);
+        transition:
+          opacity 0.25s cubic-bezier(0.2, 0, 0, 1),
+          max-height 0.25s cubic-bezier(0.2, 0, 0, 1),
+          margin 0.25s cubic-bezier(0.2, 0, 0, 1);
       }
 
       .outline {

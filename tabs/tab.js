@@ -34,6 +34,8 @@ export class Tab extends LitElement {
     hasIcon: { type: Boolean, attribute: 'has-icon' },
     iconOnly: { type: Boolean, attribute: 'icon-only' },
     inlineIcon: { type: Boolean, attribute: 'inline-icon' },
+    href: { type: String },
+    target: { type: String },
   }
 
   /**
@@ -71,6 +73,8 @@ export class Tab extends LitElement {
      */
     this.inlineIcon = false
     this.fullWidthIndicator = false
+    this.href = ''
+    this.target = ''
     this.internals =
       // Cast needed for closure
       this.attachInternals()
@@ -100,8 +104,22 @@ export class Tab extends LitElement {
           ${this.fullWidthIndicator ? nothing : indicator}
         </div>
         ${this.fullWidthIndicator ? indicator : nothing}
+        ${this.href ? this.renderLink() : nothing}
       </div>
     </div>`
+  }
+
+  renderLink() {
+    const { ariaLabel } = this
+    return html`
+      <a
+        class="link"
+        id="link"
+        href=${this.href}
+        target=${this.target || nothing}
+        tabindex="-1"
+        aria-label=${ariaLabel || nothing}></a>
+    `
   }
   getContentClasses() {
     let cc = {
@@ -135,10 +153,18 @@ export class Tab extends LitElement {
     if (event.key === 'Enter' || event.key === ' ') {
       // Prevent default behavior such as scrolling when pressing spacebar.
       event.preventDefault()
-      this.click()
+      if (this.href) {
+        const link = this.renderRoot.querySelector('a.link')
+        link?.click()
+      } else {
+        this.click()
+      }
     }
   }
   handleContentClick(event) {
+    if (this.href) {
+      return
+    }
     // Ensure the "click" target is always the tab, and not content, by stopping
     // propagation of content clicks and re-clicking the host.
     event.stopPropagation()
@@ -232,6 +258,14 @@ export class Tab extends LitElement {
       }
       :host([active]) md-focus-ring {
         margin-bottom: calc(var(--_active-indicator-height) + 1px);
+      }
+      .link {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        outline: none;
+        z-index: 1;
       }
       .button::before {
         background: var(--_container-color);

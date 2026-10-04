@@ -131,29 +131,37 @@ export class DateTimePickerDialog extends LitElement {
 
   confirm() {
     if (this.type === 'datetime-local') {
-      if (!this._date) return // Date is mandatory
-      if (!this._time) {
-        this._time = '00:00'
-      }
-      this.value = `${this._date}T${this._time}`
+      const pickerDate = this._date || this.renderRoot.querySelector('md-date-picker')?.value || ''
+      const pickerTime = this._time || this.renderRoot.querySelector('md-time-picker')?.value || '00:00'
+      if (!pickerDate) return // Date is mandatory
+      this._date = pickerDate
+      this._time = pickerTime
+      this.value = `${pickerDate}T${pickerTime}`
     } else if (this.type === 'date') {
-      // Value already updated
+      const pickerDate = this._date || this.renderRoot.querySelector('md-date-picker')?.value || ''
+      if (pickerDate) {
+        this._date = pickerDate
+        this.value = pickerDate
+      }
     } else if (this.type === 'time') {
-      // Value already updated
+      const pickerTime = this._time || this.renderRoot.querySelector('md-time-picker')?.value || '00:00'
+      this._time = pickerTime
+      this.value = pickerTime
     }
 
     this.open = false
-    this.dispatchEvent(new Event('confirm', { bubbles: true }))
+    this.dispatchEvent(new Event('change', { bubbles: true }))
+    this.dispatchEvent(new Event('confirm', { bubbles: true, composed: true }))
   }
 
   cancel() {
     this.open = false
-    this.dispatchEvent(new Event('cancel', { bubbles: true }))
+    this.dispatchEvent(new Event('cancel', { bubbles: true, composed: true }))
   }
 
   handleClose() {
     this.open = false
-    this.dispatchEvent(new Event('close', { bubbles: true }))
+    this.dispatchEvent(new Event('close', { bubbles: true, composed: true }))
   }
 
   show() {

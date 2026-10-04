@@ -1,12 +1,2361 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
   <head>
-    <meta http-equiv="refresh" content="0; url=demo/" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Material ESM - Pure ESM Material 3 Web Components</title>
+    <meta
+      name="description"
+      content="A comprehensive, pure ESM library of Google Material Design 3 web components built with Lit. Zero build required, framework-agnostic, and beautifully expressive." />
+    <link rel="icon" href="./demo/images/material.jpeg" />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" />
+
     <script>
-      window.location.replace("demo/");
+      ;(function () {
+        const theme = localStorage.getItem('material-theme') || 'device'
+        document.documentElement.setAttribute('data-theme', theme)
+      })()
+    </script>
+
+    <style>
+      /* --- Material 3 Color & Type Tokens --- */
+      :root {
+        --md-ref-typeface-brand: 'Google Sans Flex', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        --md-ref-typeface-plain: 'Google Sans Flex', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        --md-sys-typescale-label-large-font: var(--md-ref-typeface-plain);
+        --md-sys-typescale-body-large-font: var(--md-ref-typeface-plain);
+        --md-sys-typescale-body-medium-font: var(--md-ref-typeface-plain);
+        --md-sys-typescale-title-large-font: var(--md-ref-typeface-plain);
+      }
+
+      :root,
+      html[data-theme='light'] {
+        color-scheme: light;
+        --md-sys-color-primary: rgb(78 91 146);
+        --md-sys-color-surface-tint: rgb(78 91 146);
+        --md-sys-color-on-primary: rgb(255 255 255);
+        --md-sys-color-primary-container: rgb(221 225 255);
+        --md-sys-color-on-primary-container: rgb(5 22 75);
+        --md-sys-color-secondary: rgb(104 95 18);
+        --md-sys-color-on-secondary: rgb(255 255 255);
+        --md-sys-color-secondary-container: rgb(242 228 138);
+        --md-sys-color-on-secondary-container: rgb(32 28 0);
+        --md-sys-color-tertiary: rgb(117 84 111);
+        --md-sys-color-on-tertiary: rgb(255 255 255);
+        --md-sys-color-tertiary-container: rgb(255 215 244);
+        --md-sys-color-on-tertiary-container: rgb(44 18 41);
+        --md-sys-color-error: rgb(186 26 26);
+        --md-sys-color-on-error: rgb(255 255 255);
+        --md-sys-color-error-container: rgb(255 218 214);
+        --md-sys-color-on-error-container: rgb(65 0 2);
+        --md-sys-color-background: rgb(251 248 255);
+        --md-sys-color-on-background: rgb(26 27 33);
+        --md-sys-color-surface: rgb(255 255 255);
+        --md-sys-color-on-surface: rgb(26 27 33);
+        --md-sys-color-surface-variant: rgb(226 225 236);
+        --md-sys-color-on-surface-variant: rgb(69 70 79);
+        --md-sys-color-outline: rgb(118 118 128);
+        --md-sys-color-outline-variant: rgb(198 197 208);
+        --md-sys-color-shadow: rgb(0 0 0);
+        --md-sys-color-scrim: rgb(0 0 0);
+        --md-sys-color-inverse-surface: rgb(47 48 54);
+        --md-sys-color-inverse-on-surface: rgb(242 240 247);
+        --md-sys-color-inverse-primary: rgb(183 196 255);
+        --md-sys-color-surface-dim: rgb(219 217 224);
+        --md-sys-color-surface-bright: rgb(251 248 255);
+        --md-sys-color-surface-container-lowest: rgb(255 255 255);
+        --md-sys-color-surface-container-low: rgb(244 242 250);
+        --md-sys-color-surface-container: rgb(239 237 244);
+        --md-sys-color-surface-container-high: rgb(233 231 239);
+        --md-sys-color-surface-container-highest: rgb(227 225 233);
+
+        --nav-bg: rgba(251, 248, 255, 0.85);
+        --code-bg: #1e1e2e;
+        --code-color: #cdd6f4;
+        --card-border: rgba(118, 118, 128, 0.2);
+        --hero-glow: radial-gradient(circle at 50% 10%, rgba(78, 91, 146, 0.12) 0%, rgba(251, 248, 255, 0) 65%);
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme='light']) {
+          color-scheme: dark;
+          --md-sys-color-primary: rgb(183 196 255);
+          --md-sys-color-surface-tint: rgb(183 196 255);
+          --md-sys-color-on-primary: rgb(30 45 97);
+          --md-sys-color-primary-container: rgb(54 68 121);
+          --md-sys-color-on-primary-container: rgb(221 225 255);
+          --md-sys-color-secondary: rgb(213 200 113);
+          --md-sys-color-on-secondary: rgb(55 49 0);
+          --md-sys-color-secondary-container: rgb(79 71 0);
+          --md-sys-color-on-secondary-container: rgb(242 228 138);
+          --md-sys-color-tertiary: rgb(228 186 218);
+          --md-sys-color-on-tertiary: rgb(67 39 63);
+          --md-sys-color-tertiary-container: rgb(92 61 86);
+          --md-sys-color-on-tertiary-container: rgb(255 215 244);
+          --md-sys-color-error: rgb(255 180 171);
+          --md-sys-color-on-error: rgb(105 0 5);
+          --md-sys-color-error-container: rgb(147 0 10);
+          --md-sys-color-on-error-container: rgb(255 218 214);
+          --md-sys-color-background: rgb(18 19 24);
+          --md-sys-color-on-background: rgb(227 225 233);
+          --md-sys-color-surface: rgb(18 19 24);
+          --md-sys-color-on-surface: rgb(227 225 233);
+          --md-sys-color-surface-variant: rgb(69 70 79);
+          --md-sys-color-on-surface-variant: rgb(198 197 208);
+          --md-sys-color-outline: rgb(144 144 154);
+          --md-sys-color-outline-variant: rgb(69 70 79);
+          --md-sys-color-shadow: rgb(0 0 0);
+          --md-sys-color-scrim: rgb(0 0 0);
+          --md-sys-color-inverse-surface: rgb(227 225 233);
+          --md-sys-color-inverse-on-surface: rgb(47 48 54);
+          --md-sys-color-inverse-primary: rgb(78 91 146);
+          --md-sys-color-surface-dim: rgb(18 19 24);
+          --md-sys-color-surface-bright: rgb(56 57 63);
+          --md-sys-color-surface-container-lowest: rgb(13 14 19);
+          --md-sys-color-surface-container-low: rgb(26 27 33);
+          --md-sys-color-surface-container: rgb(31 31 37);
+          --md-sys-color-surface-container-high: rgb(41 42 47);
+          --md-sys-color-surface-container-highest: rgb(52 52 58);
+
+          --nav-bg: rgba(18, 19, 24, 0.85);
+          --code-bg: #11111b;
+          --code-color: #cdd6f4;
+          --card-border: rgba(144, 144, 154, 0.25);
+          --hero-glow: radial-gradient(circle at 50% 10%, rgba(183, 196, 255, 0.1) 0%, rgba(18, 19, 24, 0) 65%);
+        }
+      }
+
+      html[data-theme='dark'] {
+        color-scheme: dark;
+        --md-sys-color-primary: rgb(183 196 255);
+        --md-sys-color-surface-tint: rgb(183 196 255);
+        --md-sys-color-on-primary: rgb(30 45 97);
+        --md-sys-color-primary-container: rgb(54 68 121);
+        --md-sys-color-on-primary-container: rgb(221 225 255);
+        --md-sys-color-secondary: rgb(213 200 113);
+        --md-sys-color-on-secondary: rgb(55 49 0);
+        --md-sys-color-secondary-container: rgb(79 71 0);
+        --md-sys-color-on-secondary-container: rgb(242 228 138);
+        --md-sys-color-tertiary: rgb(228 186 218);
+        --md-sys-color-on-tertiary: rgb(67 39 63);
+        --md-sys-color-tertiary-container: rgb(92 61 86);
+        --md-sys-color-on-tertiary-container: rgb(255 215 244);
+        --md-sys-color-error: rgb(255 180 171);
+        --md-sys-color-on-error: rgb(105 0 5);
+        --md-sys-color-error-container: rgb(147 0 10);
+        --md-sys-color-on-error-container: rgb(255 218 214);
+        --md-sys-color-background: rgb(18 19 24);
+        --md-sys-color-on-background: rgb(227 225 233);
+        --md-sys-color-surface: rgb(18 19 24);
+        --md-sys-color-on-surface: rgb(227 225 233);
+        --md-sys-color-surface-variant: rgb(69 70 79);
+        --md-sys-color-on-surface-variant: rgb(198 197 208);
+        --md-sys-color-outline: rgb(144 144 154);
+        --md-sys-color-outline-variant: rgb(69 70 79);
+        --md-sys-color-shadow: rgb(0 0 0);
+        --md-sys-color-scrim: rgb(0 0 0);
+        --md-sys-color-inverse-surface: rgb(227 225 233);
+        --md-sys-color-inverse-on-surface: rgb(47 48 54);
+        --md-sys-color-inverse-primary: rgb(78 91 146);
+        --md-sys-color-surface-dim: rgb(18 19 24);
+        --md-sys-color-surface-bright: rgb(56 57 63);
+        --md-sys-color-surface-container-lowest: rgb(13 14 19);
+        --md-sys-color-surface-container-low: rgb(26 27 33);
+        --md-sys-color-surface-container: rgb(31 31 37);
+        --md-sys-color-surface-container-high: rgb(41 42 47);
+        --md-sys-color-surface-container-highest: rgb(52 52 58);
+
+        --nav-bg: rgba(18, 19, 24, 0.85);
+        --code-bg: #11111b;
+        --code-color: #cdd6f4;
+        --card-border: rgba(144, 144, 154, 0.25);
+        --hero-glow: radial-gradient(circle at 50% 10%, rgba(183, 196, 255, 0.1) 0%, rgba(18, 19, 24, 0) 65%);
+      }
+
+      /* Base layout & typography */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: var(--md-sys-color-background);
+        color: var(--md-sys-color-on-background);
+        font-family: var(--md-ref-typeface-plain);
+        font-size: 16px;
+        line-height: 1.5;
+        overflow-x: hidden;
+        transition:
+          background-color 0.25s ease,
+          color 0.25s ease;
+      }
+
+      /* Ensure custom elements inherit font properly */
+      md-button,
+      md-text-field,
+      md-chip,
+      md-tab,
+      md-list-item {
+        font-family: var(--md-ref-typeface-plain);
+      }
+
+      a {
+        color: var(--md-sys-color-primary);
+        text-decoration: none;
+        transition: opacity 0.2s;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+
+      /* --- Navigation Bar --- */
+      .navbar {
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        background: var(--nav-bg);
+        border-bottom: 1px solid var(--md-sys-color-surface-container-high);
+        transition:
+          background 0.25s ease,
+          border-color 0.25s ease;
+      }
+
+      .nav-container {
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: 0.75rem 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-weight: 700;
+        font-size: 1.25rem;
+        color: var(--md-sys-color-on-surface);
+        text-decoration: none;
+      }
+      .brand img {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        object-fit: cover;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      }
+      .version-tag {
+        font-size: 0.75rem;
+        font-weight: 600;
+        background: var(--md-sys-color-primary-container);
+        color: var(--md-sys-color-on-primary-container);
+        padding: 2px 8px;
+        border-radius: 9999px;
+        letter-spacing: 0.02em;
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .nav-links a {
+        color: var(--md-sys-color-on-surface-variant);
+        font-weight: 500;
+        font-size: 0.95rem;
+        text-decoration: none;
+        padding: 6px 10px;
+        border-radius: 8px;
+        transition: all 0.2s;
+      }
+      .nav-links a:hover {
+        color: var(--md-sys-color-primary);
+        background: var(--md-sys-color-surface-container-high);
+      }
+
+      .nav-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .theme-switcher-container {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+      }
+
+      .theme-btn {
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        color: var(--md-sys-color-on-surface-variant);
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+      .theme-btn:hover,
+      .theme-btn[aria-expanded='true'] {
+        background: var(--md-sys-color-surface-container-highest);
+        color: var(--md-sys-color-primary);
+      }
+
+      .theme-menu {
+        position: absolute;
+        top: calc(100% + 8px);
+        right: 0;
+        min-width: 160px;
+        background: var(--md-sys-color-surface-container);
+        border: 1px solid var(--card-border);
+        border-radius: 12px;
+        padding: 6px;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+        z-index: 1002;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-6px) scale(0.96);
+        transform-origin: top right;
+        transition:
+          opacity 0.15s cubic-bezier(0.2, 0, 0, 1),
+          transform 0.15s cubic-bezier(0.2, 0, 0, 1),
+          visibility 0.15s;
+        pointer-events: none;
+      }
+
+      .theme-menu.open {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0) scale(1);
+        pointer-events: auto;
+      }
+
+      .theme-menu-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        width: 100%;
+        padding: 8px 12px;
+        border: none;
+        background: transparent;
+        color: var(--md-sys-color-on-surface);
+        border-radius: 8px;
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        text-align: left;
+        transition:
+          background 0.15s ease,
+          color 0.15s ease;
+      }
+
+      .theme-menu-item:hover,
+      .theme-menu-item:focus-visible {
+        background: var(--md-sys-color-surface-container-highest);
+        color: var(--md-sys-color-primary);
+        outline: none;
+      }
+
+      .theme-menu-item.active {
+        background: var(--md-sys-color-secondary-container);
+        color: var(--md-sys-color-on-secondary-container);
+        font-weight: 600;
+      }
+
+      .theme-menu-icon {
+        font-size: 20px;
+        color: inherit;
+      }
+
+      .theme-menu-label {
+        flex: 1;
+      }
+
+      .theme-menu-check {
+        font-size: 18px;
+        opacity: 0;
+        transition: opacity 0.15s ease;
+      }
+
+      .theme-menu-item.active .theme-menu-check {
+        opacity: 1;
+      }
+
+      .mobile-menu-btn {
+        display: none;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        color: var(--md-sys-color-on-surface);
+        padding: 8px;
+        border-radius: 8px;
+      }
+
+      /* Mobile Drawer */
+      .mobile-nav-drawer {
+        display: none;
+        position: fixed;
+        top: 61px;
+        left: 0;
+        right: 0;
+        background: var(--md-sys-color-surface);
+        border-bottom: 1px solid var(--md-sys-color-outline-variant);
+        padding: 1rem 1.5rem;
+        flex-direction: column;
+        gap: 0.75rem;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        z-index: 999;
+      }
+      .mobile-nav-drawer.open {
+        display: flex;
+      }
+      .mobile-nav-drawer a {
+        color: var(--md-sys-color-on-surface);
+        font-weight: 500;
+        padding: 8px 12px;
+        border-radius: 8px;
+      }
+      .mobile-nav-drawer a:hover {
+        background: var(--md-sys-color-surface-container-high);
+      }
+
+      /* --- Hero Section --- */
+      .hero {
+        position: relative;
+        background: var(--hero-glow);
+        padding: 4.5rem 1.5rem 3.5rem;
+        overflow: hidden;
+      }
+
+      .hero-container {
+        max-width: 1240px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 1.15fr 0.85fr;
+        gap: 3.5rem;
+        align-items: center;
+      }
+
+      .hero-content {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 14px;
+        border-radius: 100px;
+        background: var(--md-sys-color-surface-container-high);
+        color: var(--md-sys-color-primary);
+        font-weight: 600;
+        font-size: 0.85rem;
+        margin-bottom: 1.25rem;
+        border: 1px solid var(--card-border);
+      }
+
+      .hero h1 {
+        font-size: 3.25rem;
+        font-weight: 700;
+        line-height: 1.15;
+        letter-spacing: -0.02em;
+        margin: 0 0 1.25rem;
+        color: var(--md-sys-color-on-surface);
+      }
+      .hero h1 .gradient-text {
+        background: linear-gradient(135deg, var(--md-sys-color-primary), var(--md-sys-color-tertiary));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .hero-subtitle {
+        font-size: 1.2rem;
+        line-height: 1.6;
+        color: var(--md-sys-color-on-surface-variant);
+        margin: 0 0 2rem;
+        max-width: 600px;
+      }
+
+      .hero-ctas {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        align-items: center;
+        margin-bottom: 2rem;
+      }
+
+      .install-pill {
+        display: inline-flex;
+        align-items: center;
+        background: var(--md-sys-color-surface-container-high);
+        border: 1px solid var(--card-border);
+        border-radius: 12px;
+        padding: 6px 8px 6px 16px;
+        font-family: 'Roboto Mono', monospace;
+        font-size: 0.9rem;
+        color: var(--md-sys-color-on-surface);
+      }
+      .install-pill code {
+        margin-right: 12px;
+        user-select: all;
+      }
+      .copy-btn {
+        background: var(--md-sys-color-surface-container-highest);
+        color: var(--md-sys-color-on-surface-variant);
+        border: none;
+        border-radius: 8px;
+        padding: 6px 10px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        transition: all 0.2s;
+      }
+      .copy-btn:hover {
+        background: var(--md-sys-color-primary-container);
+        color: var(--md-sys-color-on-primary-container);
+      }
+
+      /* Hero Live Component Preview Card */
+      .hero-card {
+        background: var(--md-sys-color-surface);
+        border: 1px solid var(--card-border);
+        border-radius: 28px;
+        box-shadow: 0 20px 48px -12px rgba(0, 0, 0, 0.18);
+        padding: 1.75rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+        position: relative;
+      }
+
+      .hero-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid var(--md-sys-color-surface-container-highest);
+      }
+      .hero-card-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 600;
+        font-size: 1rem;
+        color: var(--md-sys-color-on-surface);
+      }
+      .live-badge {
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        background: #e8f5e9;
+        color: #2e7d32;
+        padding: 2px 8px;
+        border-radius: 100px;
+        letter-spacing: 0.05em;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .live-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #2e7d32;
+        animation: pulse 1.8s infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.4;
+        }
+      }
+
+      .preview-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+      }
+
+      /* --- Highlights Banner --- */
+      .highlights {
+        border-top: 1px solid var(--md-sys-color-surface-container-high);
+        border-bottom: 1px solid var(--md-sys-color-surface-container-high);
+        background: var(--md-sys-color-surface-container-low);
+        padding: 3rem 1.5rem;
+      }
+      .highlights-container {
+        max-width: 1240px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 2rem;
+      }
+      .highlight-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+      .highlight-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: var(--md-sys-color-primary-container);
+        color: var(--md-sys-color-on-primary-container);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      .highlight-text h3 {
+        margin: 0 0 0.25rem;
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: var(--md-sys-color-on-surface);
+      }
+      .highlight-text p {
+        margin: 0;
+        font-size: 0.9rem;
+        color: var(--md-sys-color-on-surface-variant);
+        line-height: 1.4;
+      }
+
+      /* --- Section Common --- */
+      .section {
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: 5rem 1.5rem;
+      }
+
+      .section-header {
+        text-align: center;
+        max-width: 720px;
+        margin: 0 auto 3.5rem;
+      }
+      .section-header .section-eyebrow {
+        font-size: 0.85rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--md-sys-color-primary);
+        margin-bottom: 0.5rem;
+      }
+      .section-header h2 {
+        font-size: 2.25rem;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        margin: 0 0 1rem;
+        color: var(--md-sys-color-on-surface);
+      }
+      .section-header p {
+        font-size: 1.1rem;
+        color: var(--md-sys-color-on-surface-variant);
+        margin: 0;
+      }
+
+      /* --- Features Grid --- */
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 1.5rem;
+      }
+      .feature-card {
+        background: var(--md-sys-color-surface-container);
+        border: 1px solid var(--card-border);
+        border-radius: 20px;
+        padding: 2rem;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+      }
+      .feature-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+      }
+      .feature-card-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        background: var(--md-sys-color-primary-container);
+        color: var(--md-sys-color-on-primary-container);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1.25rem;
+      }
+      .feature-card h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin: 0 0 0.5rem;
+        color: var(--md-sys-color-on-surface);
+      }
+      .feature-card p {
+        font-size: 0.95rem;
+        color: var(--md-sys-color-on-surface-variant);
+        margin: 0;
+        line-height: 1.55;
+      }
+
+      /* --- Quick Start Tabs & Code --- */
+      .quickstart-card {
+        background: var(--md-sys-color-surface-container);
+        border: 1px solid var(--card-border);
+        border-radius: 24px;
+        overflow: hidden;
+        max-width: 960px;
+        margin: 0 auto;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+      }
+
+      .tabs-header {
+        display: flex;
+        background: var(--md-sys-color-surface-container-high);
+        border-bottom: 1px solid var(--card-border);
+        padding: 0.5rem 1rem 0;
+        gap: 0.5rem;
+      }
+      .tab-trigger {
+        padding: 0.75rem 1.25rem;
+        background: transparent;
+        border: none;
+        border-bottom: 3px solid transparent;
+        color: var(--md-sys-color-on-surface-variant);
+        font-family: inherit;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.2s;
+      }
+      .tab-trigger.active {
+        color: var(--md-sys-color-primary);
+        border-bottom-color: var(--md-sys-color-primary);
+        background: var(--md-sys-color-surface-container);
+        border-radius: 12px 12px 0 0;
+      }
+
+      .tab-content {
+        display: none;
+        padding: 2rem;
+      }
+      .tab-content.active {
+        display: block;
+      }
+
+      .code-container {
+        position: relative;
+        background: var(--code-bg);
+        color: var(--code-color);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.4);
+      }
+      .code-container pre {
+        margin: 0;
+        padding: 1.25rem 1.5rem;
+        font-family: 'Roboto Mono', monospace;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        overflow-x: auto;
+      }
+      .code-container .copy-action {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        background: rgba(255, 255, 255, 0.12);
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        padding: 6px 12px;
+        font-size: 0.8rem;
+        font-family: inherit;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        transition: background 0.2s;
+      }
+      .code-container .copy-action:hover {
+        background: rgba(255, 255, 255, 0.25);
+      }
+
+      /* --- Component Showcase --- */
+      .filter-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        justify-content: center;
+        margin-bottom: 2.5rem;
+      }
+      .filter-chip {
+        padding: 8px 18px;
+        border-radius: 100px;
+        border: 1px solid var(--card-border);
+        background: var(--md-sys-color-surface-container);
+        color: var(--md-sys-color-on-surface);
+        font-family: inherit;
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .filter-chip.active,
+      .filter-chip:hover {
+        background: var(--md-sys-color-primary-container);
+        color: var(--md-sys-color-on-primary-container);
+        border-color: var(--md-sys-color-primary);
+      }
+
+      .showcase-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+        gap: 2rem;
+      }
+
+      .showcase-card {
+        background: var(--md-sys-color-surface-container);
+        border: 1px solid var(--card-border);
+        border-radius: 24px;
+        padding: 1.75rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+        transition: box-shadow 0.2s;
+      }
+      .showcase-card:hover {
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      }
+
+      .showcase-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .showcase-header h3 {
+        margin: 0;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--md-sys-color-on-surface);
+      }
+      .showcase-docs-link {
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        color: var(--md-sys-color-primary);
+      }
+
+      .showcase-preview {
+        background: var(--md-sys-color-surface);
+        border: 1px solid var(--card-border);
+        border-radius: 16px;
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+        align-items: flex-start;
+        min-height: 140px;
+        justify-content: center;
+      }
+
+      .showcase-code {
+        background: var(--code-bg);
+        border-radius: 12px;
+        padding: 0.85rem 1rem;
+        color: var(--code-color);
+        font-family: 'Roboto Mono', monospace;
+        font-size: 0.8rem;
+        overflow-x: auto;
+        position: relative;
+      }
+
+      /* --- Demos Section --- */
+      .demos-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 1.5rem;
+      }
+      .demo-card {
+        background: var(--md-sys-color-surface-container);
+        border: 1px solid var(--card-border);
+        border-radius: 20px;
+        padding: 1.75rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 1.25rem;
+        text-decoration: none;
+        color: inherit;
+        transition: all 0.2s;
+      }
+      .demo-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+        border-color: var(--md-sys-color-primary);
+        text-decoration: none;
+      }
+      .demo-card-top {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+      .demo-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        background: var(--md-sys-color-primary-container);
+        color: var(--md-sys-color-on-primary-container);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      .demo-card h3 {
+        margin: 0 0 0.4rem;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--md-sys-color-on-surface);
+      }
+      .demo-card p {
+        margin: 0;
+        font-size: 0.95rem;
+        color: var(--md-sys-color-on-surface-variant);
+        line-height: 1.5;
+      }
+      .demo-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: var(--md-sys-color-primary);
+      }
+
+      /* --- Component Directory Grid --- */
+      .comp-directory-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 0.75rem;
+      }
+      .comp-item {
+        background: var(--md-sys-color-surface-container);
+        border: 1px solid var(--card-border);
+        border-radius: 12px;
+        padding: 0.75rem 1rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--md-sys-color-on-surface);
+        font-weight: 500;
+        font-size: 0.9rem;
+        transition: all 0.2s;
+        text-decoration: none;
+      }
+      .comp-item:hover {
+        background: var(--md-sys-color-primary-container);
+        color: var(--md-sys-color-on-primary-container);
+        text-decoration: none;
+      }
+
+      /* --- Footer --- */
+      footer {
+        background: var(--md-sys-color-surface-container-low);
+        border-top: 1px solid var(--md-sys-color-surface-container-high);
+        padding: 4rem 1.5rem 2rem;
+      }
+      .footer-container {
+        max-width: 1240px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr;
+        gap: 3rem;
+        margin-bottom: 3rem;
+      }
+      .footer-brand h4 {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0 0 1rem;
+        font-size: 1.25rem;
+        color: var(--md-sys-color-on-surface);
+      }
+      .footer-brand p {
+        color: var(--md-sys-color-on-surface-variant);
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin: 0 0 1.25rem;
+        max-width: 360px;
+      }
+      .footer-col h5 {
+        margin: 0 0 1rem;
+        font-size: 0.95rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--md-sys-color-on-surface);
+      }
+      .footer-col ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+      }
+      .footer-col a {
+        color: var(--md-sys-color-on-surface-variant);
+        font-size: 0.9rem;
+        text-decoration: none;
+      }
+      .footer-col a:hover {
+        color: var(--md-sys-color-primary);
+        text-decoration: underline;
+      }
+
+      .footer-bottom {
+        max-width: 1240px;
+        margin: 0 auto;
+        padding-top: 2rem;
+        border-top: 1px solid var(--md-sys-color-surface-container-high);
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        font-size: 0.85rem;
+        color: var(--md-sys-color-on-surface-variant);
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 960px) {
+        .hero-container {
+          grid-template-columns: 1fr;
+          gap: 2.5rem;
+        }
+        .hero h1 {
+          font-size: 2.5rem;
+        }
+        .footer-container {
+          grid-template-columns: 1fr 1fr;
+          gap: 2rem;
+        }
+      }
+      @media (max-width: 768px) {
+        .nav-links,
+        .nav-actions .btn-text {
+          display: none;
+        }
+        .mobile-menu-btn {
+          display: block;
+        }
+        .footer-container {
+          grid-template-columns: 1fr;
+        }
+        .hero h1 {
+          font-size: 2.1rem;
+        }
+      }
+    </style>
+
+    <!-- ESM Importmap -->
+    <script type="importmap">
+      {
+        "imports": {
+          "lit": "https://cdn.jsdelivr.net/npm/lit@3/index.js",
+          "lit/": "https://cdn.jsdelivr.net/npm/lit@3/",
+          "@lit/localize": "https://cdn.jsdelivr.net/npm/@lit/localize/lit-localize.js",
+          "@lit/reactive-element": "https://cdn.jsdelivr.net/npm/@lit/reactive-element@2/reactive-element.js",
+          "@lit/reactive-element/": "https://cdn.jsdelivr.net/npm/@lit/reactive-element@2/",
+          "lit-element/lit-element.js": "https://cdn.jsdelivr.net/npm/lit-element@4/lit-element.js",
+          "lit-html": "https://cdn.jsdelivr.net/npm/lit-html@3/lit-html.js",
+          "lit-html/": "https://cdn.jsdelivr.net/npm/lit-html@3/",
+          "material/": "./"
+        }
+      }
+    </script>
+
+    <!-- Component Modules -->
+    <script type="module">
+      import 'material/app/bar.js'
+      import 'material/buttons/button.js'
+      import 'material/buttons/button-group.js'
+      import 'material/buttons/fab.js'
+      import 'material/buttons/icon-button.js'
+      import 'material/badge/badge.js'
+      import 'material/card/card.js'
+      import 'material/checkbox/checkbox.js'
+      import 'material/chips/chip.js'
+      import 'material/chips/chip-set.js'
+      import 'material/divider/divider.js'
+      import 'material/icon/icon.js'
+      import 'material/indicators/loading.js'
+      import 'material/indicators/progress.js'
+      import 'material/list/list.js'
+      import 'material/list/list-item.js'
+      import 'material/radio/radio.js'
+      import 'material/slider/slider.js'
+      import 'material/switch/switch.js'
+      import 'material/tabs/tab.js'
+      import 'material/tabs/tabs.js'
+      import 'material/text/text-field.js'
+      import 'material/carousel/carousel.js'
+      import 'material/carousel/carousel-item.js'
+      import 'material/snackbar/snackbar.js'
     </script>
   </head>
   <body>
-    <p>Redirecting to <a href="demo/">Expressive Demo</a>...</p>
+    <!-- Navigation Bar -->
+    <header class="navbar">
+      <div class="nav-container">
+        <a href="#" class="brand">
+          <img src="./demo/images/material.jpeg" alt="Material ESM Logo" />
+          <span>Material ESM</span>
+          <span class="version-tag">v3.3.2</span>
+        </a>
+
+        <ul class="nav-links">
+          <li><a href="#features">Features</a></li>
+          <li><a href="#quickstart">Quick Start</a></li>
+          <li><a href="#components">Components</a></li>
+          <li><a href="#demos">Demos</a></li>
+          <li><a href="#docs">Documentation</a></li>
+        </ul>
+
+        <div class="nav-actions">
+          <!-- Theme Switcher Dropdown (Light / Dark / Device) -->
+          <div class="theme-switcher-container">
+            <button
+              id="themeToggleBtn"
+              class="theme-btn"
+              aria-label="Theme: Device"
+              title="Theme: Device"
+              aria-haspopup="menu"
+              aria-expanded="false">
+              <span class="material-symbols-outlined" id="themeIcon">devices</span>
+            </button>
+            <div id="themeMenu" class="theme-menu" role="menu" aria-label="Select theme">
+              <button
+                type="button"
+                class="theme-menu-item"
+                data-theme-value="light"
+                role="menuitemradio"
+                aria-checked="false">
+                <span class="material-symbols-outlined theme-menu-icon">light_mode</span>
+                <span class="theme-menu-label">Light</span>
+                <span class="material-symbols-outlined theme-menu-check">check</span>
+              </button>
+              <button
+                type="button"
+                class="theme-menu-item"
+                data-theme-value="dark"
+                role="menuitemradio"
+                aria-checked="false">
+                <span class="material-symbols-outlined theme-menu-icon">dark_mode</span>
+                <span class="theme-menu-label">Dark</span>
+                <span class="material-symbols-outlined theme-menu-check">check</span>
+              </button>
+              <button
+                type="button"
+                class="theme-menu-item"
+                data-theme-value="device"
+                role="menuitemradio"
+                aria-checked="false">
+                <span class="material-symbols-outlined theme-menu-icon">devices</span>
+                <span class="theme-menu-label">Device</span>
+                <span class="material-symbols-outlined theme-menu-check">check</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- GitHub repo link -->
+          <md-button color="outlined" href="https://github.com/material-esm/material" target="_blank" class="btn-text">
+            <md-icon slot="icon">code</md-icon>
+            GitHub
+          </md-button>
+
+          <!-- Full Demo link -->
+          <md-button color="filled" href="./demo/">
+            <md-icon slot="icon">rocket_launch</md-icon>
+            Live Demo
+          </md-button>
+
+          <button id="mobileMenuBtn" class="mobile-menu-btn" aria-label="Toggle navigation menu">
+            <span class="material-symbols-outlined">menu</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Navigation Drawer -->
+      <nav id="mobileNavDrawer" class="mobile-nav-drawer" aria-label="Mobile navigation">
+        <a href="#features" onclick="closeMobileMenu()">Features</a>
+        <a href="#quickstart" onclick="closeMobileMenu()">Quick Start</a>
+        <a href="#components" onclick="closeMobileMenu()">Components</a>
+        <a href="#demos" onclick="closeMobileMenu()">Demos</a>
+        <a href="#docs" onclick="closeMobileMenu()">Documentation</a>
+        <a href="./demo/" onclick="closeMobileMenu()">Interactive Demo</a>
+        <a href="https://github.com/material-esm/material" target="_blank" onclick="closeMobileMenu()">GitHub Repo</a>
+      </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-container">
+        <div class="hero-content">
+          <div class="eyebrow">
+            <span class="material-symbols-outlined" style="font-size: 18px">auto_awesome</span>
+            Material 3 Expressive • Pure ESM
+          </div>
+
+          <h1>Material 3 Web Components for <span class="gradient-text">Pure ESM</span></h1>
+
+          <p class="hero-subtitle">
+            A comprehensive, pure ESM library of Google Material Design 3 components. Zero build step required,
+            completely framework-agnostic, and beautifully expressive.
+          </p>
+
+          <div class="hero-ctas">
+            <md-button color="filled" href="#quickstart">
+              <md-icon slot="icon">bolt</md-icon>
+              Get Started
+            </md-button>
+            <md-button color="tonal" href="#components">
+              <md-icon slot="icon">widgets</md-icon>
+              Browse 20+ Components
+            </md-button>
+            <md-button color="outlined" href="./demo/">
+              <md-icon slot="icon">open_in_new</md-icon>
+              Kitchen Sink Demo
+            </md-button>
+          </div>
+
+          <div class="install-pill">
+            <code>npm install material-esm/material</code>
+            <button class="copy-btn" onclick="copySnippet('npm install material-esm/material', this)">
+              <span class="material-symbols-outlined" style="font-size: 16px">content_copy</span>
+              <span>Copy</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Live Interactive Component Card -->
+        <div class="hero-card">
+          <div class="hero-card-header">
+            <div class="hero-card-title">
+              <md-icon style="color: var(--md-sys-color-primary)">palette</md-icon>
+              <span>Live Material 3 Studio</span>
+            </div>
+            <span class="live-badge">
+              <span class="live-dot"></span>
+              Live ESM
+            </span>
+          </div>
+
+          <!-- Live Form Controls -->
+          <div style="display: flex; flex-direction: column; gap: 12px">
+            <md-text-field
+              label="Project name"
+              value="awesome-material-app"
+              supporting-text="Standard native custom element"></md-text-field>
+
+            <!-- Connected Segmented Buttons -->
+            <md-button-group connected checkmark aria-label="Frequency">
+              <md-button color="tonal" selected>Day</md-button>
+              <md-button color="tonal">Week</md-button>
+              <md-button color="tonal">Month</md-button>
+            </md-button-group>
+          </div>
+
+          <!-- Live Button Styles -->
+          <div class="preview-row">
+            <md-button color="filled">
+              <md-icon slot="icon">check</md-icon>
+              Filled
+            </md-button>
+            <md-button color="tonal">Tonal</md-button>
+            <md-button color="outlined">Outlined</md-button>
+            <md-fab variant="primary" lowered label="Action" style="margin-left: auto">
+              <md-icon slot="icon">add</md-icon>
+            </md-fab>
+          </div>
+
+          <!-- M3 Expressive Indicators -->
+          <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 4px">
+            <div style="display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 500">
+              <span>M3 Expressive Wavy Progress</span>
+              <span style="color: var(--md-sys-color-primary)">Active</span>
+            </div>
+            <md-progress type="linear" shape="wavy" indeterminate></md-progress>
+          </div>
+
+          <!-- Interactive row: switch, checkbox, chips & snackbar trigger -->
+          <div class="preview-row" style="justify-content: space-between">
+            <div style="display: flex; align-items: center; gap: 12px">
+              <md-switch selected icons></md-switch>
+              <md-checkbox checked></md-checkbox>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 8px">
+              <md-loading contained size="36"></md-loading>
+              <md-button color="elevated" onclick="triggerHeroSnackbar()">
+                <md-icon slot="icon">notifications</md-icon>
+                Toast
+              </md-button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Highlights Banner -->
+    <div class="highlights">
+      <div class="highlights-container">
+        <div class="highlight-item">
+          <div class="highlight-icon">
+            <span class="material-symbols-outlined">flash_on</span>
+          </div>
+          <div class="highlight-text">
+            <h3>Zero Build Required</h3>
+            <p>Runs natively in modern browsers with standard ESM imports and import maps.</p>
+          </div>
+        </div>
+
+        <div class="highlight-item">
+          <div class="highlight-icon">
+            <span class="material-symbols-outlined">style</span>
+          </div>
+          <div class="highlight-text">
+            <h3>Material 3 Expressive</h3>
+            <p>Full support for modern wavy tracks, morphing loaders, and connected button groups.</p>
+          </div>
+        </div>
+
+        <div class="highlight-item">
+          <div class="highlight-icon">
+            <span class="material-symbols-outlined">layers</span>
+          </div>
+          <div class="highlight-text">
+            <h3>Framework Agnostic</h3>
+            <p>Standard Web Components compatible with React, Vue, Svelte, Lit, or vanilla HTML.</p>
+          </div>
+        </div>
+
+        <div class="highlight-item">
+          <div class="highlight-icon">
+            <span class="material-symbols-outlined">accessibility_new</span>
+          </div>
+          <div class="highlight-text">
+            <h3>Accessible & Tested</h3>
+            <p>Full keyboard navigation, ARIA semantics, focus rings, and high-contrast styling.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Features Section -->
+    <section id="features" class="section">
+      <div class="section-header">
+        <div class="section-eyebrow">Engineered For Modern Browsers</div>
+        <h2>Why Developers Choose Material ESM</h2>
+        <p>
+          A pure, standalone implementation continuing Google's Material Web project, optimized for the modern
+          ECMAScript module ecosystem.
+        </p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-card-icon">
+            <span class="material-symbols-outlined">javascript</span>
+          </div>
+          <h3>Native ESM & No Tooling</h3>
+          <p>
+            Drop in a single importmap in your HTML and start writing custom elements right away. No webpack, Vite, or
+            Node compilation required for rapid prototyping or production apps.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-card-icon">
+            <span class="material-symbols-outlined">waves</span>
+          </div>
+          <h3>Material 3 Expressive Motion</h3>
+          <p>
+            Features the cutting-edge Material 3 Expressive spec: dynamic waveform progress indicators, shape-morphing
+            loaders, spring physics, and modern button group corner radii.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-card-icon">
+            <span class="material-symbols-outlined">dark_mode</span>
+          </div>
+          <h3>Dynamic Theming & Dark Mode</h3>
+          <p>
+            CSS custom property token system allows one-line color customization, seamless system dark mode
+            adaptability, and full Material 3 tonal palette integration.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-card-icon">
+            <span class="material-symbols-outlined">devices</span>
+          </div>
+          <h3>Universal Compatibility</h3>
+          <p>
+            Works flawlessly across all frontends: vanilla JS, React, Vue, Angular, Svelte, Solid, Astro, or
+            server-rendered frameworks like Go, Ruby on Rails, Django, and PHP.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-card-icon">
+            <span class="material-symbols-outlined">deployed_code</span>
+          </div>
+          <h3>Fine-Grained Tree-Shaking</h3>
+          <p>
+            Import only the individual elements you use—such as <code>material/buttons/button.js</code>—keeping your
+            page weight featherlight with zero unnecessary bundle bloat.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-card-icon">
+            <span class="material-symbols-outlined">volunteer_activism</span>
+          </div>
+          <h3>Actively Maintained Fork</h3>
+          <p>
+            While the original Google repository paused updates, Material ESM continues active development, resolving
+            issues, supporting forms, and implementing new M3 specifications.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quick Start Section -->
+    <section id="quickstart" class="section" style="background: var(--md-sys-color-surface-container-low)">
+      <div class="section-header">
+        <div class="section-eyebrow">Instant Setup</div>
+        <h2>Get Started in Seconds</h2>
+        <p>Choose your preferred integration method—from zero-build CDN to npm package managers.</p>
+      </div>
+
+      <div class="quickstart-card">
+        <div class="tabs-header">
+          <button class="tab-trigger active" onclick="switchTab('cdn', this)">
+            <span class="material-symbols-outlined">cloud</span>
+            CDN (Zero-Build)
+          </button>
+          <button class="tab-trigger" onclick="switchTab('npm', this)">
+            <span class="material-symbols-outlined">terminal</span>
+            NPM / Bundlers
+          </button>
+          <button class="tab-trigger" onclick="switchTab('self', this)">
+            <span class="material-symbols-outlined">folder</span>
+            Self-Hosted
+          </button>
+        </div>
+
+        <!-- CDN Tab -->
+        <div id="tab-cdn" class="tab-content active">
+          <p style="margin: 0 0 1rem; color: var(--md-sys-color-on-surface-variant)">
+            Add the importmap to your HTML <code>&lt;head&gt;</code> and immediately import components:
+          </p>
+          <div class="code-container">
+            <button class="copy-action" onclick="copySnippet(document.getElementById('cdnCode').innerText, this)">
+              <span class="material-symbols-outlined" style="font-size: 16px">content_copy</span>
+              <span>Copy</span>
+            </button>
+            <pre><code id="cdnCode">&lt;!-- 1. Add Importmap in &lt;head&gt; --&gt;
+&lt;script type="importmap"&gt;
+{
+  "imports": {
+    "lit": "https://cdn.jsdelivr.net/npm/lit@3/index.js",
+    "lit/": "https://cdn.jsdelivr.net/npm/lit@3/",
+    "@lit/localize": "https://cdn.jsdelivr.net/npm/@lit/localize/lit-localize.js",
+    "@lit/reactive-element": "https://cdn.jsdelivr.net/npm/@lit/reactive-element@2/reactive-element.js",
+    "@lit/reactive-element/": "https://cdn.jsdelivr.net/npm/@lit/reactive-element@2/",
+    "lit-element/lit-element.js": "https://cdn.jsdelivr.net/npm/lit-element@4/lit-element.js",
+    "lit-html": "https://cdn.jsdelivr.net/npm/lit-html@3/lit-html.js",
+    "lit-html/": "https://cdn.jsdelivr.net/npm/lit-html@3/",
+    "material/": "https://cdn.jsdelivr.net/gh/material-esm/material@3/"
+  }
+}
+&lt;/script&gt;
+
+&lt;!-- 2. Import components anywhere --&gt;
+&lt;script type="module"&gt;
+  import 'material/buttons/button.js'
+  import 'material/text/text-field.js'
+&lt;/script&gt;
+
+&lt;!-- 3. Use components directly --&gt;
+&lt;md-text-field label="Your Name"&gt;&lt;/md-text-field&gt;
+&lt;md-button color="filled"&gt;Submit&lt;/md-button&gt;</code></pre>
+          </div>
+        </div>
+
+        <!-- NPM Tab -->
+        <div id="tab-npm" class="tab-content">
+          <p style="margin: 0 0 1rem; color: var(--md-sys-color-on-surface-variant)">
+            Install via npm or yarn for Vite, Next.js, Rollup, or webpack setups:
+          </p>
+          <div class="code-container">
+            <button class="copy-action" onclick="copySnippet(document.getElementById('npmCode').innerText, this)">
+              <span class="material-symbols-outlined" style="font-size: 16px">content_copy</span>
+              <span>Copy</span>
+            </button>
+            <pre><code id="npmCode"># Install with npm
+npm install material-esm/material
+
+# Or with pnpm / yarn
+pnpm add material-esm/material
+
+// In your application code (React, Vue, Svelte, Vite):
+import 'material/buttons/button.js'
+import 'material/text/text-field.js'
+import 'material/indicators/progress.js'</code></pre>
+          </div>
+        </div>
+
+        <!-- Self-Hosted Tab -->
+        <div id="tab-self" class="tab-content">
+          <p style="margin: 0 0 1rem; color: var(--md-sys-color-on-surface-variant)">
+            Serve the repository directly from your local static assets directory:
+          </p>
+          <div class="code-container">
+            <button class="copy-action" onclick="copySnippet(document.getElementById('selfCode').innerText, this)">
+              <span class="material-symbols-outlined" style="font-size: 16px">content_copy</span>
+              <span>Copy</span>
+            </button>
+            <pre><code id="selfCode">&lt;!-- Point importmap to your local vendor directory --&gt;
+&lt;script type="importmap"&gt;
+{
+  "imports": {
+    "lit": "https://cdn.jsdelivr.net/npm/lit@3/index.js",
+    "lit/": "https://cdn.jsdelivr.net/npm/lit@3/",
+    "material/": "./vendor/material/"
+  }
+}
+&lt;/script&gt;</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Component Showcase Section -->
+    <section id="components" class="section">
+      <div class="section-header">
+        <div class="section-eyebrow">Interactive Catalog</div>
+        <h2>Component Showcase</h2>
+        <p>Explore live Material 3 components running in your browser.</p>
+      </div>
+
+      <!-- Filter Chips -->
+      <div class="filter-chips">
+        <button class="filter-chip active" onclick="filterShowcase('all', this)">All Components</button>
+        <button class="filter-chip" onclick="filterShowcase('carousel', this)">Carousel</button>
+        <button class="filter-chip" onclick="filterShowcase('indicators', this)">Progress & Indicators</button>
+        <button class="filter-chip" onclick="filterShowcase('buttons', this)">Buttons & FAB</button>
+        <button class="filter-chip" onclick="filterShowcase('inputs', this)">Inputs & Fields</button>
+        <button class="filter-chip" onclick="filterShowcase('surfaces', this)">Surfaces & Navigation</button>
+        <button class="filter-chip" onclick="filterShowcase('chips', this)">Chips & Badges</button>
+      </div>
+
+      <div class="showcase-grid">
+        <!-- 1. Carousel Showcase (Cooler stuff at top) -->
+        <div class="showcase-card" data-category="carousel">
+          <div class="showcase-header">
+            <h3>Multi-Browse Carousel</h3>
+            <a href="carousel/README.md" class="showcase-docs-link">
+              Docs <span class="material-symbols-outlined" style="font-size: 16px">arrow_forward</span>
+            </a>
+          </div>
+          <div class="showcase-preview" style="width: 100%; padding: 10px">
+            <md-carousel layout="multi-browse" indicators loop style="width: 100%; height: 160px">
+              <md-carousel-item interactive headline="Mountain Vista">
+                <img src="./demo/images/img1.jpg" alt="Mountain" style="width: 100%; height: 100%; object-fit: cover" />
+              </md-carousel-item>
+              <md-carousel-item interactive headline="Ocean Coast">
+                <img src="./demo/images/img2.jpg" alt="Ocean" style="width: 100%; height: 100%; object-fit: cover" />
+              </md-carousel-item>
+              <md-carousel-item interactive headline="Redwood Forest">
+                <img src="./demo/images/img3.jpg" alt="Forest" style="width: 100%; height: 100%; object-fit: cover" />
+              </md-carousel-item>
+            </md-carousel>
+          </div>
+          <div class="showcase-code">
+            <code
+              >&lt;md-carousel layout="multi-browse" indicators loop&gt; &lt;md-carousel-item headline="Mountain
+              Vista"&gt; &lt;img src="photo.jpg" /&gt; &lt;/md-carousel-item&gt; &lt;/md-carousel&gt;</code
+            >
+          </div>
+        </div>
+
+        <!-- 2. Indicators & M3 Expressive Showcase (Cooler stuff at top) -->
+        <div class="showcase-card" data-category="indicators">
+          <div class="showcase-header">
+            <h3>Expressive Progress & Loading</h3>
+            <a href="indicators/README.md" class="showcase-docs-link">
+              Docs <span class="material-symbols-outlined" style="font-size: 16px">arrow_forward</span>
+            </a>
+          </div>
+          <div class="showcase-preview" style="width: 100%">
+            <div style="width: 100%; display: flex; flex-direction: column; gap: 12px">
+              <span style="font-size: 0.85rem; font-weight: 500">Wavy Linear Track (Expressive)</span>
+              <md-progress type="linear" shape="wavy" indeterminate></md-progress>
+              <div style="display: flex; align-items: center; gap: 16px; margin-top: 6px">
+                <md-progress type="circular" shape="wavy" indeterminate></md-progress>
+                <md-loading contained size="40"></md-loading>
+                <md-loading size="40"></md-loading>
+                <md-button color="tonal" onclick="triggerToast()">
+                  <md-icon slot="icon">chat</md-icon> Show Toast
+                </md-button>
+              </div>
+            </div>
+          </div>
+          <div class="showcase-code">
+            <code
+              >&lt;md-progress type="linear" shape="wavy" indeterminate&gt;&lt;/md-progress&gt; &lt;md-loading
+              contained&gt;&lt;/md-loading&gt;</code
+            >
+          </div>
+        </div>
+
+        <!-- 3. Buttons Showcase -->
+        <div class="showcase-card" data-category="buttons">
+          <div class="showcase-header">
+            <h3>Buttons & Button Groups</h3>
+            <a href="buttons/README.md" class="showcase-docs-link">
+              Docs <span class="material-symbols-outlined" style="font-size: 16px">arrow_forward</span>
+            </a>
+          </div>
+          <div class="showcase-preview">
+            <div class="preview-row">
+              <md-button color="filled">Filled</md-button>
+              <md-button color="tonal">Tonal</md-button>
+              <md-button color="outlined">Outlined</md-button>
+              <md-button color="elevated">Elevated</md-button>
+              <md-button color="text">Text</md-button>
+            </div>
+            <div class="preview-row">
+              <md-button-group connected checkmark aria-label="Options">
+                <md-button color="tonal" selected>Small</md-button>
+                <md-button color="tonal">Medium</md-button>
+                <md-button color="tonal">Large</md-button>
+              </md-button-group>
+            </div>
+          </div>
+          <div class="showcase-code">
+            <code
+              >&lt;md-button color="filled"&gt;Filled&lt;/md-button&gt; &lt;md-button-group connected checkmark&gt;
+              &lt;md-button color="tonal" selected&gt;Option 1&lt;/md-button&gt; &lt;/md-button-group&gt;</code
+            >
+          </div>
+        </div>
+
+        <!-- 4. FABs & Icon Buttons -->
+        <div class="showcase-card" data-category="buttons">
+          <div class="showcase-header">
+            <h3>FAB & Icon Buttons</h3>
+            <a href="buttons/README.md" class="showcase-docs-link">
+              Docs <span class="material-symbols-outlined" style="font-size: 16px">arrow_forward</span>
+            </a>
+          </div>
+          <div class="showcase-preview">
+            <div class="preview-row">
+              <md-fab variant="primary" label="New Item" extended>
+                <md-icon slot="icon">edit</md-icon>
+              </md-fab>
+              <md-fab variant="secondary" lowered>
+                <md-icon slot="icon">favorite</md-icon>
+              </md-fab>
+              <md-icon-button>
+                <md-icon>settings</md-icon>
+              </md-icon-button>
+              <md-icon-button>
+                <md-icon>share</md-icon>
+              </md-icon-button>
+            </div>
+          </div>
+          <div class="showcase-code">
+            <code
+              >&lt;md-fab variant="primary" label="New Item" extended&gt; &lt;md-icon
+              slot="icon"&gt;edit&lt;/md-icon&gt; &lt;/md-fab&gt;</code
+            >
+          </div>
+        </div>
+
+        <!-- 5. Text Fields -->
+        <div class="showcase-card" data-category="inputs">
+          <div class="showcase-header">
+            <h3>Text Fields</h3>
+            <a href="text/README.md" class="showcase-docs-link">
+              Docs <span class="material-symbols-outlined" style="font-size: 16px">arrow_forward</span>
+            </a>
+          </div>
+          <div class="showcase-preview" style="width: 100%">
+            <div style="width: 100%; display: flex; flex-direction: column; gap: 12px">
+              <md-text-field
+                label="Full Name"
+                value="Alex Chen"
+                supporting-text="Your display username"></md-text-field>
+              <md-text-field color="filled" label="Email Address" value="alex@example.com"></md-text-field>
+            </div>
+          </div>
+          <div class="showcase-code">
+            <code
+              >&lt;md-text-field label="Full Name" supporting-text="..."&gt;&lt;/md-text-field&gt; &lt;md-text-field
+              color="filled" label="Email"&gt;&lt;/md-text-field&gt;</code
+            >
+          </div>
+        </div>
+
+        <!-- 6. Selection Controls -->
+        <div class="showcase-card" data-category="inputs">
+          <div class="showcase-header">
+            <h3>Switches, Checkboxes & Sliders</h3>
+            <a href="switch/README.md" class="showcase-docs-link">
+              Docs <span class="material-symbols-outlined" style="font-size: 16px">arrow_forward</span>
+            </a>
+          </div>
+          <div class="showcase-preview" style="width: 100%">
+            <div class="preview-row" style="width: 100%; justify-content: space-between">
+              <div style="display: flex; align-items: center; gap: 12px">
+                <md-switch selected icons></md-switch>
+                <md-switch></md-switch>
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px">
+                <md-checkbox checked></md-checkbox>
+                <md-checkbox indeterminate></md-checkbox>
+                <md-radio name="r1" checked></md-radio>
+                <md-radio name="r1"></md-radio>
+              </div>
+            </div>
+            <div style="width: 100%; margin-top: 8px">
+              <md-slider value="65" min="0" max="100" labeled style="width: 100%"></md-slider>
+            </div>
+          </div>
+          <div class="showcase-code">
+            <code
+              >&lt;md-switch selected icons&gt;&lt;/md-switch&gt; &lt;md-checkbox checked&gt;&lt;/md-checkbox&gt;
+              &lt;md-slider value="65" labeled&gt;&lt;/md-slider&gt;</code
+            >
+          </div>
+        </div>
+
+        <!-- 7. Surfaces & Cards -->
+        <div class="showcase-card" data-category="surfaces">
+          <div class="showcase-header">
+            <h3>Cards & Surfaces</h3>
+            <a href="card/README.md" class="showcase-docs-link">
+              Docs <span class="material-symbols-outlined" style="font-size: 16px">arrow_forward</span>
+            </a>
+          </div>
+          <div class="showcase-preview" style="width: 100%">
+            <md-card type="outlined" style="width: 100%; padding: 14px">
+              <div style="font-weight: 600; margin-bottom: 4px">Outlined Card Container</div>
+              <div style="font-size: 0.85rem; color: var(--md-sys-color-on-surface-variant)">
+                Supports filled, elevated, and outlined container styles with Material 3 elevation.
+              </div>
+            </md-card>
+          </div>
+          <div class="showcase-code">
+            <code>&lt;md-card type="outlined"&gt; &lt;h4&gt;Card Header&lt;/h4&gt; &lt;/md-card&gt;</code>
+          </div>
+        </div>
+
+        <!-- 8. Chips & Badges -->
+        <div class="showcase-card" data-category="chips">
+          <div class="showcase-header">
+            <h3>Chips & Badges</h3>
+            <a href="chips/README.md" class="showcase-docs-link">
+              Docs <span class="material-symbols-outlined" style="font-size: 16px">arrow_forward</span>
+            </a>
+          </div>
+          <div class="showcase-preview">
+            <div class="preview-row">
+              <md-chip-set>
+                <md-chip type="filter" label="Verified" selected></md-chip>
+                <md-chip type="filter" label="Open Source"></md-chip>
+                <md-chip type="assist" label="Sponsor">
+                  <md-icon slot="icon">favorite</md-icon>
+                </md-chip>
+              </md-chip-set>
+            </div>
+            <div class="preview-row" style="margin-top: 6px">
+              <span style="position: relative; display: inline-flex">
+                <md-icon-button>
+                  <md-icon>notifications</md-icon>
+                </md-icon-button>
+                <md-badge value="5" style="position: absolute; top: 4px; right: 4px"></md-badge>
+              </span>
+              <span style="position: relative; display: inline-flex">
+                <md-icon-button>
+                  <md-icon>mail</md-icon>
+                </md-icon-button>
+                <md-badge style="position: absolute; top: 8px; right: 8px"></md-badge>
+              </span>
+            </div>
+          </div>
+          <div class="showcase-code">
+            <code
+              >&lt;md-chip type="filter" label="Filter" selected&gt;&lt;/md-chip&gt; &lt;md-badge
+              value="5"&gt;&lt;/md-badge&gt;</code
+            >
+          </div>
+        </div>
+
+        <!-- 9. Lists & Items -->
+        <div class="showcase-card" data-category="surfaces">
+          <div class="showcase-header">
+            <h3>Lists & List Items</h3>
+            <a href="list/README.md" class="showcase-docs-link">
+              Docs <span class="material-symbols-outlined" style="font-size: 16px">arrow_forward</span>
+            </a>
+          </div>
+          <div class="showcase-preview" style="width: 100%">
+            <md-list style="width: 100%; background: var(--md-sys-color-surface-container); border-radius: 12px">
+              <md-list-item>
+                <md-icon slot="start">widgets</md-icon>
+                <div slot="headline">Components Library</div>
+                <div slot="supporting-text">23 production-ready modules</div>
+                <md-icon slot="end">chevron_right</md-icon>
+              </md-list-item>
+              <md-divider></md-divider>
+              <md-list-item>
+                <md-icon slot="start">auto_awesome</md-icon>
+                <div slot="headline">Material Expressive</div>
+                <div slot="supporting-text">Full motion & wave indicators</div>
+                <md-icon slot="end">chevron_right</md-icon>
+              </md-list-item>
+            </md-list>
+          </div>
+          <div class="showcase-code">
+            <code
+              >&lt;md-list&gt; &lt;md-list-item&gt; &lt;md-icon slot="start"&gt;widgets&lt;/md-icon&gt; &lt;div
+              slot="headline"&gt;Title&lt;/div&gt; &lt;div slot="supporting-text"&gt;Subhead&lt;/div&gt;
+              &lt;/md-list-item&gt; &lt;/md-list&gt;</code
+            >
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Dedicated Demos Section -->
+    <section id="demos" class="section" style="background: var(--md-sys-color-surface-container-low)">
+      <div class="section-header">
+        <div class="section-eyebrow">Explore Live Applications</div>
+        <h2>Specialized Component Demos</h2>
+        <p>Interact with complete application layouts and dedicated component testbeds.</p>
+      </div>
+
+      <div class="demos-grid">
+        <a href="./demo/" class="demo-card">
+          <div class="demo-card-top">
+            <div class="demo-icon">
+              <span class="material-symbols-outlined">dashboard</span>
+            </div>
+            <div>
+              <h3>Expressive Demo</h3>
+              <p>
+                The full kitchen-sink sandbox showcasing responsive navigation rail, app bar, search, and form inputs.
+              </p>
+            </div>
+          </div>
+          <span class="demo-cta">
+            Open Demo <span class="material-symbols-outlined" style="font-size: 18px">arrow_forward</span>
+          </span>
+        </a>
+
+        <a href="./demo/carousel-demo.html" class="demo-card">
+          <div class="demo-card-top">
+            <div class="demo-icon">
+              <span class="material-symbols-outlined">view_carousel</span>
+            </div>
+            <div>
+              <h3>Carousel Showcase</h3>
+              <p>
+                Multi-browse, uncontained, and hero carousel layouts with touch/drag snapping and pagination indicators.
+              </p>
+            </div>
+          </div>
+          <span class="demo-cta">
+            Open Demo <span class="material-symbols-outlined" style="font-size: 18px">arrow_forward</span>
+          </span>
+        </a>
+
+        <a href="./demo/app-bar-demo.html" class="demo-card">
+          <div class="demo-card-top">
+            <div class="demo-icon">
+              <span class="material-symbols-outlined">menu_open</span>
+            </div>
+            <div>
+              <h3>App Bar & Nav Drawer</h3>
+              <p>Mobile drawer toggle, responsive navigation rail, action items, and collapsible top bars.</p>
+            </div>
+          </div>
+          <span class="demo-cta">
+            Open Demo <span class="material-symbols-outlined" style="font-size: 18px">arrow_forward</span>
+          </span>
+        </a>
+
+        <a href="./demo/date-picker-demo.html" class="demo-card">
+          <div class="demo-card-top">
+            <div class="demo-icon">
+              <span class="material-symbols-outlined">calendar_month</span>
+            </div>
+            <div>
+              <h3>Date Picker</h3>
+              <p>Interactive calendar grid, year/month switching, date ranges, and dialog modal pickers.</p>
+            </div>
+          </div>
+          <span class="demo-cta">
+            Open Demo <span class="material-symbols-outlined" style="font-size: 18px">arrow_forward</span>
+          </span>
+        </a>
+
+        <a href="./demo/time-picker-demo.html" class="demo-card">
+          <div class="demo-card-top">
+            <div class="demo-icon">
+              <span class="material-symbols-outlined">schedule</span>
+            </div>
+            <div>
+              <h3>Time Picker</h3>
+              <p>Clock dial selection, AM/PM toggle, direct numeric keyboard input, and modal dialogues.</p>
+            </div>
+          </div>
+          <span class="demo-cta">
+            Open Demo <span class="material-symbols-outlined" style="font-size: 18px">arrow_forward</span>
+          </span>
+        </a>
+
+        <a href="./demo/list-demo.html" class="demo-card">
+          <div class="demo-card-top">
+            <div class="demo-icon">
+              <span class="material-symbols-outlined">format_list_bulleted</span>
+            </div>
+            <div>
+              <h3>List & Items</h3>
+              <p>
+                Single-line, two-line, and three-line lists with leading avatars, icons, badges, and trailing controls.
+              </p>
+            </div>
+          </div>
+          <span class="demo-cta">
+            Open Demo <span class="material-symbols-outlined" style="font-size: 18px">arrow_forward</span>
+          </span>
+        </a>
+      </div>
+    </section>
+
+    <!-- Documentation Quick Index -->
+    <section id="docs" class="section">
+      <div class="section-header">
+        <div class="section-eyebrow">API Documentation</div>
+        <h2>Component Directory</h2>
+        <p>Comprehensive documentation and usage guides for each component in the library.</p>
+      </div>
+
+      <div class="comp-directory-grid">
+        <a href="app/README.md" class="comp-item">
+          <span class="material-symbols-outlined">web_asset</span>
+          App Bar
+        </a>
+        <a href="badge/README.md" class="comp-item">
+          <span class="material-symbols-outlined">mark_chat_unread</span>
+          Badge
+        </a>
+        <a href="buttons/README.md" class="comp-item">
+          <span class="material-symbols-outlined">smart_button</span>
+          Buttons
+        </a>
+        <a href="card/README.md" class="comp-item">
+          <span class="material-symbols-outlined">crop_portrait</span>
+          Card
+        </a>
+        <a href="carousel/README.md" class="comp-item">
+          <span class="material-symbols-outlined">view_carousel</span>
+          Carousel
+        </a>
+        <a href="checkbox/README.md" class="comp-item">
+          <span class="material-symbols-outlined">check_box</span>
+          Checkbox
+        </a>
+        <a href="chips/README.md" class="comp-item">
+          <span class="material-symbols-outlined">label</span>
+          Chips
+        </a>
+        <a href="dialog/README.md" class="comp-item">
+          <span class="material-symbols-outlined">chat_bubble</span>
+          Dialog
+        </a>
+        <a href="divider/README.md" class="comp-item">
+          <span class="material-symbols-outlined">horizontal_rule</span>
+          Divider
+        </a>
+        <a href="icon/README.md" class="comp-item">
+          <span class="material-symbols-outlined">sentiment_satisfied</span>
+          Icon
+        </a>
+        <a href="indicators/README.md" class="comp-item">
+          <span class="material-symbols-outlined">progress_activity</span>
+          Indicators
+        </a>
+        <a href="list/README.md" class="comp-item">
+          <span class="material-symbols-outlined">format_list_bulleted</span>
+          List
+        </a>
+        <a href="menu/README.md" class="comp-item">
+          <span class="material-symbols-outlined">menu</span>
+          Menu
+        </a>
+        <a href="nav/README.md" class="comp-item">
+          <span class="material-symbols-outlined">navigation</span>
+          Navigation
+        </a>
+        <a href="pickers/README.md" class="comp-item">
+          <span class="material-symbols-outlined">calendar_today</span>
+          Pickers
+        </a>
+        <a href="radio/README.md" class="comp-item">
+          <span class="material-symbols-outlined">radio_button_checked</span>
+          Radio
+        </a>
+        <a href="search/README.md" class="comp-item">
+          <span class="material-symbols-outlined">search</span>
+          Search
+        </a>
+        <a href="select/README.md" class="comp-item">
+          <span class="material-symbols-outlined">arrow_drop_down_circle</span>
+          Select
+        </a>
+        <a href="slider/README.md" class="comp-item">
+          <span class="material-symbols-outlined">tune</span>
+          Slider
+        </a>
+        <a href="snackbar/README.md" class="comp-item">
+          <span class="material-symbols-outlined">notifications</span>
+          Snackbar
+        </a>
+        <a href="switch/README.md" class="comp-item">
+          <span class="material-symbols-outlined">toggle_on</span>
+          Switch
+        </a>
+        <a href="tabs/README.md" class="comp-item">
+          <span class="material-symbols-outlined">tab</span>
+          Tabs
+        </a>
+        <a href="text/README.md" class="comp-item">
+          <span class="material-symbols-outlined">text_fields</span>
+          Text Field
+        </a>
+        <a href="tooltip/README.md" class="comp-item">
+          <span class="material-symbols-outlined">info</span>
+          Tooltip
+        </a>
+      </div>
+    </section>
+
+    <!-- Global Toast Component for interactive feedback -->
+    <md-snackbar id="globalSnackbar" message="Material 3 notification active!"></md-snackbar>
+
+    <!-- Footer -->
+    <footer>
+      <div class="footer-container">
+        <div class="footer-brand">
+          <h4>
+            <img src="./demo/images/material.jpeg" alt="Logo" style="width: 24px; height: 24px; border-radius: 6px" />
+            Material ESM
+          </h4>
+          <p>
+            Pure ESM implementation of Google Material Design 3 Web Components. Built for modern browsers,
+            framework-independent, and fully open-source.
+          </p>
+          <div style="display: flex; gap: 8px">
+            <md-button color="tonal" size="small" href="https://github.com/sponsors/treeder" target="_blank">
+              <md-icon slot="icon">favorite</md-icon>
+              Sponsor Project
+            </md-button>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h5>Documentation</h5>
+          <ul>
+            <li><a href="README.md">Getting Started</a></li>
+            <li><a href="#quickstart">CDN & NPM Setup</a></li>
+            <li><a href="#components">Component Catalog</a></li>
+            <li><a href="https://m3.material.io/" target="_blank">Material 3 Guidelines</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h5>Demos & Tools</h5>
+          <ul>
+            <li><a href="./demo/">Expressive Demo</a></li>
+            <li><a href="./demo/carousel-demo.html">Carousel Showcase</a></li>
+            <li><a href="./demo/app-bar-demo.html">App Bar & Nav</a></li>
+            <li><a href="./demo/date-picker-demo.html">Date & Time Pickers</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h5>Community</h5>
+          <ul>
+            <li><a href="https://github.com/material-esm/material" target="_blank">GitHub Repository</a></li>
+            <li><a href="https://github.com/material-esm/material/issues" target="_blank">Issue Tracker</a></li>
+            <li><a href="https://github.com/material-esm/material/releases" target="_blank">Releases</a></li>
+            <li>
+              <a href="https://www.jsdelivr.com/package/gh/material-esm/material" target="_blank">jsDelivr CDN</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>Released under the Apache-2.0 License. Maintained by the Material ESM community.</div>
+        <div>
+          <a href="#" style="margin-left: 12px; font-weight: 500">Back to Top ↑</a>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Interactive Scripts -->
+    <script>
+      // Theme Switcher Logic (Light / Dark / Device)
+      const themeToggleBtn = document.getElementById('themeToggleBtn')
+      const themeIcon = document.getElementById('themeIcon')
+      const themeMenu = document.getElementById('themeMenu')
+      const themeMenuItems = document.querySelectorAll('.theme-menu-item')
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+
+      function getSavedTheme() {
+        return localStorage.getItem('material-theme') || 'device'
+      }
+
+      function updateThemeUI(theme) {
+        document.documentElement.setAttribute('data-theme', theme)
+
+        const isDeviceDark = mediaQuery.matches
+        let iconName = 'devices'
+        let themeLabel = 'Device'
+
+        if (theme === 'light') {
+          iconName = 'light_mode'
+          themeLabel = 'Light'
+        } else if (theme === 'dark') {
+          iconName = 'dark_mode'
+          themeLabel = 'Dark'
+        } else {
+          iconName = 'devices'
+          themeLabel = `Device (${isDeviceDark ? 'Dark' : 'Light'})`
+        }
+
+        if (themeIcon) {
+          themeIcon.textContent = iconName
+        }
+
+        if (themeToggleBtn) {
+          themeToggleBtn.setAttribute('title', `Theme: ${themeLabel}`)
+          themeToggleBtn.setAttribute('aria-label', `Theme: ${themeLabel}`)
+        }
+
+        themeMenuItems.forEach((item) => {
+          const itemVal = item.getAttribute('data-theme-value')
+          const isActive = itemVal === theme
+          item.classList.toggle('active', isActive)
+          item.setAttribute('aria-checked', isActive ? 'true' : 'false')
+        })
+      }
+
+      function applyTheme(theme) {
+        localStorage.setItem('material-theme', theme)
+        updateThemeUI(theme)
+      }
+
+      // Initial theme setup
+      const initialTheme = getSavedTheme()
+      updateThemeUI(initialTheme)
+
+      // Listen for system/device theme changes when in 'device' mode
+      mediaQuery.addEventListener('change', () => {
+        if (getSavedTheme() === 'device') {
+          updateThemeUI('device')
+        }
+      })
+
+      // Theme dropdown menu toggle & keyboard accessibility
+      function openThemeMenu() {
+        themeMenu?.classList.add('open')
+        themeToggleBtn?.setAttribute('aria-expanded', 'true')
+        const activeItem = themeMenu?.querySelector('.theme-menu-item.active')
+        activeItem?.focus()
+      }
+
+      function closeThemeMenu() {
+        themeMenu?.classList.remove('open')
+        themeToggleBtn?.setAttribute('aria-expanded', 'false')
+      }
+
+      function toggleThemeMenu() {
+        if (themeMenu?.classList.contains('open')) {
+          closeThemeMenu()
+        } else {
+          openThemeMenu()
+        }
+      }
+
+      themeToggleBtn?.addEventListener('click', (e) => {
+        e.stopPropagation()
+        toggleThemeMenu()
+      })
+
+      themeMenuItems.forEach((item) => {
+        item.addEventListener('click', (e) => {
+          e.stopPropagation()
+          const val = item.getAttribute('data-theme-value')
+          if (val) {
+            applyTheme(val)
+          }
+          closeThemeMenu()
+          themeToggleBtn?.focus()
+        })
+      })
+
+      themeMenu?.addEventListener('keydown', (e) => {
+        const items = Array.from(themeMenuItems)
+        const currentIndex = items.indexOf(document.activeElement)
+        if (e.key === 'ArrowDown') {
+          e.preventDefault()
+          const nextIndex = (currentIndex + 1) % items.length
+          items[nextIndex].focus()
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault()
+          const prevIndex = (currentIndex - 1 + items.length) % items.length
+          items[prevIndex].focus()
+        }
+      })
+
+      document.addEventListener('click', (e) => {
+        if (!themeMenu?.contains(e.target) && e.target !== themeToggleBtn) {
+          closeThemeMenu()
+        }
+      })
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && themeMenu?.classList.contains('open')) {
+          closeThemeMenu()
+          themeToggleBtn?.focus()
+        }
+      })
+
+      // Mobile Menu Toggle
+      const mobileMenuBtn = document.getElementById('mobileMenuBtn')
+      const mobileNavDrawer = document.getElementById('mobileNavDrawer')
+
+      mobileMenuBtn?.addEventListener('click', () => {
+        mobileNavDrawer?.classList.toggle('open')
+      })
+
+      function closeMobileMenu() {
+        mobileNavDrawer?.classList.remove('open')
+      }
+
+      // Quickstart Tab Switching
+      function switchTab(tabId, el) {
+        document.querySelectorAll('.tab-trigger').forEach((btn) => btn.classList.remove('active'))
+        document.querySelectorAll('.tab-content').forEach((pane) => pane.classList.remove('active'))
+
+        el.classList.add('active')
+        const target = document.getElementById(`tab-${tabId}`)
+        if (target) target.classList.add('active')
+      }
+
+      // Copy Snippet Logic
+      function copySnippet(text, button) {
+        navigator.clipboard.writeText(text).then(() => {
+          const originalText = button.innerHTML
+          button.innerHTML = '<span class="material-symbols-outlined" style="font-size:16px">check</span> Copied!'
+          setTimeout(() => {
+            button.innerHTML = originalText
+          }, 2000)
+        })
+      }
+
+      // Component Showcase Filtering
+      function filterShowcase(category, el) {
+        document.querySelectorAll('.filter-chip').forEach((chip) => chip.classList.remove('active'))
+        el.classList.add('active')
+
+        document.querySelectorAll('.showcase-card').forEach((card) => {
+          if (category === 'all' || card.getAttribute('data-category') === category) {
+            card.style.display = 'flex'
+          } else {
+            card.style.display = 'none'
+          }
+        })
+      }
+
+      // Trigger Snackbars
+      function triggerHeroSnackbar() {
+        const snackbar = document.getElementById('globalSnackbar')
+        if (snackbar) {
+          snackbar.message = '⚡ Live Material 3 snackbar activated!'
+          snackbar.show()
+        }
+      }
+
+      function triggerToast() {
+        const snackbar = document.getElementById('globalSnackbar')
+        if (snackbar) {
+          snackbar.message = '🚀 Material 3 Expressive motion in pure ESM!'
+          snackbar.show()
+        }
+      }
+    </script>
   </body>
 </html>
