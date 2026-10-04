@@ -229,6 +229,7 @@ export class TextField extends textFieldBaseClass {
      * - search
      * - tel
      * - url
+     * - color
      *
      * See
      * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#input_types
@@ -385,11 +386,27 @@ export class TextField extends textFieldBaseClass {
     this.value = input.value
   }
   /**
+   * Shows a picker for the text field, such as a color picker or file picker.
+   *
+   * https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/showPicker
+   */
+  showPicker() {
+    const input = this.getInput()
+    if (!input) {
+      return
+    }
+    if (typeof input.showPicker === 'function') {
+      input.showPicker()
+    } else {
+      input.click()
+    }
+  }
+  /**
    * Reset the text field to its default value.
    */
   reset() {
     this.dirty = false
-    this.value = this.getAttribute('value') ?? ''
+    this.value = this.getAttribute('value') ?? (this.type === 'color' ? '#000000' : '')
     this.nativeError = false
     this.nativeErrorText = ''
   }
@@ -397,6 +414,9 @@ export class TextField extends textFieldBaseClass {
     super.connectedCallback()
     if (!this.hasAttribute('color')) {
       this.setAttribute('color', this.color || 'outlined')
+    }
+    if (this.type === 'color' && !this.value) {
+      this.value = this.getAttribute('value') || '#000000'
     }
   }
   attributeChangedCallback(attribute, newValue, oldValue) {
@@ -414,8 +434,8 @@ export class TextField extends textFieldBaseClass {
     // Keep changedProperties arg so that subclasses may call it
     // If a property such as `type` changes and causes the internal <input>
     // value to change without dispatching an event, re-sync it.
-    const value = this.getInputOrTextarea().value
-    if (this.value !== value) {
+    const value = this.getInputOrTextarea()?.value
+    if (value !== undefined && this.value !== value) {
       // Note this is typically inefficient in updated() since it schedules
       // another update. However, it is needed for the <input> to fully render
       // before checking its value.
@@ -425,12 +445,34 @@ export class TextField extends textFieldBaseClass {
       this.handleIconChange()
     }
   }
+  handleClick(e) {
+    if (this.disabled || this.readOnly) {
+      return
+    }
+    if (this.type === 'color') {
+      const input = this.getInput()
+      if (!input) {
+        return
+      }
+      if (
+        e.target !== input &&
+        !e.target.closest?.('md-icon-button, button, a, [slot="leading-icon"], [slot="trailing-icon"]')
+      ) {
+        try {
+          this.showPicker()
+        } catch {
+          // Ignore if showPicker fails or is already open
+        }
+      }
+    }
+  }
   renderField() {
     const hasTrailing = this.hasTrailingIcon || this.hasError
 
     return staticHtml`<md-field
       color=${this.color}
       class="field"
+      @click=${this.handleClick}
       count=${this.value.length}
       ?disabled=${this.disabled}
       ?error=${this.hasError}
@@ -440,7 +482,7 @@ export class TextField extends textFieldBaseClass {
       ?has-start=${this.hasLeadingIcon}
       label=${this.label}
       max=${this.maxLength}
-      ?populated=${!!this.value}
+      ?populated=${!!this.value || this.type === 'color'}
       ?required=${this.required}
       ?resizable=${this.type === 'textarea'}
       supporting-text=${this.supportingText}
@@ -674,7 +716,7 @@ export class TextField extends textFieldBaseClass {
       this.type === 'time'
   }
   [getFormValue]() {
-    return this.value
+    return this.value || (this.type === 'color' ? '#000000' : '')
   }
   formResetCallback() {
     this.reset()
@@ -768,6 +810,15 @@ __decorate([
         resize: inherit;
       }
 
+      :host([type='color']:not([disabled]):not([readonly])) .field {
+        cursor: pointer;
+      }
+
+      :host([type='color'][disabled]) .field,
+      :host([type='color'][readonly]) .field {
+        cursor: default;
+      }
+
       .icon {
         color: currentColor;
         display: flex;
@@ -856,6 +907,53 @@ __decorate([
 
       :host([no-spinner]) .input[type='number'] {
         -moz-appearance: textfield;
+      }
+
+      .input[type='color'] {
+        appearance: auto;
+        -webkit-appearance: auto;
+        box-sizing: border-box;
+        cursor: pointer;
+        height: 28px;
+        min-height: 28px;
+        width: 100%;
+        border: none;
+        outline: none;
+        background: none;
+        padding: 0;
+        margin: 0;
+        vertical-align: middle;
+      }
+
+      .input[type='color']::-webkit-color-swatch-wrapper {
+        padding: 0;
+      }
+
+      .input[type='color']::-webkit-color-swatch {
+        border: 1px solid var(--_outline-color, var(--md-sys-color-outline-variant, rgba(120, 120, 120, 0.35)));
+        border-radius: var(--md-sys-shape-corner-extra-small, 4px);
+        box-sizing: border-box;
+      }
+
+      .input[type='color']::-moz-color-swatch {
+        border: 1px solid var(--_outline-color, var(--md-sys-color-outline-variant, rgba(120, 120, 120, 0.35)));
+        border-radius: var(--md-sys-shape-corner-extra-small, 4px);
+        box-sizing: border-box;
+      }
+
+      .input[type='color']::-moz-focus-inner {
+        border: 0;
+        padding: 0;
+      }
+
+      :host([disabled]) .input[type='color'],
+      :host([readonly]) .input[type='color'] {
+        cursor: default;
+        pointer-events: none;
+      }
+
+      :host([disabled]) .input[type='color'] {
+        opacity: var(--_disabled-input-text-opacity, 0.38);
       }
 
       :focus-within .input {
