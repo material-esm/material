@@ -418,6 +418,12 @@ class ExpressiveComponent extends LitElement {
               <md-text-field color="outlined" label="Time" type="time" required @change=${this.changed}></md-text-field>
               <md-text-field
                 color="outlined"
+                id="themeColor"
+                type="color"
+                label="Theme Color"
+                value="#6750a4"></md-text-field>
+              <md-text-field
+                color="outlined"
                 type="textarea"
                 id="commentBody"
                 label="What's on your mind?"
