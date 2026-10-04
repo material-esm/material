@@ -19,6 +19,13 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" />
 
+    <script>
+      ;(function () {
+        const theme = localStorage.getItem('material-theme') || 'device'
+        document.documentElement.setAttribute('data-theme', theme)
+      })()
+    </script>
+
     <style>
       /* --- Material 3 Color & Type Tokens --- */
       :root {
@@ -32,6 +39,7 @@
 
       :root,
       html[data-theme='light'] {
+        color-scheme: light;
         --md-sys-color-primary: rgb(78 91 146);
         --md-sys-color-surface-tint: rgb(78 91 146);
         --md-sys-color-on-primary: rgb(255 255 255);
@@ -79,6 +87,7 @@
 
       @media (prefers-color-scheme: dark) {
         :root:not([data-theme='light']) {
+          color-scheme: dark;
           --md-sys-color-primary: rgb(183 196 255);
           --md-sys-color-surface-tint: rgb(183 196 255);
           --md-sys-color-on-primary: rgb(30 45 97);
@@ -126,6 +135,7 @@
       }
 
       html[data-theme='dark'] {
+        color-scheme: dark;
         --md-sys-color-primary: rgb(183 196 255);
         --md-sys-color-surface-tint: rgb(183 196 255);
         --md-sys-color-on-primary: rgb(30 45 97);
@@ -293,6 +303,12 @@
         gap: 0.5rem;
       }
 
+      .theme-switcher-container {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+      }
+
       .theme-btn {
         background: transparent;
         border: none;
@@ -308,9 +324,94 @@
           background 0.2s,
           color 0.2s;
       }
-      .theme-btn:hover {
+      .theme-btn:hover,
+      .theme-btn[aria-expanded='true'] {
         background: var(--md-sys-color-surface-container-highest);
         color: var(--md-sys-color-primary);
+      }
+
+      .theme-menu {
+        position: absolute;
+        top: calc(100% + 8px);
+        right: 0;
+        min-width: 160px;
+        background: var(--md-sys-color-surface-container);
+        border: 1px solid var(--card-border);
+        border-radius: 12px;
+        padding: 6px;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+        z-index: 1002;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-6px) scale(0.96);
+        transform-origin: top right;
+        transition:
+          opacity 0.15s cubic-bezier(0.2, 0, 0, 1),
+          transform 0.15s cubic-bezier(0.2, 0, 0, 1),
+          visibility 0.15s;
+        pointer-events: none;
+      }
+
+      .theme-menu.open {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0) scale(1);
+        pointer-events: auto;
+      }
+
+      .theme-menu-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        width: 100%;
+        padding: 8px 12px;
+        border: none;
+        background: transparent;
+        color: var(--md-sys-color-on-surface);
+        border-radius: 8px;
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        text-align: left;
+        transition:
+          background 0.15s ease,
+          color 0.15s ease;
+      }
+
+      .theme-menu-item:hover,
+      .theme-menu-item:focus-visible {
+        background: var(--md-sys-color-surface-container-highest);
+        color: var(--md-sys-color-primary);
+        outline: none;
+      }
+
+      .theme-menu-item.active {
+        background: var(--md-sys-color-secondary-container);
+        color: var(--md-sys-color-on-secondary-container);
+        font-weight: 600;
+      }
+
+      .theme-menu-icon {
+        font-size: 20px;
+        color: inherit;
+      }
+
+      .theme-menu-label {
+        flex: 1;
+      }
+
+      .theme-menu-check {
+        font-size: 18px;
+        opacity: 0;
+        transition: opacity 0.15s ease;
+      }
+
+      .theme-menu-item.active .theme-menu-check {
+        opacity: 1;
       }
 
       .mobile-menu-btn {
@@ -1065,10 +1166,50 @@
         </ul>
 
         <div class="nav-actions">
-          <!-- Dark/Light Theme Toggle -->
-          <button id="themeToggleBtn" class="theme-btn" aria-label="Toggle dark mode" title="Toggle theme">
-            <span class="material-symbols-outlined" id="themeIcon">dark_mode</span>
-          </button>
+          <!-- Theme Switcher Dropdown (Light / Dark / Device) -->
+          <div class="theme-switcher-container">
+            <button
+              id="themeToggleBtn"
+              class="theme-btn"
+              aria-label="Theme: Device"
+              title="Theme: Device"
+              aria-haspopup="menu"
+              aria-expanded="false">
+              <span class="material-symbols-outlined" id="themeIcon">devices</span>
+            </button>
+            <div id="themeMenu" class="theme-menu" role="menu" aria-label="Select theme">
+              <button
+                type="button"
+                class="theme-menu-item"
+                data-theme-value="light"
+                role="menuitemradio"
+                aria-checked="false">
+                <span class="material-symbols-outlined theme-menu-icon">light_mode</span>
+                <span class="theme-menu-label">Light</span>
+                <span class="material-symbols-outlined theme-menu-check">check</span>
+              </button>
+              <button
+                type="button"
+                class="theme-menu-item"
+                data-theme-value="dark"
+                role="menuitemradio"
+                aria-checked="false">
+                <span class="material-symbols-outlined theme-menu-icon">dark_mode</span>
+                <span class="theme-menu-label">Dark</span>
+                <span class="material-symbols-outlined theme-menu-check">check</span>
+              </button>
+              <button
+                type="button"
+                class="theme-menu-item"
+                data-theme-value="device"
+                role="menuitemradio"
+                aria-checked="false">
+                <span class="material-symbols-outlined theme-menu-icon">devices</span>
+                <span class="theme-menu-label">Device</span>
+                <span class="material-symbols-outlined theme-menu-check">check</span>
+              </button>
+            </div>
+          </div>
 
           <!-- GitHub repo link -->
           <md-button color="outlined" href="https://github.com/material-esm/material" target="_blank" class="btn-text">
@@ -2025,33 +2166,131 @@ import 'material/indicators/progress.js'</code></pre>
 
     <!-- Interactive Scripts -->
     <script>
-      // Theme Toggle Logic
+      // Theme Switcher Logic (Light / Dark / Device)
       const themeToggleBtn = document.getElementById('themeToggleBtn')
       const themeIcon = document.getElementById('themeIcon')
+      const themeMenu = document.getElementById('themeMenu')
+      const themeMenuItems = document.querySelectorAll('.theme-menu-item')
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
 
-      function getInitialTheme() {
-        const savedTheme = localStorage.getItem('material-theme')
-        if (savedTheme) return savedTheme
-        const attrTheme = document.documentElement.getAttribute('data-theme')
-        if (attrTheme) return attrTheme
-        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+      function getSavedTheme() {
+        return localStorage.getItem('material-theme') || 'device'
+      }
+
+      function updateThemeUI(theme) {
+        document.documentElement.setAttribute('data-theme', theme)
+
+        const isDeviceDark = mediaQuery.matches
+        let iconName = 'devices'
+        let themeLabel = 'Device'
+
+        if (theme === 'light') {
+          iconName = 'light_mode'
+          themeLabel = 'Light'
+        } else if (theme === 'dark') {
+          iconName = 'dark_mode'
+          themeLabel = 'Dark'
+        } else {
+          iconName = 'devices'
+          themeLabel = `Device (${isDeviceDark ? 'Dark' : 'Light'})`
+        }
+
+        if (themeIcon) {
+          themeIcon.textContent = iconName
+        }
+
+        if (themeToggleBtn) {
+          themeToggleBtn.setAttribute('title', `Theme: ${themeLabel}`)
+          themeToggleBtn.setAttribute('aria-label', `Theme: ${themeLabel}`)
+        }
+
+        themeMenuItems.forEach((item) => {
+          const itemVal = item.getAttribute('data-theme-value')
+          const isActive = itemVal === theme
+          item.classList.toggle('active', isActive)
+          item.setAttribute('aria-checked', isActive ? 'true' : 'false')
+        })
       }
 
       function applyTheme(theme) {
-        document.documentElement.setAttribute('data-theme', theme)
-        if (themeIcon) {
-          themeIcon.textContent = theme === 'dark' ? 'light_mode' : 'dark_mode'
-        }
         localStorage.setItem('material-theme', theme)
+        updateThemeUI(theme)
       }
 
-      const initialTheme = getInitialTheme()
-      applyTheme(initialTheme)
+      // Initial theme setup
+      const initialTheme = getSavedTheme()
+      updateThemeUI(initialTheme)
 
-      themeToggleBtn?.addEventListener('click', () => {
-        const currentTheme = document.documentElement.getAttribute('data-theme') || 'light'
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark'
-        applyTheme(newTheme)
+      // Listen for system/device theme changes when in 'device' mode
+      mediaQuery.addEventListener('change', () => {
+        if (getSavedTheme() === 'device') {
+          updateThemeUI('device')
+        }
+      })
+
+      // Theme dropdown menu toggle & keyboard accessibility
+      function openThemeMenu() {
+        themeMenu?.classList.add('open')
+        themeToggleBtn?.setAttribute('aria-expanded', 'true')
+        const activeItem = themeMenu?.querySelector('.theme-menu-item.active')
+        activeItem?.focus()
+      }
+
+      function closeThemeMenu() {
+        themeMenu?.classList.remove('open')
+        themeToggleBtn?.setAttribute('aria-expanded', 'false')
+      }
+
+      function toggleThemeMenu() {
+        if (themeMenu?.classList.contains('open')) {
+          closeThemeMenu()
+        } else {
+          openThemeMenu()
+        }
+      }
+
+      themeToggleBtn?.addEventListener('click', (e) => {
+        e.stopPropagation()
+        toggleThemeMenu()
+      })
+
+      themeMenuItems.forEach((item) => {
+        item.addEventListener('click', (e) => {
+          e.stopPropagation()
+          const val = item.getAttribute('data-theme-value')
+          if (val) {
+            applyTheme(val)
+          }
+          closeThemeMenu()
+          themeToggleBtn?.focus()
+        })
+      })
+
+      themeMenu?.addEventListener('keydown', (e) => {
+        const items = Array.from(themeMenuItems)
+        const currentIndex = items.indexOf(document.activeElement)
+        if (e.key === 'ArrowDown') {
+          e.preventDefault()
+          const nextIndex = (currentIndex + 1) % items.length
+          items[nextIndex].focus()
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault()
+          const prevIndex = (currentIndex - 1 + items.length) % items.length
+          items[prevIndex].focus()
+        }
+      })
+
+      document.addEventListener('click', (e) => {
+        if (!themeMenu?.contains(e.target) && e.target !== themeToggleBtn) {
+          closeThemeMenu()
+        }
+      })
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && themeMenu?.classList.contains('open')) {
+          closeThemeMenu()
+          themeToggleBtn?.focus()
+        }
       })
 
       // Mobile Menu Toggle
