@@ -108,8 +108,31 @@
               id="profile-pic"
               src="./images/avatar2.png"
               class="circle"
+              tabindex="0"
+              role="button"
+              aria-haspopup="menu"
+              aria-expanded="false"
+              aria-label="User account menu"
               style="height: 36px; width: 36px; cursor: pointer"
               alt="Avatar" />
+            <md-menu id="user-menu" anchor="profile-pic" anchor-corner="end-end" menu-corner="start-end">
+              <md-menu-item id="profile-item">
+                <div slot="headline">Profile</div>
+                <md-icon class="startIcon" slot="start">person</md-icon>
+              </md-menu-item>
+              <md-menu-item id="goto-orgs">
+                <div slot="headline">My Organizations</div>
+                <md-icon class="startIcon" slot="start">storefront</md-icon>
+              </md-menu-item>
+              <md-menu-item id="goto-settings">
+                <div slot="headline">Settings</div>
+                <md-icon class="startIcon" slot="start">settings</md-icon>
+              </md-menu-item>
+              <md-menu-item id="goto-signout">
+                <div slot="headline">Sign out</div>
+                <md-icon class="startIcon" slot="start">logout</md-icon>
+              </md-menu-item>
+            </md-menu>
           </div>
         </md-app-bar>
 
@@ -118,6 +141,44 @@
         </div>
 
         <script>
+          const profilePic = document.getElementById('profile-pic')
+          const userMenu = document.getElementById('user-menu')
+
+          function toggleUserMenu() {
+            if (userMenu) {
+              userMenu.open = !userMenu.open
+            }
+          }
+
+          profilePic?.addEventListener('click', toggleUserMenu)
+          profilePic?.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              toggleUserMenu()
+            }
+          })
+
+          userMenu?.addEventListener('opened', () => {
+            profilePic?.setAttribute('aria-expanded', 'true')
+          })
+
+          userMenu?.addEventListener('closed', () => {
+            profilePic?.setAttribute('aria-expanded', 'false')
+          })
+
+          userMenu?.addEventListener('click', (e) => {
+            const item = e.target.closest('md-menu-item')
+            if (item) {
+              const headline = item.querySelector('[slot="headline"]')?.textContent?.trim()
+              console.log('Selected menu item:', headline)
+              const snackbar = document.querySelector('md-snackbar')
+              if (snackbar && headline) {
+                snackbar.message = `Selected: ${headline}`
+                snackbar.show()
+              }
+            }
+          })
+
           const topNavMenuButton = document.getElementById('top-nav-menu-button')
           const navRail = document.getElementById('nav-rail')
           const navDrawerContainer = document.getElementById('nav-drawer-container')
