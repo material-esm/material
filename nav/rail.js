@@ -83,7 +83,6 @@ export class Rail extends NavigationBar {
       .querySelector('slot[name="fab"]')
       ?.assignedElements({ flatten: true })
       .forEach((tab) => {
-        console.log('fab slot item:', tab)
         if (tab.tagName === 'MD-FAB') {
           tab.expanded = this.expanded
         }
@@ -92,7 +91,6 @@ export class Rail extends NavigationBar {
       .querySelector('slot:not([name])')
       ?.assignedElements({ flatten: true })
       .forEach((tab) => {
-        console.log('slot item:', tab)
         if (tab.tagName === 'MD-NAV-ITEM') {
           tab.expanded = this.expanded
         }
