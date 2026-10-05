@@ -178,7 +178,6 @@ export class Chip extends LitElement {
   }
 
   renderLeadingIcon() {
-    console.log('renderLeadingIcon, selected?', this.selected)
     if (!this.selected) {
       return html`<slot name="icon" @slotchange=${this.handleIconChange}></slot>`
     }
