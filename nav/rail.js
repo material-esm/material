@@ -107,21 +107,28 @@ export class Rail extends NavigationBar {
         position: sticky;
         top: 0;
         height: 100vh;
+        height: 100dvh;
+        overflow-y: auto;
+        overflow-x: hidden;
+        scrollbar-width: none;
         background-color: var(--md-sys-color-surface);
         border-right: 1px solid var(--md-sys-color-divider);
+        transition: width 200ms cubic-bezier(0.2, 0, 0, 1);
+      }
+
+      .md3-navigation-rail::-webkit-scrollbar {
+        display: none;
       }
 
       .md3-navigation-rail__tabs-slot-container {
         display: flex;
         flex-direction: column;
-        /* height: 100vh; */
         gap: 32px;
-        /* justify-content: space-between; */
         align-items: center;
       }
 
       .md3-navigation-rail-top {
-        padding-top: 40px;
+        padding-top: 24px;
         display: flex;
         flex-direction: column;
         gap: 12px;
@@ -136,21 +143,33 @@ export class Rail extends NavigationBar {
       }
 
       .md3-navigation-rail.expanded {
+        width: auto;
         min-width: 220px;
-        max-width: 360px;
+        max-width: min(360px, 85vw);
         padding-left: 16px;
+        padding-right: 16px;
       }
+
       .md3-navigation-rail__tabs-slot-container.expanded {
         align-items: start;
+        width: 100%;
       }
 
       .md3-navigation-rail-top.expanded {
         align-items: start;
+        padding-top: 16px;
         padding-left: 8px;
       }
 
       .menuSlot.expanded {
         padding-left: 8px;
+      }
+
+      .md3-navigation-rail__tabs-slot-container.expanded > div {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
       }
     `,
   ]
