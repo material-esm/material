@@ -66,7 +66,6 @@ Place `md-nav-rail` in a persistent container next to your main content.
       <md-nav-item label="Cart" badge-value="3" show-badge>
         <md-icon slot="active-icon">shopping_cart</md-icon>
         <md-icon slot="inactive-icon">shopping_cart</md-icon>
-        <md-badge value="3"></md-badge>
       </md-nav-item>
     </md-nav-rail>
   </div>
@@ -138,7 +137,6 @@ On compact / mobile screens (e.g. width < 600px), Material 3 guidelines recommen
       <md-nav-item label="Cart" badge-value="3" show-badge>
         <md-icon slot="active-icon">shopping_cart</md-icon>
         <md-icon slot="inactive-icon">shopping_cart</md-icon>
-        <md-badge value="3"></md-badge>
       </md-nav-item>
     </md-nav-rail>
   </div>
@@ -325,7 +323,6 @@ The bottom navigation bar displays three to five destinations at the bottom of a
   <md-nav-item label="Cart" badge-value="3" show-badge>
     <md-icon slot="active-icon">shopping_cart</md-icon>
     <md-icon slot="inactive-icon">shopping_cart</md-icon>
-    <md-badge value="3"></md-badge>
   </md-nav-item>
 </md-nav-bar>
 ```
@@ -353,7 +350,6 @@ Navigation items can be placed in either `md-nav-rail` or `md-nav-bar`. They rep
 <md-nav-item label="Notifications" badge-value="9+" show-badge>
   <md-icon slot="active-icon">notifications</md-icon>
   <md-icon slot="inactive-icon">notifications_none</md-icon>
-  <md-badge value="9+"></md-badge>
 </md-nav-item>
 ```
 
@@ -411,11 +407,10 @@ Navigation items can be placed in either `md-nav-rail` or `md-nav-bar`. They rep
 
 #### Slots
 
-| Slot            | Description                             |
-| --------------- | --------------------------------------- |
-| `active-icon`   | Icon displayed when item is active.     |
-| `inactive-icon` | Icon displayed when item is inactive.   |
-| `(default)`     | Additional content (e.g. `<md-badge>`). |
+| Slot            | Description                           |
+| --------------- | ------------------------------------- |
+| `active-icon`   | Icon displayed when item is active.   |
+| `inactive-icon` | Icon displayed when item is inactive. |
 
 ---
 
