@@ -2,25 +2,29 @@ import { defineConfig } from 'vite'
 import { cloudflare } from '@cloudflare/vite-plugin'
 import fs from 'node:fs'
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const rootDir = fileURLToPath(new URL('./', import.meta.url))
+const demoDir = fileURLToPath(new URL('./demo', import.meta.url))
 
 const demos = Object.fromEntries(
   fs
-    .readdirSync('demo')
+    .readdirSync(demoDir)
     .filter((file) => file.endsWith('.html'))
-    .map((file) => [file.replace('.html', ''), path.resolve('demo', file)]),
+    .map((file) => [file.replace('.html', ''), path.resolve(demoDir, file)]),
 )
 
 export default defineConfig({
   plugins: [cloudflare()],
   resolve: {
     alias: {
-      'material/': new URL('./', import.meta.url).pathname,
+      'material/': rootDir,
     },
   },
   build: {
     rollupOptions: {
       input: {
-        main: path.resolve('index.html'),
+        main: path.resolve(rootDir, 'index.html'),
         ...demos,
       },
     },
