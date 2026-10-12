@@ -639,7 +639,7 @@ export class Menu extends LitElement {
    */
   updateItemPositions() {
     if (!this.isVertical) return
-    const items = this.slotItems.filter(
+    const items = (this.slotItems ?? []).filter(
       (el) =>
         el.hasAttribute?.('md-menu-item') ||
         el.tagName?.toLowerCase() === 'md-menu-item' ||
@@ -966,7 +966,7 @@ export class Menu extends LitElement {
 
   get slotItems() {
     let slots = this.renderRoot?.querySelector('slot')
-    return slots.assignedElements({ flatten: true })
+    return slots?.assignedElements({ flatten: true }) ?? []
   }
 
   get surfaceEl() {
@@ -1090,7 +1090,9 @@ export class Menu extends LitElement {
       :host([variant='expressive'][color-style='vibrant']),
       :host([variant='expressive'][vibrant]),
       :host([vertical][color-style='vibrant']),
-      :host([vertical][vibrant]) {
+      :host([vertical][vibrant]),
+      :host([vibrant]),
+      :host([color-style='vibrant']) {
         --md-menu-container-color: var(--md-sys-color-tertiary-container, #ffd8e4);
         --md-menu-item-container-color: transparent;
         --md-menu-item-label-text-color: var(--md-sys-color-on-tertiary-container, #31111d);
