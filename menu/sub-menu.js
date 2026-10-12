@@ -52,7 +52,7 @@
  * @suppress {visibility}
  */
 import { css, html, isServer, LitElement } from 'lit'
-import { property, queryAssignedElements } from 'lit/decorators.js'
+import { queryAssignedElements } from '../utils/query.js'
 import {
   createDeactivateItemsEvent,
   createRequestActivationEvent,
@@ -85,6 +85,12 @@ export class SubMenu extends LitElement {
     hoverOpenDelay: { type: Number },
     hoverCloseDelay: { type: Number },
     isSubMenu: { type: Boolean, reflect: true },
+  }
+  get items() {
+    return queryAssignedElements(this, { slot: 'item' })
+  }
+  get menus() {
+    return queryAssignedElements(this, { slot: 'menu' })
   }
   get item() {
     return this.items[0] ?? null
@@ -234,6 +240,7 @@ export class SubMenu extends LitElement {
     // leaf menu closing. restoring focus ensures that we keep focus in the
     // submenu tree.
     menu.skipRestoreFocus = false
+    this.syncParentMenuStyles(menu)
     // Menu could already be opened because of mouse interaction
     const menuAlreadyOpen = menu.open
     menu.show()
@@ -291,6 +298,34 @@ export class SubMenu extends LitElement {
     menu.isSubmenu = true
     // Required for ChromeVox to not linearly navigate to the menu while closed
     menu.ariaHidden = 'true'
+    this.syncParentMenuStyles(menu)
+  }
+  /**
+   * Propagates variant, vertical, and color styling from the parent menu to the nested submenu.
+   */
+  syncParentMenuStyles(menu = this.menu) {
+    if (!menu) return
+    const parentMenu = this.closest('md-menu')
+    if (!parentMenu) return
+
+    const isParentVertical = parentMenu.hasAttribute('vertical') || parentMenu.isVertical
+    if (isParentVertical) {
+      if (!menu.hasAttribute('vertical') && (!menu.hasAttribute('variant') || menu.variant === 'baseline')) {
+        menu.variant = parentMenu.variant || 'vertical'
+        menu.vertical = true
+      }
+    }
+    if (
+      ((parentMenu.colorStyle && parentMenu.colorStyle !== 'standard') || parentMenu.hasAttribute('color-style')) &&
+      (!menu.hasAttribute('color-style') || menu.colorStyle === 'standard')
+    ) {
+      menu.colorStyle = parentMenu.colorStyle
+    }
+    if (parentMenu.hasAttribute('vibrant') || parentMenu.isVibrant) {
+      if (!menu.hasAttribute('vibrant')) {
+        menu.vibrant = true
+      }
+    }
   }
   onClick() {
     this.show()
@@ -399,6 +434,11 @@ export class SubMenu extends LitElement {
         position: relative;
         display: flex;
         flex-direction: column;
+        border-radius: inherit;
+      }
+      ::slotted([slot='item']) {
+        width: 100%;
+        border-radius: inherit;
       }
     `,
   ]
