@@ -543,19 +543,40 @@ export class Menu extends LitElement {
     return this.listController.items
   }
   willUpdate(changed) {
-    if (changed.has('vertical') && this.vertical && this.variant !== 'vertical') {
-      this.variant = 'vertical'
-    } else if (
-      changed.has('variant') &&
-      (this.variant === 'vertical' || this.variant === 'expressive') &&
-      !this.vertical
-    ) {
-      this.vertical = true
+    if (changed.has('vertical')) {
+      if (this.vertical) {
+        if (this.variant !== 'vertical' && this.variant !== 'expressive') {
+          this.variant = 'vertical'
+        }
+      } else if (changed.get('vertical') === true) {
+        if (this.variant === 'vertical' || this.variant === 'expressive') {
+          this.variant = 'baseline'
+        }
+      }
     }
-    if (changed.has('vibrant') && this.vibrant && this.colorStyle !== 'vibrant') {
-      this.colorStyle = 'vibrant'
-    } else if (changed.has('colorStyle') && this.colorStyle === 'vibrant' && !this.vibrant) {
-      this.vibrant = true
+    if (changed.has('variant')) {
+      if (this.variant === 'vertical' || this.variant === 'expressive') {
+        this.vertical = true
+      } else if (changed.get('variant') !== undefined) {
+        this.vertical = false
+      }
+    }
+
+    if (changed.has('vibrant')) {
+      if (this.vibrant) {
+        this.colorStyle = 'vibrant'
+      } else if (changed.get('vibrant') === true) {
+        if (this.colorStyle === 'vibrant') {
+          this.colorStyle = 'standard'
+        }
+      }
+    }
+    if (changed.has('colorStyle')) {
+      if (this.colorStyle === 'vibrant') {
+        this.vibrant = true
+      } else if (changed.get('colorStyle') !== undefined) {
+        this.vibrant = false
+      }
     }
 
     if (!changed.has('open')) {

@@ -52,8 +52,12 @@ The classic Material 3 baseline menu variant:
 
 ```html
 <md-menu anchor="anchor-id">
-  <md-menu-item headline="Option 1"></md-menu-item>
-  <md-menu-item headline="Option 2" selected></md-menu-item>
+  <md-menu-item>
+    <div slot="headline">Option 1</div>
+  </md-menu-item>
+  <md-menu-item selected>
+    <div slot="headline">Option 2</div>
+  </md-menu-item>
 </md-menu>
 ```
 
@@ -73,20 +77,24 @@ Introduced in the Material 3 Expressive design update:
 ```html
 <!-- Standard style (surface-container-low) -->
 <md-menu anchor="anchor-id" variant="vertical">
-  <md-menu-item headline="Dashboard">
+  <md-menu-item>
+    <div slot="headline">Dashboard</div>
     <md-icon slot="start">dashboard</md-icon>
   </md-menu-item>
-  <md-menu-item headline="Analytics" selected>
+  <md-menu-item selected>
+    <div slot="headline">Analytics</div>
     <md-icon slot="start">analytics</md-icon>
   </md-menu-item>
 </md-menu>
 
 <!-- Vibrant style (tertiary-container with tertiary highlight) -->
 <md-menu anchor="anchor-id" variant="vertical" color-style="vibrant">
-  <md-menu-item headline="Favorites" selected>
+  <md-menu-item selected>
+    <div slot="headline">Favorites</div>
     <md-icon slot="start">favorite</md-icon>
   </md-menu-item>
-  <md-menu-item headline="Recents">
+  <md-menu-item>
+    <div slot="headline">Recents</div>
     <md-icon slot="start">schedule</md-icon>
   </md-menu-item>
 </md-menu>
@@ -100,19 +108,23 @@ Submenus open next to their parent item without overlapping it. Add `has-overflo
 
 ```html
 <md-menu id="parent-menu" anchor="anchor-btn" variant="vertical" has-overflow>
-  <md-menu-item headline="Copy">
+  <md-menu-item>
+    <div slot="headline">Copy</div>
     <md-icon slot="start">content_copy</md-icon>
   </md-menu-item>
   <md-sub-menu>
-    <md-menu-item slot="item" headline="Share">
+    <md-menu-item slot="item">
+      <div slot="headline">Share</div>
       <md-icon slot="start">share</md-icon>
       <md-icon slot="end">arrow_right</md-icon>
     </md-menu-item>
     <md-menu slot="menu">
-      <md-menu-item headline="Email">
+      <md-menu-item>
+        <div slot="headline">Email</div>
         <md-icon slot="start">mail</md-icon>
       </md-menu-item>
-      <md-menu-item headline="Link" selected>
+      <md-menu-item selected>
+        <div slot="headline">Link</div>
         <md-icon slot="start">link</md-icon>
       </md-menu-item>
     </md-menu>

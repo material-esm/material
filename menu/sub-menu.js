@@ -316,7 +316,7 @@ export class SubMenu extends LitElement {
       }
     }
     if (
-      parentMenu.hasAttribute('color-style') &&
+      ((parentMenu.colorStyle && parentMenu.colorStyle !== 'standard') || parentMenu.hasAttribute('color-style')) &&
       (!menu.hasAttribute('color-style') || menu.colorStyle === 'standard')
     ) {
       menu.colorStyle = parentMenu.colorStyle

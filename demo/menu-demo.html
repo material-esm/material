@@ -144,17 +144,21 @@
             Open Baseline Menu
           </md-button>
           <md-menu id="menu-baseline" anchor="btn-baseline">
-            <md-menu-item headline="Profile">
+            <md-menu-item>
+              <div slot="headline">Profile</div>
               <md-icon slot="start">person</md-icon>
             </md-menu-item>
-            <md-menu-item headline="Settings" selected>
+            <md-menu-item selected>
+              <div slot="headline">Settings</div>
               <md-icon slot="start">settings</md-icon>
             </md-menu-item>
             <md-divider></md-divider>
-            <md-menu-item headline="Help & feedback">
+            <md-menu-item>
+              <div slot="headline">Help & feedback</div>
               <md-icon slot="start">help</md-icon>
             </md-menu-item>
-            <md-menu-item headline="Sign out" disabled>
+            <md-menu-item disabled>
+              <div slot="headline">Sign out</div>
               <md-icon slot="start">logout</md-icon>
             </md-menu-item>
           </md-menu>
@@ -175,17 +179,21 @@
             Open Vertical Menu
           </md-button>
           <md-menu id="menu-vertical" anchor="btn-vertical" variant="vertical">
-            <md-menu-item headline="Home">
+            <md-menu-item>
+              <div slot="headline">Home</div>
               <md-icon slot="start">home</md-icon>
             </md-menu-item>
-            <md-menu-item headline="Dashboard" selected>
+            <md-menu-item selected>
+              <div slot="headline">Dashboard</div>
               <md-icon slot="start">dashboard</md-icon>
             </md-menu-item>
-            <md-menu-item headline="Analytics">
+            <md-menu-item>
+              <div slot="headline">Analytics</div>
               <md-icon slot="start">analytics</md-icon>
             </md-menu-item>
             <md-divider></md-divider>
-            <md-menu-item headline="Preferences">
+            <md-menu-item>
+              <div slot="headline">Preferences</div>
               <md-icon slot="start">tune</md-icon>
             </md-menu-item>
           </md-menu>
@@ -203,17 +211,21 @@
             Open Vibrant Menu
           </md-button>
           <md-menu id="menu-vibrant" anchor="btn-vibrant" variant="vertical" color-style="vibrant">
-            <md-menu-item headline="Create playlist">
+            <md-menu-item>
+              <div slot="headline">Create playlist</div>
               <md-icon slot="start">playlist_add</md-icon>
             </md-menu-item>
-            <md-menu-item headline="Favorites" selected>
+            <md-menu-item selected>
+              <div slot="headline">Favorites</div>
               <md-icon slot="start">favorite</md-icon>
             </md-menu-item>
-            <md-menu-item headline="Recently added">
+            <md-menu-item>
+              <div slot="headline">Recently added</div>
               <md-icon slot="start">schedule</md-icon>
             </md-menu-item>
             <md-divider></md-divider>
-            <md-menu-item headline="Clear history">
+            <md-menu-item>
+              <div slot="headline">Clear history</div>
               <md-icon slot="start">delete</md-icon>
             </md-menu-item>
           </md-menu>
@@ -231,31 +243,38 @@
             Open Submenu
           </md-button>
           <md-menu id="menu-submenu" anchor="btn-submenu" variant="vertical" has-overflow>
-            <md-menu-item headline="Cut">
+            <md-menu-item>
+              <div slot="headline">Cut</div>
               <md-icon slot="start">content_cut</md-icon>
             </md-menu-item>
-            <md-menu-item headline="Copy">
+            <md-menu-item>
+              <div slot="headline">Copy</div>
               <md-icon slot="start">content_copy</md-icon>
             </md-menu-item>
             <md-sub-menu>
-              <md-menu-item slot="item" headline="Share">
+              <md-menu-item slot="item">
+                <div slot="headline">Share</div>
                 <md-icon slot="start">share</md-icon>
                 <md-icon slot="end">arrow_right</md-icon>
               </md-menu-item>
               <md-menu slot="menu">
-                <md-menu-item headline="Email">
+                <md-menu-item>
+                  <div slot="headline">Email</div>
                   <md-icon slot="start">mail</md-icon>
                 </md-menu-item>
-                <md-menu-item headline="Copy link" selected>
+                <md-menu-item selected>
+                  <div slot="headline">Copy link</div>
                   <md-icon slot="start">link</md-icon>
                 </md-menu-item>
-                <md-menu-item headline="Social">
+                <md-menu-item>
+                  <div slot="headline">Social</div>
                   <md-icon slot="start">public</md-icon>
                 </md-menu-item>
               </md-menu>
             </md-sub-menu>
             <md-divider></md-divider>
-            <md-menu-item headline="Delete">
+            <md-menu-item>
+              <div slot="headline">Delete</div>
               <md-icon slot="start">delete_outline</md-icon>
             </md-menu-item>
           </md-menu>
