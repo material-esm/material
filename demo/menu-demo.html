@@ -1,0 +1,266 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Material 3 Menu Demo: Baseline & Expressive Vertical</title>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="preload"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"
+      as="style"
+      onload="
+        this.onload = null
+        this.rel = 'stylesheet'
+      " />
+    <link
+      rel="preload"
+      href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;700&display=swap"
+      as="style"
+      onload="
+        this.onload = null
+        this.rel = 'stylesheet'
+      " />
+
+    <link rel="icon" href="./images/material.jpeg" />
+    <link rel="stylesheet" href="./css/styles.css" />
+
+    <script type="importmap">
+      {
+        "imports": {
+          "lit": "https://cdn.jsdelivr.net/npm/lit@3/index.js",
+          "lit/": "https://cdn.jsdelivr.net/npm/lit@3/",
+          "@lit/localize": "https://cdn.jsdelivr.net/npm/@lit/localize/lit-localize.js",
+          "@lit/reactive-element": "https://cdn.jsdelivr.net/npm/@lit/reactive-element@2/reactive-element.js",
+          "@lit/reactive-element/": "https://cdn.jsdelivr.net/npm/@lit/reactive-element@2/",
+          "lit-element/lit-element.js": "https://cdn.jsdelivr.net/npm/lit-element@4/lit-element.js",
+          "lit-html": "https://cdn.jsdelivr.net/npm/lit-html@3/lit-html.js",
+          "lit-html/": "https://cdn.jsdelivr.net/npm/lit-html@3/",
+          "material/": "../"
+        }
+      }
+    </script>
+
+    <script type="module">
+      import 'material/buttons/button.js'
+      import 'material/buttons/icon-button.js'
+      import 'material/icon/icon.js'
+      import 'material/divider/divider.js'
+      import 'material/menu/menu.js'
+      import 'material/menu/menu-item.js'
+      import 'material/menu/sub-menu.js'
+    </script>
+
+    <style>
+      body {
+        font-family: 'Google Sans Flex', Roboto, sans-serif;
+        padding: 24px;
+        background: var(--md-sys-color-surface, #fdf8fd);
+        color: var(--md-sys-color-on-surface, #1d1b20);
+      }
+      .nav-bar {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+      .nav-bar a {
+        color: var(--md-sys-color-primary, #6750a4);
+        text-decoration: none;
+        font-weight: 500;
+      }
+      .demo-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 32px;
+        margin-top: 24px;
+      }
+      .card {
+        background: var(--md-sys-color-surface-container, #f3edf7);
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .card h2 {
+        margin-top: 0;
+        font-size: 1.25rem;
+        margin-bottom: 8px;
+      }
+      .card p {
+        font-size: 0.875rem;
+        color: var(--md-sys-color-on-surface-variant, #49454f);
+        margin-bottom: 20px;
+        line-height: 1.4;
+      }
+      .anchor-wrapper {
+        position: relative;
+        display: inline-block;
+      }
+      .spec-badge {
+        display: inline-block;
+        font-size: 0.75rem;
+        padding: 2px 8px;
+        border-radius: 9999px;
+        background: var(--md-sys-color-secondary-container, #e8def8);
+        color: var(--md-sys-color-on-secondary-container, #1d192b);
+        margin-bottom: 12px;
+        font-weight: 500;
+      }
+      .spec-badge.vibrant {
+        background: var(--md-sys-color-tertiary-container, #ffd8e4);
+        color: var(--md-sys-color-on-tertiary-container, #31111d);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="nav-bar">
+      <a href="./index.html">← Back to Demos</a>
+    </div>
+
+    <h1>Material 3 Menus</h1>
+    <p>
+      Compare the Material 3 <strong>Baseline Menu</strong> spec with the new
+      <strong>M3 Expressive Vertical Menu</strong> spec.
+    </p>
+
+    <div class="demo-grid">
+      <!-- 1. Baseline Menu -->
+      <div class="card">
+        <span class="spec-badge">M3 Baseline Spec</span>
+        <h2>Baseline Menu</h2>
+        <p>
+          48px item height, 12px padding, 4px corner radius, label-large typography, and full-width edge-to-edge
+          selection.
+        </p>
+
+        <div class="anchor-wrapper">
+          <md-button id="btn-baseline" variant="filled" onclick="document.getElementById('menu-baseline').show()">
+            Open Baseline Menu
+          </md-button>
+          <md-menu id="menu-baseline" anchor="btn-baseline">
+            <md-menu-item headline="Profile">
+              <md-icon slot="start">person</md-icon>
+            </md-menu-item>
+            <md-menu-item headline="Settings" selected>
+              <md-icon slot="start">settings</md-icon>
+            </md-menu-item>
+            <md-divider></md-divider>
+            <md-menu-item headline="Help & feedback">
+              <md-icon slot="start">help</md-icon>
+            </md-menu-item>
+            <md-menu-item headline="Sign out" disabled>
+              <md-icon slot="start">logout</md-icon>
+            </md-menu-item>
+          </md-menu>
+        </div>
+      </div>
+
+      <!-- 2. Vertical Menu (Standard) -->
+      <div class="card">
+        <span class="spec-badge">M3 Expressive (Standard)</span>
+        <h2>Vertical Menu</h2>
+        <p>
+          44px item height, 16px container radius, 20px icons, inset 12px rounded pill selection, and shape-morphing
+          motion.
+        </p>
+
+        <div class="anchor-wrapper">
+          <md-button id="btn-vertical" variant="tonal" onclick="document.getElementById('menu-vertical').show()">
+            Open Vertical Menu
+          </md-button>
+          <md-menu id="menu-vertical" anchor="btn-vertical" variant="vertical">
+            <md-menu-item headline="Home">
+              <md-icon slot="start">home</md-icon>
+            </md-menu-item>
+            <md-menu-item headline="Dashboard" selected>
+              <md-icon slot="start">dashboard</md-icon>
+            </md-menu-item>
+            <md-menu-item headline="Analytics">
+              <md-icon slot="start">analytics</md-icon>
+            </md-menu-item>
+            <md-divider></md-divider>
+            <md-menu-item headline="Preferences">
+              <md-icon slot="start">tune</md-icon>
+            </md-menu-item>
+          </md-menu>
+        </div>
+      </div>
+
+      <!-- 3. Vertical Menu (Vibrant) -->
+      <div class="card">
+        <span class="spec-badge vibrant">M3 Expressive (Vibrant)</span>
+        <h2>Vibrant Vertical Menu</h2>
+        <p>High-emphasis tertiary container style with bold tertiary selection state and matching contrast tokens.</p>
+
+        <div class="anchor-wrapper">
+          <md-button id="btn-vibrant" variant="filled" onclick="document.getElementById('menu-vibrant').show()">
+            Open Vibrant Menu
+          </md-button>
+          <md-menu id="menu-vibrant" anchor="btn-vibrant" variant="vertical" color-style="vibrant">
+            <md-menu-item headline="Create playlist">
+              <md-icon slot="start">playlist_add</md-icon>
+            </md-menu-item>
+            <md-menu-item headline="Favorites" selected>
+              <md-icon slot="start">favorite</md-icon>
+            </md-menu-item>
+            <md-menu-item headline="Recently added">
+              <md-icon slot="start">schedule</md-icon>
+            </md-menu-item>
+            <md-divider></md-divider>
+            <md-menu-item headline="Clear history">
+              <md-icon slot="start">delete</md-icon>
+            </md-menu-item>
+          </md-menu>
+        </div>
+      </div>
+
+      <!-- 4. Submenu Support (Vertical) -->
+      <div class="card">
+        <span class="spec-badge">M3 Expressive Submenus</span>
+        <h2>Cascading Submenu</h2>
+        <p>Cascading submenus seamlessly inherit parent vertical variant, corner radius, and color styles.</p>
+
+        <div class="anchor-wrapper">
+          <md-button id="btn-submenu" variant="outlined" onclick="document.getElementById('menu-submenu').show()">
+            Open Submenu
+          </md-button>
+          <md-menu id="menu-submenu" anchor="btn-submenu" variant="vertical" has-overflow>
+            <md-menu-item headline="Cut">
+              <md-icon slot="start">content_cut</md-icon>
+            </md-menu-item>
+            <md-menu-item headline="Copy">
+              <md-icon slot="start">content_copy</md-icon>
+            </md-menu-item>
+            <md-sub-menu>
+              <md-menu-item slot="item" headline="Share">
+                <md-icon slot="start">share</md-icon>
+                <md-icon slot="end">arrow_right</md-icon>
+              </md-menu-item>
+              <md-menu slot="menu">
+                <md-menu-item headline="Email">
+                  <md-icon slot="start">mail</md-icon>
+                </md-menu-item>
+                <md-menu-item headline="Copy link" selected>
+                  <md-icon slot="start">link</md-icon>
+                </md-menu-item>
+                <md-menu-item headline="Social">
+                  <md-icon slot="start">public</md-icon>
+                </md-menu-item>
+              </md-menu>
+            </md-sub-menu>
+            <md-divider></md-divider>
+            <md-menu-item headline="Delete">
+              <md-icon slot="start">delete_outline</md-icon>
+            </md-menu-item>
+          </md-menu>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

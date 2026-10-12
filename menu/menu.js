@@ -110,6 +110,10 @@ export class Menu extends LitElement {
     skipRestoreFocus: { type: Boolean, attribute: 'skip-restore-focus' },
     defaultFocus: { type: String, attribute: 'default-focus' },
     noNavigationWrap: { type: Boolean, attribute: 'no-navigation-wrap' },
+    variant: { type: String, reflect: true },
+    vertical: { type: Boolean, reflect: true },
+    colorStyle: { type: String, attribute: 'color-style', reflect: true },
+    vibrant: { type: Boolean, reflect: true },
   }
   /**
    * Whether the menu is animating upwards or downwards when opening. This is
@@ -133,6 +137,18 @@ export class Menu extends LitElement {
   set anchorElement(element) {
     this.currentAnchorElement = element
     this.requestUpdate('anchorElement')
+  }
+  /**
+   * Whether the menu is rendered in the Material 3 Expressive vertical menu variant.
+   */
+  get isVertical() {
+    return this.vertical || this.variant === 'vertical' || this.variant === 'expressive'
+  }
+  /**
+   * Whether the menu uses the vibrant color style.
+   */
+  get isVibrant() {
+    return this.vibrant || this.colorStyle === 'vibrant'
   }
   constructor() {
     super()
@@ -283,6 +299,22 @@ export class Menu extends LitElement {
      * The event path of the last window pointerdown event.
      */
     this.pointerPath = []
+    /**
+     * The menu design variant: 'baseline' (default) or 'vertical' (Material 3 Expressive).
+     */
+    this.variant = 'baseline'
+    /**
+     * Shorthand boolean to enable the Material 3 Expressive vertical menu variant.
+     */
+    this.vertical = false
+    /**
+     * The color style for vertical menus: 'standard' (default) or 'vibrant'.
+     */
+    this.colorStyle = 'standard'
+    /**
+     * Shorthand boolean to enable vibrant tertiary color style.
+     */
+    this.vibrant = false
     /**
      * Whether or not the menu is repositoining due to window / document resize
      */
@@ -511,6 +543,21 @@ export class Menu extends LitElement {
     return this.listController.items
   }
   willUpdate(changed) {
+    if (changed.has('vertical') && this.vertical && this.variant !== 'vertical') {
+      this.variant = 'vertical'
+    } else if (
+      changed.has('variant') &&
+      (this.variant === 'vertical' || this.variant === 'expressive') &&
+      !this.vertical
+    ) {
+      this.vertical = true
+    }
+    if (changed.has('vibrant') && this.vibrant && this.colorStyle !== 'vibrant') {
+      this.colorStyle = 'vibrant'
+    } else if (changed.has('colorStyle') && this.colorStyle === 'vibrant' && !this.vibrant) {
+      this.vibrant = true
+    }
+
     if (!changed.has('open')) {
       return
     }
@@ -568,6 +615,49 @@ export class Menu extends LitElement {
       </div>
     `
   }
+  firstUpdated(changedProperties) {
+    super.firstUpdated?.(changedProperties)
+    this.updateItemPositions()
+  }
+  updated(changedProperties) {
+    super.updated?.(changedProperties)
+    if (
+      changedProperties.has('variant') ||
+      changedProperties.has('vertical') ||
+      changedProperties.has('colorStyle') ||
+      changedProperties.has('vibrant')
+    ) {
+      this.updateItemPositions()
+    }
+  }
+  handleSlotChange(event) {
+    this.updateItemPositions()
+    this.listController.onSlotchange(event)
+  }
+  /**
+   * Updates positional attributes on menu items when in vertical layout.
+   */
+  updateItemPositions() {
+    if (!this.isVertical) return
+    const items = this.slotItems.filter(
+      (el) =>
+        el.hasAttribute?.('md-menu-item') ||
+        el.tagName?.toLowerCase() === 'md-menu-item' ||
+        el.tagName?.toLowerCase() === 'md-sub-menu',
+    )
+    const count = items.length
+    items.forEach((item, index) => {
+      if (count === 1) {
+        item.setAttribute('menu-position', 'single')
+      } else if (index === 0) {
+        item.setAttribute('menu-position', 'first')
+      } else if (index === count - 1) {
+        item.setAttribute('menu-position', 'last')
+      } else {
+        item.setAttribute('menu-position', 'middle')
+      }
+    })
+  }
   /**
    * Renders the menu items' slot
    */
@@ -580,7 +670,7 @@ export class Menu extends LitElement {
       @activate-typeahead=${this.handleActivateTypeahead}
       @stay-open-on-focusout=${this.handleStayOpenOnFocusout}
       @close-on-focusout=${this.handleCloseOnFocusout}
-      @slotchange=${this.listController.onSlotchange}></slot>`
+      @slotchange=${this.handleSlotChange}></slot>`
   }
   /**
    * Renders the elevation component.
@@ -593,6 +683,8 @@ export class Menu extends LitElement {
       open: this.open,
       fixed: this.positioning === 'fixed',
       'has-overflow': this.hasOverflow,
+      vertical: this.isVertical,
+      vibrant: this.isVibrant,
     }
   }
   captureKeydown(event) {
@@ -890,6 +982,7 @@ export class Menu extends LitElement {
         --md-elevation-level: var(--md-menu-container-elevation, 2);
         --md-elevation-shadow-color: var(--md-menu-container-shadow-color, var(--md-sys-color-shadow, #000));
         min-width: 112px;
+        max-width: var(--md-menu-container-max-width, 280px);
         color: unset;
         display: contents;
       }
@@ -958,6 +1051,141 @@ export class Menu extends LitElement {
       ::slotted(:is(md-divider, [role='separator'])) {
         margin: 8px 0;
       }
+
+      /* ===================================================================
+       * Material 3 Expressive Vertical Menu Specifications
+       * =================================================================== */
+      :host([variant='vertical']),
+      :host([variant='expressive']),
+      :host([vertical]) {
+        --md-menu-container-shape: var(--md-sys-shape-corner-large, 16px);
+        --md-menu-container-color: var(--md-sys-color-surface-container-low, #f7f2fa);
+        --md-menu-item-one-line-container-height: 44px;
+        --md-menu-item-leading-space: 16px;
+        --md-menu-item-trailing-space: 16px;
+        --md-menu-item-top-space: 8px;
+        --md-menu-item-bottom-space: 8px;
+        --md-menu-item-between-space: 12px;
+        --md-menu-item-icon-size: 20px;
+        --md-menu-item-shape: var(--md-sys-shape-corner-extra-small, 4px);
+        --md-menu-item-selected-shape: var(--md-sys-shape-corner-medium, 12px);
+      }
+
+      .menu.vertical {
+        border-radius: var(--md-menu-container-shape, var(--md-sys-shape-corner-large, 16px));
+      }
+      .menu.vertical md-focus-ring {
+        --md-focus-ring-shape: var(--md-menu-container-shape, var(--md-sys-shape-corner-large, 16px));
+      }
+      .menu.vertical .items {
+        background-color: var(--md-menu-container-color, var(--md-sys-color-surface-container-low, #f7f2fa));
+      }
+      .menu.vertical .item-padding {
+        padding: 8px 6px;
+      }
+
+      /* Vibrant theme for vertical menus */
+      :host([variant='vertical'][color-style='vibrant']),
+      :host([variant='vertical'][vibrant]),
+      :host([variant='expressive'][color-style='vibrant']),
+      :host([variant='expressive'][vibrant]),
+      :host([vertical][color-style='vibrant']),
+      :host([vertical][vibrant]) {
+        --md-menu-container-color: var(--md-sys-color-tertiary-container, #ffd8e4);
+        --md-menu-item-container-color: transparent;
+        --md-menu-item-label-text-color: var(--md-sys-color-on-tertiary-container, #31111d);
+        --md-menu-item-leading-icon-color: var(--md-sys-color-on-tertiary-container, #31111d);
+        --md-menu-item-trailing-icon-color: var(--md-sys-color-on-tertiary-container, #31111d);
+        --md-menu-item-supporting-text-color: var(--md-sys-color-on-tertiary-container, #31111d);
+        --md-menu-item-selected-container-color: var(--md-sys-color-tertiary, #7d5260);
+        --md-menu-item-selected-label-text-color: var(--md-sys-color-on-tertiary, #ffffff);
+        --md-menu-item-selected-icon-color: var(--md-sys-color-on-tertiary, #ffffff);
+        --md-ripple-hover-color: var(--md-sys-color-on-tertiary-container, #31111d);
+        --md-ripple-pressed-color: var(--md-sys-color-on-tertiary-container, #31111d);
+      }
+
+      .menu.vertical.vibrant .items {
+        background-color: var(--md-menu-container-color, var(--md-sys-color-tertiary-container, #ffd8e4));
+      }
+
+      /* Slotted item margins and shape morphing in vertical menus */
+      :host([variant='vertical']) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item])),
+      :host([variant='expressive']) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item])),
+      :host([vertical]) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item])) {
+        margin: 2px 4px;
+        border-radius: var(--md-menu-item-shape, 4px);
+        transition:
+          border-radius 200ms cubic-bezier(0.2, 0, 0, 1),
+          background-color 200ms cubic-bezier(0.2, 0, 0, 1);
+      }
+
+      /* First child in vertical menu */
+      :host([variant='vertical']) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item])[menu-position='first']),
+      :host([variant='vertical']) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item]):first-of-type),
+      :host([variant='expressive']) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item])[menu-position='first']),
+      :host([variant='expressive']) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item]):first-of-type),
+      :host([vertical]) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item])[menu-position='first']),
+      :host([vertical]) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item]):first-of-type) {
+        border-start-start-radius: var(--md-sys-shape-corner-medium, 12px);
+        border-start-end-radius: var(--md-sys-shape-corner-medium, 12px);
+        border-end-start-radius: var(--md-sys-shape-corner-extra-small, 4px);
+        border-end-end-radius: var(--md-sys-shape-corner-extra-small, 4px);
+      }
+
+      /* Last child in vertical menu */
+      :host([variant='vertical']) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item])[menu-position='last']),
+      :host([variant='vertical']) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item]):last-of-type),
+      :host([variant='expressive']) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item])[menu-position='last']),
+      :host([variant='expressive']) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item]):last-of-type),
+      :host([vertical]) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item])[menu-position='last']),
+      :host([vertical]) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item]):last-of-type) {
+        border-start-start-radius: var(--md-sys-shape-corner-extra-small, 4px);
+        border-start-end-radius: var(--md-sys-shape-corner-extra-small, 4px);
+        border-end-start-radius: var(--md-sys-shape-corner-medium, 12px);
+        border-end-end-radius: var(--md-sys-shape-corner-medium, 12px);
+      }
+
+      /* Single child in vertical menu */
+      :host([variant='vertical']) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item])[menu-position='single']),
+      :host([variant='vertical']) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item]):only-of-type),
+      :host([variant='expressive']) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item])[menu-position='single']),
+      :host([variant='expressive']) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item]):only-of-type),
+      :host([vertical]) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item])[menu-position='single']),
+      :host([vertical]) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item]):only-of-type) {
+        border-radius: var(--md-sys-shape-corner-medium, 12px);
+      }
+
+      /* Hover and focus morphing in vertical menu */
+      :host([variant='vertical']) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item]):hover),
+      :host([variant='vertical']) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item]):focus-within),
+      :host([variant='expressive']) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item]):hover),
+      :host([variant='expressive']) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item]):focus-within),
+      :host([vertical]) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item]):hover),
+      :host([vertical]) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item]):focus-within) {
+        border-radius: var(--md-sys-shape-corner-medium, 12px);
+      }
+
+      /* Selected state pill in vertical menu */
+      :host([variant='vertical']) ::slotted([selected]),
+      :host([variant='expressive']) ::slotted([selected]),
+      :host([vertical]) ::slotted([selected]) {
+        border-radius: var(--md-sys-shape-corner-medium, 12px) !important;
+      }
+
+      /* Inset dividers in vertical menu */
+      :host([variant='vertical']) ::slotted(:is(md-divider, [role='separator'])),
+      :host([variant='expressive']) ::slotted(:is(md-divider, [role='separator'])),
+      :host([vertical]) ::slotted(:is(md-divider, [role='separator'])) {
+        margin: 6px 12px;
+      }
+
+      /* Vertical menu grouping gap support */
+      :host([variant='vertical']) ::slotted([data-gap]),
+      :host([variant='expressive']) ::slotted([data-gap]),
+      :host([vertical]) ::slotted([data-gap]) {
+        margin-bottom: 8px;
+      }
+
       @media (forced-colors: active) {
         .menu {
           border-style: solid;

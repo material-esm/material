@@ -31,18 +31,22 @@ export const menuItemStyles = css`
   :host {
     display: flex;
     text-wrap: nowrap;
+    border-radius: var(--md-menu-item-shape, 0px);
+    transition:
+      border-radius 200ms cubic-bezier(0.2, 0, 0, 1),
+      background-color 200ms cubic-bezier(0.2, 0, 0, 1);
     --md-ripple-hover-color: var(--md-menu-item-hover-state-layer-color, var(--md-sys-color-on-surface, #1d1b20));
     --md-ripple-hover-opacity: var(--md-menu-item-hover-state-layer-opacity, 0.08);
     --md-ripple-pressed-color: var(--md-menu-item-pressed-state-layer-color, var(--md-sys-color-on-surface, #1d1b20));
     --md-ripple-pressed-opacity: var(--md-menu-item-pressed-state-layer-opacity, 0.12);
   }
   :host([disabled]) {
-    opacity: var(--md-menu-item-disabled-opacity, 0.3);
+    opacity: var(--md-menu-item-disabled-opacity, 0.38);
     pointer-events: none;
   }
   md-focus-ring {
     z-index: 1;
-    --md-focus-ring-shape: 8px;
+    --md-focus-ring-shape: inherit;
   }
   a,
   button,
@@ -62,6 +66,10 @@ export const menuItemStyles = css`
     min-width: inherit;
     outline: none;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    background-color: var(--md-menu-item-container-color, transparent);
+    transition:
+      background-color 200ms cubic-bezier(0.2, 0, 0, 1),
+      border-radius 200ms cubic-bezier(0.2, 0, 0, 1);
   }
   .list-item:not(.disabled) {
     cursor: pointer;
@@ -78,38 +86,38 @@ export const menuItemStyles = css`
     color: var(--md-menu-item-label-text-color, var(--md-sys-color-on-surface, #1d1b20));
     font-family: var(
       --md-menu-item-label-text-font,
-      var(--md-sys-typescale-body-large-font, var(--md-ref-typeface-plain, Roboto))
+      var(--md-sys-typescale-label-large-font, var(--md-ref-typeface-plain, Roboto))
     );
-    font-size: var(--md-menu-item-label-text-size, var(--md-sys-typescale-body-large-size, 1rem));
-    line-height: var(--md-menu-item-label-text-line-height, var(--md-sys-typescale-body-large-line-height, 1.5rem));
+    font-size: var(--md-menu-item-label-text-size, var(--md-sys-typescale-label-large-size, 0.875rem));
+    line-height: var(--md-menu-item-label-text-line-height, var(--md-sys-typescale-label-large-line-height, 1.25rem));
     font-weight: var(
       --md-menu-item-label-text-weight,
-      var(--md-sys-typescale-body-large-weight, var(--md-ref-typeface-weight-regular, 400))
+      var(--md-sys-typescale-label-large-weight, var(--md-ref-typeface-weight-medium, 500))
     );
-    min-height: var(--md-menu-item-one-line-container-height, 56px);
-    padding-top: var(--md-menu-item-top-space, 12px);
-    padding-bottom: var(--md-menu-item-bottom-space, 12px);
-    padding-inline-start: var(--md-menu-item-leading-space, 16px);
-    padding-inline-end: var(--md-menu-item-trailing-space, 16px);
+    letter-spacing: var(--md-menu-item-label-text-tracking, var(--md-sys-typescale-label-large-tracking, 0.1px));
+    min-height: var(--md-menu-item-one-line-container-height, 48px);
+    gap: var(--md-menu-item-between-space, 12px);
+    padding-top: var(--md-menu-item-top-space, 8px);
+    padding-bottom: var(--md-menu-item-bottom-space, 8px);
+    padding-inline-start: var(--md-menu-item-leading-space, 12px);
+    padding-inline-end: var(--md-menu-item-trailing-space, 12px);
   }
   md-item[multiline] {
-    min-height: var(--md-menu-item-two-line-container-height, 72px);
+    min-height: var(--md-menu-item-two-line-container-height, 64px);
   }
   [slot='supporting-text'] {
     color: var(--md-menu-item-supporting-text-color, var(--md-sys-color-on-surface-variant, #49454f));
     font-family: var(
       --md-menu-item-supporting-text-font,
-      var(--md-sys-typescale-body-medium-font, var(--md-ref-typeface-plain, Roboto))
+      var(--md-sys-typescale-body-small-font, var(--md-ref-typeface-plain, Roboto))
     );
-    font-size: var(--md-menu-item-supporting-text-size, var(--md-sys-typescale-body-medium-size, 0.875rem));
-    line-height: var(
-      --md-menu-item-supporting-text-line-height,
-      var(--md-sys-typescale-body-medium-line-height, 1.25rem)
-    );
+    font-size: var(--md-menu-item-supporting-text-size, var(--md-sys-typescale-body-small-size, 0.75rem));
+    line-height: var(--md-menu-item-supporting-text-line-height, var(--md-sys-typescale-body-small-line-height, 1rem));
     font-weight: var(
       --md-menu-item-supporting-text-weight,
-      var(--md-sys-typescale-body-medium-weight, var(--md-ref-typeface-weight-regular, 400))
+      var(--md-sys-typescale-body-small-weight, var(--md-ref-typeface-weight-regular, 400))
     );
+    letter-spacing: var(--md-menu-item-supporting-text-tracking, var(--md-sys-typescale-body-small-tracking, 0.4px));
   }
   [slot='trailing-supporting-text'] {
     color: var(--md-menu-item-trailing-supporting-text-color, var(--md-sys-color-on-surface-variant, #49454f));
@@ -129,21 +137,38 @@ export const menuItemStyles = css`
   }
   :is([slot='start'], [slot='end'])::slotted(*) {
     fill: currentColor;
+    font-size: var(--md-menu-item-icon-size, 24px);
+    width: var(--md-menu-item-icon-size, 24px);
+    height: var(--md-menu-item-icon-size, 24px);
+  }
+  :is([slot='start'], [slot='end'])::slotted(md-icon) {
+    --md-icon-size: var(--md-menu-item-icon-size, 24px);
   }
   [slot='start'] {
     color: var(--md-menu-item-leading-icon-color, var(--md-sys-color-on-surface-variant, #49454f));
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
   [slot='end'] {
     color: var(--md-menu-item-trailing-icon-color, var(--md-sys-color-on-surface-variant, #49454f));
-  }
-  .list-item {
-    background-color: var(--md-menu-item-container-color, transparent);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
   .list-item.selected {
     background-color: var(--md-menu-item-selected-container-color, var(--md-sys-color-secondary-container, #e8def8));
+    border-radius: var(--md-menu-item-selected-shape, inherit);
   }
   .selected:not(.disabled) ::slotted(*) {
     color: var(--md-menu-item-selected-label-text-color, var(--md-sys-color-on-secondary-container, #1d192b));
+  }
+  .selected:not(.disabled) [slot='start'],
+  .selected:not(.disabled) [slot='end'] {
+    color: var(
+      --md-menu-item-selected-icon-color,
+      var(--md-menu-item-selected-label-text-color, var(--md-sys-color-on-secondary-container, #1d192b))
+    );
   }
   @media (forced-colors: active) {
     :host([disabled]),
@@ -177,7 +202,7 @@ export class MenuItem extends LitElement {
     href: { type: String },
     target: { type: String },
     keepOpen: { type: Boolean, attribute: 'keep-open' },
-    selected: { type: Boolean },
+    selected: { type: Boolean, reflect: true },
     menuItemController: { type: MenuItemController },
     typeaheadText: { type: String, attribute: 'typeahead-text' },
   }
