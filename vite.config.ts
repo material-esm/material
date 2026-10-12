@@ -4,6 +4,10 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
+if (process.env.CLOUDFLARE_PREVIEW_BUILD === 'true') {
+  process.env.CLOUDFLARE_VITE_PREVIEW_BUILD = 'true'
+}
+
 const rootDir = fileURLToPath(new URL('./', import.meta.url))
 const demoDir = fileURLToPath(new URL('./demo', import.meta.url))
 
