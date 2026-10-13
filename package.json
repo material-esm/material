@@ -24,8 +24,8 @@
   "homepage": "https://github.com/material-esm/material#readme",
   "scripts": {
     "start": "npx -y serve",
-    "deploy": "cf deploy",
-    "preview": "cf previews deploy",
+    "deploy": "wrangler deploy",
+    "preview": "wrangler preview",
     "format": "prettier --write ."
   },
   "type": "module",
@@ -51,11 +51,8 @@
     "lit": "^3.3.1"
   },
   "devDependencies": {
-    "@cloudflare/vite-plugin": "^2.0.0-beta.sha-52b0dc0e9",
-    "cf": "^1.0.0-beta.14",
     "prettier": "^3.9.8",
-    "vite": "^8.3.0",
-    "vitest": "^5.0.1"
+    "wrangler": "^4.149.0"
   },
   "prettier": {
     "tabWidth": 2,
