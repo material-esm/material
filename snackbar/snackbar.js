@@ -287,7 +287,7 @@ export class SnackBar extends LitElement {
     this.stacked = false
     this.duration = 5000
     this._open = false
-    this._showing = false
+    this._closing = false
     this._dismissTimerId = null
     this._openedTimerId = null
     this._closedTimerId = null
@@ -308,11 +308,15 @@ export class SnackBar extends LitElement {
   }
 
   get showing() {
-    return this._showing
+    return this._open || this._closing
   }
 
   set showing(val) {
-    this._showing = Boolean(val)
+    if (val) {
+      this.show()
+    } else {
+      this.close()
+    }
   }
 
   get hasAction() {
@@ -351,11 +355,10 @@ export class SnackBar extends LitElement {
   }
 
   render() {
-    if (!this._showing) return ''
-
     const isStacked = this.stacked
     const hasIcon = this.hasCloseIcon
-    const classes = ['open', isStacked ? 'stacked' : '', hasIcon ? 'has-icon' : ''].filter(Boolean).join(' ')
+    const stateClass = this._open ? 'open' : this._closing ? 'closing' : ''
+    const classes = [stateClass, isStacked ? 'stacked' : '', hasIcon ? 'has-icon' : ''].filter(Boolean).join(' ')
 
     return html`
       <div id="snackbar" class="${classes}" role="status" aria-live="polite" aria-atomic="true">
@@ -371,16 +374,25 @@ export class SnackBar extends LitElement {
     `
   }
 
-  show() {
+  async show() {
+    if (this._open && !this._closing) return
     this.clearTimers()
-    this._showing = true
+    this._closing = false
+
+    this.dispatchEvent(new CustomEvent('open', { bubbles: true, composed: true }))
+
+    if (!this.hasUpdated) {
+      this.requestUpdate()
+      await this.updateComplete
+      // ensure initial hidden layout is established before transition
+      this.renderRoot?.getElementById('snackbar')?.getBoundingClientRect()
+    }
+
     this._open = true
     if (!this.hasAttribute('open')) {
       this.setAttribute('open', '')
     }
     this.requestUpdate()
-
-    this.dispatchEvent(new CustomEvent('open', { bubbles: true, composed: true }))
 
     // M3: Snackbars with actions should NOT auto-dismiss.
     // Only auto-dismiss if non-actionable and duration > 0.
@@ -397,28 +409,21 @@ export class SnackBar extends LitElement {
   }
 
   close() {
-    if (!this._open && !this._showing) return
+    if (!this._open) return
     this.clearTimers()
 
     this._open = false
+    this._closing = true
     this.removeAttribute('open')
+    this.requestUpdate()
 
-    const snackbarEl = this.renderRoot?.getElementById('snackbar')
     this.dispatchEvent(new CustomEvent('close', { bubbles: true, composed: true }))
 
-    if (snackbarEl) {
-      snackbarEl.classList.remove('open')
-      snackbarEl.classList.add('closing')
-      this._closedTimerId = setTimeout(() => {
-        this._showing = false
-        this.requestUpdate()
-        this.dispatchEvent(new CustomEvent('closed', { bubbles: true, composed: true }))
-      }, 100)
-    } else {
-      this._showing = false
+    this._closedTimerId = setTimeout(() => {
+      this._closing = false
       this.requestUpdate()
       this.dispatchEvent(new CustomEvent('closed', { bubbles: true, composed: true }))
-    }
+    }, 100)
   }
 }
 
