@@ -1,7 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "material",
-  "account_id": "916c7eb7bc833807684bab26b6aa3eca",
   "compatibility_date": "2026-10-06",
   "assets": {
     "directory": "."
