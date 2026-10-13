@@ -313,7 +313,7 @@ export class Menu extends LitElement {
     /**
      * Shorthand boolean to enable the Material 3 Expressive vertical menu variant.
      */
-    this.vertical = true
+    this.vertical = false
     /**
      * Shorthand boolean to opt into the classic Material 3 baseline menu variant.
      */
@@ -560,7 +560,6 @@ export class Menu extends LitElement {
         this.vertical = false
       } else if (changed.get('baseline') === true) {
         this.variant = 'vertical'
-        this.vertical = true
       }
     }
     if (changed.has('vertical')) {
@@ -577,7 +576,6 @@ export class Menu extends LitElement {
         this.vertical = false
         this.baseline = true
       } else if (this.variant === 'vertical' || this.variant === 'expressive') {
-        this.vertical = true
         this.baseline = false
       }
     }

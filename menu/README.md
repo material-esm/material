@@ -146,7 +146,7 @@ Submenus open next to their parent item without overlapping it. Submenus automat
 | `hasOverflow`  | `has-overflow`  | `boolean` | `false`         | Allows submenu content to overflow the menu container.                     |
 | `positioning`  | `positioning`   | `string`  | `'absolute'`    | Positioning strategy (`'absolute'`, `'fixed'`, `'document'`, `'popover'`). |
 | `variant`      | `variant`       | `string`  | `'vertical'`    | Design variant: `'vertical'` (default, Expressive) or `'baseline'`.        |
-| `vertical`     | `vertical`      | `boolean` | `true`          | Shorthand boolean attribute for `variant="vertical"`.                      |
+| `vertical`     | `vertical`      | `boolean` | `false`         | Shorthand boolean attribute for `variant="vertical"`.                      |
 | `baseline`     | `baseline`      | `boolean` | `false`         | Shorthand boolean attribute for `variant="baseline"`.                      |
 | `colorStyle`   | `color-style`   | `string`  | `'standard'`    | Vertical color mapping: `'standard'` or `'vibrant'`.                       |
 | `vibrant`      | `vibrant`       | `boolean` | `false`         | Shorthand boolean attribute for `color-style="vibrant"`.                   |

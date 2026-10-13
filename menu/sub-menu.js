@@ -310,7 +310,7 @@ export class SubMenu extends LitElement {
 
     const isParentVertical = parentMenu.isVertical
     if (!isParentVertical) {
-      if (!menu.hasAttribute('vertical') && !menu.hasAttribute('variant')) {
+      if (!menu.hasAttribute('vertical') || menu.baseline) {
         menu.variant = 'baseline'
         menu.baseline = true
         menu.vertical = false
@@ -318,7 +318,6 @@ export class SubMenu extends LitElement {
     } else {
       if (!menu.hasAttribute('baseline') && menu.variant !== 'baseline') {
         menu.variant = parentMenu.variant || 'vertical'
-        menu.vertical = true
         menu.baseline = false
       }
     }
