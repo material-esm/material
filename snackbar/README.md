@@ -27,12 +27,12 @@ import { snack } from 'material/snackbar/snackbar.js'
 
 <!-- With Action Button -->
 <md-snackbar message="Message archived" open>
-  <md-button slot="action">Undo</md-button>
+  <md-button color="text" slot="action">Undo</md-button>
 </md-snackbar>
 
 <!-- Stacked layout for longer actions -->
 <md-snackbar message="This is a longer message that requires stacked action" stacked open>
-  <md-button slot="action">Longer action label</md-button>
+  <md-button color="text" slot="action">Longer action label</md-button>
 </md-snackbar>
 ```
 

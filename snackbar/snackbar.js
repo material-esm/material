@@ -42,7 +42,7 @@ export function snack(message, { duration, action = null, showCloseIcon = false,
     actionButton.color = 'text'
     actionButton.slot = 'action'
     actionButton.classList.add('inverse')
-    actionButton.innerText = action.label
+    actionButton.textContent = action.label
     actionButton.addEventListener('click', (event) => {
       if (action.onClick) action.onClick(event)
       snackbar.close()
@@ -57,7 +57,7 @@ export function snack(message, { duration, action = null, showCloseIcon = false,
     closeButton.slot = 'icon'
     closeButton.setAttribute('aria-label', 'Dismiss')
     const icon = document.createElement('md-icon')
-    icon.innerText = 'close'
+    icon.textContent = 'close'
     closeButton.appendChild(icon)
     closeButton.addEventListener('click', () => {
       snackbar.close()
