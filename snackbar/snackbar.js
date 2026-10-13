@@ -43,7 +43,10 @@ export function snack(message, { duration, action = null, showCloseIcon = false,
     actionButton.slot = 'action'
     actionButton.classList.add('inverse')
     actionButton.innerText = action.label
-    if (action.onClick) actionButton.addEventListener('click', action.onClick)
+    actionButton.addEventListener('click', (event) => {
+      if (action.onClick) action.onClick(event)
+      snackbar.close()
+    })
     if (action.href) actionButton.href = action.href
     snackbar.appendChild(actionButton)
   }
@@ -285,7 +288,9 @@ export class SnackBar extends LitElement {
     this.duration = 5000
     this._open = false
     this._showing = false
-    this._timerId = null
+    this._dismissTimerId = null
+    this._openedTimerId = null
+    this._closedTimerId = null
   }
 
   get open() {
@@ -295,7 +300,6 @@ export class SnackBar extends LitElement {
   set open(value) {
     const isOpen = Boolean(value)
     if (isOpen === this._open) return
-    this._open = isOpen
     if (isOpen) {
       this.show()
     } else {
@@ -328,13 +332,21 @@ export class SnackBar extends LitElement {
 
   disconnectedCallback() {
     super.disconnectedCallback()
-    this.clearTimer()
+    this.clearTimers()
   }
 
-  clearTimer() {
-    if (this._timerId) {
-      clearTimeout(this._timerId)
-      this._timerId = null
+  clearTimers() {
+    if (this._dismissTimerId) {
+      clearTimeout(this._dismissTimerId)
+      this._dismissTimerId = null
+    }
+    if (this._openedTimerId) {
+      clearTimeout(this._openedTimerId)
+      this._openedTimerId = null
+    }
+    if (this._closedTimerId) {
+      clearTimeout(this._closedTimerId)
+      this._closedTimerId = null
     }
   }
 
@@ -360,7 +372,7 @@ export class SnackBar extends LitElement {
   }
 
   show() {
-    this.clearTimer()
+    this.clearTimers()
     this._showing = true
     this._open = true
     if (!this.hasAttribute('open')) {
@@ -374,35 +386,36 @@ export class SnackBar extends LitElement {
     // Only auto-dismiss if non-actionable and duration > 0.
     const isActionable = this.hasAction || this.hasCloseIcon
     if (!isActionable && this.duration > 0 && Number.isFinite(this.duration)) {
-      this._timerId = setTimeout(() => {
+      this._dismissTimerId = setTimeout(() => {
         this.close()
       }, this.duration)
     }
 
-    setTimeout(() => {
+    this._openedTimerId = setTimeout(() => {
       this.dispatchEvent(new CustomEvent('opened', { bubbles: true, composed: true }))
     }, 150)
   }
 
   close() {
-    this.clearTimer()
+    if (!this._open && !this._showing) return
+    this.clearTimers()
+
+    this._open = false
+    this.removeAttribute('open')
+
     const snackbarEl = this.renderRoot?.getElementById('snackbar')
     this.dispatchEvent(new CustomEvent('close', { bubbles: true, composed: true }))
 
     if (snackbarEl) {
       snackbarEl.classList.remove('open')
       snackbarEl.classList.add('closing')
-      setTimeout(() => {
+      this._closedTimerId = setTimeout(() => {
         this._showing = false
-        this._open = false
-        this.removeAttribute('open')
         this.requestUpdate()
         this.dispatchEvent(new CustomEvent('closed', { bubbles: true, composed: true }))
       }, 100)
     } else {
       this._showing = false
-      this._open = false
-      this.removeAttribute('open')
       this.requestUpdate()
       this.dispatchEvent(new CustomEvent('closed', { bubbles: true, composed: true }))
     }
