@@ -130,20 +130,55 @@
     </p>
 
     <div class="demo-grid">
-      <!-- 1. Baseline Menu -->
+      <!-- 1. Vertical Menu (Default) -->
+      <div class="card">
+        <span class="spec-badge">Default (M3 Expressive)</span>
+        <h2>Vertical Menu (Default)</h2>
+        <p>
+          44px item height, 16px container radius, 20px icons, inset 12px rounded pill selection, and shape-morphing
+          motion. Applied by default to all <code>&lt;md-menu&gt;</code> elements.
+        </p>
+
+        <div class="anchor-wrapper">
+          <md-button id="btn-vertical" color="tonal" onclick="document.getElementById('menu-vertical').show()">
+            Open Default Menu
+          </md-button>
+          <md-menu id="menu-vertical" anchor="btn-vertical">
+            <md-menu-item>
+              <div slot="headline">Home</div>
+              <md-icon slot="start">home</md-icon>
+            </md-menu-item>
+            <md-menu-item selected>
+              <div slot="headline">Dashboard</div>
+              <md-icon slot="start">dashboard</md-icon>
+            </md-menu-item>
+            <md-menu-item>
+              <div slot="headline">Analytics</div>
+              <md-icon slot="start">analytics</md-icon>
+            </md-menu-item>
+            <md-divider></md-divider>
+            <md-menu-item>
+              <div slot="headline">Preferences</div>
+              <md-icon slot="start">tune</md-icon>
+            </md-menu-item>
+          </md-menu>
+        </div>
+      </div>
+
+      <!-- 2. Baseline Menu (Opt-in) -->
       <div class="card">
         <span class="spec-badge">M3 Baseline Spec</span>
-        <h2>Baseline Menu</h2>
+        <h2>Baseline Menu (<code>variant="baseline"</code>)</h2>
         <p>
           48px item height, 12px padding, 4px corner radius, label-large typography, and full-width edge-to-edge
-          selection.
+          selection. Opt in via <code>variant="baseline"</code> or the boolean attribute <code>baseline</code>.
         </p>
 
         <div class="anchor-wrapper">
           <md-button id="btn-baseline" color="filled" onclick="document.getElementById('menu-baseline').show()">
             Open Baseline Menu
           </md-button>
-          <md-menu id="menu-baseline" anchor="btn-baseline">
+          <md-menu id="menu-baseline" anchor="btn-baseline" variant="baseline">
             <md-menu-item>
               <div slot="headline">Profile</div>
               <md-icon slot="start">person</md-icon>
@@ -164,21 +199,6 @@
           </md-menu>
         </div>
       </div>
-
-      <!-- 2. Vertical Menu (Standard) -->
-      <div class="card">
-        <span class="spec-badge">M3 Expressive (Standard)</span>
-        <h2>Vertical Menu</h2>
-        <p>
-          44px item height, 16px container radius, 20px icons, inset 12px rounded pill selection, and shape-morphing
-          motion.
-        </p>
-
-        <div class="anchor-wrapper">
-          <md-button id="btn-vertical" color="tonal" onclick="document.getElementById('menu-vertical').show()">
-            Open Vertical Menu
-          </md-button>
-          <md-menu id="menu-vertical" anchor="btn-vertical" variant="vertical">
             <md-menu-item>
               <div slot="headline">Home</div>
               <md-icon slot="start">home</md-icon>

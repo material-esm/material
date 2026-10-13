@@ -39,31 +39,9 @@ menu.close()
 
 ## Variants
 
-### Baseline Menu (Default)
+### Expressive Vertical Menu (Default)
 
-The classic Material 3 baseline menu variant:
-
-- **Item height**: 48px
-- **Horizontal padding**: 12px
-- **Element gap**: 12px
-- **Container corner radius**: 4px (`md.sys.shape.corner.extra-small`)
-- **Typography**: `md.sys.typescale.label-large` (14px, 500 weight, 20px line-height)
-- **Selection style**: Full-width edge-to-edge container highlight
-
-```html
-<md-menu anchor="anchor-id">
-  <md-menu-item>
-    <div slot="headline">Option 1</div>
-  </md-menu-item>
-  <md-menu-item selected>
-    <div slot="headline">Option 2</div>
-  </md-menu-item>
-</md-menu>
-```
-
-### Expressive Vertical Menu (`variant="vertical"` or `vertical`)
-
-Introduced in the Material 3 Expressive design update:
+The modern Material 3 Expressive vertical menu is enabled by default:
 
 - **Item height**: 44px
 - **Horizontal padding**: 16px
@@ -75,8 +53,8 @@ Introduced in the Material 3 Expressive design update:
 - **Shape morphing**: Smooth corner radius and background transitions on hover and focus
 
 ```html
-<!-- Standard style (surface-container-low) -->
-<md-menu anchor="anchor-id" variant="vertical">
+<!-- Standard style (surface-container-low, default) -->
+<md-menu anchor="anchor-id">
   <md-menu-item>
     <div slot="headline">Dashboard</div>
     <md-icon slot="start">dashboard</md-icon>
@@ -88,7 +66,7 @@ Introduced in the Material 3 Expressive design update:
 </md-menu>
 
 <!-- Vibrant style (tertiary-container with tertiary highlight) -->
-<md-menu anchor="anchor-id" variant="vertical" color-style="vibrant">
+<md-menu anchor="anchor-id" color-style="vibrant">
   <md-menu-item selected>
     <div slot="headline">Favorites</div>
     <md-icon slot="start">favorite</md-icon>
@@ -100,14 +78,36 @@ Introduced in the Material 3 Expressive design update:
 </md-menu>
 ```
 
+### Baseline Menu (`variant="baseline"` or `baseline`)
+
+The classic Material 3 baseline menu variant:
+
+- **Item height**: 48px
+- **Horizontal padding**: 12px
+- **Element gap**: 12px
+- **Container corner radius**: 4px (`md.sys.shape.corner.extra-small`)
+- **Typography**: `md.sys.typescale.label-large` (14px, 500 weight, 20px line-height)
+- **Selection style**: Full-width edge-to-edge container highlight
+
+```html
+<md-menu anchor="anchor-id" variant="baseline">
+  <md-menu-item>
+    <div slot="headline">Option 1</div>
+  </md-menu-item>
+  <md-menu-item selected>
+    <div slot="headline">Option 2</div>
+  </md-menu-item>
+</md-menu>
+```
+
 ---
 
 ## Submenus (`<md-sub-menu>`)
 
-Submenus open next to their parent item without overlapping it. Add `has-overflow` to the parent `<md-menu>` when embedding submenus:
+Submenus open next to their parent item without overlapping it. Submenus automatically inherit the parent menu's variant (vertical or baseline) and color style. Add `has-overflow` to the parent `<md-menu>` when embedding submenus:
 
 ```html
-<md-menu id="parent-menu" anchor="anchor-btn" variant="vertical" has-overflow>
+<md-menu id="parent-menu" anchor="anchor-btn" has-overflow>
   <md-menu-item>
     <div slot="headline">Copy</div>
     <md-icon slot="start">content_copy</md-icon>
@@ -145,8 +145,9 @@ Submenus open next to their parent item without overlapping it. Add `has-overflo
 | `quick`        | `quick`         | `boolean` | `false`         | Skips open and close transitions when `true`.                              |
 | `hasOverflow`  | `has-overflow`  | `boolean` | `false`         | Allows submenu content to overflow the menu container.                     |
 | `positioning`  | `positioning`   | `string`  | `'absolute'`    | Positioning strategy (`'absolute'`, `'fixed'`, `'document'`, `'popover'`). |
-| `variant`      | `variant`       | `string`  | `'baseline'`    | Design variant: `'baseline'` or `'vertical'` (`'expressive'`).             |
-| `vertical`     | `vertical`      | `boolean` | `false`         | Shorthand boolean attribute for `variant="vertical"`.                      |
+| `variant`      | `variant`       | `string`  | `'vertical'`    | Design variant: `'vertical'` (default, Expressive) or `'baseline'`.        |
+| `vertical`     | `vertical`      | `boolean` | `true`          | Shorthand boolean attribute for `variant="vertical"`.                      |
+| `baseline`     | `baseline`      | `boolean` | `false`         | Shorthand boolean attribute for `variant="baseline"`.                      |
 | `colorStyle`   | `color-style`   | `string`  | `'standard'`    | Vertical color mapping: `'standard'` or `'vibrant'`.                       |
 | `vibrant`      | `vibrant`       | `boolean` | `false`         | Shorthand boolean attribute for `color-style="vibrant"`.                   |
 | `anchorCorner` | `anchor-corner` | `string`  | `'end-start'`   | Corner of the anchor element to align to.                                  |
