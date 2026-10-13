@@ -24,6 +24,7 @@
   "homepage": "https://github.com/material-esm/material#readme",
   "scripts": {
     "start": "npx -y serve",
+    "build": "echo 'No build required'",
     "deploy": "wrangler deploy",
     "preview": "wrangler preview",
     "format": "prettier --write ."
