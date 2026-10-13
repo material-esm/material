@@ -112,6 +112,7 @@ export class Menu extends LitElement {
     noNavigationWrap: { type: Boolean, attribute: 'no-navigation-wrap' },
     variant: { type: String, reflect: true },
     vertical: { type: Boolean, reflect: true },
+    baseline: { type: Boolean, reflect: true },
     colorStyle: { type: String, attribute: 'color-style', reflect: true },
     vibrant: { type: Boolean, reflect: true },
   }
@@ -139,10 +140,16 @@ export class Menu extends LitElement {
     this.requestUpdate('anchorElement')
   }
   /**
-   * Whether the menu is rendered in the Material 3 Expressive vertical menu variant.
+   * Whether the menu is rendered in the Material 3 Expressive vertical menu variant (default).
    */
   get isVertical() {
-    return this.vertical || this.variant === 'vertical' || this.variant === 'expressive'
+    return !this.baseline && this.variant !== 'baseline'
+  }
+  /**
+   * Whether the menu is rendered in the classic Material 3 baseline menu variant.
+   */
+  get isBaseline() {
+    return !this.isVertical
   }
   /**
    * Whether the menu uses the vibrant color style.
@@ -300,13 +307,17 @@ export class Menu extends LitElement {
      */
     this.pointerPath = []
     /**
-     * The menu design variant: 'baseline' (default) or 'vertical' (Material 3 Expressive).
+     * The menu design variant: 'vertical' (default, Material 3 Expressive) or 'baseline'.
      */
-    this.variant = 'baseline'
+    this.variant = 'vertical'
     /**
      * Shorthand boolean to enable the Material 3 Expressive vertical menu variant.
      */
     this.vertical = false
+    /**
+     * Shorthand boolean to opt into the classic Material 3 baseline menu variant.
+     */
+    this.baseline = false
     /**
      * The color style for vertical menus: 'standard' (default) or 'vibrant'.
      */
@@ -543,22 +554,29 @@ export class Menu extends LitElement {
     return this.listController.items
   }
   willUpdate(changed) {
+    if (changed.has('baseline')) {
+      if (this.baseline) {
+        this.variant = 'baseline'
+        this.vertical = false
+      } else if (changed.get('baseline') === true) {
+        this.variant = 'vertical'
+      }
+    }
     if (changed.has('vertical')) {
       if (this.vertical) {
-        if (this.variant !== 'vertical' && this.variant !== 'expressive') {
-          this.variant = 'vertical'
-        }
+        this.variant = 'vertical'
+        this.baseline = false
       } else if (changed.get('vertical') === true) {
-        if (this.variant === 'vertical' || this.variant === 'expressive') {
-          this.variant = 'baseline'
-        }
+        this.variant = 'baseline'
+        this.baseline = true
       }
     }
     if (changed.has('variant')) {
-      if (this.variant === 'vertical' || this.variant === 'expressive') {
-        this.vertical = true
-      } else if (changed.get('variant') !== undefined) {
+      if (this.variant === 'baseline') {
         this.vertical = false
+        this.baseline = true
+      } else if (this.variant === 'vertical' || this.variant === 'expressive') {
+        this.baseline = false
       }
     }
 
@@ -645,6 +663,7 @@ export class Menu extends LitElement {
     if (
       changedProperties.has('variant') ||
       changedProperties.has('vertical') ||
+      changedProperties.has('baseline') ||
       changedProperties.has('colorStyle') ||
       changedProperties.has('vibrant')
     ) {
@@ -659,13 +678,16 @@ export class Menu extends LitElement {
    * Updates positional attributes on menu items when in vertical layout.
    */
   updateItemPositions() {
-    if (!this.isVertical) return
     const items = (this.slotItems ?? []).filter(
       (el) =>
         el.hasAttribute?.('md-menu-item') ||
         el.tagName?.toLowerCase() === 'md-menu-item' ||
         el.tagName?.toLowerCase() === 'md-sub-menu',
     )
+    if (!this.isVertical) {
+      items.forEach((item) => item.removeAttribute('menu-position'))
+      return
+    }
     const count = items.length
     items.forEach((item, index) => {
       if (count === 1) {
@@ -705,6 +727,7 @@ export class Menu extends LitElement {
       fixed: this.positioning === 'fixed',
       'has-overflow': this.hasOverflow,
       vertical: this.isVertical,
+      baseline: !this.isVertical,
       vibrant: this.isVibrant,
     }
   }
@@ -1002,16 +1025,27 @@ export class Menu extends LitElement {
       :host {
         --md-elevation-level: var(--md-menu-container-elevation, 2);
         --md-elevation-shadow-color: var(--md-menu-container-shadow-color, var(--md-sys-color-shadow, #000));
+        --md-menu-container-shape: var(--md-sys-shape-corner-large, 16px);
+        --md-menu-container-color: var(--md-sys-color-surface-container-low, #f7f2fa);
+        --md-menu-item-one-line-container-height: 44px;
+        --md-menu-item-leading-space: 16px;
+        --md-menu-item-trailing-space: 16px;
+        --md-menu-item-top-space: 8px;
+        --md-menu-item-bottom-space: 8px;
+        --md-menu-item-between-space: 12px;
+        --md-menu-item-icon-size: 20px;
+        --md-menu-item-shape: var(--md-sys-shape-corner-extra-small, 4px);
+        --md-menu-item-selected-shape: var(--md-sys-shape-corner-medium, 12px);
         min-width: 112px;
         max-width: var(--md-menu-container-max-width, 280px);
         color: unset;
         display: contents;
       }
       md-focus-ring {
-        --md-focus-ring-shape: var(--md-menu-container-shape, var(--md-sys-shape-corner-extra-small, 4px));
+        --md-focus-ring-shape: var(--md-menu-container-shape, var(--md-sys-shape-corner-large, 16px));
       }
       .menu {
-        border-radius: var(--md-menu-container-shape, var(--md-sys-shape-corner-extra-small, 4px));
+        border-radius: var(--md-menu-container-shape, var(--md-sys-shape-corner-large, 16px));
         display: none;
         inset: auto;
         border: none;
@@ -1040,7 +1074,7 @@ export class Menu extends LitElement {
         margin: 0;
         outline: none;
         box-sizing: border-box;
-        background-color: var(--md-menu-container-color, var(--md-sys-color-surface-container, #f3edf7));
+        background-color: var(--md-menu-container-color, var(--md-sys-color-surface-container-low, #f7f2fa));
         height: inherit;
         max-height: inherit;
         overflow: auto;
@@ -1049,7 +1083,7 @@ export class Menu extends LitElement {
         border-radius: inherit;
       }
       .item-padding {
-        padding-block: 8px;
+        padding: 8px 6px;
       }
       .has-overflow:not([popover]) .items {
         overflow: visible;
@@ -1070,11 +1104,53 @@ export class Menu extends LitElement {
         max-height: inherit;
       }
       ::slotted(:is(md-divider, [role='separator'])) {
+        margin: 6px 12px;
+      }
+
+      /* Baseline variant overrides */
+      :host([variant='baseline']),
+      :host([baseline]) {
+        --md-menu-container-shape: var(--md-sys-shape-corner-extra-small, 4px);
+        --md-menu-container-color: var(--md-sys-color-surface-container, #f3edf7);
+        --md-menu-item-one-line-container-height: 48px;
+        --md-menu-item-leading-space: 12px;
+        --md-menu-item-trailing-space: 12px;
+        --md-menu-item-top-space: 8px;
+        --md-menu-item-bottom-space: 8px;
+        --md-menu-item-between-space: 12px;
+        --md-menu-item-icon-size: 24px;
+        --md-menu-item-shape: 0px;
+        --md-menu-item-selected-shape: 0px;
+      }
+      .menu.baseline {
+        border-radius: var(--md-menu-container-shape, var(--md-sys-shape-corner-extra-small, 4px));
+      }
+      .menu.baseline md-focus-ring {
+        --md-focus-ring-shape: var(--md-menu-container-shape, var(--md-sys-shape-corner-extra-small, 4px));
+      }
+      .menu.baseline .items {
+        background-color: var(--md-menu-container-color, var(--md-sys-color-surface-container, #f3edf7));
+      }
+      .menu.baseline .item-padding {
+        padding-block: 8px;
+        padding-inline: 0px;
+      }
+      :host([variant='baseline']) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item])),
+      :host([baseline]) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item])) {
+        margin: 0;
+        border-radius: 0 !important;
+      }
+      :host([variant='baseline']) ::slotted([selected]),
+      :host([baseline]) ::slotted([selected]) {
+        border-radius: 0 !important;
+      }
+      :host([variant='baseline']) ::slotted(:is(md-divider, [role='separator'])),
+      :host([baseline]) ::slotted(:is(md-divider, [role='separator'])) {
         margin: 8px 0;
       }
 
       /* ===================================================================
-       * Material 3 Expressive Vertical Menu Specifications
+       * Material 3 Expressive Vertical Menu Specifications (Default)
        * =================================================================== */
       :host([variant='vertical']),
       :host([variant='expressive']),
@@ -1127,11 +1203,13 @@ export class Menu extends LitElement {
         --md-ripple-pressed-color: var(--md-sys-color-on-tertiary-container, #31111d);
       }
 
-      .menu.vertical.vibrant .items {
+      .menu.vertical.vibrant .items,
+      .menu:not(.baseline).vibrant .items {
         background-color: var(--md-menu-container-color, var(--md-sys-color-tertiary-container, #ffd8e4));
       }
 
       /* Slotted item margins and shape morphing in vertical menus */
+      :host(:not([variant='baseline']):not([baseline])) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item])),
       :host([variant='vertical']) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item])),
       :host([variant='expressive']) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item])),
       :host([vertical]) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item])) {
@@ -1143,6 +1221,8 @@ export class Menu extends LitElement {
       }
 
       /* First child in vertical menu */
+      :host(:not([variant='baseline']):not([baseline])) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item])[menu-position='first']),
+      :host(:not([variant='baseline']):not([baseline])) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item]):first-of-type),
       :host([variant='vertical']) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item])[menu-position='first']),
       :host([variant='vertical']) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item]):first-of-type),
       :host([variant='expressive']) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item])[menu-position='first']),
@@ -1156,6 +1236,8 @@ export class Menu extends LitElement {
       }
 
       /* Last child in vertical menu */
+      :host(:not([variant='baseline']):not([baseline])) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item])[menu-position='last']),
+      :host(:not([variant='baseline']):not([baseline])) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item]):last-of-type),
       :host([variant='vertical']) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item])[menu-position='last']),
       :host([variant='vertical']) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item]):last-of-type),
       :host([variant='expressive']) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item])[menu-position='last']),
@@ -1169,6 +1251,8 @@ export class Menu extends LitElement {
       }
 
       /* Single child in vertical menu */
+      :host(:not([variant='baseline']):not([baseline])) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item])[menu-position='single']),
+      :host(:not([variant='baseline']):not([baseline])) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item]):only-of-type),
       :host([variant='vertical']) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item])[menu-position='single']),
       :host([variant='vertical']) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item]):only-of-type),
       :host([variant='expressive']) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item])[menu-position='single']),
@@ -1179,6 +1263,8 @@ export class Menu extends LitElement {
       }
 
       /* Hover and focus morphing in vertical menu */
+      :host(:not([variant='baseline']):not([baseline])) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item]):hover),
+      :host(:not([variant='baseline']):not([baseline])) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item]):focus-within),
       :host([variant='vertical']) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item]):hover),
       :host([variant='vertical']) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item]):focus-within),
       :host([variant='expressive']) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item]):hover),
@@ -1189,6 +1275,7 @@ export class Menu extends LitElement {
       }
 
       /* Selected state pill in vertical menu */
+      :host(:not([variant='baseline']):not([baseline])) ::slotted([selected]),
       :host([variant='vertical']) ::slotted([selected]),
       :host([variant='expressive']) ::slotted([selected]),
       :host([vertical]) ::slotted([selected]) {
@@ -1196,6 +1283,7 @@ export class Menu extends LitElement {
       }
 
       /* Inset dividers in vertical menu */
+      :host(:not([variant='baseline']):not([baseline])) ::slotted(:is(md-divider, [role='separator'])),
       :host([variant='vertical']) ::slotted(:is(md-divider, [role='separator'])),
       :host([variant='expressive']) ::slotted(:is(md-divider, [role='separator'])),
       :host([vertical]) ::slotted(:is(md-divider, [role='separator'])) {
@@ -1203,6 +1291,7 @@ export class Menu extends LitElement {
       }
 
       /* Vertical menu grouping gap support */
+      :host(:not([variant='baseline']):not([baseline])) ::slotted([data-gap]),
       :host([variant='vertical']) ::slotted([data-gap]),
       :host([variant='expressive']) ::slotted([data-gap]),
       :host([vertical]) ::slotted([data-gap]) {

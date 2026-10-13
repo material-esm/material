@@ -308,11 +308,17 @@ export class SubMenu extends LitElement {
     const parentMenu = this.closest('md-menu')
     if (!parentMenu) return
 
-    const isParentVertical = parentMenu.hasAttribute('vertical') || parentMenu.isVertical
-    if (isParentVertical) {
-      if (!menu.hasAttribute('vertical') && (!menu.hasAttribute('variant') || menu.variant === 'baseline')) {
+    const isParentVertical = parentMenu.isVertical
+    if (!isParentVertical) {
+      if (!menu.hasAttribute('vertical') || menu.baseline) {
+        menu.variant = 'baseline'
+        menu.baseline = true
+        menu.vertical = false
+      }
+    } else {
+      if (!menu.hasAttribute('baseline') && menu.variant !== 'baseline') {
         menu.variant = parentMenu.variant || 'vertical'
-        menu.vertical = true
+        menu.baseline = false
       }
     }
     if (
