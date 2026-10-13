@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import '../divider/divider.js'
+import '../internal/elevation/elevation.js'
 import { html, isServer, LitElement, nothing, css } from 'lit'
 import { classMap } from 'lit/directives/class-map.js'
 import { requestUpdateOnAriaChange } from '../internal/aria/delegate.js'
@@ -25,6 +26,14 @@ export class Dialog extends LitElement {
     quick: { type: Boolean, reflect: true },
     returnValue: { type: String },
     type: { type: String },
+    stacked: { type: Boolean, reflect: true },
+    preventScrimClose: { type: Boolean, reflect: true, attribute: 'prevent-scrim-close' },
+    fullscreen: { type: Boolean, reflect: true },
+    isAtScrollTop: { state: true },
+    isAtScrollBottom: { state: true },
+    hasHeadline: { state: true },
+    hasActions: { state: true },
+    hasIcon: { state: true },
   }
 
   /**
@@ -59,6 +68,10 @@ export class Dialog extends LitElement {
      * https://developer.mozilla.org/en-US/docs/Web/API/HTMLDialogElement/returnValue
      */
     this.returnValue = ''
+    this.type = ''
+    this.stacked = false
+    this.preventScrimClose = false
+    this.fullscreen = false
     /**
      * Gets the opening animation for a dialog. Set to a new function to customize
      * the animation.
@@ -211,6 +224,8 @@ export class Dialog extends LitElement {
       scrollable: scrollable,
       'show-top-divider': scrollable && !this.isAtScrollTop,
       'show-bottom-divider': scrollable && !this.isAtScrollBottom,
+      stacked: this.stacked,
+      fullscreen: this.fullscreen,
     }
     const { ariaLabel } = this
     return html`
@@ -225,6 +240,7 @@ export class Dialog extends LitElement {
         @close=${this.handleClose}
         @keydown=${this.handleKeydown}
         .returnValue=${this.returnValue || nothing}>
+        <md-elevation part="elevation"></md-elevation>
         <div class="container" @click=${this.handleContentClick}>
           <div class="headline">
             <div class="icon" aria-hidden="true">
@@ -267,6 +283,11 @@ export class Dialog extends LitElement {
       // Avoid doing a layout calculation below if we know the click came from
       // content.
       this.nextClickIsFromContent = false
+      return
+    }
+    // M3: Alert dialogs interrupt with urgent information and require a user action.
+    // Tapping the scrim does not dismiss an alert dialog.
+    if (this.type === 'alert' || this.preventScrimClose) {
       return
     }
     // Click originated on the backdrop. Native `<dialog>`s will not cancel,
@@ -335,7 +356,7 @@ export class Dialog extends LitElement {
     if (this.quick) {
       return
     }
-    const { dialog, scrim, container, headline, content, actions } = this
+    const { dialog, scrim, container, headline, content, actions, elevation } = this
     if (!dialog || !scrim || !container || !headline || !content || !actions) {
       return
     }
@@ -346,6 +367,7 @@ export class Dialog extends LitElement {
       headline: headlineAnimate,
       content: contentAnimate,
       actions: actionsAnimate,
+      elevation: elevationAnimate,
     } = animation
     const elementAndAnimation = [
       [dialog, dialogAnimate ?? []],
@@ -354,6 +376,7 @@ export class Dialog extends LitElement {
       [headline, headlineAnimate ?? []],
       [content, contentAnimate ?? []],
       [actions, actionsAnimate ?? []],
+      ...(elevation ? [[elevation, elevationAnimate ?? []]] : []),
     ]
     const animations = []
     for (const [element, animation] of elementAndAnimation) {
@@ -400,18 +423,42 @@ export class Dialog extends LitElement {
     })
   }
   get topAnchor() {
-    return this.renderRoot.querySelector('.top.anchor')
+    return this.renderRoot?.querySelector('.top.anchor')
   }
   get bottomAnchor() {
-    return this.renderRoot.querySelector('.bottom.anchor')
+    return this.renderRoot?.querySelector('.bottom.anchor')
   }
 
   get dialog() {
-    return this.renderRoot.querySelector('dialog')
+    return this.renderRoot?.querySelector('dialog')
   }
 
   get scrim() {
-    return this.renderRoot.querySelector('.scrim')
+    return this.renderRoot?.querySelector('.scrim')
+  }
+
+  get container() {
+    return this.renderRoot?.querySelector('.container')
+  }
+
+  get scroller() {
+    return this.renderRoot?.querySelector('.scroller')
+  }
+
+  get headline() {
+    return this.renderRoot?.querySelector('.headline')
+  }
+
+  get content() {
+    return this.renderRoot?.querySelector('.content')
+  }
+
+  get actions() {
+    return this.renderRoot?.querySelector('.actions')
+  }
+
+  get elevation() {
+    return this.renderRoot?.querySelector('md-elevation')
   }
 
   static styles = [
@@ -435,18 +482,19 @@ export class Dialog extends LitElement {
         );
         display: contents;
         margin: auto;
-        // max-height: min(560px, 100% - 48px);
-        // max-width: min(560px, 100% - 48px);
-        min-height: 140px;
-        min-width: 280px;
+        max-height: var(--md-dialog-container-max-height, min(560px, calc(100% - 48px)));
+        max-width: var(--md-dialog-container-max-width, min(560px, calc(100% - 48px)));
+        min-height: var(--md-dialog-container-min-height, 140px);
+        min-width: var(--md-dialog-container-min-width, 280px);
         position: fixed;
         height: fit-content;
         width: fit-content;
       }
       dialog {
-        background: rgba(0, 0, 0, 0);
+        background: transparent;
         border: none;
         border-radius: inherit;
+        box-sizing: border-box;
         flex-direction: column;
         height: inherit;
         margin: inherit;
@@ -465,11 +513,19 @@ export class Dialog extends LitElement {
       ::backdrop {
         background: none;
       }
+      md-elevation {
+        border-radius: inherit;
+        inset: 0;
+        pointer-events: none;
+        position: absolute;
+        --md-elevation-level: var(--md-dialog-container-elevation, 3);
+        --md-elevation-shadow-color: var(--md-dialog-container-shadow-color, var(--md-sys-color-shadow, #000));
+      }
       .scrim {
-        background: var(--md-sys-color-scrim, #000);
+        background: var(--md-dialog-scrim-color, var(--md-sys-color-scrim, #000));
         display: none;
         inset: 0;
-        opacity: 32%;
+        opacity: var(--md-dialog-scrim-opacity, 32%);
         pointer-events: none;
         position: fixed;
         z-index: 1;
@@ -496,6 +552,7 @@ export class Dialog extends LitElement {
           --md-dialog-headline-weight,
           var(--md-sys-typescale-headline-small-weight, var(--md-ref-typeface-weight-regular, 400))
         );
+        letter-spacing: var(--md-dialog-headline-tracking, var(--md-sys-typescale-headline-small-tracking, 0));
         position: relative;
       }
       slot[name='headline']::slotted(*) {
@@ -519,6 +576,7 @@ export class Dialog extends LitElement {
       }
       .has-icon slot[name='headline']::slotted(*) {
         justify-content: center;
+        text-align: center;
         padding-top: 16px;
       }
       .scrollable slot[name='headline']::slotted(*) {
@@ -568,6 +626,7 @@ export class Dialog extends LitElement {
           --md-dialog-supporting-text-weight,
           var(--md-sys-typescale-body-medium-weight, var(--md-ref-typeface-weight-regular, 400))
         );
+        letter-spacing: var(--md-dialog-supporting-text-tracking, var(--md-sys-typescale-body-medium-tracking, 0.25px));
         height: min-content;
         position: relative;
       }
@@ -594,6 +653,11 @@ export class Dialog extends LitElement {
         justify-content: flex-end;
         padding: 16px 24px 24px;
       }
+      :host([stacked]) slot[name='actions']::slotted(*),
+      dialog.stacked slot[name='actions']::slotted(*) {
+        flex-direction: column-reverse;
+        align-items: stretch;
+      }
       .has-actions slot[name='content']::slotted(*) {
         padding-bottom: 8px;
       }
@@ -611,6 +675,33 @@ export class Dialog extends LitElement {
       .actions md-divider {
         top: 0;
       }
+      /* Full-screen dialog variant */
+      :host([fullscreen]) {
+        border-radius: 0;
+        height: 100%;
+        max-height: 100%;
+        max-width: 100%;
+        min-height: 100%;
+        min-width: 100%;
+        width: 100%;
+      }
+      dialog.fullscreen {
+        border-radius: 0;
+        height: 100%;
+        max-height: 100%;
+        max-width: 100%;
+        min-height: 100%;
+        min-width: 100%;
+        width: 100%;
+      }
+      :host([fullscreen]) md-elevation,
+      dialog.fullscreen md-elevation {
+        --md-elevation-level: 0;
+        display: none;
+      }
+      :host([fullscreen]) .scrim {
+        display: none !important;
+      }
       @media (forced-colors: active) {
         dialog {
           outline: 2px solid WindowText;
@@ -622,48 +713,5 @@ export class Dialog extends LitElement {
 ;(() => {
   requestUpdateOnAriaChange(Dialog)
 })()
-
-// __decorate([
-//     query('dialog')
-// ], Dialog.prototype, "dialog", void 0);
-// __decorate([
-//     query('.scrim')
-// ], Dialog.prototype, "scrim", void 0);
-// __decorate([
-//     query('.container')
-// ], Dialog.prototype, "container", void 0);
-// __decorate([
-//     query('.headline')
-// ], Dialog.prototype, "headline", void 0);
-// __decorate([
-//     query('.content')
-// ], Dialog.prototype, "content", void 0);
-// __decorate([
-//     query('.actions')
-// ], Dialog.prototype, "actions", void 0);
-// __decorate([
-//     state()
-// ], Dialog.prototype, "isAtScrollTop", void 0);
-// __decorate([
-//     state()
-// ], Dialog.prototype, "isAtScrollBottom", void 0);
-// __decorate([
-//     query('.scroller')
-// ], Dialog.prototype, "scroller", void 0);
-// __decorate([
-//     query('.top.anchor')
-// ], Dialog.prototype, "topAnchor", void 0);
-// __decorate([
-//     query('.bottom.anchor')
-// ], Dialog.prototype, "bottomAnchor", void 0);
-// __decorate([
-//     state()
-// ], Dialog.prototype, "hasHeadline", void 0);
-// __decorate([
-//     state()
-// ], Dialog.prototype, "hasActions", void 0);
-// __decorate([
-//     state()
-// ], Dialog.prototype, "hasIcon", void 0);
 
 customElements.define('md-dialog', Dialog)

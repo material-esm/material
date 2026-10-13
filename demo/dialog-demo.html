@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Material 3 Dialog Demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="preload"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"
+      as="style"
+      onload="
+        this.onload = null
+        this.rel = 'stylesheet'
+      " />
+    <link
+      rel="preload"
+      href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;700&display=swap"
+      as="style"
+      onload="
+        this.onload = null
+        this.rel = 'stylesheet'
+      " />
+
+    <link rel="icon" href="./images/material.jpeg" />
+    <link rel="stylesheet" href="./css/styles.css" />
+
+    <script type="importmap">
+      {
+        "imports": {
+          "lit": "https://cdn.jsdelivr.net/npm/lit@3/index.js",
+          "lit/": "https://cdn.jsdelivr.net/npm/lit@3/",
+          "@lit/localize": "https://cdn.jsdelivr.net/npm/@lit/localize/lit-localize.js",
+          "@lit/reactive-element": "https://cdn.jsdelivr.net/npm/@lit/reactive-element@2/reactive-element.js",
+          "@lit/reactive-element/": "https://cdn.jsdelivr.net/npm/@lit/reactive-element@2/",
+          "lit-element/lit-element.js": "https://cdn.jsdelivr.net/npm/lit-element@4/lit-element.js",
+          "lit-html": "https://cdn.jsdelivr.net/npm/lit-html@3/lit-html.js",
+          "lit-html/": "https://cdn.jsdelivr.net/npm/lit-html@3/",
+          "material/": "../"
+        }
+      }
+    </script>
+    <script type="module">
+      import 'material/dialog/dialog.js'
+      import 'material/buttons/button.js'
+      import 'material/buttons/icon-button.js'
+      import 'material/icon/icon.js'
+      import 'material/divider/divider.js'
+    </script>
+
+    <style>
+      body {
+        background: var(--md-sys-color-background, #fef7ff);
+        color: var(--md-sys-color-on-background, #1d1b20);
+        padding: 24px;
+        max-width: 800px;
+        margin: 0 auto;
+        box-sizing: border-box;
+      }
+
+      .header-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .demo-section {
+        background: var(--md-sys-color-surface-container, #f3edf7);
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 24px;
+      }
+
+      .demo-section h2 {
+        margin-top: 0;
+        font-size: 1.25rem;
+      }
+
+      .button-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 16px;
+      }
+
+      .status-card {
+        padding: 12px 16px;
+        border-radius: 8px;
+        background: var(--md-sys-color-surface-container-highest, #e6e0e9);
+        margin-top: 16px;
+        font-size: 0.9rem;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="header-nav">
+      <h1>Material 3 Dialogs</h1>
+      <md-button color="tonal" href="./index.html">Back to Components</md-button>
+    </div>
+
+    <p>
+      Dialogs provide critical information and decisions in a user flow, featuring Level 3 elevation, standard 28dp
+      shape tokens, and smooth M3 entry/exit motion.
+    </p>
+
+    <div class="demo-section">
+      <h2>1. Basic & Confirmation Dialog</h2>
+      <p>Standard modal dialog with headline, body, and action buttons.</p>
+      <div class="button-row">
+        <md-button color="filled" id="btn-basic">Open Basic Dialog</md-button>
+      </div>
+
+      <md-dialog id="dialog-basic">
+        <div slot="headline">Delete item?</div>
+        <div slot="content">
+          Are you sure you want to delete this file? This action is permanent and cannot be undone.
+        </div>
+        <div slot="actions">
+          <md-button color="text" id="btn-basic-cancel">Cancel</md-button>
+          <md-button color="filled" id="btn-basic-ok">Delete</md-button>
+        </div>
+      </md-dialog>
+    </div>
+
+    <div class="demo-section">
+      <h2>2. Alert Dialog (`type="alert"`)</h2>
+      <p>
+        Alert dialogs interrupt the user with urgent information. They have <code>role="alertdialog"</code> and cannot
+        be dismissed by tapping the backdrop scrim.
+      </p>
+      <div class="button-row">
+        <md-button color="filled" id="btn-alert">Open Alert Dialog</md-button>
+      </div>
+
+      <md-dialog id="dialog-alert" type="alert">
+        <md-icon slot="icon">warning</md-icon>
+        <div slot="headline">Discard unsaved draft?</div>
+        <div slot="content">
+          You have pending changes that will be lost forever if you discard them now. Tapping outside the dialog will
+          not dismiss it.
+        </div>
+        <div slot="actions">
+          <md-button color="text" id="btn-alert-cancel">Keep Editing</md-button>
+          <md-button color="filled" id="btn-alert-ok">Discard</md-button>
+        </div>
+      </md-dialog>
+    </div>
+
+    <div class="demo-section">
+      <h2>3. Stacked Actions (`stacked`)</h2>
+      <p>
+        For long action button labels, buttons stack vertically with the primary confirming action above the dismissive
+        action.
+      </p>
+      <div class="button-row">
+        <md-button color="filled" id="btn-stacked">Open Stacked Dialog</md-button>
+      </div>
+
+      <md-dialog id="dialog-stacked" stacked>
+        <div slot="headline">Turn on backup?</div>
+        <div slot="content">Photos and videos will be saved automatically to your Google Photos cloud library.</div>
+        <div slot="actions">
+          <md-button color="text" id="btn-stacked-cancel">Don't Back Up</md-button>
+          <md-button color="filled" id="btn-stacked-ok">Turn On Cloud Backup</md-button>
+        </div>
+      </md-dialog>
+    </div>
+
+    <div class="demo-section">
+      <h2>4. Scrollable Dialog with Dividers</h2>
+      <p>
+        When content overflows, vertical scrolling is activated, and 1dp dividers dynamically appear beneath the
+        headline and above the actions.
+      </p>
+      <div class="button-row">
+        <md-button color="filled" id="btn-scrollable">Open Scrollable Dialog</md-button>
+      </div>
+
+      <md-dialog id="dialog-scrollable">
+        <div slot="headline">Terms and Conditions</div>
+        <div slot="content" style="max-height: 200px">
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ut perspiciatis unde omnis iste natus error sit
+            voluptatem accusantium doloremque laudantium.
+          </p>
+          <p>
+            Totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt
+            explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit.
+          </p>
+          <p>
+            Sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui
+            dolorem ipsum quia dolor sit amet, consectetur, adipisci velit.
+          </p>
+          <p>
+            Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex
+            ea commodi consequatur?
+          </p>
+        </div>
+        <div slot="actions">
+          <md-button color="text" id="btn-scrollable-cancel">Decline</md-button>
+          <md-button color="filled" id="btn-scrollable-ok">Accept</md-button>
+        </div>
+      </md-dialog>
+    </div>
+
+    <div class="demo-section">
+      <h2>5. Full-Screen Dialog (`fullscreen`)</h2>
+      <p>Full-screen dialogs fill the entire viewport for complex workflows and form tasks.</p>
+      <div class="button-row">
+        <md-button color="filled" id="btn-fullscreen">Open Full-Screen Dialog</md-button>
+      </div>
+
+      <md-dialog id="dialog-fullscreen" fullscreen>
+        <div slot="headline">Create Event</div>
+        <div slot="content">
+          <p>This dialog spans the full viewport (100% width and height, 0dp corner radius, 0 elevation).</p>
+          <p>Fill out the details below before saving your new calendar event.</p>
+        </div>
+        <div slot="actions">
+          <md-button color="text" id="btn-fullscreen-cancel">Discard</md-button>
+          <md-button color="filled" id="btn-fullscreen-ok">Save</md-button>
+        </div>
+      </md-dialog>
+    </div>
+
+    <div class="status-card" id="status-card">Last Action: <strong id="status-text">None</strong></div>
+
+    <script>
+      function setupDialog(btnId, dialogId, cancelBtnId, okBtnId) {
+        const btn = document.getElementById(btnId)
+        const dialog = document.getElementById(dialogId)
+        const cancelBtn = document.getElementById(cancelBtnId)
+        const okBtn = document.getElementById(okBtnId)
+        const statusText = document.getElementById('status-text')
+
+        btn.addEventListener('click', () => dialog.show())
+        cancelBtn.addEventListener('click', () => dialog.close('cancel'))
+        okBtn.addEventListener('click', () => dialog.close('confirm'))
+
+        dialog.addEventListener('close', () => {
+          statusText.textContent = `${dialogId} closed with value: "${dialog.returnValue}"`
+        })
+        dialog.addEventListener('cancel', () => {
+          statusText.textContent = `${dialogId} canceled`
+        })
+      }
+
+      setupDialog('btn-basic', 'dialog-basic', 'btn-basic-cancel', 'btn-basic-ok')
+      setupDialog('btn-alert', 'dialog-alert', 'btn-alert-cancel', 'btn-alert-ok')
+      setupDialog('btn-stacked', 'dialog-stacked', 'btn-stacked-cancel', 'btn-stacked-ok')
+      setupDialog('btn-scrollable', 'dialog-scrollable', 'btn-scrollable-cancel', 'btn-scrollable-ok')
+      setupDialog('btn-fullscreen', 'dialog-fullscreen', 'btn-fullscreen-cancel', 'btn-fullscreen-ok')
+    </script>
+  </body>
+</html>
