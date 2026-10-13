@@ -736,7 +736,19 @@ export class Button extends buttonBaseClass {
       }
       /* This is for things like the snackbar, will use opposite colors */
       :host([color='text'].inverse) {
-        --_label-text-color: var(--md-button-label-text-color, var(--md-sys-color-on-primary, #6750a4));
+        --_label-text-color: var(--md-button-label-text-color, var(--md-sys-color-inverse-primary, #d0bcff));
+        --_hover-label-text-color: var(
+          --md-button-hover-label-text-color,
+          var(--md-sys-color-inverse-primary, #d0bcff)
+        );
+        --_focus-label-text-color: var(
+          --md-button-focus-label-text-color,
+          var(--md-sys-color-inverse-primary, #d0bcff)
+        );
+        --_pressed-label-text-color: var(
+          --md-button-pressed-label-text-color,
+          var(--md-sys-color-inverse-primary, #d0bcff)
+        );
       }
       :host([color='text'][selected]) {
         --_container-color: var(
