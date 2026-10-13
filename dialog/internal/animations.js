@@ -59,6 +59,13 @@ export const DIALOG_DEFAULT_OPEN_ANIMATION = {
       { duration: 300, easing: 'linear', fill: 'forwards' },
     ],
   ],
+  elevation: [
+    [
+      // Elevation fade in
+      [{ opacity: 0 }, { opacity: 0, offset: 0.2 }, { opacity: 1 }],
+      { duration: 150, easing: 'linear', fill: 'forwards' },
+    ],
+  ],
 }
 /**
  * The default dialog close animation.
@@ -111,6 +118,13 @@ export const DIALOG_DEFAULT_CLOSE_ANIMATION = {
   actions: [
     [
       // Actions fade out
+      [{ opacity: 1 }, { opacity: 0 }],
+      { duration: 100, easing: 'linear', fill: 'forwards' },
+    ],
+  ],
+  elevation: [
+    [
+      // Elevation fade out
       [{ opacity: 1 }, { opacity: 0 }],
       { duration: 100, easing: 'linear', fill: 'forwards' },
     ],

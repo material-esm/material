@@ -693,10 +693,21 @@ class ExpressiveComponent extends LitElement {
           </div>
 
           <md-dialog id="dialog1">
-            <div slot="headline">Dialog title</div>
+            <div slot="headline">Dialog Title</div>
             <form slot="content" id="form-id" method="dialog">A simple dialog with free-form content.</form>
             <div slot="actions">
-              <md-button color="text" form="form-id" @click=${() => this.renderRoot.querySelector('#dialog1').close()}>
+              <md-button
+                color="text"
+                form="form-id"
+                value="cancel"
+                @click=${() => this.renderRoot.querySelector('#dialog1').close('cancel')}>
+                Cancel
+              </md-button>
+              <md-button
+                color="filled"
+                form="form-id"
+                value="ok"
+                @click=${() => this.renderRoot.querySelector('#dialog1').close('ok')}>
                 Ok
               </md-button>
             </div>
