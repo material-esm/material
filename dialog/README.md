@@ -23,12 +23,12 @@ import { Dialog } from 'material/dialog/dialog.js'
   <div slot="headline">Delete item?</div>
   <div slot="content">This will permanently remove the selected file. This action cannot be undone.</div>
   <div slot="actions">
-    <md-button color="text" @click="${()" =""> this.dialog.close('cancel')}>Cancel</md-button>
-    <md-button color="filled" @click="${()" =""> this.dialog.close('delete')}>Delete</md-button>
+    <md-button color="text" onclick="document.getElementById('confirm-dialog').close('cancel')">Cancel</md-button>
+    <md-button color="filled" onclick="document.getElementById('confirm-dialog').close('delete')">Delete</md-button>
   </div>
 </md-dialog>
 
-<md-button color="filled" @click="${()" =""> this.dialog.show()}>Open Dialog</md-button>
+<md-button color="filled" onclick="document.getElementById('confirm-dialog').show()">Open Dialog</md-button>
 ```
 
 ### Programmatic Control
@@ -58,8 +58,8 @@ Alert dialogs interrupt users with urgent, critical information. Following M3 gu
   <div slot="headline">Discard unsaved changes?</div>
   <div slot="content">You have unsaved changes in your document. Leaving now will cause them to be lost.</div>
   <div slot="actions">
-    <md-button color="text" @click="${()" =""> this.alert.close('cancel')}>Keep Editing</md-button>
-    <md-button color="filled" @click="${()" =""> this.alert.close('discard')}>Discard</md-button>
+    <md-button color="text" onclick="document.getElementById('alert-dialog').close('cancel')">Keep Editing</md-button>
+    <md-button color="filled" onclick="document.getElementById('alert-dialog').close('discard')">Discard</md-button>
   </div>
 </md-dialog>
 ```
@@ -76,8 +76,8 @@ When an icon is placed in the `icon` slot, the dialog automatically centers the 
   <div slot="headline">Permanently delete?</div>
   <div slot="content">All associated data will be erased from our servers immediately.</div>
   <div slot="actions">
-    <md-button color="text" @click="${()" =""> this.dialog.close()}>Cancel</md-button>
-    <md-button color="filled" @click="${()" =""> this.dialog.close()}>Delete</md-button>
+    <md-button color="text" onclick="document.getElementById('icon-dialog').close('cancel')">Cancel</md-button>
+    <md-button color="filled" onclick="document.getElementById('icon-dialog').close('delete')">Delete</md-button>
   </div>
 </md-dialog>
 ```
@@ -91,8 +91,12 @@ When action buttons have longer labels that cannot comfortably fit side-by-side,
   <div slot="headline">Turn on backup?</div>
   <div slot="content">Photos and videos will be saved automatically to your cloud storage account.</div>
   <div slot="actions">
-    <md-button color="text" @click="${()" =""> this.dialog.close('cancel')}>Don't Back Up</md-button>
-    <md-button color="filled" @click="${()" =""> this.dialog.close('backup')}>Turn On Cloud Backup</md-button>
+    <md-button color="text" onclick="document.getElementById('stacked-dialog').close('cancel')"
+      >Don't Back Up</md-button
+    >
+    <md-button color="filled" onclick="document.getElementById('stacked-dialog').close('backup')"
+      >Turn On Cloud Backup</md-button
+    >
   </div>
 </md-dialog>
 ```
@@ -110,8 +114,8 @@ For complex tasks on compact or mobile viewports, the `fullscreen` attribute sca
     </form>
   </div>
   <div slot="actions">
-    <md-button color="text" @click="${()" =""> this.dialog.close()}>Discard</md-button>
-    <md-button color="filled" @click="${()" =""> this.dialog.close('save')}>Save</md-button>
+    <md-button color="text" onclick="document.getElementById('fullscreen-dialog').close('discard')">Discard</md-button>
+    <md-button color="filled" onclick="document.getElementById('fullscreen-dialog').close('save')">Save</md-button>
   </div>
 </md-dialog>
 ```
