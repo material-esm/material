@@ -505,7 +505,6 @@ export class Dialog extends LitElement {
         outline: none;
         overflow: visible;
         padding: 0;
-        position: relative;
         width: inherit;
       }
       dialog[open] {
