@@ -153,7 +153,6 @@ export const menuItemStyles = css`
   :is([slot='start'], [slot='end'])::slotted(md-icon) {
     --md-icon-size: var(--md-menu-item-icon-size, 20px);
     font-size: var(--md-menu-item-icon-size, 20px);
-    font-variation-settings: 'opsz' 20;
   }
   [slot='start'] {
     color: var(--md-menu-item-leading-icon-color, var(--md-sys-color-on-surface-variant, #49454f));
