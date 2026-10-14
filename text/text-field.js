@@ -791,7 +791,6 @@ __decorate([
         resize: both;
         text-align: start;
         -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-        width: 100%;
       }
 
       .field {

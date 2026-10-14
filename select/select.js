@@ -827,7 +827,6 @@ export class Select extends selectBaseClass {
       }
       :host {
         display: inline-flex;
-        width: 100%;
       }
       :host([disabled]) {
         pointer-events: none;
