@@ -96,7 +96,7 @@ export const menuItemStyles = css`
     );
     letter-spacing: var(--md-menu-item-label-text-tracking, var(--md-sys-typescale-label-large-tracking, 0.1px));
     min-height: var(--md-menu-item-one-line-container-height, 48px);
-    gap: var(--md-menu-item-between-space, 12px);
+    gap: var(--md-menu-item-between-space, 8px);
     padding-top: var(--md-menu-item-top-space, 8px);
     padding-bottom: var(--md-menu-item-bottom-space, 8px);
     padding-inline-start: var(--md-menu-item-leading-space, 12px);
@@ -137,12 +137,22 @@ export const menuItemStyles = css`
   }
   :is([slot='start'], [slot='end'])::slotted(*) {
     fill: currentColor;
-    font-size: var(--md-menu-item-icon-size, 24px);
-    width: var(--md-menu-item-icon-size, 24px);
-    height: var(--md-menu-item-icon-size, 24px);
+    font-size: var(--md-menu-item-icon-size, 20px);
+    width: var(--md-menu-item-icon-size, 20px);
+    height: var(--md-menu-item-icon-size, 20px);
+    max-width: var(--md-menu-item-icon-size, 20px);
+    max-height: var(--md-menu-item-icon-size, 20px);
+    box-sizing: border-box;
+    object-fit: contain;
+    flex-shrink: 0;
+  }
+  :is([slot='start'], [slot='end'])::slotted(img) {
+    border-radius: inherit;
+    object-fit: cover;
   }
   :is([slot='start'], [slot='end'])::slotted(md-icon) {
-    --md-icon-size: var(--md-menu-item-icon-size, 24px);
+    --md-icon-size: var(--md-menu-item-icon-size, 20px);
+    font-size: var(--md-menu-item-icon-size, 20px);
   }
   [slot='start'] {
     color: var(--md-menu-item-leading-icon-color, var(--md-sys-color-on-surface-variant, #49454f));
