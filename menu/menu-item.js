@@ -159,26 +159,12 @@ export const menuItemStyles = css`
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: var(--md-menu-item-icon-size, 20px);
-    height: var(--md-menu-item-icon-size, 20px);
-    min-width: var(--md-menu-item-icon-size, 20px);
-    min-height: var(--md-menu-item-icon-size, 20px);
-    max-width: var(--md-menu-item-icon-size, 20px);
-    max-height: var(--md-menu-item-icon-size, 20px);
-    flex-shrink: 0;
   }
   [slot='end'] {
     color: var(--md-menu-item-trailing-icon-color, var(--md-sys-color-on-surface-variant, #49454f));
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: var(--md-menu-item-icon-size, 20px);
-    height: var(--md-menu-item-icon-size, 20px);
-    min-width: var(--md-menu-item-icon-size, 20px);
-    min-height: var(--md-menu-item-icon-size, 20px);
-    max-width: var(--md-menu-item-icon-size, 20px);
-    max-height: var(--md-menu-item-icon-size, 20px);
-    flex-shrink: 0;
   }
   .list-item.selected {
     background-color: var(--md-menu-item-selected-container-color, var(--md-sys-color-secondary-container, #e8def8));
