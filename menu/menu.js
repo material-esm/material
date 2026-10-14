@@ -1027,12 +1027,12 @@ export class Menu extends LitElement {
         --md-elevation-shadow-color: var(--md-menu-container-shadow-color, var(--md-sys-color-shadow, #000));
         --md-menu-container-shape: var(--md-sys-shape-corner-large, 16px);
         --md-menu-container-color: var(--md-sys-color-surface-container-low, #f7f2fa);
-        --md-menu-item-one-line-container-height: 44px;
-        --md-menu-item-leading-space: 16px;
-        --md-menu-item-trailing-space: 16px;
+        --md-menu-item-one-line-container-height: 48px;
+        --md-menu-item-leading-space: 12px;
+        --md-menu-item-trailing-space: 12px;
         --md-menu-item-top-space: 8px;
         --md-menu-item-bottom-space: 8px;
-        --md-menu-item-between-space: 12px;
+        --md-menu-item-between-space: 8px;
         --md-menu-item-icon-size: 20px;
         --md-menu-item-shape: var(--md-sys-shape-corner-extra-small, 4px);
         --md-menu-item-selected-shape: var(--md-sys-shape-corner-medium, 12px);
@@ -1117,8 +1117,8 @@ export class Menu extends LitElement {
         --md-menu-item-trailing-space: 12px;
         --md-menu-item-top-space: 8px;
         --md-menu-item-bottom-space: 8px;
-        --md-menu-item-between-space: 12px;
-        --md-menu-item-icon-size: 24px;
+        --md-menu-item-between-space: 8px;
+        --md-menu-item-icon-size: 20px;
         --md-menu-item-shape: 0px;
         --md-menu-item-selected-shape: 0px;
       }
@@ -1157,12 +1157,12 @@ export class Menu extends LitElement {
       :host([vertical]) {
         --md-menu-container-shape: var(--md-sys-shape-corner-large, 16px);
         --md-menu-container-color: var(--md-sys-color-surface-container-low, #f7f2fa);
-        --md-menu-item-one-line-container-height: 44px;
-        --md-menu-item-leading-space: 16px;
-        --md-menu-item-trailing-space: 16px;
+        --md-menu-item-one-line-container-height: 48px;
+        --md-menu-item-leading-space: 12px;
+        --md-menu-item-trailing-space: 12px;
         --md-menu-item-top-space: 8px;
         --md-menu-item-bottom-space: 8px;
-        --md-menu-item-between-space: 12px;
+        --md-menu-item-between-space: 8px;
         --md-menu-item-icon-size: 20px;
         --md-menu-item-shape: var(--md-sys-shape-corner-extra-small, 4px);
         --md-menu-item-selected-shape: var(--md-sys-shape-corner-medium, 12px);
@@ -1221,8 +1221,10 @@ export class Menu extends LitElement {
       }
 
       /* First child in vertical menu */
-      :host(:not([variant='baseline']):not([baseline])) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item])[menu-position='first']),
-      :host(:not([variant='baseline']):not([baseline])) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item]):first-of-type),
+      :host(:not([variant='baseline']):not([baseline]))
+        ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item])[menu-position='first']),
+      :host(:not([variant='baseline']):not([baseline]))
+        ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item]):first-of-type),
       :host([variant='vertical']) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item])[menu-position='first']),
       :host([variant='vertical']) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item]):first-of-type),
       :host([variant='expressive']) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item])[menu-position='first']),
@@ -1236,8 +1238,10 @@ export class Menu extends LitElement {
       }
 
       /* Last child in vertical menu */
-      :host(:not([variant='baseline']):not([baseline])) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item])[menu-position='last']),
-      :host(:not([variant='baseline']):not([baseline])) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item]):last-of-type),
+      :host(:not([variant='baseline']):not([baseline]))
+        ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item])[menu-position='last']),
+      :host(:not([variant='baseline']):not([baseline]))
+        ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item]):last-of-type),
       :host([variant='vertical']) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item])[menu-position='last']),
       :host([variant='vertical']) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item]):last-of-type),
       :host([variant='expressive']) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item])[menu-position='last']),
@@ -1251,8 +1255,10 @@ export class Menu extends LitElement {
       }
 
       /* Single child in vertical menu */
-      :host(:not([variant='baseline']):not([baseline])) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item])[menu-position='single']),
-      :host(:not([variant='baseline']):not([baseline])) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item]):only-of-type),
+      :host(:not([variant='baseline']):not([baseline]))
+        ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item])[menu-position='single']),
+      :host(:not([variant='baseline']):not([baseline]))
+        ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item]):only-of-type),
       :host([variant='vertical']) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item])[menu-position='single']),
       :host([variant='vertical']) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item]):only-of-type),
       :host([variant='expressive']) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item])[menu-position='single']),
@@ -1264,7 +1270,8 @@ export class Menu extends LitElement {
 
       /* Hover and focus morphing in vertical menu */
       :host(:not([variant='baseline']):not([baseline])) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item]):hover),
-      :host(:not([variant='baseline']):not([baseline])) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item]):focus-within),
+      :host(:not([variant='baseline']):not([baseline]))
+        ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item]):focus-within),
       :host([variant='vertical']) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item]):hover),
       :host([variant='vertical']) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item]):focus-within),
       :host([variant='expressive']) ::slotted(:is(md-menu-item, md-sub-menu, [md-menu-item]):hover),

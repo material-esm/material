@@ -43,9 +43,9 @@ menu.close()
 
 The modern Material 3 Expressive vertical menu is enabled by default:
 
-- **Item height**: 44px
-- **Horizontal padding**: 16px
-- **Element gap**: 12px
+- **Item height**: 48px
+- **Horizontal padding**: 12px
+- **Element gap**: 8px
 - **Container corner radius**: 16px (`md.sys.shape.corner.large`)
 - **Item corner radius**: Inset pill with 12px outer corners (`md.sys.shape.corner.medium`) and 4px inner corners
 - **Icon size**: 20px (`md.comp.menus.item.leading/trailing-icon-size`)
@@ -189,10 +189,10 @@ Submenus open next to their parent item without overlapping it. Submenus automat
 | `--md-menu-container-shape`                | `4px` (baseline) / `16px` (vertical)                                | Menu surface corner radius                   |
 | `--md-menu-container-color`                | `surface-container` (baseline) / `surface-container-low` (vertical) | Background color of menu container           |
 | `--md-menu-container-max-width`            | `280px`                                                             | Maximum container width                      |
-| `--md-menu-item-one-line-container-height` | `48px` (baseline) / `44px` (vertical)                               | Height of a single-line menu item            |
-| `--md-menu-item-leading-space`             | `12px` (baseline) / `16px` (vertical)                               | Left/leading padding inside menu item        |
-| `--md-menu-item-trailing-space`            | `12px` (baseline) / `16px` (vertical)                               | Right/trailing padding inside menu item      |
-| `--md-menu-item-between-space`             | `12px`                                                              | Spacing between icons and text inside item   |
-| `--md-menu-item-icon-size`                 | `24px` (baseline) / `20px` (vertical)                               | Sizing of slotted leading and trailing icons |
+| `--md-menu-item-one-line-container-height` | `48px`                                                              | Height of a single-line menu item            |
+| `--md-menu-item-leading-space`             | `12px`                                                              | Left/leading padding inside menu item        |
+| `--md-menu-item-trailing-space`            | `12px`                                                              | Right/trailing padding inside menu item      |
+| `--md-menu-item-between-space`             | `8px`                                                               | Spacing between icons and text inside item   |
+| `--md-menu-item-icon-size`                 | `20px`                                                              | Sizing of slotted leading and trailing icons |
 | `--md-menu-item-selected-container-color`  | `secondary-container` (baseline/standard) / `tertiary` (vibrant)    | Background color of selected item            |
 | `--md-menu-item-selected-label-text-color` | `on-secondary-container` / `on-tertiary` (vibrant)                  | Label color of selected item                 |

@@ -135,7 +135,7 @@
         <span class="spec-badge">Default (M3 Expressive)</span>
         <h2>Vertical Menu (Default)</h2>
         <p>
-          44px item height, 16px container radius, 20px icons, inset 12px rounded pill selection, and shape-morphing
+          48px item height, 16px container radius, 20px icons, inset 12px rounded pill selection, and shape-morphing
           motion. Applied by default to all <code>&lt;md-menu&gt;</code> elements.
         </p>
 
@@ -276,6 +276,41 @@
             <md-menu-item>
               <div slot="headline">Delete</div>
               <md-icon slot="start">delete_outline</md-icon>
+            </md-menu-item>
+          </md-menu>
+        </div>
+      </div>
+
+      <!-- 5. Slotted Icons & Avatars -->
+      <div class="card">
+        <span class="spec-badge">Slotted Content</span>
+        <h2>Slotted Icons & Avatars</h2>
+        <p>Demonstrates proper 20px spec containment for standard icons, slotted images/avatars, and SVG graphics.</p>
+
+        <div class="anchor-wrapper">
+          <md-button id="btn-slotted" color="tonal" onclick="document.getElementById('menu-slotted').show()">
+            Open Slotted Menu
+          </md-button>
+          <md-menu id="menu-slotted" anchor="btn-slotted">
+            <md-menu-item>
+              <div slot="headline">Travis Reeder</div>
+              <img slot="start" src="./images/avatar2.png" style="border-radius: 50%" alt="Avatar" />
+            </md-menu-item>
+            <md-menu-item>
+              <div slot="headline">Standard Icon</div>
+              <md-icon slot="start">settings</md-icon>
+            </md-menu-item>
+            <md-menu-item>
+              <div slot="headline">SVG Graphic</div>
+              <svg slot="start" viewBox="0 0 24 24" width="24" height="24">
+                <path fill="currentColor" d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+              </svg>
+            </md-menu-item>
+            <md-divider></md-divider>
+            <md-menu-item>
+              <div slot="headline">Trailing Indicator</div>
+              <md-icon slot="start">folder</md-icon>
+              <md-icon slot="end">chevron_right</md-icon>
             </md-menu-item>
           </md-menu>
         </div>
