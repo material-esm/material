@@ -765,6 +765,7 @@ export class Select extends selectBaseClass {
       .wrapper {
         color: unset;
         min-width: 160px;
+        width: 100%;
         display: flex;
       }
       .field {
@@ -822,9 +823,11 @@ export class Select extends selectBaseClass {
       .field,
       .select {
         width: 100%;
+        min-width: 0;
       }
       :host {
         display: inline-flex;
+        width: 100%;
       }
       :host([disabled]) {
         pointer-events: none;
