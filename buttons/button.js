@@ -259,7 +259,7 @@ export class Button extends buttonBaseClass {
         ? html`<svg class="checkmark" viewBox="0 0 18 18" aria-hidden="true">
             <path d="M6.75 12.127L3.623 9l-1.06 1.057L6.75 14.25l9-9-1.057-1.06z"></path>
           </svg>`
-        : nothing
+        : null
     return html`
       <span class="touch"></span>
       ${this.trailingIcon ? nothing : checkmark || icon}
