@@ -363,7 +363,7 @@ Navigation items can be placed in either `md-nav-rail` or `md-nav-bar`. They rep
 
 | Property             | Attribute              | Type      | Default | Description                                                 |
 | -------------------- | ---------------------- | --------- | ------- | ----------------------------------------------------------- |
-| `activeIndex`        | `active-index`         | `number`  | `0`     | The 0-based index of the currently active navigation item.  |
+| `activeIndex`        | `active-index`         | `number`  | `-1`    | The 0-based index of the currently active navigation item (`-1` for none). |
 | `expanded`           | `expanded`             | `boolean` | `false` | Whether the rail is expanded into the wide drawer layout.   |
 | `hideInactiveLabels` | `hide-inactive-labels` | `boolean` | `false` | Whether to hide labels on destinations that are not active. |
 
@@ -420,7 +420,7 @@ Navigation items can be placed in either `md-nav-rail` or `md-nav-bar`. They rep
 
 | Property             | Attribute              | Type      | Default | Description                                                |
 | -------------------- | ---------------------- | --------- | ------- | ---------------------------------------------------------- |
-| `activeIndex`        | `active-index`         | `number`  | `0`     | The 0-based index of the currently active navigation item. |
+| `activeIndex`        | `active-index`         | `number`  | `-1`    | The 0-based index of the currently active navigation item (`-1` for none). |
 | `hideInactiveLabels` | `hide-inactive-labels` | `boolean` | `false` | Whether to hide labels on inactive navigation items.       |
 
 #### Events
