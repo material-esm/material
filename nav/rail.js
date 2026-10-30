@@ -9,17 +9,12 @@ import { NavigationBar } from './bar.js'
  */
 export class Rail extends NavigationBar {
   static properties = {
-    activeIndex: { type: Number, attribute: 'active-index' },
-    hideInactiveLabels: { type: Boolean, attribute: 'hide-inactive-labels' },
-    tabs: { type: Array },
+    ...NavigationBar.properties,
     expanded: { type: Boolean, reflect: true },
   }
 
   constructor() {
     super()
-    this.activeIndex = 0
-    this.hideInactiveLabels = false
-    this.tabs = []
     this.expanded = false
   }
 
@@ -79,6 +74,7 @@ export class Rail extends NavigationBar {
   }
 
   _updateChildren() {
+    this.layout()
     this.renderRoot
       .querySelector('slot[name="fab"]')
       ?.assignedElements({ flatten: true })

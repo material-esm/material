@@ -1,17 +1,27 @@
 import { css, html, LitElement, nothing } from 'lit'
 import '../internal/elevation/elevation.js'
 import { isRtl } from '../internal/controller/is-rtl.js'
+
+const activeIndexConverter = {
+  fromAttribute(value) {
+    if (value === null || value.trim() === '') return -1
+    const num = Number(value)
+    return Number.isNaN(num) ? -1 : num
+  },
+}
+
 /**
  * NavigationBar
  */
 export class NavigationBar extends LitElement {
   static properties = {
-    activeIndex: { type: Number, attribute: 'active-index' },
+    activeIndex: { type: Number, attribute: 'active-index', converter: activeIndexConverter },
     hideInactiveLabels: { type: Boolean, attribute: 'hide-inactive-labels' },
+    tabs: { type: Array },
   }
   constructor() {
     super()
-    this.activeIndex = 0
+    this.activeIndex = -1
     this.hideInactiveLabels = false
     this.tabs = []
   }
@@ -26,7 +36,7 @@ export class NavigationBar extends LitElement {
       @navigation-tab-interaction="${this.handleNavigationTabInteraction}"
       @navigation-tab-rendered=${this.handleNavigationTabConnected}>
       <md-elevation part="elevation"></md-elevation>
-      <div class="md3-navigation-bar__tabs-slot-container"><slot></slot></div>
+      <div class="md3-navigation-bar__tabs-slot-container"><slot @slotchange=${this.layout}></slot></div>
     </div>`
   }
   updated(changedProperties) {
@@ -73,6 +83,7 @@ export class NavigationBar extends LitElement {
     this.activeIndex = this.tabs.indexOf(event.detail.state)
   }
   handleKeydown(event) {
+    if (this.tabs.length === 0) return
     const key = event.key
     const focusedTabIndex = this.tabs.findIndex((tab) => {
       return tab.matches(':focus-within')
@@ -80,40 +91,39 @@ export class NavigationBar extends LitElement {
     const isRTL = isRtl(this)
     const maxIndex = this.tabs.length - 1
     if (key === 'Enter' || key === ' ') {
-      this.activeIndex = focusedTabIndex
+      if (focusedTabIndex >= 0) {
+        this.activeIndex = focusedTabIndex
+      }
       return
     }
     if (key === 'Home') {
-      this.tabs[0].focus()
+      this.tabs[0]?.focus()
       return
     }
     if (key === 'End') {
-      this.tabs[maxIndex].focus()
+      this.tabs[maxIndex]?.focus()
       return
     }
     const toNextTab = (key === 'ArrowRight' && !isRTL) || (key === 'ArrowLeft' && isRTL)
     if (toNextTab && focusedTabIndex === maxIndex) {
-      this.tabs[0].focus()
+      this.tabs[0]?.focus()
       return
     }
     if (toNextTab) {
-      this.tabs[focusedTabIndex + 1].focus()
+      this.tabs[focusedTabIndex + 1]?.focus()
       return
     }
     const toPreviousTab = (key === 'ArrowLeft' && !isRTL) || (key === 'ArrowRight' && isRTL)
-    if (toPreviousTab && focusedTabIndex === 0) {
-      this.tabs[maxIndex].focus()
+    if (toPreviousTab && focusedTabIndex <= 0) {
+      this.tabs[maxIndex]?.focus()
       return
     }
     if (toPreviousTab) {
-      this.tabs[focusedTabIndex - 1].focus()
+      this.tabs[focusedTabIndex - 1]?.focus()
       return
     }
   }
   onActiveIndexChange(value) {
-    if (!this.tabs[value]) {
-      throw new Error('NavigationBar: activeIndex is out of bounds.')
-    }
     for (let i = 0; i < this.tabs.length; i++) {
       this.tabs[i].active = i === value
     }
@@ -130,7 +140,7 @@ export class NavigationBar extends LitElement {
     // console.log("ELS:", els)
     // let els = this.renderRoot?.querySelector('slot')?.assignedElements({ flatten: true })
     // return els.filter((e) => e.tagName === 'MD-NAVIGATION-TAB')
-    return els.assignedElements({ flatten: true })
+    return els?.assignedElements({ flatten: true })
   }
 
   static styles = [
