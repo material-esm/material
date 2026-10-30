@@ -17,7 +17,7 @@ export class NavigationBar extends LitElement {
   static properties = {
     activeIndex: { type: Number, attribute: 'active-index', converter: activeIndexConverter },
     hideInactiveLabels: { type: Boolean, attribute: 'hide-inactive-labels' },
-    tabs: { type: Array },
+    tabs: { state: true },
   }
   constructor() {
     super()
@@ -42,16 +42,18 @@ export class NavigationBar extends LitElement {
   updated(changedProperties) {
     if (changedProperties.has('activeIndex')) {
       this.onActiveIndexChange(this.activeIndex)
-      this.dispatchEvent(
-        new CustomEvent('navigation-bar-activated', {
-          detail: {
-            tab: this.tabs[this.activeIndex],
-            activeIndex: this.activeIndex,
-          },
-          bubbles: true,
-          composed: true,
-        }),
-      )
+      if (this.activeIndex >= 0 && this.tabs[this.activeIndex]) {
+        this.dispatchEvent(
+          new CustomEvent('navigation-bar-activated', {
+            detail: {
+              tab: this.tabs[this.activeIndex],
+              activeIndex: this.activeIndex,
+            },
+            bubbles: true,
+            composed: true,
+          }),
+        )
+      }
     }
     if (changedProperties.has('hideInactiveLabels')) {
       this.onHideInactiveLabelsChange(this.hideInactiveLabels)
