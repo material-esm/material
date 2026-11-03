@@ -16,15 +16,22 @@ import { getFormValue, mixinFormAssociated } from '../labs/behaviors/form-associ
 const searchBaseClass = mixinFormAssociated(mixinElementInternals(LitElement))
 
 /**
- * Material Design 3 Search Bar component.
+ * Material Design 3 Search Bar & Search View component.
  *
  * Implements the Material Design 3 Search specification:
  * https://m3.material.io/components/search/overview
+ *
+ * Supports adaptive Search View suggestions/results slotted into the default
+ * slot (or `slot="suggestions"`):
+ * - Docked dropdown surface below the search bar in medium/expanded windows (`>= 600px`).
+ * - Full-screen modal search view in compact windows (`< 600px`).
  *
  * @fires input {InputEvent} Dispatched when the search input value changes.
  * @fires change {Event} Dispatched when the search input value is committed.
  * @fires search {CustomEvent<{value: string}>} Dispatched when Enter is pressed.
  * @fires clear {CustomEvent} Dispatched when the clear button is activated.
+ * @fires open {CustomEvent} Dispatched when the search suggestions view opens.
+ * @fires close {CustomEvent} Dispatched when the search suggestions view closes.
  */
 export class Search extends searchBaseClass {
   static shadowRootOptions = {
@@ -45,10 +52,18 @@ export class Search extends searchBaseClass {
     elevated: { type: Boolean, reflect: true },
     /** Hides the automatic clear ('close') button when text is present. */
     noClear: { type: Boolean, attribute: 'no-clear', reflect: true },
+    /** Whether the search suggestions/results view is open. */
+    open: { type: Boolean, reflect: true },
+    /** Search view layout mode: 'auto' (fullscreen <600px, docked >=600px) | 'docked' | 'fullscreen'. */
+    view: { type: String, reflect: true },
+    /** Internal state tracking whether custom leading content is slotted. */
+    _hasSlottedLeading: { state: true },
     /** Internal state tracking whether custom trailing content is slotted. */
     _hasSlottedTrailing: { state: true },
     /** Internal state tracking whether a trailing avatar is slotted. */
     _hasSlottedAvatar: { state: true },
+    /** Internal state tracking whether suggestions/results are slotted. */
+    _hasSlottedSuggestions: { state: true },
   }
 
   constructor() {
@@ -59,8 +74,36 @@ export class Search extends searchBaseClass {
     this.centerAligned = false
     this.elevated = false
     this.noClear = false
+    this.open = false
+    this.view = 'auto'
+    this._hasSlottedLeading = false
     this._hasSlottedTrailing = false
     this._hasSlottedAvatar = false
+    this._hasSlottedSuggestions = false
+
+    this._onDocumentPointerDown = this._handleDocumentPointerDown.bind(this)
+  }
+
+  connectedCallback() {
+    super.connectedCallback()
+    document.addEventListener('pointerdown', this._onDocumentPointerDown)
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback()
+    document.removeEventListener('pointerdown', this._onDocumentPointerDown)
+  }
+
+  updated(changedProperties) {
+    super.updated(changedProperties)
+    if (changedProperties.has('open')) {
+      this.dispatchEvent(
+        new CustomEvent(this.open ? 'open' : 'close', {
+          bubbles: true,
+          composed: true,
+        }),
+      )
+    }
   }
 
   [getFormValue]() {
@@ -99,11 +142,27 @@ export class Search extends searchBaseClass {
     this._clear()
   }
 
+  /** Closes the search suggestions view. */
+  close() {
+    if (this.open) {
+      this.open = false
+    }
+    this.blur()
+  }
+
+  _handleDocumentPointerDown(e) {
+    if (!this.open) return
+    const path = e.composedPath()
+    if (!path.includes(this)) {
+      this.open = false
+    }
+  }
+
   _handleContainerClick(e) {
     if (this.disabled) return
     const input = this.renderRoot?.querySelector('#input')
     if (!input) return
-    // Do not steal focus if clicking an interactive slotted element or clear button
+    // Do not steal focus if clicking an interactive slotted element or clear/back button
     const path = e.composedPath()
     for (const node of path) {
       if (node === input) return
@@ -121,10 +180,27 @@ export class Search extends searchBaseClass {
       }
     }
     input.focus()
+    if (this._hasSlottedSuggestions) {
+      this.open = true
+    }
+  }
+
+  _handleFocus() {
+    this._syncSuggestionsState()
+    if (this._hasSlottedSuggestions) {
+      this.open = true
+    }
   }
 
   _handleInput(e) {
     this.value = e.target.value
+    // Allow host @input listeners to filter/toggle slotted suggestion visibility first
+    queueMicrotask(() => {
+      this._syncSuggestionsState()
+      if (this._hasSlottedSuggestions) {
+        this.open = true
+      }
+    })
   }
 
   _handleChange(e) {
@@ -133,8 +209,13 @@ export class Search extends searchBaseClass {
   }
 
   _handleKeyDown(e) {
+    if (e.key === 'Escape' && this.open) {
+      e.stopPropagation()
+      this.close()
+      return
+    }
     if (e.key === 'Enter') {
-      this.dispatchEvent(
+      const dispatched = this.dispatchEvent(
         new CustomEvent('search', {
           detail: { value: this.value },
           bubbles: true,
@@ -142,37 +223,61 @@ export class Search extends searchBaseClass {
           cancelable: true,
         }),
       )
+      if (dispatched && this.open) {
+        this.open = false
+      }
     }
   }
 
+  _handleBackClick(e) {
+    e.stopPropagation()
+    this.close()
+  }
+
+  _hasNodes(slot) {
+    if (!slot) return false
+    return slot
+      .assignedNodes({ flatten: true })
+      .some((n) => (n.nodeType === Node.ELEMENT_NODE && !n.hidden) || (n.nodeType === Node.TEXT_NODE && (n.textContent || '').trim().length > 0))
+  }
+
+  _syncSuggestionsState() {
+    const namedSlot = this.renderRoot?.querySelector('slot[name="suggestions"]')
+    const defaultSlot = this.renderRoot?.querySelector('slot:not([name])')
+    this._hasSlottedSuggestions = this._hasNodes(namedSlot) || this._hasNodes(defaultSlot)
+  }
+
+  _handleLeadingSlotChange(e) {
+    this._hasSlottedLeading = this._hasNodes(e.target)
+  }
+
   _handleTrailingSlotChange(e) {
-    const nodes = e.target.assignedNodes({ flatten: true })
-    this._hasSlottedTrailing = nodes.some(
-      (n) => n.nodeType === Node.ELEMENT_NODE || (n.textContent || '').trim().length > 0,
-    )
+    this._hasSlottedTrailing = this._hasNodes(e.target)
   }
 
   _handleAvatarSlotChange(e) {
-    const nodes = e.target.assignedNodes({ flatten: true })
-    this._hasSlottedAvatar = nodes.some(
-      (n) => n.nodeType === Node.ELEMENT_NODE || (n.textContent || '').trim().length > 0,
-    )
+    this._hasSlottedAvatar = this._hasNodes(e.target)
+  }
+
+  _handleSuggestionsSlotChange() {
+    this._syncSuggestionsState()
   }
 
   firstUpdated(changedProperties) {
     super.firstUpdated?.(changedProperties)
+    const leadingSlot = this.renderRoot?.querySelector('slot[name="leading-icon"]')
     const trailingSlot = this.renderRoot?.querySelector('slot[name="trailing-icon"]')
     const avatarSlot = this.renderRoot?.querySelector('slot[name="avatar"]')
+    if (leadingSlot) {
+      this._hasSlottedLeading = this._hasNodes(leadingSlot)
+    }
     if (trailingSlot) {
-      this._hasSlottedTrailing = trailingSlot
-        .assignedNodes({ flatten: true })
-        .some((n) => n.nodeType === Node.ELEMENT_NODE || (n.textContent || '').trim().length > 0)
+      this._hasSlottedTrailing = this._hasNodes(trailingSlot)
     }
     if (avatarSlot) {
-      this._hasSlottedAvatar = avatarSlot
-        .assignedNodes({ flatten: true })
-        .some((n) => n.nodeType === Node.ELEMENT_NODE || (n.textContent || '').trim().length > 0)
+      this._hasSlottedAvatar = this._hasNodes(avatarSlot)
     }
+    this._syncSuggestionsState()
   }
 
   _clear(e) {
@@ -197,56 +302,87 @@ export class Search extends searchBaseClass {
   render() {
     const showClear = this._hasValue && !this.noClear
     const hasTrailing = showClear || this._hasSlottedTrailing || this._hasSlottedAvatar
+    const showView = this.open && this._hasSlottedSuggestions
+    const showBackButton = showView && !this._hasSlottedLeading
 
     return html`
-      <div
-        class="md3-search-bar ${hasTrailing ? 'has-trailing' : ''}"
-        part="container"
-        role="search"
-        @click=${this._handleContainerClick}>
-        <md-elevation part="elevation"></md-elevation>
-        <div class="md3-search-bar__state-layer" part="state-layer"></div>
-        <md-focus-ring part="focus-ring" for="input"></md-focus-ring>
+      <div class="md3-search-wrapper ${showView ? 'view-open' : ''}">
+        <div
+          class="md3-search-bar ${hasTrailing ? 'has-trailing' : ''}"
+          part="container"
+          role="search"
+          @click=${this._handleContainerClick}>
+          <md-elevation part="elevation"></md-elevation>
+          <div class="md3-search-bar__state-layer" part="state-layer"></div>
+          <md-focus-ring part="focus-ring" for="input"></md-focus-ring>
 
-        <div class="md3-search-bar__leading" part="leading">
-          <slot name="leading-icon">
-            <md-icon aria-hidden="true">search</md-icon>
-          </slot>
+          <div class="md3-search-bar__leading" part="leading">
+            ${
+              showBackButton
+                ? html`
+                    <md-icon-button
+                      class="md3-search-bar__back-button"
+                      part="back-button"
+                      type="button"
+                      aria-label="Back"
+                      @click=${this._handleBackClick}>
+                      <md-icon>chevron_left</md-icon>
+                    </md-icon-button>
+                  `
+                : !this._hasSlottedLeading
+                  ? html`<md-icon aria-hidden="true">search</md-icon>`
+                  : nothing
+            }
+            <slot
+              name="leading-icon"
+              ?hidden=${showBackButton || !this._hasSlottedLeading}
+              @slotchange=${this._handleLeadingSlotChange}></slot>
+          </div>
+
+          <input
+            id="input"
+            part="input"
+            class="md3-search-bar__input"
+            type="search"
+            .value=${live(this.value ?? '')}
+            name=${this.name || nothing}
+            placeholder=${this.placeholder || ''}
+            aria-label=${this.label || this.placeholder || 'Search'}
+            aria-expanded=${this._hasSlottedSuggestions ? String(showView) : nothing}
+            ?disabled=${this.disabled}
+            @focus=${this._handleFocus}
+            @input=${this._handleInput}
+            @change=${this._handleChange}
+            @keydown=${this._handleKeyDown} />
+
+          <div class="md3-search-bar__trailing" part="trailing" ?hidden=${!hasTrailing}>
+            ${
+              showClear
+                ? html`
+                    <md-icon-button
+                      class="md3-search-bar__clear-button"
+                      part="clear-button"
+                      type="button"
+                      aria-label="Clear search"
+                      ?disabled=${this.disabled}
+                      @click=${this._clear}>
+                      <md-icon>close</md-icon>
+                    </md-icon-button>
+                  `
+                : nothing
+            }
+            <slot name="trailing-icon" @slotchange=${this._handleTrailingSlotChange}></slot>
+            <div class="md3-search-bar__avatar" ?hidden=${!this._hasSlottedAvatar}>
+              <slot name="avatar" @slotchange=${this._handleAvatarSlotChange}></slot>
+            </div>
+          </div>
         </div>
 
-        <input
-          id="input"
-          part="input"
-          class="md3-search-bar__input"
-          type="search"
-          .value=${live(this.value ?? '')}
-          name=${this.name || nothing}
-          placeholder=${this.placeholder || ''}
-          aria-label=${this.label || this.placeholder || 'Search'}
-          ?disabled=${this.disabled}
-          @input=${this._handleInput}
-          @change=${this._handleChange}
-          @keydown=${this._handleKeyDown} />
-
-        <div class="md3-search-bar__trailing" part="trailing" ?hidden=${!hasTrailing}>
-          ${
-            showClear
-              ? html`
-                  <md-icon-button
-                    class="md3-search-bar__clear-button"
-                    part="clear-button"
-                    type="button"
-                    aria-label="Clear search"
-                    ?disabled=${this.disabled}
-                    @click=${this._clear}>
-                    <md-icon>close</md-icon>
-                  </md-icon-button>
-                `
-              : nothing
-          }
-          <slot name="trailing-icon" @slotchange=${this._handleTrailingSlotChange}></slot>
-          <div class="md3-search-bar__avatar" ?hidden=${!this._hasSlottedAvatar}>
-            <slot name="avatar" @slotchange=${this._handleAvatarSlotChange}></slot>
+        <div class="md3-search-bar__view" part="view" role="region" aria-label="Search suggestions" ?hidden=${!showView}>
+          <md-elevation part="view-elevation"></md-elevation>
+          <div class="md3-search-bar__view-content" part="view-content">
+            <slot name="suggestions" @slotchange=${this._handleSuggestionsSlotChange}></slot>
+            <slot @slotchange=${this._handleSuggestionsSlotChange}></slot>
           </div>
         </div>
       </div>
@@ -256,10 +392,12 @@ export class Search extends searchBaseClass {
   static styles = css`
     :host {
       display: block;
+      position: relative;
       outline: none;
       width: 100%;
       min-width: var(--md-search-min-width, var(--md-comp-search-bar-container-min-width, min(360px, 100%)));
       max-width: var(--md-search-max-width, var(--md-comp-search-bar-container-max-width, 720px));
+      min-height: var(--_container-height);
       box-sizing: border-box;
 
       --_container-height: var(--md-search-container-height, var(--md-comp-search-bar-container-height, 56px));
@@ -272,6 +410,14 @@ export class Search extends searchBaseClass {
         var(--md-comp-search-bar-container-color, var(--md-sys-color-surface-container-high, #ece6f0))
       );
       --_container-elevation: var(--md-search-container-elevation, var(--md-comp-search-bar-container-elevation, 0));
+
+      --_view-container-color: var(--md-search-view-container-color, var(--_container-color));
+      --_view-elevation: var(--md-search-view-elevation, var(--md-sys-elevation-level3, 3));
+      --_view-docked-shape: var(--md-search-view-docked-shape, 16px 16px 28px 28px);
+      --_fullscreen-surface-color: var(
+        --md-search-fullscreen-surface-color,
+        var(--md-sys-color-surface, #fef7ff)
+      );
 
       --_leading-icon-color: var(
         --md-search-leading-icon-color,
@@ -351,6 +497,11 @@ export class Search extends searchBaseClass {
       opacity: 0.38;
     }
 
+    .md3-search-wrapper {
+      position: relative;
+      width: 100%;
+    }
+
     .md3-search-bar {
       position: relative;
       display: flex;
@@ -367,7 +518,7 @@ export class Search extends searchBaseClass {
       transition: background-color 200ms cubic-bezier(0.2, 0, 0, 1);
     }
 
-    md-elevation {
+    .md3-search-bar > md-elevation {
       border-radius: inherit;
       --md-elevation-level: var(--_container-elevation);
       pointer-events: none;
@@ -408,6 +559,11 @@ export class Search extends searchBaseClass {
       --md-icon-button-icon-color: var(--_leading-icon-color);
     }
 
+    .md3-search-bar__leading slot[hidden] {
+      display: none;
+    }
+
+    .md3-search-bar__back-button,
     .md3-search-bar__leading ::slotted(md-icon-button) {
       margin-inline: -8px;
     }
@@ -501,6 +657,115 @@ export class Search extends searchBaseClass {
       border-radius: var(--_avatar-shape);
       object-fit: cover;
       display: block;
+    }
+
+    /* Search View (Docked by default on medium/expanded >= 600px) */
+    .md3-search-bar__view {
+      position: absolute;
+      top: calc(100% + 2px);
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background-color: var(--_view-container-color);
+      border-radius: var(--_view-docked-shape);
+      box-sizing: border-box;
+    }
+
+    .md3-search-bar__view[hidden] {
+      display: none;
+    }
+
+    .md3-search-bar__view > md-elevation {
+      border-radius: inherit;
+      --md-elevation-level: var(--_view-elevation);
+      pointer-events: none;
+    }
+
+    .md3-search-bar__view-content {
+      position: relative;
+      z-index: 1;
+      padding: 8px 0;
+      max-height: var(--md-search-view-max-height, 360px);
+      overflow-y: auto;
+      border-radius: inherit;
+      box-sizing: border-box;
+      --md-list-item-container-color: transparent;
+      --md-menu-item-container-color: transparent;
+    }
+
+    /* Full-screen Search View on compact windows (< 600px) when view="auto", or when view="fullscreen" */
+    @media (width < 600px) {
+      :host(:not([view='docked'])) .md3-search-wrapper.view-open {
+        position: fixed;
+        inset: 0;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        background-color: var(--_fullscreen-surface-color);
+        padding-top: 8px;
+        box-sizing: border-box;
+      }
+
+      :host(:not([view='docked'])) .md3-search-wrapper.view-open .md3-search-bar {
+        margin: 0 12px;
+        width: calc(100% - 24px);
+        flex-shrink: 0;
+      }
+
+      :host(:not([view='docked'])) .md3-search-wrapper.view-open .md3-search-bar__view {
+        position: static;
+        flex: 1 1 auto;
+        width: 100%;
+        border-radius: 0;
+        background-color: transparent;
+        margin-top: 4px;
+      }
+
+      :host(:not([view='docked'])) .md3-search-wrapper.view-open .md3-search-bar__view > md-elevation {
+        --md-elevation-level: 0;
+      }
+
+      :host(:not([view='docked'])) .md3-search-wrapper.view-open .md3-search-bar__view-content {
+        max-height: none;
+        height: 100%;
+        border-radius: 0;
+      }
+    }
+
+    :host([view='fullscreen']) .md3-search-wrapper.view-open {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      background-color: var(--_fullscreen-surface-color);
+      padding-top: 8px;
+      box-sizing: border-box;
+    }
+
+    :host([view='fullscreen']) .md3-search-wrapper.view-open .md3-search-bar {
+      margin: 0 12px;
+      width: calc(100% - 24px);
+      flex-shrink: 0;
+    }
+
+    :host([view='fullscreen']) .md3-search-wrapper.view-open .md3-search-bar__view {
+      position: static;
+      flex: 1 1 auto;
+      width: 100%;
+      border-radius: 0;
+      background-color: transparent;
+      margin-top: 4px;
+    }
+
+    :host([view='fullscreen']) .md3-search-wrapper.view-open .md3-search-bar__view > md-elevation {
+      --md-elevation-level: 0;
+    }
+
+    :host([view='fullscreen']) .md3-search-wrapper.view-open .md3-search-bar__view-content {
+      max-height: none;
+      height: 100%;
+      border-radius: 0;
     }
   `
 }

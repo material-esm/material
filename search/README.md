@@ -30,24 +30,47 @@ import 'material/search/search.js'
 </md-search>
 ```
 
+### With Adaptive Search Suggestions (Docked & Full-Screen Search View)
+
+Slotting items into `<md-search>` (or `slot="suggestions"`) automatically renders an adaptive **Search View**:
+- **Medium & Expanded windows (`>= 600px`)**: Displays a **docked** menu surface directly beneath the search bar.
+- **Compact windows (`< 600px`)**: Expands into a **full-screen** search view with a leading back button (`<`).
+
+```html
+<md-search placeholder="Search your library">
+  <md-list-item type="button">
+    <md-icon slot="start">animation</md-icon>
+    <div slot="headline">Animations</div>
+  </md-list-item>
+  <md-list-item type="button">
+    <md-icon slot="start">location_on</md-icon>
+    <div slot="headline">Munich</div>
+  </md-list-item>
+</md-search>
+```
+
 ### Properties and Attributes
 
-| Property        | Attribute        | Type      | Default    | Description                                                     |
-| --------------- | ---------------- | --------- | ---------- | --------------------------------------------------------------- |
-| `value`         | `value`          | `string`  | `''`       | Current search query value.                                     |
-| `placeholder`   | `placeholder`    | `string`  | `'Search'` | Supporting / hint text displayed when the input is empty.       |
-| `label`         | `label`          | `string`  | `'Search'` | Accessible `aria-label` for the search input.                   |
-| `name`          | `name`           | `string`  | `''`       | Input name attribute.                                           |
-| `disabled`      | `disabled`       | `boolean` | `false`    | Whether the search bar is disabled.                             |
-| `centerAligned` | `center-aligned` | `boolean` | `false`    | Center-aligns the supporting / hint text when unfocused/empty.  |
-| `elevated`      | `elevated`       | `boolean` | `false`    | Applies resting elevation (level 3) to the search container.    |
-| `noClear`       | `no-clear`       | `boolean` | `false`    | Hides the automatic clear (`close`) button when text is typed.  |
+| Property        | Attribute        | Type      | Default    | Description                                                                                      |
+| --------------- | ---------------- | --------- | ---------- | ------------------------------------------------------------------------------------------------ |
+| `value`         | `value`          | `string`  | `''`       | Current search query value.                                                                      |
+| `placeholder`   | `placeholder`    | `string`  | `'Search'` | Supporting / hint text displayed when the input is empty.                                        |
+| `label`         | `label`          | `string`  | `'Search'` | Accessible `aria-label` for the search input.                                                    |
+| `name`          | `name`           | `string`  | `''`       | Input name attribute for form submission.                                                        |
+| `disabled`      | `disabled`       | `boolean` | `false`    | Whether the search bar is disabled.                                                              |
+| `centerAligned` | `center-aligned` | `boolean` | `false`    | Center-aligns the supporting / hint text when unfocused/empty.                                   |
+| `elevated`      | `elevated`       | `boolean` | `false`    | Applies resting elevation (level 3) to the search container.                                     |
+| `noClear`       | `no-clear`       | `boolean` | `false`    | Hides the automatic clear (`close`) button when text is typed.                                   |
+| `open`          | `open`           | `boolean` | `false`    | Whether the search suggestions/results view is open.                                             |
+| `view`          | `view`           | `string`  | `'auto'`   | Search view mode: `'auto'` (fullscreen `< 600px`, docked `>= 600px`), `'docked'`, or `'fullscreen'`. |
 
 ### Slots
 
 | Slot            | Description                                                                                  |
 | --------------- | -------------------------------------------------------------------------------------------- |
-| `leading-icon`  | Element placed at the start (defaults to `<md-icon>search</md-icon>`).                       |
+| `(default)`     | Search suggestions or result items (e.g. `<md-list-item>`) shown in the Search View.         |
+| `suggestions`   | Named slot alias for search suggestions or result items.                                     |
+| `leading-icon`  | Element placed at the start (defaults to `<md-icon>search</md-icon>`, or back button when open). |
 | `trailing-icon` | Persistent action icon(s) placed at the end (e.g. voice search `<md-icon-button>`).          |
 | `avatar`        | Optional `30px` circular avatar image or element placed at the trailing edge.                |
 
@@ -59,6 +82,8 @@ import 'material/search/search.js'
 | `change` | `Event`                         | Dispatched when the search input value is committed.|
 | `search` | `CustomEvent<{ value: string }>`| Dispatched when the user presses `Enter`.           |
 | `clear`  | `CustomEvent`                   | Dispatched when the clear button is clicked.        |
+| `open`   | `CustomEvent`                   | Dispatched when the search suggestions view opens.  |
+| `close`  | `CustomEvent`                   | Dispatched when the search suggestions view closes. |
 
 ### CSS Custom Properties
 

@@ -120,6 +120,7 @@ For Large Flexible, use `type="large-flexible"`.
 | `search-field`             | Custom search input field override for the `search` variant.                               |
 | `leading-icon-text-field`  | Icon inside the search input field.                                                        |
 | `trailing-icon-text-field` | Clear or trailing icon inside the search input field.                                      |
+| `suggestions`              | Search suggestion items forwarded to the embedded `<md-search>` Search View.               |
 | `(default)`                | Additional under-bar content (such as tabs or divider).                                    |
 
 ## CSS Custom Properties

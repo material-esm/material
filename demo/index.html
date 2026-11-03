@@ -136,10 +136,64 @@
         </md-app-bar>
 
         <div class="search-container">
-          <md-search></md-search>
+          <md-search id="demo-search" placeholder="Search your library">
+            <md-list-item type="button" data-query="Animations">
+              <md-icon slot="start">animation</md-icon>
+              <div slot="headline">Animations</div>
+            </md-list-item>
+            <md-list-item type="button" data-query="Munich">
+              <md-icon slot="start">location_on</md-icon>
+              <div slot="headline">Munich</div>
+            </md-list-item>
+            <md-list-item type="button" data-query="One year ago">
+              <md-icon slot="start">calendar_today</md-icon>
+              <div slot="headline">One year ago</div>
+            </md-list-item>
+            <md-list-item type="button" data-query="Peanut">
+              <md-icon slot="start">history</md-icon>
+              <div slot="headline">Peanut</div>
+            </md-list-item>
+            <md-list-item type="button" data-query="End of school year">
+              <md-icon slot="start">history</md-icon>
+              <div slot="headline">End of school year</div>
+            </md-list-item>
+          </md-search>
         </div>
 
         <script>
+          const demoSearch = document.getElementById('demo-search')
+          const searchItems = demoSearch ? Array.from(demoSearch.querySelectorAll('md-list-item')) : []
+
+          function filterSearchSuggestions(query) {
+            const q = (query || '').trim().toLowerCase()
+            for (const item of searchItems) {
+              const text = (item.dataset.query || item.textContent || '').toLowerCase()
+              item.hidden = q.length > 0 && !text.includes(q)
+            }
+          }
+
+          demoSearch?.addEventListener('input', (e) => {
+            filterSearchSuggestions(e.target.value)
+          })
+
+          demoSearch?.addEventListener('clear', () => {
+            filterSearchSuggestions('')
+          })
+
+          demoSearch?.addEventListener('click', (e) => {
+            const item = e.target.closest('md-list-item')
+            if (item && demoSearch) {
+              const selected = item.dataset.query || item.textContent.trim()
+              demoSearch.value = selected
+              filterSearchSuggestions(selected)
+              demoSearch.close()
+              const snackbar = document.querySelector('md-snackbar')
+              if (snackbar) {
+                snackbar.message = `Search: ${selected}`
+                snackbar.show()
+              }
+            }
+          })
           const profilePic = document.getElementById('profile-pic')
           const userMenu = document.getElementById('user-menu')
 

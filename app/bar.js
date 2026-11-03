@@ -356,10 +356,9 @@ export class AppBar extends LitElement {
                 @input=${this._handleSearchInput}
                 @change=${this._handleSearchChange}
                 @clear=${this._handleSearchClear}>
-                <slot name="leading-icon-text-field" slot="leading-icon">
-                  <md-icon aria-hidden="true">search</md-icon>
-                </slot>
+                <slot name="leading-icon-text-field" slot="leading-icon"></slot>
                 <slot name="trailing-icon-text-field" slot="trailing-icon"></slot>
+                <slot name="suggestions" slot="suggestions"></slot>
               </md-search>
             </slot>
           </div>

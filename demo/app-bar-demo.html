@@ -49,6 +49,7 @@
       import 'material/buttons/icon-button.js'
       import 'material/buttons/button.js'
       import 'material/icon/icon.js'
+      import 'material/list/list-item.js'
     </script>
 
     <style>
@@ -65,7 +66,6 @@
         margin-bottom: 40px;
         border: 1px solid var(--md-sys-color-outline-variant, #cac4d0);
         border-radius: 16px;
-        overflow: hidden;
         background: var(--md-sys-color-surface, #fff);
       }
 
@@ -73,6 +73,7 @@
         padding: 16px 20px;
         background: var(--md-sys-color-surface-container-low, #f7f2fa);
         border-bottom: 1px solid var(--md-sys-color-outline-variant, #cac4d0);
+        border-radius: 15px 15px 0 0;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -256,7 +257,7 @@
         </div>
       </div>
       <div class="demo-section-body">
-        <md-app-bar id="bar-search" type="search" placeholder="Search contacts, messages...">
+        <md-app-bar id="bar-search" type="search" placeholder="Search replies">
           <md-icon-button slot="navigation-icon">
             <md-icon>menu</md-icon>
           </md-icon-button>
@@ -266,6 +267,26 @@
           <div slot="action-items" style="display: flex">
             <md-icon-button><md-icon>more_vert</md-icon></md-icon-button>
           </div>
+          <md-list-item slot="suggestions" type="button" data-query="Animations">
+            <md-icon slot="start">animation</md-icon>
+            <div slot="headline">Animations</div>
+          </md-list-item>
+          <md-list-item slot="suggestions" type="button" data-query="Munich">
+            <md-icon slot="start">location_on</md-icon>
+            <div slot="headline">Munich</div>
+          </md-list-item>
+          <md-list-item slot="suggestions" type="button" data-query="One year ago">
+            <md-icon slot="start">calendar_today</md-icon>
+            <div slot="headline">One year ago</div>
+          </md-list-item>
+          <md-list-item slot="suggestions" type="button" data-query="Peanut">
+            <md-icon slot="start">history</md-icon>
+            <div slot="headline">Peanut</div>
+          </md-list-item>
+          <md-list-item slot="suggestions" type="button" data-query="End of school year">
+            <md-icon slot="start">history</md-icon>
+            <div slot="headline">End of school year</div>
+          </md-list-item>
         </md-app-bar>
       </div>
     </div>
@@ -324,6 +345,26 @@
         const el = document.getElementById(id)
         el.collapsed = !el.collapsed
       }
+
+      const barSearch = document.getElementById('bar-search')
+      const barSearchItems = barSearch ? Array.from(barSearch.querySelectorAll('md-list-item[slot="suggestions"]')) : []
+
+      barSearch?.addEventListener('input', (e) => {
+        const q = (e.target.value || '').trim().toLowerCase()
+        for (const item of barSearchItems) {
+          const text = (item.dataset.query || item.textContent || '').toLowerCase()
+          item.hidden = q.length > 0 && !text.includes(q)
+        }
+      })
+
+      barSearch?.addEventListener('click', (e) => {
+        const item = e.target.closest('md-list-item[slot="suggestions"]')
+        if (item && barSearch) {
+          barSearch.value = item.dataset.query || item.textContent.trim()
+          const innerSearch = barSearch.shadowRoot?.querySelector('#search-input')
+          innerSearch?.close()
+        }
+      })
     </script>
   </body>
 </html>
