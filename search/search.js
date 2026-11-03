@@ -157,11 +157,11 @@ export class Search extends LitElement {
     this.value = ''
     if (input) {
       input.value = ''
-      input.dispatchEvent(new Event('input', { bubbles: true, composed: true }))
+      input.dispatchEvent(new InputEvent('input', { bubbles: true, composed: true }))
       input.dispatchEvent(new Event('change', { bubbles: true }))
       input.focus()
     } else {
-      this.dispatchEvent(new Event('input', { bubbles: true, composed: true }))
+      this.dispatchEvent(new InputEvent('input', { bubbles: true, composed: true }))
       this.dispatchEvent(new Event('change', { bubbles: true }))
     }
     this.dispatchEvent(new CustomEvent('clear', { bubbles: true, composed: true }))

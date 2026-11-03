@@ -7,6 +7,7 @@ import { LitElement, html, css, nothing } from 'lit'
 import '../search/search.js'
 import '../icon/icon.js'
 import '../internal/elevation/elevation.js'
+import { redispatchEvent } from '../internal/events/redispatch-event.js'
 
 /**
  * Material Design 3 Top App Bar component.
@@ -231,6 +232,7 @@ export class AppBar extends LitElement {
     const input = e.target
     this.value = input.value
     this._hasSearchValue = Boolean(input.value)
+    redispatchEvent(this, e)
   }
 
   _handleSearchClear() {
