@@ -129,6 +129,7 @@ export class Search extends LitElement {
           detail: { value: this.value },
           bubbles: true,
           composed: true,
+          cancelable: true,
         }),
       )
     }
@@ -146,6 +147,22 @@ export class Search extends LitElement {
     this._hasSlottedAvatar = nodes.some(
       (n) => n.nodeType === Node.ELEMENT_NODE || (n.textContent || '').trim().length > 0,
     )
+  }
+
+  firstUpdated(changedProperties) {
+    super.firstUpdated?.(changedProperties)
+    const trailingSlot = this.renderRoot?.querySelector('slot[name="trailing-icon"]')
+    const avatarSlot = this.renderRoot?.querySelector('slot[name="avatar"]')
+    if (trailingSlot) {
+      this._hasSlottedTrailing = trailingSlot
+        .assignedNodes({ flatten: true })
+        .some((n) => n.nodeType === Node.ELEMENT_NODE || (n.textContent || '').trim().length > 0)
+    }
+    if (avatarSlot) {
+      this._hasSlottedAvatar = avatarSlot
+        .assignedNodes({ flatten: true })
+        .some((n) => n.nodeType === Node.ELEMENT_NODE || (n.textContent || '').trim().length > 0)
+    }
   }
 
   _clear(e) {
@@ -208,6 +225,7 @@ export class Search extends LitElement {
                   <md-icon-button
                     class="md3-search-bar__clear-button"
                     part="clear-button"
+                    type="button"
                     aria-label="Clear search"
                     ?disabled=${this.disabled}
                     @click=${this._clear}>

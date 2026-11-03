@@ -240,13 +240,13 @@ export class AppBar extends LitElement {
     this._hasSearchValue = false
   }
 
-  _clearSearch() {
-    const searchEl = this.renderRoot?.querySelector('#search-input')
-    if (searchEl && typeof searchEl.clear === 'function') {
-      searchEl.clear()
-    } else {
-      this.value = ''
-      this._hasSearchValue = false
+  firstUpdated(changedProperties) {
+    super.firstUpdated?.(changedProperties)
+    this._handleLeadingSlotChange()
+    this._handleTrailingSlotChange()
+    const subSlot = this.renderRoot?.querySelector('slot[name="subtitle"]')
+    if (subSlot) {
+      this._hasSlottedSubtitle = this._hasAssignedContent(subSlot)
     }
   }
 
@@ -516,6 +516,12 @@ export class AppBar extends LitElement {
     .md3-app-bar__flexible-row.center-aligned {
       align-items: center;
       text-align: center;
+    }
+
+    .md3-app-bar.center-aligned .md3-app-bar__leading[hidden],
+    .md3-app-bar.center-aligned .md3-app-bar__trailing[hidden] {
+      display: flex;
+      visibility: hidden;
     }
 
     /* Medium & Large Flexible App Bars */
