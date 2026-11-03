@@ -167,6 +167,16 @@ export class Search extends searchBaseClass {
     }
   }
 
+  _handleFocusout(e) {
+    if (!this.open) return
+    const next = e.relatedTarget
+    if (!next) return
+    if (this.contains(next) || this.shadowRoot?.contains(next)) return
+    const items = this._getSlottedSuggestionElements()
+    if (items.some((item) => item === next || item.contains?.(next))) return
+    this.open = false
+  }
+
   _handleContainerClick(e) {
     if (this.disabled) return
     const input = this.renderRoot?.querySelector('#input')
@@ -422,7 +432,7 @@ export class Search extends searchBaseClass {
     const showBackButton = showView && !this._hasSlottedLeading
 
     return html`
-      <div class="md3-search-wrapper ${showView ? 'view-open' : ''}">
+      <div class="md3-search-wrapper ${showView ? 'view-open' : ''}" @focusout=${this._handleFocusout}>
         <div
           class="md3-search-bar ${hasTrailing ? 'has-trailing' : ''}"
           part="container"
