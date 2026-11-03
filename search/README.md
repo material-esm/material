@@ -32,20 +32,20 @@ import 'material/search/search.js'
 
 ### With Adaptive Search Suggestions (Docked & Full-Screen Search View)
 
-Slotting items into `<md-search>` (or `slot="suggestions"`) automatically renders an adaptive **Search View**:
-- **Medium & Expanded windows (`>= 600px`)**: Displays a **docked** menu surface directly beneath the search bar.
+Slotting `<md-menu-item>` (or `<md-list-item>`) elements into `<md-search>` (or `slot="suggestions"`) automatically renders an adaptive **Search View** that filters items as you type:
+- **Medium & Expanded windows (`>= 600px`)**: Displays a **docked** M3 Expressive vertical menu surface directly beneath the search bar.
 - **Compact windows (`< 600px`)**: Expands into a **full-screen** search view with a leading back button (`<`).
 
 ```html
 <md-search placeholder="Search your library">
-  <md-list-item type="button">
+  <md-menu-item>
     <md-icon slot="start">animation</md-icon>
     <div slot="headline">Animations</div>
-  </md-list-item>
-  <md-list-item type="button">
+  </md-menu-item>
+  <md-menu-item>
     <md-icon slot="start">location_on</md-icon>
     <div slot="headline">Munich</div>
-  </md-list-item>
+  </md-menu-item>
 </md-search>
 ```
 
@@ -61,6 +61,7 @@ Slotting items into `<md-search>` (or `slot="suggestions"`) automatically render
 | `centerAligned` | `center-aligned` | `boolean` | `false`    | Center-aligns the supporting / hint text when unfocused/empty.                                   |
 | `elevated`      | `elevated`       | `boolean` | `false`    | Applies resting elevation (level 3) to the search container.                                     |
 | `noClear`       | `no-clear`       | `boolean` | `false`    | Hides the automatic clear (`close`) button when text is typed.                                   |
+| `noFilter`      | `no-filter`      | `boolean` | `false`    | Disables automatic filtering of slotted suggestion items on input.                               |
 | `open`          | `open`           | `boolean` | `false`    | Whether the search suggestions/results view is open.                                             |
 | `view`          | `view`           | `string`  | `'auto'`   | Search view mode: `'auto'` (fullscreen `< 600px`, docked `>= 600px`), `'docked'`, or `'fullscreen'`. |
 

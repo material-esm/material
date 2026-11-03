@@ -40,6 +40,30 @@ export const menuItemStyles = css`
     --md-ripple-pressed-color: var(--md-menu-item-pressed-state-layer-color, var(--md-sys-color-on-surface, #1d1b20));
     --md-ripple-pressed-opacity: var(--md-menu-item-pressed-state-layer-opacity, 0.12);
   }
+  :host([hidden]) {
+    display: none;
+  }
+  :host([menu-position]) {
+    margin: 2px 4px;
+    border-radius: var(--md-menu-item-shape, var(--md-sys-shape-corner-extra-small, 4px));
+  }
+  :host([menu-position='first']) {
+    border-start-start-radius: var(--md-sys-shape-corner-medium, 12px);
+    border-start-end-radius: var(--md-sys-shape-corner-medium, 12px);
+    border-end-start-radius: var(--md-sys-shape-corner-extra-small, 4px);
+    border-end-end-radius: var(--md-sys-shape-corner-extra-small, 4px);
+  }
+  :host([menu-position='last']) {
+    border-start-start-radius: var(--md-sys-shape-corner-extra-small, 4px);
+    border-start-end-radius: var(--md-sys-shape-corner-extra-small, 4px);
+    border-end-start-radius: var(--md-sys-shape-corner-medium, 12px);
+    border-end-end-radius: var(--md-sys-shape-corner-medium, 12px);
+  }
+  :host([menu-position='single']),
+  :host([menu-position]:hover),
+  :host([menu-position]:focus-within) {
+    border-radius: var(--md-sys-shape-corner-medium, 12px);
+  }
   :host([disabled]) {
     opacity: var(--md-menu-item-disabled-opacity, 0.38);
     pointer-events: none;

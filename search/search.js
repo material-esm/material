@@ -23,12 +23,12 @@ const searchBaseClass = mixinFormAssociated(mixinElementInternals(LitElement))
  *
  * Supports adaptive Search View suggestions/results slotted into the default
  * slot (or `slot="suggestions"`):
- * - Docked dropdown surface below the search bar in medium/expanded windows (`>= 600px`).
+ * - Docked vertical-menu surface below the search bar in medium/expanded windows (`>= 600px`).
  * - Full-screen modal search view in compact windows (`< 600px`).
  *
  * @fires input {InputEvent} Dispatched when the search input value changes.
  * @fires change {Event} Dispatched when the search input value is committed.
- * @fires search {CustomEvent<{value: string}>} Dispatched when Enter is pressed.
+ * @fires search {CustomEvent<{value: string}>} Dispatched when Enter is pressed or a suggestion is selected.
  * @fires clear {CustomEvent} Dispatched when the clear button is activated.
  * @fires open {CustomEvent} Dispatched when the search suggestions view opens.
  * @fires close {CustomEvent} Dispatched when the search suggestions view closes.
@@ -52,6 +52,8 @@ export class Search extends searchBaseClass {
     elevated: { type: Boolean, reflect: true },
     /** Hides the automatic clear ('close') button when text is present. */
     noClear: { type: Boolean, attribute: 'no-clear', reflect: true },
+    /** Disables automatic filtering of slotted suggestion items on input. */
+    noFilter: { type: Boolean, attribute: 'no-filter', reflect: true },
     /** Whether the search suggestions/results view is open. */
     open: { type: Boolean, reflect: true },
     /** Search view layout mode: 'auto' (fullscreen <600px, docked >=600px) | 'docked' | 'fullscreen'. */
@@ -62,7 +64,7 @@ export class Search extends searchBaseClass {
     _hasSlottedTrailing: { state: true },
     /** Internal state tracking whether a trailing avatar is slotted. */
     _hasSlottedAvatar: { state: true },
-    /** Internal state tracking whether suggestions/results are slotted. */
+    /** Internal state tracking whether visible suggestions/results are slotted. */
     _hasSlottedSuggestions: { state: true },
   }
 
@@ -74,6 +76,7 @@ export class Search extends searchBaseClass {
     this.centerAligned = false
     this.elevated = false
     this.noClear = false
+    this.noFilter = false
     this.open = false
     this.view = 'auto'
     this._hasSlottedLeading = false
@@ -96,6 +99,12 @@ export class Search extends searchBaseClass {
 
   updated(changedProperties) {
     super.updated(changedProperties)
+    if (changedProperties.has('value')) {
+      if (!this.noFilter) {
+        this._filterSuggestions(this.value)
+      }
+      this._syncSuggestionsState()
+    }
     if (changedProperties.has('open')) {
       this.dispatchEvent(
         new CustomEvent(this.open ? 'open' : 'close', {
@@ -180,12 +189,16 @@ export class Search extends searchBaseClass {
       }
     }
     input.focus()
+    this._syncSuggestionsState()
     if (this._hasSlottedSuggestions) {
       this.open = true
     }
   }
 
   _handleFocus() {
+    if (!this.noFilter) {
+      this._filterSuggestions(this.value)
+    }
     this._syncSuggestionsState()
     if (this._hasSlottedSuggestions) {
       this.open = true
@@ -194,10 +207,17 @@ export class Search extends searchBaseClass {
 
   _handleInput(e) {
     this.value = e.target.value
-    // Allow host @input listeners to filter/toggle slotted suggestion visibility first
+    if (!this.noFilter) {
+      this._filterSuggestions(this.value)
+    }
+    this._syncSuggestionsState()
+    if (this._hasSlottedSuggestions) {
+      this.open = true
+    }
+    // Also re-sync after any external host @input handlers finish
     queueMicrotask(() => {
       this._syncSuggestionsState()
-      if (this._hasSlottedSuggestions) {
+      if (this._hasSlottedSuggestions && this.shadowRoot?.activeElement) {
         this.open = true
       }
     })
@@ -234,17 +254,103 @@ export class Search extends searchBaseClass {
     this.close()
   }
 
+  _getItemText(el) {
+    if (!el || el.nodeType !== Node.ELEMENT_NODE) return ''
+    if (el.dataset?.query) return el.dataset.query
+    if (typeof el.headline === 'string' && el.headline.trim()) return el.headline.trim()
+    const headlineEl = el.querySelector?.('[slot="headline"]')
+    if (headlineEl && headlineEl.textContent?.trim()) return headlineEl.textContent.trim()
+    if (typeof el.typeaheadText === 'string' && el.typeaheadText.trim()) return el.typeaheadText.trim()
+    return (el.textContent || '').trim()
+  }
+
+  _getSlottedSuggestionElements() {
+    const namedSlot = this.renderRoot?.querySelector('slot[name="suggestions"]')
+    const defaultSlot = this.renderRoot?.querySelector('slot:not([name])')
+    const nodes = [
+      ...(namedSlot ? namedSlot.assignedElements({ flatten: true }) : []),
+      ...(defaultSlot ? defaultSlot.assignedElements({ flatten: true }) : []),
+    ]
+    return nodes
+  }
+
+  _filterSuggestions(query) {
+    const items = this._getSlottedSuggestionElements()
+    if (!items.length) return
+    const q = (query || '').trim().toLowerCase()
+    for (const item of items) {
+      const text = this._getItemText(item).toLowerCase()
+      const matches = q.length === 0 || text.includes(q)
+      item.hidden = !matches
+    }
+  }
+
+  _updateItemPositions(visibleItems) {
+    const count = visibleItems.length
+    visibleItems.forEach((item, index) => {
+      if (count === 1) {
+        item.setAttribute('menu-position', 'single')
+      } else if (index === 0) {
+        item.setAttribute('menu-position', 'first')
+      } else if (index === count - 1) {
+        item.setAttribute('menu-position', 'last')
+      } else {
+        item.setAttribute('menu-position', 'middle')
+      }
+    })
+  }
+
+  _handleViewItemClick(e) {
+    const path = e.composedPath()
+    const items = this._getSlottedSuggestionElements()
+    if (!items.length) return
+    const clickedItem = path.find((node) => items.includes(node))
+    if (!clickedItem || clickedItem.disabled) return
+
+    const selectedText = this._getItemText(clickedItem)
+    if (selectedText) {
+      this.value = selectedText
+      const input = this.renderRoot?.querySelector('#input')
+      if (input) {
+        input.value = selectedText
+      }
+      if (!this.noFilter) {
+        this._filterSuggestions(selectedText)
+      }
+      this.dispatchEvent(new InputEvent('input', { bubbles: true, composed: true }))
+      this.dispatchEvent(new Event('change', { bubbles: true }))
+      this.dispatchEvent(
+        new CustomEvent('search', {
+          detail: { value: this.value },
+          bubbles: true,
+          composed: true,
+          cancelable: true,
+        }),
+      )
+    }
+    this.close()
+  }
+
+  _handleCloseMenuEvent(e) {
+    e.stopPropagation()
+  }
+
   _hasNodes(slot) {
     if (!slot) return false
     return slot
       .assignedNodes({ flatten: true })
-      .some((n) => (n.nodeType === Node.ELEMENT_NODE && !n.hidden) || (n.nodeType === Node.TEXT_NODE && (n.textContent || '').trim().length > 0))
+      .some(
+        (n) =>
+          (n.nodeType === Node.ELEMENT_NODE && !n.hidden) ||
+          (n.nodeType === Node.TEXT_NODE && (n.textContent || '').trim().length > 0),
+      )
   }
 
   _syncSuggestionsState() {
-    const namedSlot = this.renderRoot?.querySelector('slot[name="suggestions"]')
-    const defaultSlot = this.renderRoot?.querySelector('slot:not([name])')
-    this._hasSlottedSuggestions = this._hasNodes(namedSlot) || this._hasNodes(defaultSlot)
+    const items = this._getSlottedSuggestionElements()
+    const visibleItems = items.filter((el) => !el.hidden)
+    this._updateItemPositions(visibleItems)
+    this._hasSlottedSuggestions = visibleItems.length > 0
   }
 
   _handleLeadingSlotChange(e) {
@@ -260,6 +366,9 @@ export class Search extends searchBaseClass {
   }
 
   _handleSuggestionsSlotChange() {
+    if (!this.noFilter && this.value) {
+      this._filterSuggestions(this.value)
+    }
     this._syncSuggestionsState()
   }
 
@@ -277,6 +386,9 @@ export class Search extends searchBaseClass {
     if (avatarSlot) {
       this._hasSlottedAvatar = this._hasNodes(avatarSlot)
     }
+    if (!this.noFilter && this.value) {
+      this._filterSuggestions(this.value)
+    }
     this._syncSuggestionsState()
   }
 
@@ -287,6 +399,10 @@ export class Search extends searchBaseClass {
     if (this.disabled) return
     const input = this.renderRoot?.querySelector('#input')
     this.value = ''
+    if (!this.noFilter) {
+      this._filterSuggestions('')
+    }
+    this._syncSuggestionsState()
     if (input) {
       input.value = ''
       input.dispatchEvent(new InputEvent('input', { bubbles: true, composed: true }))
@@ -378,7 +494,14 @@ export class Search extends searchBaseClass {
           </div>
         </div>
 
-        <div class="md3-search-bar__view" part="view" role="region" aria-label="Search suggestions" ?hidden=${!showView}>
+        <div
+          class="md3-search-bar__view"
+          part="view"
+          role="menu"
+          aria-label="Search suggestions"
+          ?hidden=${!showView}
+          @click=${this._handleViewItemClick}
+          @close-menu=${this._handleCloseMenuEvent}>
           <md-elevation part="view-elevation"></md-elevation>
           <div class="md3-search-bar__view-content" part="view-content">
             <slot name="suggestions" @slotchange=${this._handleSuggestionsSlotChange}></slot>
@@ -411,13 +534,36 @@ export class Search extends searchBaseClass {
       );
       --_container-elevation: var(--md-search-container-elevation, var(--md-comp-search-bar-container-elevation, 0));
 
-      --_view-container-color: var(--md-search-view-container-color, var(--_container-color));
-      --_view-elevation: var(--md-search-view-elevation, var(--md-sys-elevation-level3, 3));
-      --_view-docked-shape: var(--md-search-view-docked-shape, 16px 16px 28px 28px);
+      /* Default M3 Expressive Vertical Menu styling for the docked Search View */
+      --_view-container-color: var(
+        --md-search-view-container-color,
+        var(--md-menu-container-color, var(--md-sys-color-surface-container-low, #f7f2fa))
+      );
+      --_view-elevation: var(--md-search-view-elevation, var(--md-menu-container-elevation, 2));
+      --_view-docked-shape: var(
+        --md-search-view-docked-shape,
+        var(--md-menu-container-shape, var(--md-sys-shape-corner-large, 16px))
+      );
       --_fullscreen-surface-color: var(
         --md-search-fullscreen-surface-color,
         var(--md-sys-color-surface, #fef7ff)
       );
+
+      /* Vertical menu item tokens */
+      --md-menu-item-one-line-container-height: 48px;
+      --md-menu-item-leading-space: 12px;
+      --md-menu-item-trailing-space: 12px;
+      --md-menu-item-top-space: 8px;
+      --md-menu-item-bottom-space: 8px;
+      --md-menu-item-between-space: 8px;
+      --md-menu-item-icon-size: 20px;
+      --md-menu-item-shape: var(--md-sys-shape-corner-extra-small, 4px);
+      --md-menu-item-selected-shape: var(--md-sys-shape-corner-medium, 12px);
+      --md-list-item-one-line-container-height: 48px;
+      --md-list-item-leading-space: 12px;
+      --md-list-item-trailing-space: 12px;
+      --md-list-item-top-space: 8px;
+      --md-list-item-bottom-space: 8px;
 
       --_leading-icon-color: var(
         --md-search-leading-icon-color,
@@ -659,16 +805,17 @@ export class Search extends searchBaseClass {
       display: block;
     }
 
-    /* Search View (Docked by default on medium/expanded >= 600px) */
+    /* Search View (M3 Expressive Vertical Menu surface when docked on >= 600px) */
     .md3-search-bar__view {
       position: absolute;
-      top: calc(100% + 2px);
+      top: calc(100% + 4px);
       left: 0;
       right: 0;
       z-index: 100;
       background-color: var(--_view-container-color);
       border-radius: var(--_view-docked-shape);
       box-sizing: border-box;
+      user-select: none;
     }
 
     .md3-search-bar__view[hidden] {
@@ -678,19 +825,64 @@ export class Search extends searchBaseClass {
     .md3-search-bar__view > md-elevation {
       border-radius: inherit;
       --md-elevation-level: var(--_view-elevation);
+      --md-elevation-shadow-color: var(--md-menu-container-shadow-color, var(--md-sys-color-shadow, #000));
       pointer-events: none;
     }
 
     .md3-search-bar__view-content {
       position: relative;
       z-index: 1;
-      padding: 8px 0;
+      padding: 8px 6px;
       max-height: var(--md-search-view-max-height, 360px);
       overflow-y: auto;
       border-radius: inherit;
       box-sizing: border-box;
       --md-list-item-container-color: transparent;
       --md-menu-item-container-color: transparent;
+    }
+
+    .md3-search-bar__view-content ::slotted([hidden]) {
+      display: none !important;
+    }
+
+    /* Slotted item margins and shape morphing matching vertical md-menu */
+    .md3-search-bar__view-content ::slotted(:is(md-menu-item, md-list-item, [md-menu-item], [md-list-item])) {
+      margin: 2px 4px;
+      border-radius: var(--md-menu-item-shape, 4px);
+      transition:
+        border-radius 200ms cubic-bezier(0.2, 0, 0, 1),
+        background-color 200ms cubic-bezier(0.2, 0, 0, 1);
+    }
+
+    .md3-search-bar__view-content
+      ::slotted(:is(md-menu-item, md-list-item, [md-menu-item], [md-list-item])[menu-position='first']) {
+      border-start-start-radius: var(--md-sys-shape-corner-medium, 12px);
+      border-start-end-radius: var(--md-sys-shape-corner-medium, 12px);
+      border-end-start-radius: var(--md-sys-shape-corner-extra-small, 4px);
+      border-end-end-radius: var(--md-sys-shape-corner-extra-small, 4px);
+    }
+
+    .md3-search-bar__view-content
+      ::slotted(:is(md-menu-item, md-list-item, [md-menu-item], [md-list-item])[menu-position='last']) {
+      border-start-start-radius: var(--md-sys-shape-corner-extra-small, 4px);
+      border-start-end-radius: var(--md-sys-shape-corner-extra-small, 4px);
+      border-end-start-radius: var(--md-sys-shape-corner-medium, 12px);
+      border-end-end-radius: var(--md-sys-shape-corner-medium, 12px);
+    }
+
+    .md3-search-bar__view-content
+      ::slotted(:is(md-menu-item, md-list-item, [md-menu-item], [md-list-item])[menu-position='single']) {
+      border-radius: var(--md-sys-shape-corner-medium, 12px);
+    }
+
+    .md3-search-bar__view-content ::slotted(:is(md-menu-item, md-list-item, [md-menu-item], [md-list-item]):hover),
+    .md3-search-bar__view-content
+      ::slotted(:is(md-menu-item, md-list-item, [md-menu-item], [md-list-item]):focus-within) {
+      border-radius: var(--md-sys-shape-corner-medium, 12px);
+    }
+
+    .md3-search-bar__view-content ::slotted(:is(md-divider, [role='separator'])) {
+      margin: 6px 12px;
     }
 
     /* Full-screen Search View on compact windows (< 600px) when view="auto", or when view="fullscreen" */
