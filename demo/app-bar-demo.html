@@ -49,6 +49,7 @@
       import 'material/buttons/icon-button.js'
       import 'material/buttons/button.js'
       import 'material/icon/icon.js'
+      import 'material/menu/menu-item.js'
     </script>
 
     <style>
@@ -65,7 +66,6 @@
         margin-bottom: 40px;
         border: 1px solid var(--md-sys-color-outline-variant, #cac4d0);
         border-radius: 16px;
-        overflow: hidden;
         background: var(--md-sys-color-surface, #fff);
       }
 
@@ -73,6 +73,7 @@
         padding: 16px 20px;
         background: var(--md-sys-color-surface-container-low, #f7f2fa);
         border-bottom: 1px solid var(--md-sys-color-outline-variant, #cac4d0);
+        border-radius: 15px 15px 0 0;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -248,19 +249,44 @@
         <div>
           <h3>5. Search App Bar</h3>
           <span style="font-size: 13px; color: var(--md-sys-color-on-surface-variant)"
-            >Full top app bar containing an embedded search input and actions</span
+            >Full top app bar containing an embedded M3 search bar and actions</span
           >
+        </div>
+        <div class="demo-controls">
+          <md-button onclick="toggleScrolled('bar-search')">Toggle Scrolled</md-button>
         </div>
       </div>
       <div class="demo-section-body">
-        <md-app-bar type="search" placeholder="Search contacts, messages...">
+        <md-app-bar id="bar-search" type="search" placeholder="Search replies">
           <md-icon-button slot="navigation-icon">
             <md-icon>menu</md-icon>
           </md-icon-button>
+          <md-icon-button slot="trailing-icon-text-field" aria-label="Voice search">
+            <md-icon>mic</md-icon>
+          </md-icon-button>
           <div slot="action-items" style="display: flex">
-            <md-icon-button><md-icon>mic</md-icon></md-icon-button>
             <md-icon-button><md-icon>more_vert</md-icon></md-icon-button>
           </div>
+          <md-menu-item slot="suggestions" data-query="Animations">
+            <md-icon slot="start">animation</md-icon>
+            <div slot="headline">Animations</div>
+          </md-menu-item>
+          <md-menu-item slot="suggestions" data-query="Munich">
+            <md-icon slot="start">location_on</md-icon>
+            <div slot="headline">Munich</div>
+          </md-menu-item>
+          <md-menu-item slot="suggestions" data-query="One year ago">
+            <md-icon slot="start">calendar_today</md-icon>
+            <div slot="headline">One year ago</div>
+          </md-menu-item>
+          <md-menu-item slot="suggestions" data-query="Peanut">
+            <md-icon slot="start">history</md-icon>
+            <div slot="headline">Peanut</div>
+          </md-menu-item>
+          <md-menu-item slot="suggestions" data-query="End of school year">
+            <md-icon slot="start">history</md-icon>
+            <div slot="headline">End of school year</div>
+          </md-menu-item>
         </md-app-bar>
       </div>
     </div>

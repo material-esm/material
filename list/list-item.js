@@ -173,6 +173,9 @@ export class ListItem extends LitElement {
         );
         --md-ripple-pressed-opacity: var(--md-list-item-pressed-state-layer-opacity, 0.12);
       }
+      :host([hidden]) {
+        display: none;
+      }
       :host(:is([type='button']:not([disabled]), [type='link'])) {
         cursor: pointer;
       }

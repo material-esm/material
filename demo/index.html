@@ -136,10 +136,40 @@
         </md-app-bar>
 
         <div class="search-container">
-          <md-search></md-search>
+          <md-search id="demo-search" placeholder="Search your library">
+            <md-menu-item data-query="Animations">
+              <md-icon slot="start">animation</md-icon>
+              <div slot="headline">Animations</div>
+            </md-menu-item>
+            <md-menu-item data-query="Munich">
+              <md-icon slot="start">location_on</md-icon>
+              <div slot="headline">Munich</div>
+            </md-menu-item>
+            <md-menu-item data-query="One year ago">
+              <md-icon slot="start">calendar_today</md-icon>
+              <div slot="headline">One year ago</div>
+            </md-menu-item>
+            <md-menu-item data-query="Peanut">
+              <md-icon slot="start">history</md-icon>
+              <div slot="headline">Peanut</div>
+            </md-menu-item>
+            <md-menu-item data-query="End of school year">
+              <md-icon slot="start">history</md-icon>
+              <div slot="headline">End of school year</div>
+            </md-menu-item>
+          </md-search>
         </div>
 
         <script>
+          const demoSearch = document.getElementById('demo-search')
+
+          demoSearch?.addEventListener('search', (e) => {
+            const snackbar = document.querySelector('md-snackbar')
+            if (snackbar && e.detail?.value) {
+              snackbar.message = `Search: ${e.detail.value}`
+              snackbar.show()
+            }
+          })
           const profilePic = document.getElementById('profile-pic')
           const userMenu = document.getElementById('user-menu')
 
