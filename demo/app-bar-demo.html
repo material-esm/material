@@ -248,17 +248,22 @@
         <div>
           <h3>5. Search App Bar</h3>
           <span style="font-size: 13px; color: var(--md-sys-color-on-surface-variant)"
-            >Full top app bar containing an embedded search input and actions</span
+            >Full top app bar containing an embedded M3 search bar and actions</span
           >
+        </div>
+        <div class="demo-controls">
+          <md-button onclick="toggleScrolled('bar-search')">Toggle Scrolled</md-button>
         </div>
       </div>
       <div class="demo-section-body">
-        <md-app-bar type="search" placeholder="Search contacts, messages...">
+        <md-app-bar id="bar-search" type="search" placeholder="Search contacts, messages...">
           <md-icon-button slot="navigation-icon">
             <md-icon>menu</md-icon>
           </md-icon-button>
+          <md-icon-button slot="trailing-icon-text-field" aria-label="Voice search">
+            <md-icon>mic</md-icon>
+          </md-icon-button>
           <div slot="action-items" style="display: flex">
-            <md-icon-button><md-icon>mic</md-icon></md-icon-button>
             <md-icon-button><md-icon>more_vert</md-icon></md-icon-button>
           </div>
         </md-app-bar>

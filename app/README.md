@@ -130,5 +130,7 @@ For Large Flexible, use `type="large-flexible"`.
 | `--md-app-bar-scrolled-container-color` | `var(--md-sys-color-surface-container)`  | Background color when scrolled.       |
 | `--md-app-bar-headline-color`           | `var(--md-sys-color-on-surface)`         | Text color of the headline.           |
 | `--md-app-bar-subtitle-color`           | `var(--md-sys-color-on-surface-variant)` | Text color of the subtitle.           |
-| `--md-app-bar-leading-icon-color`       | `var(--md-sys-color-on-surface)`         | Color of the leading navigation icon. |
-| `--md-app-bar-trailing-icon-color`      | `var(--md-sys-color-on-surface-variant)` | Color of the trailing action icons.   |
+| `--md-app-bar-leading-icon-color`          | `var(--md-sys-color-on-surface)`                | Color of the leading navigation icon.              |
+| `--md-app-bar-trailing-icon-color`         | `var(--md-sys-color-on-surface-variant)`        | Color of the trailing action icons.                |
+| `--md-app-bar-search-container-color`      | `var(--md-sys-color-surface-container)`         | Search bar fill color inside unscrolled app bar.   |
+| `--md-app-bar-scrolled-search-container-color` | `var(--md-sys-color-surface-container-highest)` | Search bar fill color inside scrolled app bar.     |

@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { LitElement, html, css, nothing } from 'lit'
-import '../text/text-field.js'
+import '../search/search.js'
 import '../icon/icon.js'
 import '../internal/elevation/elevation.js'
 
@@ -19,7 +19,7 @@ import '../internal/elevation/elevation.js'
  * - `center-aligned`: 64px single-row top app bar with centered title.
  * - `medium-flexible`: 112px–136px two-row flexible bar, collapses to 64px on scroll.
  * - `large-flexible`: 120px–152px two-row flexible bar, collapses to 64px on scroll.
- * - `search`: 64px search bar with embedded search text field.
+ * - `search`: 64px search app bar with embedded M3 search bar.
  *
  * @fires search {CustomEvent<{value: string}>} Dispatched when search is submitted.
  * @fires input {Event} Dispatched when search input value changes.
@@ -39,7 +39,7 @@ export class AppBar extends LitElement {
     label: { type: String },
     /** Optional subtitle text */
     subtitle: { type: String },
-    /** Shorthand boolean attribute to center-align the headline */
+    /** Shorthand boolean attribute to center-align the headline or search hint text */
     centerAligned: { type: Boolean, attribute: 'center-aligned', reflect: true },
     /** Whether the app bar has elevation and surface-container color applied from scrolling */
     scrolled: { type: Boolean, reflect: true },
@@ -57,6 +57,10 @@ export class AppBar extends LitElement {
     _hasSearchValue: { state: true },
     /** Internal state indicating whether custom subtitle markup is slotted */
     _hasSlottedSubtitle: { state: true },
+    /** Internal state indicating whether leading navigation icon is slotted */
+    _hasLeading: { state: true },
+    /** Internal state indicating whether trailing action items are slotted */
+    _hasTrailing: { state: true },
   }
 
   constructor() {
@@ -76,6 +80,8 @@ export class AppBar extends LitElement {
     this.value = ''
     this._hasSearchValue = false
     this._hasSlottedSubtitle = false
+    this._hasLeading = false
+    this._hasTrailing = false
 
     this._onScroll = this._handleScroll.bind(this)
     this._currentTarget = null
@@ -107,9 +113,6 @@ export class AppBar extends LitElement {
    */
   get _effectiveType() {
     const v = (this.variant || this.type || 'small').toLowerCase()
-    if (this.centerAligned || v === 'center-aligned' || v === 'center') {
-      return 'center-aligned'
-    }
     if (v === 'medium' || v === 'medium-flexible') {
       return 'medium-flexible'
     }
@@ -118,6 +121,9 @@ export class AppBar extends LitElement {
     }
     if (v === 'search') {
       return 'search'
+    }
+    if (this.centerAligned || v === 'center-aligned' || v === 'center') {
+      return 'center-aligned'
     }
     return 'small'
   }
@@ -132,7 +138,7 @@ export class AppBar extends LitElement {
   }
 
   get _isCenterAligned() {
-    return this._effectiveType === 'center-aligned'
+    return this.centerAligned || this._effectiveType === 'center-aligned'
   }
 
   get _headlineText() {
@@ -143,11 +149,26 @@ export class AppBar extends LitElement {
     return Boolean(this.subtitle || this._hasSlottedSubtitle)
   }
 
+  _hasAssignedContent(slot) {
+    if (!slot) return false
+    const assigned = slot.assignedNodes({ flatten: true })
+    return assigned.some((n) => n.nodeType === Node.ELEMENT_NODE || (n.textContent || '').trim().length > 0)
+  }
+
+  _handleLeadingSlotChange() {
+    const navSlot = this.renderRoot?.querySelector('slot[name="navigation-icon"]')
+    const leadSlot = this.renderRoot?.querySelector('slot[name="leading-icon"]')
+    this._hasLeading = this._hasAssignedContent(navSlot) || this._hasAssignedContent(leadSlot)
+  }
+
+  _handleTrailingSlotChange() {
+    const actionSlot = this.renderRoot?.querySelector('slot[name="action-items"]')
+    const trailSlot = this.renderRoot?.querySelector('slot[name="trailing-icon"]')
+    this._hasTrailing = this._hasAssignedContent(actionSlot) || this._hasAssignedContent(trailSlot)
+  }
+
   _handleSubtitleSlotChange(e) {
-    const assigned = e.target.assignedNodes({ flatten: true })
-    this._hasSlottedSubtitle = assigned.some(
-      (n) => n.nodeType === Node.ELEMENT_NODE || (n.textContent || '').trim().length > 0,
-    )
+    this._hasSlottedSubtitle = this._hasAssignedContent(e.target)
   }
 
   _getScrollTargetElement() {
@@ -209,28 +230,21 @@ export class AppBar extends LitElement {
   _handleSearchChange(e) {
     const input = e.target
     this.value = input.value
+    this._hasSearchValue = Boolean(input.value)
   }
 
-  _handleSearchKeyDown(e) {
-    if (e.key === 'Enter') {
-      this.dispatchEvent(
-        new CustomEvent('search', {
-          detail: { value: this.value },
-          bubbles: true,
-          composed: true,
-        }),
-      )
-    }
+  _handleSearchClear() {
+    this.value = ''
+    this._hasSearchValue = false
   }
 
   _clearSearch() {
-    this.value = ''
-    this._hasSearchValue = false
-    const input = this.renderRoot?.querySelector('#search-input')
-    if (input) {
-      input.value = ''
-      input.dispatchEvent(new Event('input', { bubbles: true, composed: true }))
-      input.dispatchEvent(new Event('change', { bubbles: true, composed: true }))
+    const searchEl = this.renderRoot?.querySelector('#search-input')
+    if (searchEl && typeof searchEl.clear === 'function') {
+      searchEl.clear()
+    } else {
+      this.value = ''
+      this._hasSearchValue = false
     }
   }
 
@@ -246,16 +260,16 @@ export class AppBar extends LitElement {
 
     return html`
       <header
-        class="md3-app-bar md3-app-bar--${type} ${this.scrolled ? 'scrolled' : ''} ${isCollapsed ? 'collapsed' : ''} ${this._hasSubtitle ? 'has-subtitle' : ''}"
+        class="md3-app-bar md3-app-bar--${type} ${this.scrolled ? 'scrolled' : ''} ${isCollapsed ? 'collapsed' : ''} ${this._hasSubtitle ? 'has-subtitle' : ''} ${isCenterAligned ? 'center-aligned' : ''}"
         role="banner">
         <md-elevation part="elevation"></md-elevation>
 
         <!-- Top row: Navigation icon, title (for small/center, or collapsed flexible), and action items -->
         <div class="md3-app-bar__row md3-app-bar__top-row">
           <!-- Leading / Navigation icon -->
-          <div class="md3-app-bar__leading">
-            <slot name="navigation-icon">
-              <slot name="leading-icon"></slot>
+          <div class="md3-app-bar__leading" ?hidden=${!this._hasLeading}>
+            <slot name="navigation-icon" @slotchange=${this._handleLeadingSlotChange}>
+              <slot name="leading-icon" @slotchange=${this._handleLeadingSlotChange}></slot>
             </slot>
           </div>
 
@@ -281,9 +295,9 @@ export class AppBar extends LitElement {
           </div>
 
           <!-- Trailing action items -->
-          <div class="md3-app-bar__trailing">
-            <slot name="action-items">
-              <slot name="trailing-icon"></slot>
+          <div class="md3-app-bar__trailing" ?hidden=${!this._hasTrailing}>
+            <slot name="action-items" @slotchange=${this._handleTrailingSlotChange}>
+              <slot name="trailing-icon" @slotchange=${this._handleTrailingSlotChange}></slot>
             </slot>
           </div>
         </div>
@@ -292,7 +306,9 @@ export class AppBar extends LitElement {
         ${
           isFlexible
             ? html`
-                <div class="md3-app-bar__flexible-row" part="flexible-container">
+                <div
+                  class="md3-app-bar__flexible-row ${isCenterAligned ? 'center-aligned' : ''}"
+                  part="flexible-container">
                   <div class="md3-app-bar__flexible-headline" part="headline">
                     ${
                       !isCollapsed
@@ -320,44 +336,35 @@ export class AppBar extends LitElement {
         <md-elevation part="elevation"></md-elevation>
 
         <div class="md3-app-bar__row md3-app-bar__search-row">
-          <div class="md3-app-bar__leading">
-            <slot name="navigation-icon">
-              <slot name="leading-icon"></slot>
+          <div class="md3-app-bar__leading" ?hidden=${!this._hasLeading}>
+            <slot name="navigation-icon" @slotchange=${this._handleLeadingSlotChange}>
+              <slot name="leading-icon" @slotchange=${this._handleLeadingSlotChange}></slot>
             </slot>
           </div>
 
           <div class="md3-app-bar__search-field-container">
             <slot name="search-field">
-              <md-text-field
-                color="outlined"
+              <md-search
                 id="search-input"
                 class="md3-app-bar__search-input"
-                type="search"
                 .value=${this.value}
-                label="${this.label || this.placeholder || ''}"
+                label="${this.label || this.placeholder || 'Search'}"
                 placeholder="${this.placeholder || ''}"
+                ?center-aligned=${this._isCenterAligned}
                 @input=${this._handleSearchInput}
                 @change=${this._handleSearchChange}
-                @keydown=${this._handleSearchKeyDown}>
+                @clear=${this._handleSearchClear}>
                 <slot name="leading-icon-text-field" slot="leading-icon">
-                  <md-icon>search</md-icon>
+                  <md-icon aria-hidden="true">search</md-icon>
                 </slot>
-                ${
-                  this._hasSearchValue
-                    ? html`
-                        <slot name="trailing-icon-text-field" slot="trailing-icon">
-                          <md-icon class="md3-app-bar__clear-icon" @click=${this._clearSearch}>close</md-icon>
-                        </slot>
-                      `
-                    : html`<slot name="trailing-icon-text-field" slot="trailing-icon"></slot>`
-                }
-              </md-text-field>
+                <slot name="trailing-icon-text-field" slot="trailing-icon"></slot>
+              </md-search>
             </slot>
           </div>
 
-          <div class="md3-app-bar__trailing">
-            <slot name="action-items">
-              <slot name="trailing-icon"></slot>
+          <div class="md3-app-bar__trailing" ?hidden=${!this._hasTrailing}>
+            <slot name="action-items" @slotchange=${this._handleTrailingSlotChange}>
+              <slot name="trailing-icon" @slotchange=${this._handleTrailingSlotChange}></slot>
             </slot>
           </div>
         </div>
@@ -381,6 +388,14 @@ export class AppBar extends LitElement {
       --_subtitle-color: var(--md-app-bar-subtitle-color, var(--md-sys-color-on-surface-variant, #45464f));
       --_leading-icon-color: var(--md-app-bar-leading-icon-color, var(--md-sys-color-on-surface, #1a1b21));
       --_trailing-icon-color: var(--md-app-bar-trailing-icon-color, var(--md-sys-color-on-surface-variant, #45464f));
+      --_search-container-color: var(
+        --md-app-bar-search-container-color,
+        var(--md-sys-color-surface-container, #efedf4)
+      );
+      --_scrolled-search-container-color: var(
+        --md-app-bar-scrolled-search-container-color,
+        var(--md-sys-color-surface-container-highest, #e6e0e9)
+      );
       --md-elevation-level: 0;
     }
 
@@ -433,6 +448,11 @@ export class AppBar extends LitElement {
       flex-shrink: 0;
     }
 
+    .md3-app-bar__leading[hidden],
+    .md3-app-bar__trailing[hidden] {
+      display: none;
+    }
+
     .md3-app-bar__trailing {
       display: flex;
       align-items: center;
@@ -457,10 +477,10 @@ export class AppBar extends LitElement {
     }
 
     .md3-app-bar__headline {
-      font-family: var(--md-ref-typeface-brand, inherit);
-      font-size: var(--md-app-bar-headline-size, 22px);
-      line-height: 28px;
-      font-weight: 500;
+      font-family: var(--md-sys-typescale-title-large-font, var(--md-ref-typeface-brand, inherit));
+      font-size: var(--md-app-bar-headline-size, var(--md-sys-typescale-title-large-size, 22px));
+      line-height: var(--md-sys-typescale-title-large-line-height, 28px);
+      font-weight: var(--md-app-bar-headline-weight, var(--md-sys-typescale-title-large-weight, 400));
       color: var(--_on-container-color);
       white-space: nowrap;
       overflow: hidden;
@@ -469,10 +489,10 @@ export class AppBar extends LitElement {
     }
 
     .md3-app-bar__subtitle {
-      font-family: var(--md-ref-typeface-plain, inherit);
-      font-size: 14px;
-      line-height: 20px;
-      font-weight: 400;
+      font-family: var(--md-sys-typescale-body-medium-font, var(--md-ref-typeface-plain, inherit));
+      font-size: var(--md-sys-typescale-body-medium-size, 14px);
+      line-height: var(--md-sys-typescale-body-medium-line-height, 20px);
+      font-weight: var(--md-sys-typescale-body-medium-weight, 400);
       color: var(--_subtitle-color);
       white-space: nowrap;
       overflow: hidden;
@@ -484,11 +504,16 @@ export class AppBar extends LitElement {
       display: none;
     }
 
-    /* Center-aligned variant */
-    .md3-app-bar--center-aligned .md3-app-bar__headline-container.center-aligned {
+    /* Center-aligned configuration */
+    .md3-app-bar__headline-container.center-aligned {
       align-items: center;
       text-align: center;
-      padding-inline: 0;
+      padding-inline: 12px;
+    }
+
+    .md3-app-bar__flexible-row.center-aligned {
+      align-items: center;
+      text-align: center;
     }
 
     /* Medium & Large Flexible App Bars */
@@ -518,26 +543,32 @@ export class AppBar extends LitElement {
         opacity 200ms cubic-bezier(0.2, 0, 0, 1),
         max-height 250ms cubic-bezier(0.2, 0, 0, 1),
         padding 250ms cubic-bezier(0.2, 0, 0, 1);
-      max-height: 120px;
+      max-height: 160px;
       overflow: hidden;
     }
 
     .md3-app-bar--medium-flexible .md3-app-bar__flexible-headline {
-      font-family: var(--md-ref-typeface-brand, inherit);
-      font-size: 24px;
-      line-height: 32px;
-      font-weight: 400;
+      font-family: var(--md-sys-typescale-headline-small-font, var(--md-ref-typeface-brand, inherit));
+      font-size: var(--md-sys-typescale-headline-small-size, 24px);
+      line-height: var(--md-sys-typescale-headline-small-line-height, 32px);
+      font-weight: var(--md-sys-typescale-headline-small-weight, 400);
       color: var(--_on-container-color);
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
     .md3-app-bar--large-flexible .md3-app-bar__flexible-headline {
-      font-family: var(--md-ref-typeface-brand, inherit);
-      font-size: 28px;
-      line-height: 36px;
-      font-weight: 400;
+      font-family: var(--md-sys-typescale-headline-medium-font, var(--md-ref-typeface-brand, inherit));
+      font-size: var(--md-sys-typescale-headline-medium-size, 28px);
+      line-height: var(--md-sys-typescale-headline-medium-line-height, 36px);
+      font-weight: var(--md-sys-typescale-headline-medium-weight, 400);
       color: var(--_on-container-color);
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
       overflow: hidden;
       text-overflow: ellipsis;
     }
@@ -571,24 +602,32 @@ export class AppBar extends LitElement {
     /* Search variant */
     .md3-app-bar--search .md3-app-bar__search-row {
       height: 64px;
-      padding: 0 8px;
+      padding: 4px 8px;
       gap: 8px;
+    }
+
+    .md3-app-bar--search .md3-app-bar__trailing {
+      margin-inline-start: 0;
     }
 
     .md3-app-bar__search-field-container {
       display: flex;
       flex: 1;
       align-items: center;
+      justify-content: center;
       min-width: 0;
     }
 
     .md3-app-bar__search-input {
       width: 100%;
-      --md-text-field-container-shape: 28px;
+      --md-search-max-width: 100%;
+      --md-search-min-width: 0px;
+      --md-search-container-height: 56px;
+      --md-search-container-color: var(--_search-container-color);
     }
 
-    .md3-app-bar__clear-icon {
-      cursor: pointer;
+    .md3-app-bar--search.scrolled .md3-app-bar__search-input {
+      --md-search-container-color: var(--_scrolled-search-container-color);
     }
   `
 }
