@@ -10,6 +10,10 @@ import '../buttons/icon-button.js'
 import '../internal/elevation/elevation.js'
 import '../internal/focus/focus-ring.js'
 import { redispatchEvent } from '../internal/events/redispatch-event.js'
+import { mixinElementInternals } from '../labs/behaviors/element-internals.js'
+import { getFormValue, mixinFormAssociated } from '../labs/behaviors/form-associated.js'
+
+const searchBaseClass = mixinFormAssociated(mixinElementInternals(LitElement))
 
 /**
  * Material Design 3 Search Bar component.
@@ -22,7 +26,7 @@ import { redispatchEvent } from '../internal/events/redispatch-event.js'
  * @fires search {CustomEvent<{value: string}>} Dispatched when Enter is pressed.
  * @fires clear {CustomEvent} Dispatched when the clear button is activated.
  */
-export class Search extends LitElement {
+export class Search extends searchBaseClass {
   static shadowRootOptions = {
     ...LitElement.shadowRootOptions,
     delegatesFocus: true,
@@ -35,10 +39,6 @@ export class Search extends LitElement {
     placeholder: { type: String },
     /** Current search query value. */
     value: { type: String },
-    /** Name of the search input for form usage. */
-    name: { type: String },
-    /** Whether the search bar is disabled. */
-    disabled: { type: Boolean, reflect: true },
     /** Center-aligns the supporting/hint text. */
     centerAligned: { type: Boolean, attribute: 'center-aligned', reflect: true },
     /** Applies resting elevation (level 3) to the search bar container. */
@@ -56,13 +56,23 @@ export class Search extends LitElement {
     this.label = 'Search'
     this.placeholder = 'Search'
     this.value = ''
-    this.name = ''
-    this.disabled = false
     this.centerAligned = false
     this.elevated = false
     this.noClear = false
     this._hasSlottedTrailing = false
     this._hasSlottedAvatar = false
+  }
+
+  [getFormValue]() {
+    return this.value
+  }
+
+  formResetCallback() {
+    this.value = this.getAttribute('value') ?? ''
+  }
+
+  formStateRestoreCallback(state) {
+    this.value = state
   }
 
   get _hasValue() {
@@ -246,6 +256,7 @@ export class Search extends LitElement {
   static styles = css`
     :host {
       display: block;
+      outline: none;
       width: 100%;
       min-width: var(--md-search-min-width, var(--md-comp-search-bar-container-min-width, min(360px, 100%)));
       max-width: var(--md-search-max-width, var(--md-comp-search-bar-container-max-width, 720px));
