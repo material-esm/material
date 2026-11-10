@@ -8,42 +8,34 @@ import '../divider/divider.js'
 import { ANIMATE_INDICATOR } from './tab.js'
 import { queryAssignedElements } from '../utils/query.js'
 /**
- * @fires change {Event} Fired when the selected tab changes. The target's selected or
- * selectedItem and previousSelected or previousSelectedItem provide information
- * about the selection change. The change event is fired when a user interaction
- * like a space/enter key or click cause a selection change. The tab selection
- * based on these actions can be cancelled by calling preventDefault on the
+ * @fires change {Event} Fired when the selected tab changes. The target's `activeTabIndex`
+ * or `activeTab` provide information about the selection change. The change event is fired
+ * when a user interaction like a space/enter key or click cause a selection change. The tab
+ * selection based on these actions can be cancelled by calling preventDefault on the
  * triggering `keydown` or `click` event. --bubbles
  *
  * @example
  * // perform an action if a tab is clicked
- * tabs.addEventListener('change', (event: Event) => {
- *   if (event.target.selected === 2)
- *      takeAction();
+ * tabs.addEventListener('change', (event) => {
+ *   if (event.target.activeTabIndex === 2) {
+ *     takeAction();
  *   }
  * });
  *
  * // prevent a click from triggering tab selection under some condition
- * tabs.addEventListener('click', (event: Event) => {
- *   if (notReady)
- *      event.preventDefault();
+ * tabs.addEventListener('click', (event) => {
+ *   if (notReady) {
+ *     event.preventDefault();
  *   }
  * });
  *
  */
 export class Tabs extends LitElement {
   static properties = {
-    // tabs: { type: Array },
     activeTabIndex: { type: Number, attribute: 'active-tab-index' },
     autoActivate: { type: Boolean, attribute: 'auto-activate' },
+    scrollable: { type: Boolean, reflect: true },
   }
-
-  // constructor() {
-  //     super()
-  //     // this.tabs = []
-  //     this.activeTabIndex = 0
-  //     this.autoActivate = false
-  // }
 
   get tabs() {
     return queryAssignedElements(this, { flatten: true, selector: '[md-tab]' })
@@ -82,6 +74,10 @@ export class Tabs extends LitElement {
   }
   set activeTabIndex(index) {
     const activateTabAtIndex = () => {
+      if (this._pendingActiveTabIndex !== undefined) {
+        index = this._pendingActiveTabIndex
+        this._pendingActiveTabIndex = undefined
+      }
       const tab = this.tabs[index]
       // Ignore out-of-bound indices.
       if (tab) {
@@ -90,22 +86,16 @@ export class Tabs extends LitElement {
     }
     if (!this.slotElement) {
       // This is needed to support setting the activeTabIndex via a lit property
-      // binding.
-      //
-      // ```ts
-      // html`
-      //   <md-tabs .activeTabIndex=${1}>
-      //     <md-tab>First</md-tab>
-      //     <md-tab>Second</md-tab>
-      //   </md-tabs>
-      // `;
-      // ```
-      //
-      // It's needed since lit's rendering lifecycle is asynchronous, and the
-      // `<slot>` element hasn't rendered, so `tabs` is empty.
-      this.updateComplete.then(activateTabAtIndex)
+      // binding or attribute before the `<slot>` element has rendered.
+      this._pendingActiveTabIndex = index
+      this.updateComplete.then(() => {
+        if (this._pendingActiveTabIndex !== undefined) {
+          activateTabAtIndex()
+        }
+      })
       return
     }
+    this._pendingActiveTabIndex = undefined
     activateTabAtIndex()
   }
   get focusedTab() {
@@ -116,8 +106,12 @@ export class Tabs extends LitElement {
     /**
      * Whether or not to automatically select a tab when it is focused.
      */
-    this.activeTabIndex = 0
     this.autoActivate = false
+    /**
+     * Whether tabs size to their content and scroll horizontally with M3's 52dp leading offset.
+     */
+    this.scrollable = false
+    this._pendingActiveTabIndex = undefined
     this.internals =
       // Cast needed for closure
       this.attachInternals()
@@ -151,7 +145,8 @@ export class Tabs extends LitElement {
     const extent = tabToScrollTo.offsetWidth
     const scroll = this.tabsScrollerElement.scrollLeft
     const hostExtent = this.offsetWidth
-    const scrollMargin = 48
+    const leadingPadding = parseFloat(getComputedStyle(this.tabsScrollerElement).paddingInlineStart) || 0
+    const scrollMargin = Math.max(48, leadingPadding)
     const min = offset - scrollMargin
     const max = offset + extent - hostExtent + scrollMargin
     const to = Math.min(min, Math.max(max, scroll))
@@ -275,11 +270,23 @@ export class Tabs extends LitElement {
     }
   }
   handleSlotChange() {
+    if (this._pendingActiveTabIndex !== undefined) {
+      const pendingTab = this.tabs[this._pendingActiveTabIndex]
+      this._pendingActiveTabIndex = undefined
+      if (pendingTab) {
+        this.activateTab(pendingTab)
+        return
+      }
+    }
     const firstTab = this.tabs[0]
     if (!this.activeTab && firstTab) {
       // If the active tab was removed, auto-select the first one. There should
       // always be a selected tab while the bar has children.
       this.activateTab(firstTab)
+      return
+    }
+    if (this.activeTab) {
+      this.updateFocusableTab(this.activeTab)
     }
     // When children shift, ensure the active tab is visible. For example, if
     // many children are added before the active tab, it'd be pushed off screen.
@@ -301,11 +308,13 @@ export class Tabs extends LitElement {
       :host([hidden]) {
         display: none;
       }
-      :host::-webkit-scrollbar {
+      :host::-webkit-scrollbar,
+      .tabs::-webkit-scrollbar {
         display: none;
       }
       .tabs {
         align-items: end;
+        box-sizing: border-box;
         display: flex;
         height: 100%;
         overflow: inherit;
@@ -315,8 +324,15 @@ export class Tabs extends LitElement {
         justify-content: space-between;
         width: 100%;
       }
+      :host([scrollable]) .tabs {
+        justify-content: flex-start;
+        padding-inline-start: var(--md-tabs-scrollable-offset, 52px);
+      }
       ::slotted(*) {
         flex: 1;
+      }
+      :host([scrollable]) ::slotted(*) {
+        flex: 0 0 auto;
       }
       ::slotted([active]) {
         z-index: 1;

@@ -3,6 +3,7 @@
  * Copyright 2023 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
+import '../badge/badge.js'
 import '../internal/elevation/elevation.js'
 import '../internal/focus/focus-ring.js'
 import '../internal/ripple/ripple.js'
@@ -26,13 +27,16 @@ export const ANIMATE_INDICATOR = Symbol('animateIndicator')
  */
 export class Tab extends LitElement {
   static properties = {
-    type: { type: String },
+    type: { type: String, reflect: true },
     isTab: { type: Boolean, reflect: true, attribute: 'md-tab' },
     active: { type: Boolean, reflect: true },
-    selected: { type: Boolean, reflect: true },
+    selected: { type: Boolean },
     hasIcon: { type: Boolean, attribute: 'has-icon' },
     iconOnly: { type: Boolean, attribute: 'icon-only' },
     inlineIcon: { type: Boolean, attribute: 'inline-icon' },
+    showBadge: { type: Boolean, attribute: 'show-badge' },
+    badgeValue: { type: String, attribute: 'badge-value' },
+    hasBadge: { type: Boolean, state: true },
     href: { type: String },
     target: { type: String },
   }
@@ -71,6 +75,15 @@ export class Tab extends LitElement {
      * Whether or not the icon renders inline with label or stacked vertically.
      */
     this.inlineIcon = false
+    /**
+     * Whether to render a notification badge on the tab.
+     */
+    this.showBadge = false
+    /**
+     * Optional badge count/text value (up to 4 characters, e.g. "3" or "99+").
+     */
+    this.badgeValue = ''
+    this.hasBadge = false
     this.href = ''
     this.target = ''
     this.internals =
@@ -86,25 +99,46 @@ export class Tab extends LitElement {
     return this.type !== 'primary'
   }
 
+  get isAnchoredBadge() {
+    return this.hasIcon && (this.iconOnly || (this.type === 'primary' && !this.inlineIcon))
+  }
+
   get [INDICATOR]() {
     return this.renderRoot?.querySelector('.indicator') ?? null
   }
 
   render() {
     const indicator = html`<div class="indicator"></div>`
-    return html` <div class="wrapper ${this.type}">
-      <div class="button" role="presentation" @click=${this.handleContentClick}>
-        <md-focus-ring part="focus-ring" inward .control=${this}></md-focus-ring>
-        <md-elevation part="elevation"></md-elevation>
-        <md-ripple .control=${this}></md-ripple>
-        <div class="content ${classMap(this.getContentClasses())}" role="presentation">
+    const anchoredBadge = this.isAnchoredBadge
+    const showPropBadge = this.showBadge || Boolean(this.badgeValue)
+    const hasAnyBadge = showPropBadge || this.hasBadge
+    return html`<div class="button" role="presentation" @click=${this.handleContentClick}>
+      <md-focus-ring part="focus-ring" inward .control=${this}></md-focus-ring>
+      <md-elevation part="elevation"></md-elevation>
+      <md-ripple .control=${this}></md-ripple>
+      <div class="content ${classMap(this.getContentClasses())}" role="presentation">
+        <span class="icon-box ${classMap({ 'has-icon': this.hasIcon })}">
           <slot name="icon" @slotchange=${this.handleIconSlotChange}></slot>
-          <slot @slotchange=${this.handleSlotChange}></slot>
-          ${this.fullWidthIndicator ? nothing : indicator}
-        </div>
-        ${this.fullWidthIndicator ? indicator : nothing} ${this.href ? this.renderLink() : nothing}
+          ${anchoredBadge ? this.renderBadge(false) : nothing}
+        </span>
+        <slot @slotchange=${this.handleSlotChange}></slot>
+        ${
+          anchoredBadge
+            ? nothing
+            : html`<span class="badge-inline ${classMap({ visible: hasAnyBadge })}">${this.renderBadge(true)}</span>`
+        }
+        ${this.fullWidthIndicator ? nothing : indicator}
       </div>
+      ${this.fullWidthIndicator ? indicator : nothing} ${this.href ? this.renderLink() : nothing}
     </div>`
+  }
+
+  renderBadge(inline) {
+    const showPropBadge = this.showBadge || Boolean(this.badgeValue)
+    return html`
+      ${showPropBadge ? html`<md-badge ?inline=${inline} .value=${this.badgeValue}></md-badge>` : nothing}
+      <slot name="badge" @slotchange=${this.handleBadgeSlotChange}></slot>
+    `
   }
 
   renderLink() {
@@ -124,7 +158,7 @@ export class Tab extends LitElement {
       'has-icon': this.hasIcon,
       'has-label': !this.iconOnly,
     }
-    if (this.type == 'primary') {
+    if (this.type === 'primary') {
       cc = {
         ...this.getContentClassesPrimary(),
         ...cc,
@@ -141,7 +175,20 @@ export class Tab extends LitElement {
 
   updated() {
     this.internals.ariaSelected = String(this.active)
+    this.syncSlottedBadges()
   }
+
+  syncSlottedBadges() {
+    const inline = !this.isAnchoredBadge
+    for (const badge of this.assignedBadges) {
+      if ('inline' in badge) {
+        badge.inline = inline
+      } else {
+        badge.toggleAttribute('inline', inline)
+      }
+    }
+  }
+
   async handleKeydown(event) {
     // Allow event to bubble.
     await 0
@@ -220,9 +267,17 @@ export class Tab extends LitElement {
   handleIconSlotChange() {
     this.hasIcon = this.assignedIcons.length > 0
   }
+  handleBadgeSlotChange() {
+    this.hasBadge = this.assignedBadges.length > 0
+    this.syncSlottedBadges()
+  }
 
   get assignedIcons() {
     return queryAssignedElements(this, { flatten: true, slot: 'icon' })
+  }
+
+  get assignedBadges() {
+    return queryAssignedElements(this, { flatten: true, slot: 'badge' })
   }
 
   get assignedDefaultNodes() {
@@ -245,6 +300,7 @@ export class Tab extends LitElement {
         font-size: var(--_label-text-size);
         line-height: var(--_label-text-line-height);
         font-weight: var(--_label-text-weight);
+        letter-spacing: var(--_label-text-tracking);
         color: var(--_label-text-color);
         z-index: 0;
         --md-ripple-hover-color: var(--_hover-state-layer-color);
@@ -290,7 +346,25 @@ export class Tab extends LitElement {
         align-items: center;
         justify-content: center;
         height: var(--_container-height);
+        font-family: var(--_label-text-font);
         gap: 8px;
+      }
+      .icon-box {
+        display: contents;
+      }
+      .icon-box.has-icon {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .badge-inline {
+        display: contents;
+      }
+      .badge-inline.visible {
+        display: inline-flex;
+        align-items: center;
+        margin-inline-start: -4px;
       }
       .indicator {
         position: absolute;
@@ -375,115 +449,7 @@ export class Tab extends LitElement {
       }
     `,
     css`
-      .wrapper.primary {
-        --_active-indicator-color: var(--md-primary-tab-active-indicator-color, var(--md-sys-color-primary, #6750a4));
-        --_active-indicator-height: var(--md-primary-tab-active-indicator-height, 3px);
-        --_active-indicator-shape: var(--md-primary-tab-active-indicator-shape, 3px 3px 0px 0px);
-        --_active-hover-state-layer-color: var(
-          --md-primary-tab-active-hover-state-layer-color,
-          var(--md-sys-color-primary, #6750a4)
-        );
-        --_active-hover-state-layer-opacity: var(--md-primary-tab-active-hover-state-layer-opacity, 0.08);
-        --_active-pressed-state-layer-color: var(
-          --md-primary-tab-active-pressed-state-layer-color,
-          var(--md-sys-color-primary, #6750a4)
-        );
-        --_active-pressed-state-layer-opacity: var(--md-primary-tab-active-pressed-state-layer-opacity, 0.12);
-        --_container-color: var(--md-primary-tab-container-color, var(--md-sys-color-surface, #fef7ff));
-        --_container-elevation: var(--md-primary-tab-container-elevation, 0);
-        --_container-height: var(--md-primary-tab-container-height, 48px);
-        --_with-icon-and-label-text-container-height: var(
-          --md-primary-tab-with-icon-and-label-text-container-height,
-          64px
-        );
-        --_hover-state-layer-color: var(
-          --md-primary-tab-hover-state-layer-color,
-          var(--md-sys-color-on-surface, #1d1b20)
-        );
-        --_hover-state-layer-opacity: var(--md-primary-tab-hover-state-layer-opacity, 0.08);
-        --_pressed-state-layer-color: var(
-          --md-primary-tab-pressed-state-layer-color,
-          var(--md-sys-color-primary, #6750a4)
-        );
-        --_pressed-state-layer-opacity: var(--md-primary-tab-pressed-state-layer-opacity, 0.12);
-        --_active-focus-icon-color: var(--md-primary-tab-active-focus-icon-color, var(--md-sys-color-primary, #6750a4));
-        --_active-hover-icon-color: var(--md-primary-tab-active-hover-icon-color, var(--md-sys-color-primary, #6750a4));
-        --_active-icon-color: var(--md-primary-tab-active-icon-color, var(--md-sys-color-primary, #6750a4));
-        --_active-pressed-icon-color: var(
-          --md-primary-tab-active-pressed-icon-color,
-          var(--md-sys-color-primary, #6750a4)
-        );
-        --_icon-size: var(--md-primary-tab-icon-size, 24px);
-        --_focus-icon-color: var(--md-primary-tab-focus-icon-color, var(--md-sys-color-on-surface, #1d1b20));
-        --_hover-icon-color: var(--md-primary-tab-hover-icon-color, var(--md-sys-color-on-surface, #1d1b20));
-        --_icon-color: var(--md-primary-tab-icon-color, var(--md-sys-color-on-surface-variant, #49454f));
-        --_pressed-icon-color: var(--md-primary-tab-pressed-icon-color, var(--md-sys-color-on-surface, #1d1b20));
-        --_label-text-font: var(
-          --md-primary-tab-label-text-font,
-          var(--md-sys-typescale-title-small-font, var(--md-ref-typeface-plain, Roboto))
-        );
-        --_label-text-line-height: var(
-          --md-primary-tab-label-text-line-height,
-          var(--md-sys-typescale-title-small-line-height, 1.25rem)
-        );
-        --_label-text-size: var(--md-primary-tab-label-text-size, var(--md-sys-typescale-title-small-size, 0.875rem));
-        --_label-text-weight: var(
-          --md-primary-tab-label-text-weight,
-          var(--md-sys-typescale-title-small-weight, var(--md-ref-typeface-weight-medium, 500))
-        );
-        --_active-focus-label-text-color: var(
-          --md-primary-tab-active-focus-label-text-color,
-          var(--md-sys-color-primary, #6750a4)
-        );
-        --_active-hover-label-text-color: var(
-          --md-primary-tab-active-hover-label-text-color,
-          var(--md-sys-color-primary, #6750a4)
-        );
-        --_active-label-text-color: var(--md-primary-tab-active-label-text-color, var(--md-sys-color-primary, #6750a4));
-        --_active-pressed-label-text-color: var(
-          --md-primary-tab-active-pressed-label-text-color,
-          var(--md-sys-color-primary, #6750a4)
-        );
-        --_focus-label-text-color: var(
-          --md-primary-tab-focus-label-text-color,
-          var(--md-sys-color-on-surface, #1d1b20)
-        );
-        --_hover-label-text-color: var(
-          --md-primary-tab-hover-label-text-color,
-          var(--md-sys-color-on-surface, #1d1b20)
-        );
-        --_label-text-color: var(--md-primary-tab-label-text-color, var(--md-sys-color-on-surface-variant, #49454f));
-        --_pressed-label-text-color: var(
-          --md-primary-tab-pressed-label-text-color,
-          var(--md-sys-color-on-surface, #1d1b20)
-        );
-        --_container-shape-start-start: var(
-          --md-primary-tab-container-shape-start-start,
-          var(--md-primary-tab-container-shape, var(--md-sys-shape-corner-none, 0px))
-        );
-        --_container-shape-start-end: var(
-          --md-primary-tab-container-shape-start-end,
-          var(--md-primary-tab-container-shape, var(--md-sys-shape-corner-none, 0px))
-        );
-        --_container-shape-end-end: var(
-          --md-primary-tab-container-shape-end-end,
-          var(--md-primary-tab-container-shape, var(--md-sys-shape-corner-none, 0px))
-        );
-        --_container-shape-end-start: var(
-          --md-primary-tab-container-shape-end-start,
-          var(--md-primary-tab-container-shape, var(--md-sys-shape-corner-none, 0px))
-        );
-      }
-      .content.stacked {
-        flex-direction: column;
-        gap: 2px;
-      }
-      .content.stacked.has-icon.has-label {
-        height: var(--_with-icon-and-label-text-container-height);
-      }
-    `,
-    css`
-      .wrapper.secondary {
+      :host {
         --_active-indicator-color: var(--md-secondary-tab-active-indicator-color, var(--md-sys-color-primary, #6750a4));
         --_active-indicator-height: var(--md-secondary-tab-active-indicator-height, 2px);
         --_active-label-text-color: var(
@@ -515,6 +481,10 @@ export class Tab extends LitElement {
           var(--md-sys-typescale-title-small-line-height, 1.25rem)
         );
         --_label-text-size: var(--md-secondary-tab-label-text-size, var(--md-sys-typescale-title-small-size, 0.875rem));
+        --_label-text-tracking: var(
+          --md-secondary-tab-label-text-tracking,
+          var(--md-sys-typescale-title-small-tracking, 0.00625rem)
+        );
         --_label-text-weight: var(
           --md-secondary-tab-label-text-weight,
           var(--md-sys-typescale-title-small-weight, var(--md-ref-typeface-weight-medium, 500))
@@ -586,6 +556,121 @@ export class Tab extends LitElement {
           --md-secondary-tab-container-shape-end-start,
           var(--md-secondary-tab-container-shape, var(--md-sys-shape-corner-none, 0px))
         );
+      }
+    `,
+    css`
+      :host([type='primary']) {
+        --_active-indicator-color: var(--md-primary-tab-active-indicator-color, var(--md-sys-color-primary, #6750a4));
+        --_active-indicator-height: var(--md-primary-tab-active-indicator-height, 3px);
+        --_active-indicator-shape: var(--md-primary-tab-active-indicator-shape, 3px 3px 0px 0px);
+        --_active-hover-state-layer-color: var(
+          --md-primary-tab-active-hover-state-layer-color,
+          var(--md-sys-color-primary, #6750a4)
+        );
+        --_active-hover-state-layer-opacity: var(--md-primary-tab-active-hover-state-layer-opacity, 0.08);
+        --_active-pressed-state-layer-color: var(
+          --md-primary-tab-active-pressed-state-layer-color,
+          var(--md-sys-color-primary, #6750a4)
+        );
+        --_active-pressed-state-layer-opacity: var(--md-primary-tab-active-pressed-state-layer-opacity, 0.12);
+        --_container-color: var(--md-primary-tab-container-color, var(--md-sys-color-surface, #fef7ff));
+        --_container-elevation: var(--md-primary-tab-container-elevation, 0);
+        --_container-height: var(--md-primary-tab-container-height, 48px);
+        --_with-icon-and-label-text-container-height: var(
+          --md-primary-tab-with-icon-and-label-text-container-height,
+          64px
+        );
+        --_hover-state-layer-color: var(
+          --md-primary-tab-hover-state-layer-color,
+          var(--md-sys-color-on-surface, #1d1b20)
+        );
+        --_hover-state-layer-opacity: var(--md-primary-tab-hover-state-layer-opacity, 0.08);
+        --_pressed-state-layer-color: var(
+          --md-primary-tab-pressed-state-layer-color,
+          var(--md-sys-color-primary, #6750a4)
+        );
+        --_pressed-state-layer-opacity: var(--md-primary-tab-pressed-state-layer-opacity, 0.12);
+        --_active-focus-icon-color: var(--md-primary-tab-active-focus-icon-color, var(--md-sys-color-primary, #6750a4));
+        --_active-hover-icon-color: var(--md-primary-tab-active-hover-icon-color, var(--md-sys-color-primary, #6750a4));
+        --_active-icon-color: var(--md-primary-tab-active-icon-color, var(--md-sys-color-primary, #6750a4));
+        --_active-pressed-icon-color: var(
+          --md-primary-tab-active-pressed-icon-color,
+          var(--md-sys-color-primary, #6750a4)
+        );
+        --_icon-size: var(--md-primary-tab-icon-size, 24px);
+        --_focus-icon-color: var(--md-primary-tab-focus-icon-color, var(--md-sys-color-on-surface, #1d1b20));
+        --_hover-icon-color: var(--md-primary-tab-hover-icon-color, var(--md-sys-color-on-surface, #1d1b20));
+        --_icon-color: var(--md-primary-tab-icon-color, var(--md-sys-color-on-surface-variant, #49454f));
+        --_pressed-icon-color: var(--md-primary-tab-pressed-icon-color, var(--md-sys-color-on-surface, #1d1b20));
+        --_label-text-font: var(
+          --md-primary-tab-label-text-font,
+          var(--md-sys-typescale-title-small-font, var(--md-ref-typeface-plain, Roboto))
+        );
+        --_label-text-line-height: var(
+          --md-primary-tab-label-text-line-height,
+          var(--md-sys-typescale-title-small-line-height, 1.25rem)
+        );
+        --_label-text-size: var(--md-primary-tab-label-text-size, var(--md-sys-typescale-title-small-size, 0.875rem));
+        --_label-text-tracking: var(
+          --md-primary-tab-label-text-tracking,
+          var(--md-sys-typescale-title-small-tracking, 0.00625rem)
+        );
+        --_label-text-weight: var(
+          --md-primary-tab-label-text-weight,
+          var(--md-sys-typescale-title-small-weight, var(--md-ref-typeface-weight-medium, 500))
+        );
+        --_active-focus-label-text-color: var(
+          --md-primary-tab-active-focus-label-text-color,
+          var(--md-sys-color-primary, #6750a4)
+        );
+        --_active-hover-label-text-color: var(
+          --md-primary-tab-active-hover-label-text-color,
+          var(--md-sys-color-primary, #6750a4)
+        );
+        --_active-label-text-color: var(--md-primary-tab-active-label-text-color, var(--md-sys-color-primary, #6750a4));
+        --_active-pressed-label-text-color: var(
+          --md-primary-tab-active-pressed-label-text-color,
+          var(--md-sys-color-primary, #6750a4)
+        );
+        --_focus-label-text-color: var(
+          --md-primary-tab-focus-label-text-color,
+          var(--md-sys-color-on-surface, #1d1b20)
+        );
+        --_hover-label-text-color: var(
+          --md-primary-tab-hover-label-text-color,
+          var(--md-sys-color-on-surface, #1d1b20)
+        );
+        --_label-text-color: var(--md-primary-tab-label-text-color, var(--md-sys-color-on-surface-variant, #49454f));
+        --_pressed-label-text-color: var(
+          --md-primary-tab-pressed-label-text-color,
+          var(--md-sys-color-on-surface, #1d1b20)
+        );
+        --_container-shape-start-start: var(
+          --md-primary-tab-container-shape-start-start,
+          var(--md-primary-tab-container-shape, var(--md-sys-shape-corner-none, 0px))
+        );
+        --_container-shape-start-end: var(
+          --md-primary-tab-container-shape-start-end,
+          var(--md-primary-tab-container-shape, var(--md-sys-shape-corner-none, 0px))
+        );
+        --_container-shape-end-end: var(
+          --md-primary-tab-container-shape-end-end,
+          var(--md-primary-tab-container-shape, var(--md-sys-shape-corner-none, 0px))
+        );
+        --_container-shape-end-start: var(
+          --md-primary-tab-container-shape-end-start,
+          var(--md-primary-tab-container-shape, var(--md-sys-shape-corner-none, 0px))
+        );
+      }
+      :host([type='primary']) .content {
+        min-width: var(--md-primary-tab-active-indicator-min-width, 24px);
+      }
+      .content.stacked.has-icon {
+        flex-direction: column;
+        gap: 2px;
+      }
+      .content.stacked.has-icon.has-label {
+        height: var(--_with-icon-and-label-text-container-height);
       }
     `,
   ]
