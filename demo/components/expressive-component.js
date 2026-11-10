@@ -581,14 +581,14 @@ class ExpressiveComponent extends LitElement {
             </div>
           </div>
 
-          <h3 class="sub-section-title">Primary Tabs (with Icons)</h3>
+          <h3 class="sub-section-title">Primary Tabs (with Icons & Badges)</h3>
           <div style="max-width: 600px;">
             <md-tabs @change=${this.tabChanged} id="tabs">
-              <md-tab type="primary" id="photos-tab" aria-label="Photos" aria-controls="photos-panel">
+              <md-tab type="primary" id="photos-tab" aria-label="Photos" aria-controls="photos-panel" badge-value="3">
                 <md-icon slot="icon">photo</md-icon>
                 Photos
               </md-tab>
-              <md-tab type="primary" id="videos-tab" aria-label="Videos" aria-controls="videos-panel">
+              <md-tab type="primary" id="videos-tab" aria-label="Videos" aria-controls="videos-panel" show-badge>
                 <md-icon slot="icon">videocam</md-icon>
                 Video
               </md-tab>
@@ -604,10 +604,21 @@ class ExpressiveComponent extends LitElement {
           <div style="max-width: 600px;">
             <md-tabs @change=${this.secondaryTabChanged} id="tabs2">
               <md-tab type="secondary" id="photos-tab2" aria-label="Photos">Photos</md-tab>
-              <md-tab type="secondary" id="videos-tab2" aria-label="Videos">Videos</md-tab>
+              <md-tab type="secondary" id="videos-tab2" aria-label="Videos" badge-value="12">Videos</md-tab>
               <md-tab type="secondary" id="music-tab2" aria-label="Music">Music</md-tab>
             </md-tabs>
             ${this.renderSecondaryTabPanel()}
+          </div>
+
+          <h3 class="sub-section-title">Scrollable Tabs</h3>
+          <div style="max-width: 420px;">
+            <md-tabs scrollable>
+              <md-tab type="primary">For you</md-tab>
+              <md-tab type="primary">Top charts</md-tab>
+              <md-tab type="primary">Children</md-tab>
+              <md-tab type="primary">Categories</md-tab>
+              <md-tab type="primary">Editors' choice</md-tab>
+            </md-tabs>
           </div>
         </section>
 

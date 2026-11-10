@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { html, LitElement, css } from 'lit'
-import { property } from 'lit/decorators.js'
 import { classMap } from 'lit/directives/class-map.js'
 /**
  * b/265340196 - add docs
@@ -12,11 +11,13 @@ import { classMap } from 'lit/directives/class-map.js'
 export class Badge extends LitElement {
   static properties = {
     value: { type: String },
+    inline: { type: Boolean, reflect: true },
   }
 
   constructor() {
     super(...arguments)
     this.value = ''
+    this.inline = false
   }
   render() {
     const classes = { 'md3-badge--large': this.value }
@@ -81,10 +82,21 @@ export class Badge extends LitElement {
         text-align: center;
       }
       .md3-badge__value {
+        margin: 0;
         font-family: var(--_large-label-text-font);
         font-size: var(--_large-label-text-size);
         line-height: var(--_large-label-text-line-height);
         font-weight: var(--_large-label-text-weight);
+      }
+      :host([inline]) {
+        display: inline-flex;
+        align-items: center;
+        vertical-align: middle;
+      }
+      :host([inline]) .md3-badge {
+        position: static;
+        inset: auto;
+        margin: 0;
       }
     `,
   ]
