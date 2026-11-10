@@ -3,14 +3,13 @@
  * Copyright 2023 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
-var _a
 import '../internal/elevation/elevation.js'
 import '../internal/focus/focus-ring.js'
 import '../internal/ripple/ripple.js'
 import { html, isServer, LitElement, nothing, css } from 'lit'
 import { classMap } from 'lit/directives/class-map.js'
 import { EASING } from '../internal/motion/animation.js'
-import { queryAssignedNodes } from '../utils/query.js'
+import { queryAssignedElements, queryAssignedNodes } from '../utils/query.js'
 /**
  * Symbol for tabs to use to animate their indicators based off another tab's
  * indicator.
@@ -72,7 +71,6 @@ export class Tab extends LitElement {
      * Whether or not the icon renders inline with label or stacked vertically.
      */
     this.inlineIcon = false
-    this.fullWidthIndicator = false
     this.href = ''
     this.target = ''
     this.internals =
@@ -84,11 +82,12 @@ export class Tab extends LitElement {
     }
   }
 
-  connectedCallback() {
-    super.connectedCallback()
-    if (this.type == 'secondary') {
-      this.fullWidthIndicator = true
-    }
+  get fullWidthIndicator() {
+    return this.type !== 'primary'
+  }
+
+  get [INDICATOR]() {
+    return this.renderRoot?.querySelector('.indicator') ?? null
   }
 
   render() {
@@ -103,8 +102,7 @@ export class Tab extends LitElement {
           <slot @slotchange=${this.handleSlotChange}></slot>
           ${this.fullWidthIndicator ? nothing : indicator}
         </div>
-        ${this.fullWidthIndicator ? indicator : nothing}
-        ${this.href ? this.renderLink() : nothing}
+        ${this.fullWidthIndicator ? indicator : nothing} ${this.href ? this.renderLink() : nothing}
       </div>
     </div>`
   }
@@ -170,7 +168,7 @@ export class Tab extends LitElement {
     event.stopPropagation()
     this.click()
   }
-  [((_a = INDICATOR), ANIMATE_INDICATOR)](previousTab) {
+  [ANIMATE_INDICATOR](previousTab) {
     if (!this[INDICATOR]) {
       return
     }
@@ -198,7 +196,7 @@ export class Tab extends LitElement {
     const toPos = toRect.left
     const toExtent = toRect.width
     const scale = fromExtent / toExtent
-    if (!reduceMotion && fromPos !== undefined && toPos !== undefined && !isNaN(scale)) {
+    if (!reduceMotion && fromPos !== undefined && toPos !== undefined && Number.isFinite(scale)) {
       from['transform'] = `translateX(${(fromPos - toPos).toFixed(4)}px) scaleX(${scale.toFixed(4)})`
     } else {
       from['opacity'] = 0
@@ -220,13 +218,15 @@ export class Tab extends LitElement {
     this.iconOnly = true
   }
   handleIconSlotChange() {
-    // this.hasIcon = this.assignedIcons.length > 0
+    this.hasIcon = this.assignedIcons.length > 0
+  }
+
+  get assignedIcons() {
+    return queryAssignedElements(this, { flatten: true, slot: 'icon' })
   }
 
   get assignedDefaultNodes() {
-    let r = queryAssignedNodes(this, { flatten: true })
-    // console.log("AR:", r)
-    return r
+    return queryAssignedNodes(this, { flatten: true })
   }
 
   static styles = [
@@ -309,6 +309,7 @@ export class Tab extends LitElement {
         writing-mode: horizontal-tb;
         fill: currentColor;
         color: var(--_icon-color);
+        --md-icon-size: var(--_icon-size);
         font-size: var(--_icon-size);
         width: var(--_icon-size);
         height: var(--_icon-size);
@@ -527,12 +528,18 @@ export class Tab extends LitElement {
           var(--md-sys-color-on-surface, #1d1b20)
         );
         --_pressed-state-layer-opacity: var(--md-secondary-tab-pressed-state-layer-opacity, 0.12);
-        --_active-focus-icon-color: var(--md-secondary-tab-active-focus-icon-color,);
+        --_active-focus-icon-color: var(
+          --md-secondary-tab-active-focus-icon-color,
+          var(--md-sys-color-on-surface, #1d1b20)
+        );
         --_active-focus-label-text-color: var(
           --md-secondary-tab-active-focus-label-text-color,
           var(--md-sys-color-on-surface, #1d1b20)
         );
-        --_active-hover-icon-color: var(--md-secondary-tab-active-hover-icon-color,);
+        --_active-hover-icon-color: var(
+          --md-secondary-tab-active-hover-icon-color,
+          var(--md-sys-color-on-surface, #1d1b20)
+        );
         --_active-hover-label-text-color: var(
           --md-secondary-tab-active-hover-label-text-color,
           var(--md-sys-color-on-surface, #1d1b20)
@@ -544,7 +551,10 @@ export class Tab extends LitElement {
         --_active-hover-state-layer-opacity: var(--md-secondary-tab-active-hover-state-layer-opacity, 0.08);
         --_active-icon-color: var(--md-secondary-tab-active-icon-color, var(--md-sys-color-on-surface, #1d1b20));
         --_active-indicator-shape: var(--md-secondary-tab-active-indicator-shape, 0);
-        --_active-pressed-icon-color: var(--md-secondary-tab-active-pressed-icon-color,);
+        --_active-pressed-icon-color: var(
+          --md-secondary-tab-active-pressed-icon-color,
+          var(--md-sys-color-on-surface, #1d1b20)
+        );
         --_active-pressed-label-text-color: var(
           --md-secondary-tab-active-pressed-label-text-color,
           var(--md-sys-color-on-surface, #1d1b20)
