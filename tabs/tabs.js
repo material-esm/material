@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { html, isServer, LitElement, css } from 'lit'
+import '../divider/divider.js'
 import { ANIMATE_INDICATOR } from './tab.js'
 import { queryAssignedElements } from '../utils/query.js'
 /**
@@ -46,6 +47,14 @@ export class Tabs extends LitElement {
 
   get tabs() {
     return queryAssignedElements(this, { flatten: true, selector: '[md-tab]' })
+  }
+
+  get slotElement() {
+    return this.renderRoot?.querySelector('slot') ?? null
+  }
+
+  get tabsScrollerElement() {
+    return this.renderRoot?.querySelector('.tabs') ?? null
   }
 
   /**
@@ -140,7 +149,7 @@ export class Tabs extends LitElement {
     }
     const offset = tabToScrollTo.offsetLeft
     const extent = tabToScrollTo.offsetWidth
-    const scroll = this.scrollLeft
+    const scroll = this.tabsScrollerElement.scrollLeft
     const hostExtent = this.offsetWidth
     const scrollMargin = 48
     const min = offset - scrollMargin
@@ -300,6 +309,7 @@ export class Tabs extends LitElement {
         display: flex;
         height: 100%;
         overflow: inherit;
+        position: relative;
         scroll-behavior: inherit;
         scrollbar-width: inherit;
         justify-content: space-between;
