@@ -30,7 +30,7 @@ export class Tab extends LitElement {
     type: { type: String, reflect: true },
     isTab: { type: Boolean, reflect: true, attribute: 'md-tab' },
     active: { type: Boolean, reflect: true },
-    selected: { type: Boolean },
+    selected: { type: Boolean, noAccessor: true },
     hasIcon: { type: Boolean, attribute: 'has-icon' },
     iconOnly: { type: Boolean, attribute: 'icon-only' },
     inlineIcon: { type: Boolean, attribute: 'inline-icon' },

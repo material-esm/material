@@ -32,7 +32,7 @@ import { queryAssignedElements } from '../utils/query.js'
  */
 export class Tabs extends LitElement {
   static properties = {
-    activeTabIndex: { type: Number, attribute: 'active-tab-index' },
+    activeTabIndex: { type: Number, attribute: 'active-tab-index', noAccessor: true },
     autoActivate: { type: Boolean, attribute: 'auto-activate' },
     scrollable: { type: Boolean, reflect: true },
   }
