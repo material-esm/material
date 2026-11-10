@@ -95,6 +95,13 @@ export class Tab extends LitElement {
     }
   }
 
+  connectedCallback() {
+    super.connectedCallback()
+    if (this.isTab && !this.hasAttribute('md-tab')) {
+      this.setAttribute('md-tab', '')
+    }
+  }
+
   get fullWidthIndicator() {
     return this.type !== 'primary'
   }

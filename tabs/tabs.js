@@ -74,11 +74,13 @@ export class Tabs extends LitElement {
   }
   set activeTabIndex(index) {
     const activateTabAtIndex = () => {
-      if (this._pendingActiveTabIndex !== undefined) {
-        index = this._pendingActiveTabIndex
-        this._pendingActiveTabIndex = undefined
+      const targetIndex = this._pendingActiveTabIndex !== undefined ? this._pendingActiveTabIndex : index
+      if (this.tabs.length === 0) {
+        this._pendingActiveTabIndex = targetIndex
+        return
       }
-      const tab = this.tabs[index]
+      this._pendingActiveTabIndex = undefined
+      const tab = this.tabs[targetIndex]
       // Ignore out-of-bound indices.
       if (tab) {
         this.activateTab(tab)
@@ -181,6 +183,7 @@ export class Tabs extends LitElement {
       // Ignore setting activeTab to a tab element that is not a child.
       return
     }
+    this._pendingActiveTabIndex = undefined
     for (const tab of tabs) {
       tab.active = tab === activeTab
     }
@@ -269,8 +272,14 @@ export class Tabs extends LitElement {
       this.updateFocusableTab(activeTab)
     }
   }
-  handleSlotChange() {
-    if (this._pendingActiveTabIndex !== undefined) {
+  async handleSlotChange() {
+    if (this.tabs.length === 0) {
+      const assigned = this.slotElement?.assignedElements({ flatten: true }) ?? []
+      if (assigned.length > 0) {
+        await Promise.all(assigned.map((el) => el.updateComplete))
+      }
+    }
+    if (this._pendingActiveTabIndex !== undefined && this.tabs.length > 0) {
       const pendingTab = this.tabs[this._pendingActiveTabIndex]
       this._pendingActiveTabIndex = undefined
       if (pendingTab) {
