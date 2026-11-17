@@ -111,6 +111,8 @@ export class Progress extends LitElement {
       this._setupResizeObserver()
       this._syncCircularMetrics()
       this._updateWavyAnimationState()
+    } else if (changedProperties.has('value') || changedProperties.has('max')) {
+      this._updateWavyAnimationState()
     }
   }
 
@@ -216,7 +218,7 @@ export class Progress extends LitElement {
   }
 
   _updateWavyAnimationState() {
-    if (this.shape === 'wavy' && this.type !== 'linear') {
+    if (this.shape === 'wavy' && this.type !== 'linear' && (this.indeterminate || this.clampedFraction > 0)) {
       this._startWavyAnimation()
     } else {
       this._stopWavyAnimation()
