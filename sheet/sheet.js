@@ -146,6 +146,7 @@ export class Sheet extends LitElement {
 
     this.prevActiveElement = null
     this._animId = 0
+    this._springTimeout = null
 
     // Gesture tracking state
     this.isDragging = false
@@ -421,6 +422,10 @@ export class Sheet extends LitElement {
   }
 
   cleanupListeners() {
+    if (this._springTimeout) {
+      clearTimeout(this._springTimeout)
+      this._springTimeout = null
+    }
     if (!isServer) {
       window.removeEventListener('keydown', this.handleKeydown)
     }
@@ -506,6 +511,11 @@ export class Sheet extends LitElement {
   beginPointerTracking(e, waitThreshold) {
     const sheet = this.sheet
     if (!sheet) return
+
+    if (this._springTimeout) {
+      clearTimeout(this._springTimeout)
+      this._springTimeout = null
+    }
 
     this.dragStartX = e.clientX
     this.dragStartY = e.clientY
@@ -638,13 +648,19 @@ export class Sheet extends LitElement {
       this.scrim.style.opacity = ''
     }
 
-    setTimeout(() => {
-      if (this.sheet && !this.isClosing) {
-        this.sheet.style.transition = ''
-        this.sheet.style.transform = ''
-      }
-      if (this.scrim && !this.isClosing) {
-        this.scrim.style.transition = ''
+    if (this._springTimeout) {
+      clearTimeout(this._springTimeout)
+    }
+    this._springTimeout = setTimeout(() => {
+      this._springTimeout = null
+      if (!this.isClosing && !this.isOpening && !this.isDragging && !this.dragPending) {
+        if (this.sheet) {
+          this.sheet.style.transition = ''
+          this.sheet.style.transform = ''
+        }
+        if (this.scrim) {
+          this.scrim.style.transition = ''
+        }
       }
     }, 220)
   }
@@ -714,67 +730,69 @@ export class Sheet extends LitElement {
         aria-label=${ariaLabel || (!hasHeadlineText ? 'Sheet' : nothing)}
         tabindex="-1">
         <md-elevation part="elevation"></md-elevation>
-        ${
-          showDragHandle
-            ? html`
-                <div
-                  class="drag-handle-container"
-                  part="drag-handle"
-                  @pointerdown=${this.handleHandlePointerDown}
-                  aria-hidden="true">
-                  <slot name="drag-handle">
-                    <div class="drag-handle"></div>
-                  </slot>
-                </div>
-              `
-            : nothing
-        }
-        <div class="header" part="header" @pointerdown=${isSide ? this.handleHeaderPointerDown : nothing}>
-          <div class="back-button-wrapper ${showBackButton ? 'visible' : ''}">
-            <slot name="back-button" @slotchange=${this.handleBackSlotChange}>
-              ${
-                this.hasBackButton
-                  ? html`
-                      <md-icon-button
-                        class="back-btn"
-                        aria-label=${this.backLabel || 'Back'}
-                        @click=${this.handleBackClick}>
-                        <md-icon class="back-icon">arrow_back</md-icon>
-                      </md-icon-button>
-                    `
-                  : nothing
-              }
-            </slot>
+        <div class="surface">
+          ${
+            showDragHandle
+              ? html`
+                  <div
+                    class="drag-handle-container"
+                    part="drag-handle"
+                    @pointerdown=${this.handleHandlePointerDown}
+                    aria-hidden="true">
+                    <slot name="drag-handle">
+                      <div class="drag-handle"></div>
+                    </slot>
+                  </div>
+                `
+              : nothing
+          }
+          <div class="header" part="header" @pointerdown=${isSide ? this.handleHeaderPointerDown : nothing}>
+            <div class="back-button-wrapper ${showBackButton ? 'visible' : ''}">
+              <slot name="back-button" @slotchange=${this.handleBackSlotChange}>
+                ${
+                  this.hasBackButton
+                    ? html`
+                        <md-icon-button
+                          class="back-btn"
+                          aria-label=${this.backLabel || 'Back'}
+                          @click=${this.handleBackClick}>
+                          <md-icon class="back-icon">arrow_back</md-icon>
+                        </md-icon-button>
+                      `
+                    : nothing
+                }
+              </slot>
+            </div>
+            <div class="headline" id="headline" part="headline">
+              <slot name="headline" @slotchange=${this.handleHeadlineChange}>${this.headline}</slot>
+            </div>
+            <div class="close-button-wrapper ${showCloseButton ? 'visible' : ''}">
+              <slot name="close-button" @slotchange=${this.handleCloseSlotChange}>
+                ${
+                  this.hasCloseButton
+                    ? html`
+                        <md-icon-button
+                          class="close-btn"
+                          aria-label=${this.closeLabel || 'Close'}
+                          @click=${this.handleCloseButtonClick}>
+                          <md-icon>close</md-icon>
+                        </md-icon-button>
+                      `
+                    : nothing
+                }
+              </slot>
+            </div>
           </div>
-          <div class="headline" id="headline" part="headline">
-            <slot name="headline" @slotchange=${this.handleHeadlineChange}>${this.headline}</slot>
+          <md-divider class="header-divider"></md-divider>
+          <div class="content-scroller" part="content">
+            <div class="content">
+              <slot></slot>
+            </div>
           </div>
-          <div class="close-button-wrapper ${showCloseButton ? 'visible' : ''}">
-            <slot name="close-button" @slotchange=${this.handleCloseSlotChange}>
-              ${
-                this.hasCloseButton
-                  ? html`
-                      <md-icon-button
-                        class="close-btn"
-                        aria-label=${this.closeLabel || 'Close'}
-                        @click=${this.handleCloseButtonClick}>
-                        <md-icon>close</md-icon>
-                      </md-icon-button>
-                    `
-                  : nothing
-              }
-            </slot>
+          <md-divider class="actions-divider"></md-divider>
+          <div class="actions" part="actions">
+            <slot name="actions" @slotchange=${this.handleActionsChange}></slot>
           </div>
-        </div>
-        <md-divider class="header-divider"></md-divider>
-        <div class="content-scroller" part="content">
-          <div class="content">
-            <slot></slot>
-          </div>
-        </div>
-        <md-divider class="actions-divider"></md-divider>
-        <div class="actions" part="actions">
-          <slot name="actions" @slotchange=${this.handleActionsChange}></slot>
         </div>
       </div>
     `

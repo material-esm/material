@@ -119,8 +119,20 @@ export const styles = css`
     flex-direction: column;
     color: var(--_content-color);
     outline: none;
-    overflow: hidden;
+    overflow: visible;
     overscroll-behavior: contain;
+  }
+
+  .surface {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+    border-radius: inherit;
+    overflow: hidden;
   }
 
   /* Bottom Sheet Surface (M3 Bottom Sheets spec) */
@@ -377,6 +389,7 @@ export const styles = css`
   /* Scrollable Body Content */
   .content-scroller {
     flex: 1 1 auto;
+    min-height: 0;
     overflow-y: auto;
     overscroll-behavior: contain;
     box-sizing: border-box;
