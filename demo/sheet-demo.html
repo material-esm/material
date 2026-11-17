@@ -1,0 +1,607 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Material 3 Sheet Demo (Bottom & Side Sheets)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="preload"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"
+      as="style"
+      onload="
+        this.onload = null
+        this.rel = 'stylesheet'
+      " />
+    <link
+      rel="preload"
+      href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;700&display=swap"
+      as="style"
+      onload="
+        this.onload = null
+        this.rel = 'stylesheet'
+      " />
+
+    <link rel="icon" href="./images/material.jpeg" />
+    <link rel="stylesheet" href="./css/styles.css" />
+
+    <script type="importmap">
+      {
+        "imports": {
+          "lit": "https://cdn.jsdelivr.net/npm/lit@3/index.js",
+          "lit/": "https://cdn.jsdelivr.net/npm/lit@3/",
+          "@lit/localize": "https://cdn.jsdelivr.net/npm/@lit/localize/lit-localize.js",
+          "@lit/reactive-element": "https://cdn.jsdelivr.net/npm/@lit/reactive-element@2/reactive-element.js",
+          "@lit/reactive-element/": "https://cdn.jsdelivr.net/npm/@lit/reactive-element@2/",
+          "lit-element/lit-element.js": "https://cdn.jsdelivr.net/npm/lit-element@4/lit-element.js",
+          "lit-html": "https://cdn.jsdelivr.net/npm/lit-html@3/lit-html.js",
+          "lit-html/": "https://cdn.jsdelivr.net/npm/lit-html@3/",
+          "material/": "../"
+        }
+      }
+    </script>
+    <script type="module">
+      import 'material/sheet/sheet.js'
+      import 'material/buttons/button.js'
+      import 'material/buttons/icon-button.js'
+      import 'material/chips/chip.js'
+      import 'material/chips/chip-set.js'
+      import 'material/checkbox/checkbox.js'
+      import 'material/switch/switch.js'
+      import 'material/icon/icon.js'
+      import 'material/list/list.js'
+      import 'material/list/list-item.js'
+      import 'material/divider/divider.js'
+    </script>
+
+    <style>
+      body {
+        background: var(--md-sys-color-background, #fef7ff);
+        color: var(--md-sys-color-on-background, #1d1b20);
+        padding: 24px;
+        max-width: 900px;
+        margin: 0 auto;
+        box-sizing: border-box;
+      }
+
+      .header-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .demo-section {
+        margin-bottom: 24px;
+        background: var(--md-sys-color-surface-container, #f3edf7);
+        border-radius: 24px;
+        padding: 24px;
+        box-sizing: border-box;
+      }
+
+      .demo-section h2 {
+        margin-top: 0;
+        margin-bottom: 8px;
+        font-size: 1.25rem;
+        font-weight: 500;
+      }
+
+      .demo-section p {
+        margin-top: 0;
+        margin-bottom: 16px;
+        color: var(--md-sys-color-on-surface-variant, #49454f);
+      }
+
+      .button-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .event-log {
+        background: var(--md-sys-color-surface-container-high, #ece6f0);
+        border-radius: 12px;
+        padding: 12px 16px;
+        font-family: monospace;
+        font-size: 0.85rem;
+        margin-top: 16px;
+        max-height: 140px;
+        overflow-y: auto;
+      }
+
+      .share-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        text-align: center;
+        padding: 8px 0;
+      }
+
+      .share-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+      }
+
+      .share-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: var(--md-sys-color-primary-container, #eaddff);
+        color: var(--md-sys-color-on-primary-container, #21005d);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .share-label {
+        font-size: 0.8rem;
+        color: var(--md-sys-color-on-surface, #1d1b20);
+      }
+
+      .filter-group {
+        margin-bottom: 20px;
+      }
+
+      .filter-group h4 {
+        margin: 0 0 10px 0;
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: var(--md-sys-color-on-surface-variant, #49454f);
+      }
+
+      .inline-sandbox {
+        display: flex;
+        border: 1px solid var(--md-sys-color-outline-variant, #cac4d0);
+        border-radius: 16px;
+        overflow: hidden;
+        background: var(--md-sys-color-surface, #fef7ff);
+        min-height: 280px;
+      }
+
+      .inline-sandbox-main {
+        flex: 1;
+        padding: 20px;
+      }
+
+      @media (max-width: 600px) {
+        body {
+          padding: 16px 12px;
+        }
+        .demo-section {
+          padding: 16px 12px;
+          border-radius: 16px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header-nav">
+      <a href="./index.html" style="display: inline-flex; align-items: center; gap: 4px">
+        <md-icon style="font-size: 18px">arrow_back</md-icon> Back to Material 3 Demo
+      </a>
+      <h1 style="margin: 0; font-size: 1.5rem">Sheets (Side &amp; Bottom)</h1>
+    </div>
+
+    <!-- Section 1: Side Sheets -->
+    <div class="demo-section">
+      <h2>Side Sheets (Modal, Navigation, Start &amp; Detached)</h2>
+      <p>
+        Side sheets show supplementary surfaces anchored to the trailing (<code>end</code>) or leading
+        (<code>start</code>) edge of the screen with <code>400dp</code> max width, <code>16dp</code> inner corners,
+        header close/back buttons, and start-aligned bottom actions.
+      </p>
+      <div class="button-row">
+        <md-button color="filled" id="btn-side-filters">Open Filter Side Sheet</md-button>
+        <md-button color="tonal" id="btn-side-nav">Multi-Step Side Sheet</md-button>
+        <md-button color="outlined" id="btn-side-detached">Detached Side Sheet</md-button>
+        <md-button color="outlined" id="btn-side-start">Leading (Start) Side Sheet</md-button>
+      </div>
+    </div>
+
+    <!-- Section 2: Standard (Coplanar) Side Sheet -->
+    <div class="demo-section">
+      <h2>Standard (Coplanar) Side Sheet</h2>
+      <p>
+        Standard side sheets use <code>modal="false"</code> (and optional <code>inline</code>) to sit coplanar alongside
+        primary content without a scrim, separated by an <code>outline-variant</code> vertical border.
+      </p>
+      <div class="button-row" style="margin-bottom: 16px">
+        <md-button color="filled" id="btn-inline-side">Toggle Coplanar Inspector</md-button>
+        <md-button color="outlined" id="btn-docked-side">Toggle Viewport-Docked Standard Side Sheet</md-button>
+      </div>
+
+      <div class="inline-sandbox">
+        <div class="inline-sandbox-main">
+          <h3 style="margin-top: 0">Document Workspace</h3>
+          <p>
+            Click an item below or toggle the coplanar side sheet — notice how this primary workspace reflows smoothly
+            and remains completely interactive while the standard side sheet is open.
+          </p>
+          <md-chip-set>
+            <md-chip
+              type="assist"
+              label="Architecture.pdf"
+              onclick="inspectItem('Architecture.pdf', '2.4 MB • PDF Document')"></md-chip>
+            <md-chip
+              type="assist"
+              label="Design Tokens.json"
+              onclick="inspectItem('Design Tokens.json', '48 KB • JSON File')"></md-chip>
+            <md-chip
+              type="assist"
+              label="Hero Banner.png"
+              onclick="inspectItem('Hero Banner.png', '1.8 MB • PNG Image')"></md-chip>
+          </md-chip-set>
+        </div>
+
+        <md-sheet
+          id="sheet-inline-side"
+          position="end"
+          modal="false"
+          inline
+          divider
+          headline="Architecture.pdf"
+          style="--md-sheet-width: 280px; height: 280px">
+          <p id="inspector-meta" style="margin-top: 0">2.4 MB • PDF Document</p>
+          <p style="font-size: 0.82rem; color: var(--md-sys-color-on-surface-variant)">
+            Shared with Design Systems Team. Modified 10 minutes ago.
+          </p>
+        </md-sheet>
+      </div>
+    </div>
+
+    <!-- Section 3: Bottom Sheets -->
+    <div class="demo-section">
+      <h2>Bottom Sheets (Modal, Scrollable &amp; Standard)</h2>
+      <p>
+        Bottom sheets slide up from the bottom edge (<code>position="bottom"</code>, default) with a drag handle pill,
+        <code>28dp</code> top corners, and swipe-down dismissal.
+      </p>
+      <div class="button-row">
+        <md-button color="filled" id="btn-modal">Open Modal Bottom Sheet</md-button>
+        <md-button color="tonal" id="btn-share">Open Share Sheet</md-button>
+        <md-button color="tonal" id="btn-scroll">Scrollable List Sheet</md-button>
+        <md-button color="outlined" id="btn-standard">Toggle Standard Bottom Sheet</md-button>
+      </div>
+    </div>
+
+    <!-- Section 4: Responsive Bottom <-> Side Sheet -->
+    <div class="demo-section">
+      <h2>Responsive Adaptive Sheet</h2>
+      <p>
+        One <code>&lt;md-sheet&gt;</code> element automatically adapts from a <strong>bottom sheet</strong> on narrow
+        screens (&lt; 720px) to a <strong>side sheet</strong> on wide screens (&ge; 720px). Resize your browser window
+        while it is open!
+      </p>
+      <div class="button-row">
+        <md-button color="filled" id="btn-responsive">Open Responsive Sheet</md-button>
+      </div>
+    </div>
+
+    <!-- Event Logging Panel -->
+    <div class="demo-section">
+      <h2>Event Log</h2>
+      <p>
+        Lifecycle events (<code>open</code>, <code>opened</code>, <code>close</code>, <code>closed</code>,
+        <code>cancel</code>, <code>back</code>):
+      </p>
+      <div id="log" class="event-log">Ready. Interact with any sheet above.</div>
+    </div>
+
+    <!-- Side Sheet 1: Filters -->
+    <md-sheet id="sheet-side-filters" position="end" headline="Filters" divider>
+      <div class="filter-group">
+        <h4>Category</h4>
+        <md-chip-set>
+          <md-chip type="filter" label="Components" selected></md-chip>
+          <md-chip type="filter" label="Icons"></md-chip>
+          <md-chip type="filter" label="Themes" selected></md-chip>
+          <md-chip type="filter" label="Templates"></md-chip>
+        </md-chip-set>
+      </div>
+      <div class="filter-group">
+        <h4>Options</h4>
+        <label style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; cursor: pointer">
+          <md-checkbox checked></md-checkbox>
+          <span>Material 3 Expressive ready</span>
+        </label>
+        <label style="display: flex; align-items: center; gap: 12px; cursor: pointer">
+          <md-checkbox></md-checkbox>
+          <span>Include experimental labs</span>
+        </label>
+      </div>
+      <div slot="actions">
+        <md-button color="filled" id="btn-filters-save">Save</md-button>
+        <md-button color="outlined" id="btn-filters-cancel">Cancel</md-button>
+      </div>
+    </md-sheet>
+
+    <!-- Side Sheet 2: Multi-step Navigation with Back Button -->
+    <md-sheet id="sheet-side-nav" position="end" headline="Settings" divider>
+      <div id="nav-step-root">
+        <md-list>
+          <md-list-item type="button" id="goto-notifications">
+            <md-icon slot="start">notifications</md-icon>
+            <div slot="headline">Notifications</div>
+            <div slot="supporting-text">Push, email, and digest alerts</div>
+            <md-icon slot="end">chevron_right</md-icon>
+          </md-list-item>
+          <md-list-item type="button" id="goto-privacy">
+            <md-icon slot="start">shield</md-icon>
+            <div slot="headline">Privacy &amp; Security</div>
+            <div slot="supporting-text">Permissions and session controls</div>
+            <md-icon slot="end">chevron_right</md-icon>
+          </md-list-item>
+        </md-list>
+      </div>
+      <div id="nav-step-detail" style="display: none">
+        <p id="nav-detail-desc">Configure preferences for this section. Click the header back arrow to return.</p>
+        <label style="display: flex; align-items: center; justify-content: space-between; padding: 12px 0">
+          <span>Enable instant alerts</span>
+          <md-switch selected></md-switch>
+        </label>
+      </div>
+    </md-sheet>
+
+    <!-- Side Sheet 3: Detached Floating Side Sheet -->
+    <md-sheet id="sheet-side-detached" position="end" detached headline="Detached Sheet" divider>
+      <p>
+        With the <code>detached</code> attribute, this side sheet floats <code>16dp</code> inset from the viewport edges
+        with <code>16dp</code> rounded corners on all four sides.
+      </p>
+      <div slot="actions">
+        <md-button color="filled" onclick="document.getElementById('sheet-side-detached').close('done')"
+          >Got it</md-button
+        >
+      </div>
+    </md-sheet>
+
+    <!-- Side Sheet 4: Leading (Start) Side Sheet -->
+    <md-sheet id="sheet-side-start" position="start" headline="Leading Side Sheet">
+      <p>
+        Anchored to <code>position="start"</code> (left edge in LTR, right edge in RTL) with rounded inner trailing
+        corners.
+      </p>
+    </md-sheet>
+
+    <!-- Side Sheet 5: Viewport-Docked Standard Side Sheet -->
+    <md-sheet id="sheet-docked-side" position="end" modal="false" headline="Standard Docked" divider>
+      <p>
+        This standard side sheet is anchored to the viewport edge without a scrim so you can keep scrolling and clicking
+        buttons on the main page.
+      </p>
+    </md-sheet>
+
+    <!-- Bottom Sheet 1: Modal -->
+    <md-sheet id="sheet-modal" headline="Modal Bottom Sheet">
+      <p>
+        Bottom sheets show secondary content anchored to the bottom of the screen. Swipe down on the handle or click the
+        backdrop to dismiss.
+      </p>
+      <div slot="actions">
+        <md-button color="text" id="btn-modal-cancel">Cancel</md-button>
+        <md-button color="filled" id="btn-modal-done">Done</md-button>
+      </div>
+    </md-sheet>
+
+    <!-- Bottom Sheet 2: Share -->
+    <md-sheet id="sheet-share" headline="Share with friends">
+      <div class="share-grid">
+        <div class="share-item" onclick="logEvent('Selected Messages')">
+          <div class="share-icon"><md-icon>chat</md-icon></div>
+          <span class="share-label">Messages</span>
+        </div>
+        <div class="share-item" onclick="logEvent('Selected Mail')">
+          <div class="share-icon"><md-icon>mail</md-icon></div>
+          <span class="share-label">Email</span>
+        </div>
+        <div class="share-item" onclick="logEvent('Selected Drive')">
+          <div class="share-icon"><md-icon>add_to_drive</md-icon></div>
+          <span class="share-label">Drive</span>
+        </div>
+        <div class="share-item" onclick="logEvent('Selected Copy Link')">
+          <div class="share-icon"><md-icon>link</md-icon></div>
+          <span class="share-label">Copy link</span>
+        </div>
+      </div>
+      <div slot="actions">
+        <md-button color="text" id="btn-share-close">Close</md-button>
+      </div>
+    </md-sheet>
+
+    <!-- Bottom Sheet 3: Scrollable List -->
+    <md-sheet id="sheet-scroll" headline="Select an Option" divider>
+      <md-list>
+        <md-list-item type="button" onclick="logEvent('Selected Option 1')">
+          <md-icon slot="start">star</md-icon>
+          <div slot="headline">Option 1</div>
+          <div slot="supporting-text">Supporting details for option 1</div>
+        </md-list-item>
+        <md-list-item type="button" onclick="logEvent('Selected Option 2')">
+          <md-icon slot="start">favorite</md-icon>
+          <div slot="headline">Option 2</div>
+          <div slot="supporting-text">Supporting details for option 2</div>
+        </md-list-item>
+        <md-list-item type="button" onclick="logEvent('Selected Option 3')">
+          <md-icon slot="start">bookmark</md-icon>
+          <div slot="headline">Option 3</div>
+          <div slot="supporting-text">Supporting details for option 3</div>
+        </md-list-item>
+        <md-list-item type="button" onclick="logEvent('Selected Option 4')">
+          <md-icon slot="start">label</md-icon>
+          <div slot="headline">Option 4</div>
+          <div slot="supporting-text">Supporting details for option 4</div>
+        </md-list-item>
+        <md-list-item type="button" onclick="logEvent('Selected Option 5')">
+          <md-icon slot="start">schedule</md-icon>
+          <div slot="headline">Option 5</div>
+          <div slot="supporting-text">Supporting details for option 5</div>
+        </md-list-item>
+        <md-list-item type="button" onclick="logEvent('Selected Option 6')">
+          <md-icon slot="start">folder</md-icon>
+          <div slot="headline">Option 6</div>
+          <div slot="supporting-text">Supporting details for option 6</div>
+        </md-list-item>
+        <md-list-item type="button" onclick="logEvent('Selected Option 7')">
+          <md-icon slot="start">description</md-icon>
+          <div slot="headline">Option 7</div>
+          <div slot="supporting-text">Supporting details for option 7</div>
+        </md-list-item>
+        <md-list-item type="button" onclick="logEvent('Selected Option 8')">
+          <md-icon slot="start">settings</md-icon>
+          <div slot="headline">Option 8</div>
+          <div slot="supporting-text">Supporting details for option 8</div>
+        </md-list-item>
+      </md-list>
+      <div slot="actions">
+        <md-button color="text" id="btn-scroll-close">Close</md-button>
+      </div>
+    </md-sheet>
+
+    <!-- Bottom Sheet 4: Standard -->
+    <md-sheet id="sheet-standard" modal="false" headline="Standard Bottom Sheet (Now Playing)">
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 0">
+        <div>
+          <div style="font-weight: 500">Song of the Wind</div>
+          <div style="font-size: 0.85rem; color: var(--md-sys-color-on-surface-variant)">Artist Name</div>
+        </div>
+        <div style="display: flex; gap: 8px">
+          <md-icon-button><md-icon>skip_previous</md-icon></md-icon-button>
+          <md-icon-button><md-icon>play_arrow</md-icon></md-icon-button>
+          <md-icon-button><md-icon>skip_next</md-icon></md-icon-button>
+        </div>
+      </div>
+      <div slot="actions">
+        <md-button color="text" id="btn-standard-close">Dismiss</md-button>
+      </div>
+    </md-sheet>
+
+    <!-- Responsive Adaptive Sheet -->
+    <md-sheet id="sheet-responsive" headline="Adaptive Sheet" divider>
+      <p>
+        Current mode: <strong id="responsive-mode-label">Side Sheet</strong>. Try resizing your viewport across the
+        <code>720px</code> breakpoint!
+      </p>
+      <div slot="actions">
+        <md-button color="filled" onclick="document.getElementById('sheet-responsive').close('apply')">Apply</md-button>
+      </div>
+    </md-sheet>
+
+    <script>
+      const log = document.getElementById('log')
+      function logEvent(msg) {
+        const time = new Date().toLocaleTimeString()
+        log.innerHTML = `[${time}] ${msg}<br>` + log.innerHTML
+      }
+
+      const allSheets = document.querySelectorAll('md-sheet')
+      allSheets.forEach((s) => {
+        s.addEventListener('open', () => logEvent(`${s.id}: open`))
+        s.addEventListener('opened', () => logEvent(`${s.id}: opened`))
+        s.addEventListener('close', (e) => logEvent(`${s.id}: close (returnValue: "${e.detail?.returnValue ?? ''}")`))
+        s.addEventListener('closed', (e) => logEvent(`${s.id}: closed`))
+        s.addEventListener('cancel', () => logEvent(`${s.id}: cancel`))
+        s.addEventListener('back', () => logEvent(`${s.id}: back button clicked`))
+      })
+
+      // Side sheets
+      const sideFilters = document.getElementById('sheet-side-filters')
+      document.getElementById('btn-side-filters').onclick = () => sideFilters.show()
+      document.getElementById('btn-filters-save').onclick = () => sideFilters.close('save')
+      document.getElementById('btn-filters-cancel').onclick = () => sideFilters.close('cancel')
+
+      const sideNav = document.getElementById('sheet-side-nav')
+      const navRoot = document.getElementById('nav-step-root')
+      const navDetail = document.getElementById('nav-step-detail')
+      const showSubStep = (title) => {
+        sideNav.headline = title
+        sideNav.hasBackButton = true
+        navRoot.style.display = 'none'
+        navDetail.style.display = 'block'
+      }
+      const resetNavStep = () => {
+        sideNav.headline = 'Settings'
+        sideNav.hasBackButton = false
+        navRoot.style.display = 'block'
+        navDetail.style.display = 'none'
+      }
+      document.getElementById('btn-side-nav').onclick = () => {
+        resetNavStep()
+        sideNav.show()
+      }
+      document.getElementById('goto-notifications').onclick = () => showSubStep('Notifications')
+      document.getElementById('goto-privacy').onclick = () => showSubStep('Privacy & Security')
+      sideNav.addEventListener('back', resetNavStep)
+
+      document.getElementById('btn-side-detached').onclick = () => document.getElementById('sheet-side-detached').show()
+      document.getElementById('btn-side-start').onclick = () => document.getElementById('sheet-side-start').show()
+
+      // Coplanar inline & docked standard side sheets
+      const inlineSide = document.getElementById('sheet-inline-side')
+      document.getElementById('btn-inline-side').onclick = () => {
+        inlineSide.open = !inlineSide.open
+      }
+      window.inspectItem = (title, meta) => {
+        inlineSide.headline = title
+        document.getElementById('inspector-meta').textContent = meta
+        inlineSide.show()
+      }
+
+      const dockedSide = document.getElementById('sheet-docked-side')
+      document.getElementById('btn-docked-side').onclick = () => {
+        dockedSide.open = !dockedSide.open
+      }
+
+      // Bottom sheets
+      const modalSheet = document.getElementById('sheet-modal')
+      document.getElementById('btn-modal').onclick = () => modalSheet.show()
+      document.getElementById('btn-modal-cancel').onclick = () => modalSheet.close('cancel')
+      document.getElementById('btn-modal-done').onclick = () => modalSheet.close('done')
+
+      const shareSheet = document.getElementById('sheet-share')
+      document.getElementById('btn-share').onclick = () => shareSheet.show()
+      document.getElementById('btn-share-close').onclick = () => shareSheet.close('close')
+
+      const scrollSheet = document.getElementById('sheet-scroll')
+      document.getElementById('btn-scroll').onclick = () => scrollSheet.show()
+      document.getElementById('btn-scroll-close').onclick = () => scrollSheet.close('close')
+
+      const standardSheet = document.getElementById('sheet-standard')
+      document.getElementById('btn-standard').onclick = () => {
+        standardSheet.open = !standardSheet.open
+      }
+      document.getElementById('btn-standard-close').onclick = () => standardSheet.close('dismiss')
+
+      // Responsive sheet
+      const responsiveSheet = document.getElementById('sheet-responsive')
+      const modeLabel = document.getElementById('responsive-mode-label')
+      const mq = window.matchMedia('(min-width: 720px)')
+      const syncResponsive = () => {
+        responsiveSheet.position = mq.matches ? 'end' : 'bottom'
+        modeLabel.textContent = mq.matches ? 'Side Sheet (position="end")' : 'Bottom Sheet (position="bottom")'
+      }
+      mq.addEventListener('change', syncResponsive)
+      syncResponsive()
+      document.getElementById('btn-responsive').onclick = () => responsiveSheet.show()
+
+      // Auto-open via ?open=sheet-id
+      const urlParams = new URLSearchParams(window.location.search)
+      const autoOpen = urlParams.get('open')
+      if (autoOpen) {
+        customElements.whenDefined('md-sheet').then(() => {
+          const el = document.getElementById(autoOpen)
+          if (el) {
+            el.quick = true
+            el.show()
+          }
+        })
+      }
+    </script>
+  </body>
+</html>

@@ -29,7 +29,6 @@ See the README in each component's directory for how to use them:
 
 - [App Bar](app/README.md)
 - [Badge](badge/README.md)
-- [Bottom Sheet](bottom-sheet/README.md)
 - [Buttons](buttons/README.md)
 - [Card](card/README.md)
 - [Carousel](carousel/README.md)
@@ -46,6 +45,7 @@ See the README in each component's directory for how to use them:
 - [Radio](radio/README.md)
 - [Search](search/README.md)
 - [Select](select/README.md)
+- [Sheet](sheet/README.md)
 - [Slider](slider/README.md)
 - [Snackbar](snackbar/README.md)
 - [Switch](switch/README.md)
