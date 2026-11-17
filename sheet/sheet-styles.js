@@ -53,43 +53,43 @@ export const styles = css`
   }
 
   /* Standard (non-modal) viewport-docked host bounds */
-  :host([type='standard']),
-  :host([modal='false']) {
+  :host(:not([inline])[type='standard']),
+  :host(:not([inline])[modal='false']) {
     inset: auto 0 0 0;
     pointer-events: none;
   }
 
-  :host([position='end'][type='standard']),
-  :host([position='end'][modal='false']),
-  :host([position='side'][type='standard']),
-  :host([position='side'][modal='false']) {
+  :host(:not([inline])[position='end'][type='standard']),
+  :host(:not([inline])[position='end'][modal='false']),
+  :host(:not([inline])[position='side'][type='standard']),
+  :host(:not([inline])[position='side'][modal='false']) {
     inset-block: 0;
     inset-inline-start: auto;
     inset-inline-end: 0;
   }
 
-  :host([position='start'][type='standard']),
-  :host([position='start'][modal='false']) {
+  :host(:not([inline])[position='start'][type='standard']),
+  :host(:not([inline])[position='start'][modal='false']) {
     inset-block: 0;
     inset-inline-start: 0;
     inset-inline-end: auto;
   }
 
-  :host([position='right'][type='standard']),
-  :host([position='right'][modal='false']) {
+  :host(:not([inline])[position='right'][type='standard']),
+  :host(:not([inline])[position='right'][modal='false']) {
     inset: 0 0 0 auto;
   }
 
-  :host([position='left'][type='standard']),
-  :host([position='left'][modal='false']) {
+  :host(:not([inline])[position='left'][type='standard']),
+  :host(:not([inline])[position='left'][modal='false']) {
     inset: 0 auto 0 0;
   }
 
   /* Coplanar inline layout mode for standard side sheets inside flex/grid shells */
   :host([inline]) {
     position: sticky;
-    top: 0;
     inset: auto;
+    top: 0;
     height: 100vh;
     height: 100svh;
     z-index: auto;

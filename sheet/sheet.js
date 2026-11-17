@@ -338,6 +338,12 @@ export class Sheet extends LitElement {
    */
   async close(returnValue = this.returnValue) {
     if (this.isClosing || (!this.isOpen && !this.isOpening)) return
+    if (!this.isOpen && this.isOpening) {
+      this._animId++
+      this.isOpening = false
+      this.removeAttribute('open')
+      return
+    }
     const resolvedReturnValue = returnValue ?? ''
     const closeEvent = new CustomEvent('close', {
       cancelable: true,
