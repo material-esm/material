@@ -180,17 +180,38 @@ class ExpressiveComponent extends LitElement {
 
           <h3 class="sub-section-title">Wavy Progress Indicators</h3>
           <div class="flexw g16 aic">
-            <md-progress type="circular" indeterminate shape="wavy"></md-progress>
-            <md-progress type="circular" value="0.7" shape="wavy"></md-progress>
-            <md-progress type="linear" value="0.5" shape="wavy" style="width: 220px"></md-progress>
-            <md-progress type="linear" indeterminate shape="wavy" style="width: 220px"></md-progress>
+            <md-progress type="circular" indeterminate shape="wavy" aria-label="Loading wavy circular"></md-progress>
+            <md-progress type="circular" value="0.7" shape="wavy" aria-label="70% wavy circular"></md-progress>
+            <md-progress
+              type="linear"
+              value="0.5"
+              shape="wavy"
+              style="width: 220px"
+              aria-label="50% wavy linear"></md-progress>
+            <md-progress
+              type="linear"
+              indeterminate
+              shape="wavy"
+              style="width: 220px"
+              aria-label="Loading wavy linear"></md-progress>
           </div>
 
-          <h3 class="sub-section-title">Standard Progress</h3>
+          <h3 class="sub-section-title">Standard Progress (Flat & Thick Variants)</h3>
           <div class="flexw g16 aic">
-            <md-progress type="circular" indeterminate shape="flat"></md-progress>
-            <md-progress type="circular" value="0.7"></md-progress>
-            <md-progress type="linear" value="0.5" style="width: 220px"></md-progress>
+            <md-progress type="circular" indeterminate shape="flat" aria-label="Loading circular"></md-progress>
+            <md-progress
+              type="circular"
+              indeterminate
+              four-color
+              aria-label="Loading four-color circular"></md-progress>
+            <md-progress type="circular" value="0.7" aria-label="70% circular"></md-progress>
+            <md-progress type="linear" value="0.5" style="width: 220px" aria-label="50% linear"></md-progress>
+            <md-progress type="linear" indeterminate style="width: 220px" aria-label="Loading linear"></md-progress>
+            <md-progress
+              type="linear"
+              value="0.65"
+              style="width: 220px; --md-progress-active-indicator-thickness: 8px; --md-progress-track-thickness: 8px"
+              aria-label="65% thick linear"></md-progress>
           </div>
         </section>
 

@@ -1,22 +1,38 @@
-import { html, LitElement, nothing, css, svg } from 'lit'
+import { html, LitElement, nothing, svg } from 'lit'
 import { classMap } from 'lit/directives/class-map.js'
-import { requestUpdateOnAriaChange } from '../internal/aria/delegate.js'
 import { styleMap } from 'lit/directives/style-map.js'
+import { requestUpdateOnAriaChange } from '../internal/aria/delegate.js'
+import { circularStyles, linearStyles, SUPPORTS_REGISTERED_PROPS } from './progress-styles.js'
+
+const TWO_PI = Math.PI * 2
+const CIRCULAR_INDETERMINATE_ARC_MS = 1333
+const CIRCULAR_INDETERMINATE_ROTATE_MS = 1568.2352941176
+
 /**
- * A progress component.
+ * Material Design 3 Progress Indicator (`<md-progress>`).
+ *
+ * Supports `type="circular" | "linear"`, determinate and `indeterminate` states,
+ * `four-color` indeterminate palette cycling, and M3 Expressive `shape="flat" | "wavy"`.
  */
 export class Progress extends LitElement {
   static properties = {
     type: { type: String, reflect: true },
     value: { type: Number },
     max: { type: Number },
-    indeterminate: { type: Boolean },
-    fourColor: { type: Boolean, attribute: 'four-color' },
+    indeterminate: { type: Boolean, reflect: true },
+    fourColor: { type: Boolean, attribute: 'four-color', reflect: true },
     buffer: { type: Number },
     shape: { type: String, reflect: true },
+    _boxSize: { state: true },
+    _strokeWidth: { state: true },
+    _trackGap: { state: true },
+    _waveAmplitude: { state: true },
   }
+
+  static styles = [circularStyles, linearStyles]
+
   constructor() {
-    super(...arguments)
+    super()
     this.type = 'circular'
     /**
      * Progress to display, a fraction between 0 and `max`.
@@ -40,169 +56,470 @@ export class Progress extends LitElement {
      * If the value is 0 or negative, the buffer is not displayed.
      */
     this.buffer = 0
+    /**
+     * Visual shape style: `'flat'` (default) or `'wavy'` (M3 Expressive).
+     */
     this.shape = 'flat'
-    this.wavyCirclePath = null
+
+    this._boxSize = 48
+    this._strokeWidth = 4
+    this._trackGap = 4
+    this._waveAmplitude = 1.6
+
+    this._wavyAnimationActive = false
+    this._wavyRafId = 0
+    this._wavyLastTs = 0
+    this._wavyPhase = 0
+    this._wavyElapsedMs = 0
+    this._wavyPathEl = null
+    this._wavyTrackEl = null
+    this._resizeObserver = null
+  }
+
+  get clampedFraction() {
+    if (!Number.isFinite(this.max) || this.max <= 0 || !Number.isFinite(this.value)) {
+      return 0
+    }
+    return Math.max(0, Math.min(1, this.value / this.max))
+  }
+
+  get clampedBufferFraction() {
+    if (!Number.isFinite(this.max) || this.max <= 0 || !Number.isFinite(this.buffer)) {
+      return 0
+    }
+    return Math.max(0, Math.min(1, this.buffer / this.max))
+  }
+
+  connectedCallback() {
+    super.connectedCallback()
+    this._setupResizeObserver()
+    if (this.hasUpdated) {
+      this._syncCircularMetrics()
+      this._updateWavyAnimationState()
+    }
   }
 
   firstUpdated() {
-    this.updateWavyAnimationState()
+    this._syncCircularMetrics()
+    this._updateWavyAnimationState()
   }
 
   updated(changedProperties) {
-    if (changedProperties.has('shape') || changedProperties.has('type')) {
-      this.wavyCirclePath = null
-      this.updateWavyAnimationState()
+    if (changedProperties.has('type') || changedProperties.has('shape') || changedProperties.has('indeterminate')) {
+      this._wavyPathEl = null
+      this._wavyTrackEl = null
+      this._setupResizeObserver()
+      this._syncCircularMetrics()
+      this._updateWavyAnimationState()
+    } else if (changedProperties.has('value') || changedProperties.has('max')) {
+      this._updateWavyAnimationState()
     }
   }
 
   disconnectedCallback() {
     super.disconnectedCallback()
-    this.stopWavyAnimation()
+    this._stopWavyAnimation()
+    this._teardownResizeObserver()
   }
 
-  updateWavyAnimationState() {
-    if (this.shape === 'wavy' && this.type === 'circular') {
-      this.startWavyAnimation()
+  _setupResizeObserver() {
+    if (this.type === 'linear') {
+      this._teardownResizeObserver()
+      return
+    }
+    if (this._resizeObserver || typeof ResizeObserver === 'undefined') {
+      return
+    }
+    this._resizeObserver = new ResizeObserver(() => {
+      this._syncCircularMetrics()
+    })
+    this._resizeObserver.observe(this)
+  }
+
+  _teardownResizeObserver() {
+    if (this._resizeObserver) {
+      this._resizeObserver.disconnect()
+      this._resizeObserver = null
+    }
+  }
+
+  _syncCircularMetrics() {
+    if (this.type === 'linear' || typeof window === 'undefined') {
+      return
+    }
+    const rect = this.getBoundingClientRect()
+    const cs = window.getComputedStyle(this)
+    const cssSize = parsePx(cs.width) || parsePx(cs.getPropertyValue('--md-circular-progress-size')) || 48
+    const boxSize = rect.width > 0 ? rect.width : cssSize
+
+    const explicitGap =
+      cs.getPropertyValue('--md-circular-progress-track-gap').trim() ||
+      cs.getPropertyValue('--md-progress-track-gap').trim()
+    const trackGap = explicitGap ? Math.max(0, parsePx(explicitGap, 4)) : 4
+
+    const explicitThickness =
+      cs.getPropertyValue('--md-circular-progress-track-thickness').trim() ||
+      cs.getPropertyValue('--md-progress-active-indicator-thickness').trim() ||
+      cs.getPropertyValue('--md-progress-track-thickness').trim()
+    const legacyWidth = cs.getPropertyValue('--md-circular-progress-active-indicator-width').trim()
+
+    let strokeWidth = boxSize < 32 ? Math.max(2.5, (boxSize / 40) * 4) : 4
+    if (explicitThickness) {
+      strokeWidth = Math.max(1, parsePx(explicitThickness, 4))
+    } else if (legacyWidth) {
+      if (legacyWidth.endsWith('px')) {
+        strokeWidth = Math.max(1, parseFloat(legacyWidth) || 4)
+      } else {
+        const pct = parseFloat(legacyWidth)
+        if (Number.isFinite(pct) && pct > 0) {
+          const inset = boxSize >= 40 ? 8 : 0
+          strokeWidth = Math.max(1, (pct / 100) * Math.max(16, boxSize - inset))
+        }
+      }
+    }
+
+    const explicitAmp =
+      cs.getPropertyValue('--md-circular-progress-wave-amplitude').trim() ||
+      cs.getPropertyValue('--md-progress-wave-amplitude').trim()
+    const waveAmplitude = explicitAmp ? Math.max(0, parsePx(explicitAmp, 1.6)) : 1.6 * (boxSize / 48)
+
+    if (Math.abs(this._boxSize - boxSize) > 0.05) this._boxSize = boxSize
+    if (Math.abs(this._strokeWidth - strokeWidth) > 0.05) this._strokeWidth = strokeWidth
+    if (Math.abs(this._trackGap - trackGap) > 0.05) this._trackGap = trackGap
+    if (Math.abs(this._waveAmplitude - waveAmplitude) > 0.05) this._waveAmplitude = waveAmplitude
+  }
+
+  _getCircularGeometry() {
+    const size = this._boxSize || 48
+    const stroke = this._strokeWidth || 4
+    const gap = Math.max(0, this._trackGap ?? 4)
+    const isWavy = this.shape === 'wavy'
+    const cx = size / 2
+    const cy = size / 2
+
+    if (isWavy) {
+      const amp = this._waveAmplitude ?? 1.6
+      const padding = size >= 40 ? 2 : 1
+      const r = Math.max(4, size / 2 - padding - amp - stroke / 2)
+      const circumference = TWO_PI * r
+      const frequency = Math.max(4, Math.round(circumference / 14.5))
+      return { size, cx, cy, r, stroke, gap, amp, frequency, circumference }
+    }
+
+    // M3 flat circular: 40dp visual ring inside 48dp host (4dp inset), scaling down to 0 inset at 24dp
+    const padding = size >= 40 ? 4 : Math.max(0, ((size - 24) / 16) * 4)
+    const r = Math.max(4, size / 2 - padding - stroke / 2)
+    const circumference = TWO_PI * r
+    return { size, cx, cy, r, stroke, gap, amp: 0, frequency: 0, circumference }
+  }
+
+  _prefersReducedMotion() {
+    return typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+  }
+
+  _updateWavyAnimationState() {
+    if (this.shape === 'wavy' && this.type !== 'linear' && (this.indeterminate || this.clampedFraction > 0)) {
+      this._startWavyAnimation()
     } else {
-      this.stopWavyAnimation()
+      this._stopWavyAnimation()
     }
   }
 
-  startWavyAnimation() {
-    if (this.wavyAnimationActive) return
-    this.wavyAnimationActive = true
-    this.wavyPhase = 0
+  _startWavyAnimation() {
+    if (this._wavyAnimationActive || typeof requestAnimationFrame === 'undefined') {
+      return
+    }
+    this._wavyAnimationActive = true
+    this._wavyLastTs = 0
+
     const loop = (ts) => {
-      if (!this.wavyAnimationActive) return
-      this.wavyPhase += 0.08
-      if (!this.wavyCirclePath) {
-        this.wavyCirclePath = this.renderRoot.querySelector('.active-track.wavy-circle')
-      }
-      const path = this.wavyCirclePath
-      if (path) {
-        const isIndeterminateWavy = this.indeterminate && this.shape === 'wavy'
-        const progress = isIndeterminateWavy ? 0.25 : (this.value / this.max)
-        path.setAttribute('d', getWavyCirclePath(2400, 2400, 2160, 120, 12, this.wavyPhase, progress))
-      }
-      this.wavyRafId = requestAnimationFrame(loop)
+      if (!this._wavyAnimationActive) return
+      if (this._wavyLastTs === 0) this._wavyLastTs = ts
+      const rawDt = Math.min((ts - this._wavyLastTs) / 1000, 0.1)
+      this._wavyLastTs = ts
+
+      const reduced = this._prefersReducedMotion()
+      const speedFactor = reduced ? 0.2 : 1
+      const dt = Math.max(0, rawDt) * speedFactor
+
+      // Advance wave phase at ~1 wave cycle per second
+      this._wavyPhase += dt * TWO_PI
+      this._wavyElapsedMs += dt * 1000
+
+      this._renderWavyCircularFrame(reduced)
+      this._wavyRafId = requestAnimationFrame(loop)
     }
-    this.wavyRafId = requestAnimationFrame(loop)
+
+    this._wavyRafId = requestAnimationFrame(loop)
   }
 
-  stopWavyAnimation() {
-    this.wavyAnimationActive = false
-    if (this.wavyRafId) {
-      cancelAnimationFrame(this.wavyRafId)
-      this.wavyRafId = 0
+  _renderWavyCircularFrame(reduced = false) {
+    if (!this._wavyPathEl) {
+      this._wavyPathEl = this.renderRoot?.querySelector('.active-track.wavy-circle')
+    }
+    if (!this._wavyTrackEl) {
+      this._wavyTrackEl = this.renderRoot?.querySelector('.circular .track')
+    }
+    const pathEl = this._wavyPathEl
+    const trackEl = this._wavyTrackEl
+    if (!pathEl) return
+
+    const { cx, cy, r, stroke, gap, amp, frequency, circumference } = this._getCircularGeometry()
+    const clearance = gap > 0 ? gap + stroke : 0
+
+    let startAngle = 0
+    let sweepAngle = 0
+
+    if (this.indeterminate) {
+      const rotAngle =
+        ((this._wavyElapsedMs % CIRCULAR_INDETERMINATE_ROTATE_MS) / CIRCULAR_INDETERMINATE_ROTATE_MS) * TWO_PI
+      if (reduced) {
+        startAngle = rotAngle
+        sweepAngle = Math.PI * 0.5
+      } else {
+        const cycleT = (this._wavyElapsedMs % CIRCULAR_INDETERMINATE_ARC_MS) / CIRCULAR_INDETERMINATE_ARC_MS
+        let arcDeg
+        let offsetDeg
+        if (cycleT < 0.5) {
+          const u = easeStandard(cycleT * 2)
+          arcDeg = 20 + 240 * u
+          offsetDeg = 50 * u
+        } else {
+          const u = easeStandard((cycleT - 0.5) * 2)
+          arcDeg = 260 - 240 * u
+          offsetDeg = 50 + 310 * u
+        }
+        startAngle = rotAngle + (offsetDeg * Math.PI) / 180
+        sweepAngle = (arcDeg * Math.PI) / 180
+      }
+    } else {
+      sweepAngle = this.clampedFraction * TWO_PI
+    }
+
+    if (sweepAngle <= 0.001) {
+      pathEl.setAttribute('d', '')
+      pathEl.setAttribute('opacity', '0')
+    } else {
+      pathEl.setAttribute('d', getWavyCirclePath(cx, cy, r, amp, frequency, this._wavyPhase, startAngle, sweepAngle))
+      pathEl.setAttribute('opacity', '1')
+    }
+
+    if (trackEl) {
+      if (sweepAngle <= 0.001) {
+        trackEl.setAttribute('stroke-dasharray', `${circumference} 0`)
+        trackEl.setAttribute('stroke-dashoffset', '0')
+        trackEl.setAttribute('opacity', '1')
+      } else if (sweepAngle >= TWO_PI - 0.001) {
+        trackEl.setAttribute('stroke-dasharray', `0 ${circumference}`)
+        trackEl.setAttribute('opacity', '0')
+      } else {
+        const activeLen = (sweepAngle / TWO_PI) * circumference
+        const startLen = ((startAngle % TWO_PI) / TWO_PI) * circumference
+        const trackStart = startLen + activeLen + clearance
+        const trackLen = Math.max(0, circumference - activeLen - 2 * clearance)
+        trackEl.setAttribute('stroke-dasharray', `${trackLen} ${circumference - trackLen}`)
+        trackEl.setAttribute('stroke-dashoffset', `${-trackStart}`)
+        trackEl.setAttribute('opacity', trackLen > 0.1 ? '1' : '0')
+      }
     }
   }
+
+  _stopWavyAnimation() {
+    this._wavyAnimationActive = false
+    if (this._wavyRafId && typeof cancelAnimationFrame !== 'undefined') {
+      cancelAnimationFrame(this._wavyRafId)
+      this._wavyRafId = 0
+    }
+  }
+
   render() {
-    // Needed for closure conformance
-    const { ariaLabel } = this
+    const { ariaLabel, ariaValueText } = this
     return html`
       <div
         class="progress ${classMap(this.getRenderClasses())}"
         role="progressbar"
-        aria-label="${ariaLabel || nothing}"
+        aria-label=${ariaLabel || nothing}
+        aria-valuetext=${ariaValueText || nothing}
         aria-valuemin="0"
         aria-valuemax=${this.max}
         aria-valuenow=${this.indeterminate ? nothing : this.value}>
-        ${this.renderIndicator()}
+        ${this.type === 'linear' ? this.renderLinearIndicator() : this.renderCircularIndicator()}
       </div>
     `
   }
+
   getRenderClasses() {
+    const isLinear = this.type === 'linear'
     return {
       indeterminate: this.indeterminate,
       'four-color': this.fourColor,
-      circular: this.type === 'circular',
-      linear: this.type === 'linear',
+      circular: !isLinear,
+      linear: isLinear,
       wavy: this.shape === 'wavy',
+      'registered-props': SUPPORTS_REGISTERED_PROPS,
     }
   }
-  renderIndicator() {
-    if (this.type == 'linear') {
-      return this.renderLinearIndicator()
-    } else {
-      return this.renderCircularIndicator()
-    }
-  }
+
   renderCircularIndicator() {
-    if (this.indeterminate && this.shape !== 'wavy') {
-      return this.renderIndeterminateContainer()
+    const { size, cx, cy, r, stroke, gap, amp, frequency, circumference } = this._getCircularGeometry()
+    const isWavy = this.shape === 'wavy'
+    const clearance = gap > 0 ? gap + stroke : 0
+
+    if (!isWavy && this.indeterminate) {
+      const gapDeg = Math.min(80, (clearance / circumference) * 360)
+      const trackMax = Math.max(0, 360 - 20 - 2 * gapDeg)
+      const trackMin = Math.max(0, 360 - 260 - 2 * gapDeg)
+      const reducedTrack = Math.max(0, 360 - 90 - 2 * gapDeg)
+      const indeterminateVars = {
+        '--_ind-track-max': `${trackMax.toFixed(2)}`,
+        '--_ind-track-max-comp': `${(360 - trackMax).toFixed(2)}`,
+        '--_ind-track-min': `${trackMin.toFixed(2)}`,
+        '--_ind-track-min-comp': `${(360 - trackMin).toFixed(2)}`,
+        '--_ind-offset-0': `${-(20 + gapDeg).toFixed(2)}`,
+        '--_ind-offset-50': `${-(50 + 260 + gapDeg).toFixed(2)}`,
+        '--_ind-offset-100': `${-(360 + 20 + gapDeg).toFixed(2)}`,
+        '--_ind-reduced-track': `${reducedTrack.toFixed(2)}`,
+        '--_ind-reduced-track-comp': `${(360 - reducedTrack).toFixed(2)}`,
+        '--_ind-reduced-offset': `${-(90 + gapDeg).toFixed(2)}`,
+      }
+
+      return html`
+        <svg viewBox="0 0 ${size} ${size}" style=${styleMap(indeterminateVars)}>
+          <circle class="track" cx=${cx} cy=${cy} r=${r} stroke-width=${stroke} pathLength="360"></circle>
+          <circle class="active-track" cx=${cx} cy=${cy} r=${r} stroke-width=${stroke} pathLength="360"></circle>
+        </svg>
+      `
     }
-    return this.renderDeterminateContainer()
-  }
-  // Determinate mode is rendered with an svg so the progress arc can be
-  // easily animated via stroke-dashoffset.
-  renderDeterminateContainer() {
-    const isIndeterminateWavy = this.indeterminate && this.shape === 'wavy'
-    const progress = isIndeterminateWavy ? 0.25 : (this.value / this.max)
-    const dashOffset = (1 - this.value / this.max) * 100
-    // note, dash-array/offset are relative to Setting `pathLength` but
-    // Chrome seems to render this inaccurately and using a large viewbox helps.
+
+    const fraction = this.indeterminate ? 0.25 : this.clampedFraction
+    let trackDashArray = `${circumference} 0`
+    let trackDashOffset = 0
+    let trackOpacity = 1
+
+    if (fraction >= 1) {
+      trackDashArray = `0 ${circumference}`
+      trackOpacity = 0
+    } else if (fraction > 0) {
+      const activeLen = fraction * circumference
+      const trackStart = activeLen + clearance
+      const trackLen = Math.max(0, circumference - activeLen - 2 * clearance)
+      trackDashArray = `${trackLen} ${circumference - trackLen}`
+      trackDashOffset = -trackStart
+      trackOpacity = trackLen > 0.1 ? 1 : 0
+    }
+
+    if (isWavy) {
+      const sweepAngle = fraction * TWO_PI
+      const d = sweepAngle > 0.001 ? getWavyCirclePath(cx, cy, r, amp, frequency, this._wavyPhase, 0, sweepAngle) : ''
+      return html`
+        <svg viewBox="0 0 ${size} ${size}">
+          <circle
+            class="track"
+            cx=${cx}
+            cy=${cy}
+            r=${r}
+            stroke-width=${stroke}
+            stroke-dasharray=${trackDashArray}
+            stroke-dashoffset=${trackDashOffset}
+            opacity=${trackOpacity}></circle>
+          <path
+            class="active-track wavy-circle"
+            stroke-width=${stroke}
+            d=${d}
+            opacity=${sweepAngle > 0.001 ? 1 : 0}></path>
+        </svg>
+      `
+    }
+
+    let activeDashArray = `0 ${circumference}`
+    let activeOpacity = 0
+    if (fraction >= 1) {
+      activeDashArray = `${circumference} 0`
+      activeOpacity = 1
+    } else if (fraction > 0) {
+      const activeLen = fraction * circumference
+      activeDashArray = `${activeLen} ${circumference - activeLen}`
+      activeOpacity = 1
+    }
+
     return html`
-      <svg viewBox="0 0 4800 4800" width="100%" height="100%">
-        <circle class="track" cx="2400" cy="2400" r="2160" stroke="rgba(0,0,0,0)" stroke-width="480" fill="none"></circle>
-        ${this.shape === 'wavy'
-          ? svg`<path class="active-track wavy-circle"
-                       stroke="var(--_active-indicator-color)"
-                       stroke-width="480"
-                       stroke-linecap="round"
-                       stroke-linejoin="round"
-                       fill="none"
-                       d=${getWavyCirclePath(2400, 2400, 2160, 120, 12, 0, progress)}></path>`
-          : svg`<circle class="active-track"
-                         cx="2400"
-                         cy="2400"
-                         r="2160"
-                         stroke="var(--_active-indicator-color)"
-                         stroke-width="480"
-                         stroke-linecap="round"
-                         fill="none"
-                         pathLength="100"
-                         stroke-dashoffset=${dashOffset}></circle>`
-        }
+      <svg viewBox="0 0 ${size} ${size}">
+        <circle
+          class="track"
+          cx=${cx}
+          cy=${cy}
+          r=${r}
+          stroke-width=${stroke}
+          stroke-dasharray=${trackDashArray}
+          stroke-dashoffset=${trackDashOffset}
+          opacity=${trackOpacity}></circle>
+        <circle
+          class="active-track"
+          cx=${cx}
+          cy=${cy}
+          r=${r}
+          stroke-width=${stroke}
+          stroke-dasharray=${activeDashArray}
+          stroke-dashoffset="0"
+          opacity=${activeOpacity}></circle>
       </svg>
     `
   }
-  // Indeterminate mode rendered with 2 bordered-divs. The borders are
-  // clipped into half circles by their containers. The divs are then carefully
-  // animated to produce changes to the spinner arc size.
-  // This approach has 4.5x the FPS of rendering via svg on Chrome 111.
-  // See https://lit.dev/playground/#gist=febb773565272f75408ab06a0eb49746.
-  renderIndeterminateContainer() {
-    return html` <div class="spinner">
-      <div class="left">
-        <div class="circle"></div>
-      </div>
-      <div class="right">
-        <div class="circle"></div>
-      </div>
-    </div>`
-  }
 
   renderLinearIndicator() {
-    // Note, the indeterminate animation is rendered with transform %'s
-    // Previously, this was optimized to use px calculated with the resizeObserver
-    // due to a now fixed Chrome bug: crbug.com/389359.
-    const progressStyles = {
-      transform: `scaleX(${(this.indeterminate ? 1 : this.value / this.max) * 100}%)`,
+    const p = this.clampedFraction
+    const b = this.clampedBufferFraction
+    const hasBuffer = !this.indeterminate && this.buffer > 0 && b < 1 && p < 1
+
+    const primaryBarStyles = {}
+    const inactiveTrackStyles = {}
+    const dotsStyles = {}
+
+    if (!this.indeterminate) {
+      if (p <= 0) {
+        primaryBarStyles.left = '0px'
+        primaryBarStyles.width = '0px'
+        primaryBarStyles.opacity = '0'
+      } else if (p >= 1) {
+        primaryBarStyles.left = '0px'
+        primaryBarStyles.width = '100%'
+      } else {
+        primaryBarStyles.left = '0px'
+        primaryBarStyles.width = `max(var(--_active-indicator-height), ${p * 100}%)`
+      }
+
+      const trackEnd = hasBuffer ? `${b * 100}%` : '100%'
+      const activeEnd = p > 0 ? `calc(max(var(--_active-indicator-height), ${p * 100}%) + var(--_track-gap))` : '0px'
+      if (p >= 1 || (hasBuffer && b <= p)) {
+        inactiveTrackStyles.left = '100%'
+        inactiveTrackStyles.width = '0px'
+      } else if (p <= 0) {
+        inactiveTrackStyles.left = '0px'
+        inactiveTrackStyles.width = trackEnd
+      } else {
+        inactiveTrackStyles.left = activeEnd
+        inactiveTrackStyles.width = `max(0px, calc(${trackEnd} - ${activeEnd}))`
+      }
+
+      if (hasBuffer) {
+        const bufferEnd = `calc(${b * 100}% + var(--_track-gap))`
+        const dotsStart = p > 0 ? `max(${activeEnd}, ${bufferEnd})` : bufferEnd
+        dotsStyles.left = dotsStart
+        dotsStyles.width = `max(0px, calc(100% - ${dotsStart}))`
+      }
     }
-    const bufferValue = this.buffer ?? 0
-    const hasBuffer = bufferValue > 0
-    const dotSize = this.indeterminate || !hasBuffer ? 1 : bufferValue / this.max
-    const dotStyles = {
-      transform: `scaleX(${dotSize * 100}%)`,
-    }
-    // Only display dots when visible - this prevents invisible infinite
-    // animation.
-    const hideDots = this.indeterminate || !hasBuffer || bufferValue >= this.max || this.value >= this.max
+
+    const hideDots = !hasBuffer
+    const hideStop = this.indeterminate || p >= 1 || hasBuffer
+
     return html`
-      <div class="dots" ?hidden=${hideDots}></div>
-      <div class="inactive-track" style=${styleMap(dotStyles)}></div>
-      <div class="stop-indicator" ?hidden=${this.indeterminate}></div>
-      <div class="bar primary-bar" style=${styleMap(progressStyles)}>
+      <div class="dots" ?hidden=${hideDots} style=${styleMap(dotsStyles)}></div>
+      <div class="track-segment inactive-track" style=${styleMap(inactiveTrackStyles)}></div>
+      <div class="track-segment indeterminate-track track-0"></div>
+      <div class="track-segment indeterminate-track track-1"></div>
+      <div class="track-segment indeterminate-track track-2"></div>
+      <div class="stop-indicator" ?hidden=${hideStop}></div>
+      <div class="bar primary-bar" style=${styleMap(primaryBarStyles)}>
         <div class="bar-inner"></div>
       </div>
       <div class="bar secondary-bar">
@@ -210,511 +527,62 @@ export class Progress extends LitElement {
       </div>
     `
   }
-
-  static styles = [
-    css`
-      :host([type='circular']) {
-        --_active-indicator-color: var(
-          --md-circular-progress-active-indicator-color,
-          var(--md-sys-color-primary, #6750a4)
-        );
-        --_active-indicator-width: var(--md-circular-progress-active-indicator-width, 10);
-        --_four-color-active-indicator-four-color: var(
-          --md-circular-progress-four-color-active-indicator-four-color,
-          var(--md-sys-color-tertiary-container, #ffd8e4)
-        );
-        --_four-color-active-indicator-one-color: var(
-          --md-circular-progress-four-color-active-indicator-one-color,
-          var(--md-sys-color-primary, #6750a4)
-        );
-        --_four-color-active-indicator-three-color: var(
-          --md-circular-progress-four-color-active-indicator-three-color,
-          var(--md-sys-color-tertiary, #7d5260)
-        );
-        --_four-color-active-indicator-two-color: var(
-          --md-circular-progress-four-color-active-indicator-two-color,
-          var(--md-sys-color-primary-container, #eaddff)
-        );
-        --_size: var(--md-circular-progress-size, 48px);
-        display: inline-flex;
-        vertical-align: middle;
-        width: var(--_size);
-        height: var(--_size);
-        position: relative;
-        align-items: center;
-        justify-content: center;
-        contain: strict;
-        content-visibility: auto;
-      }
-      .progress {
-        flex: 1;
-        align-self: stretch;
-        margin: 4px;
-      }
-      .progress,
-      .spinner,
-      .left,
-      .right,
-      .circle,
-      svg,
-      .track,
-      .active-track {
-        position: absolute;
-        inset: 0;
-      }
-      svg {
-        transform: rotate(-90deg);
-      }
-      circle {
-        fill: rgba(0, 0, 0, 0);
-      }
-      .active-track {
-        transition: stroke-dashoffset 500ms cubic-bezier(0, 0, 0.2, 1);
-        stroke: var(--_active-indicator-color);
-      }
-      .track {
-        stroke: rgba(0, 0, 0, 0);
-      }
-      .circular.progress.indeterminate {
-        animation: linear infinite linear-rotate;
-        animation-duration: 1568.2352941176ms;
-      }
-      .spinner {
-        animation: infinite both rotate-arc;
-        animation-duration: 5332ms;
-        animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-      }
-      .left {
-        overflow: hidden;
-        inset: 0 50% 0 0;
-      }
-      .right {
-        overflow: hidden;
-        inset: 0 0 0 50%;
-      }
-      .circle {
-        box-sizing: border-box;
-        border-radius: 50%;
-        border: solid calc(var(--_active-indicator-width) / 100 * (var(--_size) - 8px));
-        border-color: var(--_active-indicator-color) var(--_active-indicator-color) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0);
-        animation: expand-arc;
-        animation-iteration-count: infinite;
-        animation-fill-mode: both;
-        animation-duration: 1333ms, 5332ms;
-        animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-      }
-      .four-color .circle {
-        animation-name: expand-arc, four-color;
-      }
-      .left .circle {
-        rotate: 135deg;
-        inset: 0 -100% 0 0;
-      }
-      .right .circle {
-        rotate: 100deg;
-        inset: 0 0 0 -100%;
-        animation-delay: -666.5ms, 0ms;
-      }
-      @media (forced-colors: active) {
-        .active-track {
-          stroke: CanvasText;
-        }
-        .circle {
-          border-color: CanvasText CanvasText Canvas Canvas;
-        }
-      }
-      @keyframes expand-arc {
-        0% {
-          transform: rotate(265deg);
-        }
-        50% {
-          transform: rotate(130deg);
-        }
-        100% {
-          transform: rotate(265deg);
-        }
-      }
-      @keyframes rotate-arc {
-        12.5% {
-          transform: rotate(135deg);
-        }
-        25% {
-          transform: rotate(270deg);
-        }
-        37.5% {
-          transform: rotate(405deg);
-        }
-        50% {
-          transform: rotate(540deg);
-        }
-        62.5% {
-          transform: rotate(675deg);
-        }
-        75% {
-          transform: rotate(810deg);
-        }
-        87.5% {
-          transform: rotate(945deg);
-        }
-        100% {
-          transform: rotate(1080deg);
-        }
-      }
-      @keyframes linear-rotate {
-        to {
-          transform: rotate(360deg);
-        }
-      }
-      @keyframes four-color {
-        0% {
-          border-top-color: var(--_four-color-active-indicator-one-color);
-          border-right-color: var(--_four-color-active-indicator-one-color);
-        }
-        15% {
-          border-top-color: var(--_four-color-active-indicator-one-color);
-          border-right-color: var(--_four-color-active-indicator-one-color);
-        }
-        25% {
-          border-top-color: var(--_four-color-active-indicator-two-color);
-          border-right-color: var(--_four-color-active-indicator-two-color);
-        }
-        40% {
-          border-top-color: var(--_four-color-active-indicator-two-color);
-          border-right-color: var(--_four-color-active-indicator-two-color);
-        }
-        50% {
-          border-top-color: var(--_four-color-active-indicator-three-color);
-          border-right-color: var(--_four-color-active-indicator-three-color);
-        }
-        65% {
-          border-top-color: var(--_four-color-active-indicator-three-color);
-          border-right-color: var(--_four-color-active-indicator-three-color);
-        }
-        75% {
-          border-top-color: var(--_four-color-active-indicator-four-color);
-          border-right-color: var(--_four-color-active-indicator-four-color);
-        }
-        90% {
-          border-top-color: var(--_four-color-active-indicator-four-color);
-          border-right-color: var(--_four-color-active-indicator-four-color);
-        }
-        100% {
-          border-top-color: var(--_four-color-active-indicator-one-color);
-          border-right-color: var(--_four-color-active-indicator-one-color);
-        }
-      }
-    `,
-    css`
-      :host([type='linear']) {
-        --_active-indicator-color: var(
-          --md-linear-progress-active-indicator-color,
-          var(--md-sys-color-primary, #6750a4)
-        );
-        --_active-indicator-height: var(--md-linear-progress-active-indicator-height, 4px);
-        --_four-color-active-indicator-four-color: var(
-          --md-linear-progress-four-color-active-indicator-four-color,
-          var(--md-sys-color-tertiary-container, #ffd8e4)
-        );
-        --_four-color-active-indicator-one-color: var(
-          --md-linear-progress-four-color-active-indicator-one-color,
-          var(--md-sys-color-primary, #6750a4)
-        );
-        --_four-color-active-indicator-three-color: var(
-          --md-linear-progress-four-color-active-indicator-three-color,
-          var(--md-sys-color-tertiary, #7d5260)
-        );
-        --_four-color-active-indicator-two-color: var(
-          --md-linear-progress-four-color-active-indicator-two-color,
-          var(--md-sys-color-primary-container, #eaddff)
-        );
-        --_track-color: var(--md-linear-progress-track-color, var(--md-sys-color-surface-container-highest, #e6e0e9));
-        --_track-height: var(--md-linear-progress-track-height, 4px);
-        --_track-shape: var(--md-linear-progress-track-shape, var(--md-sys-shape-corner-none, 0px));
-        border-radius: var(--_track-shape);
-        display: flex;
-        position: relative;
-        min-width: 80px;
-        height: var(--_track-height);
-        content-visibility: auto;
-        contain: strict;
-      }
-      .linear.progress,
-      .dots,
-      .inactive-track,
-      .bar,
-      .bar-inner {
-        position: absolute;
-      }
-      .linear.progress {
-        direction: ltr;
-        inset: 0;
-        border-radius: inherit;
-        overflow: hidden;
-        display: flex;
-        align-items: center;
-        margin: 0;
-      }
-      .bar {
-        animation: none;
-        width: 100%;
-        height: var(--_active-indicator-height);
-        transform-origin: left center;
-        transition: transform 250ms cubic-bezier(0.4, 0, 0.6, 1);
-        inset: 0;
-        left: 0;
-      }
-      .secondary-bar {
-        display: none;
-      }
-      .bar-inner {
-        inset: 0;
-        animation: none;
-        background: var(--_active-indicator-color);
-      }
-      .inactive-track {
-        background: var(--_track-color);
-        inset: 0;
-        transition: transform 250ms cubic-bezier(0.4, 0, 0.6, 1);
-        transform-origin: left center;
-      }
-      .stop-indicator {
-        position: absolute;
-        right: 0;
-        width: 4px;
-        height: 4px;
-        border-radius: 50%;
-        background: var(--_active-indicator-color);
-        top: calc(50% - 2px);
-      }
-      .dots {
-        inset: 0;
-        animation: linear infinite 250ms;
-        animation-name: buffering;
-        background-color: var(--_track-color);
-        background-repeat: repeat-x;
-        -webkit-mask-image: url("data:image/svg+xml,%3Csvg version='1.1' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 5 2' preserveAspectRatio='xMinYMin slice'%3E%3Ccircle cx='1' cy='1' r='1'/%3E%3C/svg%3E");
-        mask-image: url("data:image/svg+xml,%3Csvg version='1.1' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 5 2' preserveAspectRatio='xMinYMin slice'%3E%3Ccircle cx='1' cy='1' r='1'/%3E%3C/svg%3E");
-        z-index: -1;
-      }
-      .dots[hidden] {
-        display: none;
-      }
-      .indeterminate .bar {
-        transition: none;
-      }
-      .indeterminate .primary-bar {
-        inset-inline-start: -145.167%;
-      }
-      .indeterminate .secondary-bar {
-        inset-inline-start: -54.8889%;
-        display: block;
-      }
-      .indeterminate .primary-bar {
-        animation: linear infinite 2s;
-        animation-name: primary-indeterminate-translate;
-      }
-      .indeterminate .primary-bar > .bar-inner {
-        animation: linear infinite 2s primary-indeterminate-scale;
-      }
-      .indeterminate.four-color .primary-bar > .bar-inner {
-        animation-name: primary-indeterminate-scale, four-color;
-        animation-duration: 2s, 4s;
-      }
-      .indeterminate .secondary-bar {
-        animation: linear infinite 2s;
-        animation-name: secondary-indeterminate-translate;
-      }
-      .indeterminate .secondary-bar > .bar-inner {
-        animation: linear infinite 2s secondary-indeterminate-scale;
-      }
-      .indeterminate.four-color .secondary-bar > .bar-inner {
-        animation-name: secondary-indeterminate-scale, four-color;
-        animation-duration: 2s, 4s;
-      }
-      :host(:dir(rtl)) {
-        transform: scale(-1);
-      }
-      @keyframes primary-indeterminate-scale {
-        0% {
-          transform: scaleX(0.08);
-        }
-        36.65% {
-          animation-timing-function: cubic-bezier(0.334731, 0.12482, 0.785844, 1);
-          transform: scaleX(0.08);
-        }
-        69.15% {
-          animation-timing-function: cubic-bezier(0.06, 0.11, 0.6, 1);
-          transform: scaleX(0.661479);
-        }
-        100% {
-          transform: scaleX(0.08);
-        }
-      }
-      @keyframes secondary-indeterminate-scale {
-        0% {
-          animation-timing-function: cubic-bezier(0.205028, 0.057051, 0.57661, 0.453971);
-          transform: scaleX(0.08);
-        }
-        19.15% {
-          animation-timing-function: cubic-bezier(0.152313, 0.196432, 0.648374, 1.00432);
-          transform: scaleX(0.457104);
-        }
-        44.15% {
-          animation-timing-function: cubic-bezier(0.257759, -0.003163, 0.211762, 1.38179);
-          transform: scaleX(0.72796);
-        }
-        100% {
-          transform: scaleX(0.08);
-        }
-      }
-      @keyframes buffering {
-        0% {
-          transform: translateX(calc(var(--_track-height) / 2 * 5));
-        }
-      }
-      @keyframes primary-indeterminate-translate {
-        0% {
-          transform: translateX(0px);
-        }
-        20% {
-          animation-timing-function: cubic-bezier(0.5, 0, 0.701732, 0.495819);
-          transform: translateX(0px);
-        }
-        59.15% {
-          animation-timing-function: cubic-bezier(0.302435, 0.381352, 0.55, 0.956352);
-          transform: translateX(83.6714%);
-        }
-        100% {
-          transform: translateX(200.611%);
-        }
-      }
-      @keyframes secondary-indeterminate-translate {
-        0% {
-          animation-timing-function: cubic-bezier(0.15, 0, 0.515058, 0.409685);
-          transform: translateX(0px);
-        }
-        25% {
-          animation-timing-function: cubic-bezier(0.31033, 0.284058, 0.8, 0.733712);
-          transform: translateX(37.6519%);
-        }
-        48.35% {
-          animation-timing-function: cubic-bezier(0.4, 0.627035, 0.6, 0.902026);
-          transform: translateX(84.3862%);
-        }
-        100% {
-          transform: translateX(160.278%);
-        }
-      }
-      @keyframes four-color {
-        0% {
-          background: var(--_four-color-active-indicator-one-color);
-        }
-        15% {
-          background: var(--_four-color-active-indicator-one-color);
-        }
-        25% {
-          background: var(--_four-color-active-indicator-two-color);
-        }
-        40% {
-          background: var(--_four-color-active-indicator-two-color);
-        }
-        50% {
-          background: var(--_four-color-active-indicator-three-color);
-        }
-        65% {
-          background: var(--_four-color-active-indicator-three-color);
-        }
-        75% {
-          background: var(--_four-color-active-indicator-four-color);
-        }
-        90% {
-          background: var(--_four-color-active-indicator-four-color);
-        }
-        100% {
-          background: var(--_four-color-active-indicator-one-color);
-        }
-      }
-      @media (forced-colors: active) {
-        :host {
-          outline: 1px solid CanvasText;
-        }
-        .bar-inner,
-        .dots {
-          background-color: CanvasText;
-        }
-      }
-      /* --- Wavy Progress Indicator Styling --- */
-      :host([shape='wavy'][type='linear']) {
-        --_track-height: 12px;
-        --_active-indicator-height: 12px;
-        --_track-shape: 6px;
-      }
-      :host([shape='wavy'][type='linear']) .inactive-track,
-      :host([shape='wavy'][type='linear']) .dots {
-        height: 4px;
-        top: 4px;
-      }
-      :host([shape='wavy'][type='linear']) .bar-inner {
-        background: var(--_active-indicator-color);
-        -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='12' viewBox='0 0 24 12'%3E%3Cpath d='M 0 6 Q 6 -2 12 6 T 24 6' fill='none' stroke='black' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E");
-        mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='12' viewBox='0 0 24 12'%3E%3Cpath d='M 0 6 Q 6 -2 12 6 T 24 6' fill='none' stroke='black' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E");
-        -webkit-mask-repeat: repeat-x;
-        mask-repeat: repeat-x;
-        animation: wavy-linear-move 1s linear infinite;
-      }
-      :host([shape='wavy'][type='linear'].indeterminate) .primary-bar > .bar-inner {
-        animation: primary-indeterminate-scale 2s linear infinite, wavy-linear-move 1s linear infinite;
-      }
-      :host([shape='wavy'][type='linear'].indeterminate.four-color) .primary-bar > .bar-inner {
-        animation: primary-indeterminate-scale 2s linear infinite, four-color 4s linear infinite, wavy-linear-move 1s linear infinite;
-      }
-      :host([shape='wavy'][type='linear'].indeterminate) .secondary-bar > .bar-inner {
-        animation: secondary-indeterminate-scale 2s linear infinite, wavy-linear-move 1s linear infinite;
-      }
-      :host([shape='wavy'][type='linear'].indeterminate.four-color) .secondary-bar > .bar-inner {
-        animation: secondary-indeterminate-scale 2s linear infinite, four-color 4s linear infinite, wavy-linear-move 1s linear infinite;
-      }
-      @keyframes wavy-linear-move {
-        from {
-          -webkit-mask-position-x: 0px;
-          mask-position-x: 0px;
-        }
-        to {
-          -webkit-mask-position-x: 24px;
-          mask-position-x: 24px;
-        }
-      }
-      .active-track.wavy-circle {
-        stroke-linecap: round;
-        stroke-linejoin: round;
-        stroke: var(--_active-indicator-color);
-        stroke-width: calc(var(--_active-indicator-width) * 48px);
-        fill: rgba(0, 0, 0, 0);
-      }
-    `,
-  ]
 }
+
 ;(() => {
   requestUpdateOnAriaChange(Progress)
 })()
 
-customElements.define('md-progress', Progress)
+if (!customElements.get('md-progress')) {
+  customElements.define('md-progress', Progress)
+}
 
-function getWavyCirclePath(cx, cy, r, amplitude, frequency, phase, progress = 1.0) {
-  if (isNaN(progress) || !isFinite(progress)) {
-    progress = 0
+function parsePx(value, fallback = 0) {
+  if (!value) return fallback
+  const n = parseFloat(value)
+  return Number.isFinite(n) ? n : fallback
+}
+
+// Fast-out, slow-in M3 standard easing approximation: cubic-bezier(0.4, 0, 0.2, 1)
+function easeStandard(x) {
+  if (x <= 0) return 0
+  if (x >= 1) return 1
+  // Solve x(t) for cubic-bezier(0.4, 0, 0.2, 1) via 5 Newton-Raphson iterations
+  let t = x
+  for (let i = 0; i < 5; i++) {
+    const u = 1 - t
+    const bx = 3 * u * u * t * 0.4 + 3 * u * t * t * 0.2 + t * t * t - x
+    const dbx = 3 * u * u * 0.4 + 6 * u * t * (0.2 - 0.4) + 3 * t * t * (1 - 0.2)
+    if (Math.abs(dbx) < 1e-6) break
+    t = Math.max(0, Math.min(1, t - bx / dbx))
   }
-  progress = Math.max(0, Math.min(1, progress))
+  const u = 1 - t
+  return 3 * u * t * t + t * t * t
+}
+
+export function getWavyCirclePath(cx, cy, r, amplitude, frequency, phase, startAngle = 0, sweepAngle = TWO_PI) {
+  if (!Number.isFinite(sweepAngle) || sweepAngle <= 0.001) {
+    return ''
+  }
+  const clampedSweep = Math.min(TWO_PI, Math.max(0, sweepAngle))
+  const isClosed = clampedSweep >= TWO_PI - 0.001
+  // Smoothly taper wave amplitude near tiny sweeps so very small arcs stay clean
+  const effectiveAmp = amplitude * Math.min(1, clampedSweep / 0.35)
+  const fullCircleSteps = Math.max(96, frequency * 16)
+  const steps = isClosed ? fullCircleSteps : Math.max(16, Math.ceil((clampedSweep / TWO_PI) * fullCircleSteps))
   const points = []
-  const steps = Math.max(10, Math.round(180 * progress))
-  for (let i = 0; i <= steps; i++) {
-    const theta = (i / steps) * progress * 2 * Math.PI
-    const perturbedRadius = r + amplitude * Math.sin(frequency * theta + phase)
+  const count = isClosed ? steps : steps + 1
+
+  for (let i = 0; i < count; i++) {
+    const frac = i / steps
+    const theta = startAngle + frac * clampedSweep
+    const perturbedRadius = r + effectiveAmp * Math.sin(frequency * theta - phase)
     const x = cx + perturbedRadius * Math.cos(theta)
     const y = cy + perturbedRadius * Math.sin(theta)
-    points.push(`${i === 0 ? 'M' : 'L'} ${x.toFixed(1)} ${y.toFixed(1)}`)
+    points.push(`${i === 0 ? 'M' : 'L'} ${x.toFixed(2)} ${y.toFixed(2)}`)
   }
-  if (progress >= 1.0) {
+
+  if (isClosed) {
     points.push('Z')
   }
   return points.join(' ')
