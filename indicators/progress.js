@@ -487,6 +487,7 @@ export class Progress extends LitElement {
       }
 
       const trackEnd = hasBuffer ? `${b * 100}%` : '100%'
+      const activeEnd = p > 0 ? `calc(max(var(--_active-indicator-height), ${p * 100}%) + var(--_track-gap))` : '0px'
       if (p >= 1 || (hasBuffer && b <= p)) {
         inactiveTrackStyles.left = '100%'
         inactiveTrackStyles.width = '0px'
@@ -494,13 +495,13 @@ export class Progress extends LitElement {
         inactiveTrackStyles.left = '0px'
         inactiveTrackStyles.width = trackEnd
       } else {
-        const activeEnd = `calc(max(var(--_active-indicator-height), ${p * 100}%) + var(--_track-gap))`
         inactiveTrackStyles.left = activeEnd
         inactiveTrackStyles.width = `max(0px, calc(${trackEnd} - ${activeEnd}))`
       }
 
       if (hasBuffer) {
-        const dotsStart = `calc(${b * 100}% + var(--_track-gap))`
+        const bufferEnd = `calc(${b * 100}% + var(--_track-gap))`
+        const dotsStart = p > 0 ? `max(${activeEnd}, ${bufferEnd})` : bufferEnd
         dotsStyles.left = dotsStart
         dotsStyles.width = `max(0px, calc(100% - ${dotsStart}))`
       }
@@ -571,7 +572,7 @@ export function getWavyCirclePath(cx, cy, r, amplitude, frequency, phase, startA
   const count = isClosed ? steps : steps + 1
 
   for (let i = 0; i < count; i++) {
-    const frac = isClosed ? i / steps : i / steps
+    const frac = i / steps
     const theta = startAngle + frac * clampedSweep
     const perturbedRadius = r + effectiveAmp * Math.sin(frequency * theta - phase)
     const x = cx + perturbedRadius * Math.cos(theta)

@@ -401,6 +401,17 @@ export class Loading extends LitElement {
     this.resolvedContainerColor = this._resolveColor(this.containerColor || this._defaultContainerColor())
   }
 
+  _drawCurrentFrame() {
+    if (!this.ctx) return
+    const shape = getMorphedShape(this.animator.morph)
+    drawIndicator(this.ctx, this.size, shape, this.animator.rotation, {
+      color: this.resolvedColor,
+      sizeRatio: this.sizeRatio,
+      contained: this.contained,
+      containerColor: this.resolvedContainerColor,
+    })
+  }
+
   _syncCanvasSize() {
     const canvas = this.renderRoot?.querySelector('#canvas')
     if (!canvas) return
@@ -411,6 +422,9 @@ export class Loading extends LitElement {
       this._cssSize = measured
     }
     this.ctx = setupCanvas(canvas, this.size)
+    if (this.paused) {
+      this._drawCurrentFrame()
+    }
   }
 
   startAnimation() {
@@ -428,19 +442,13 @@ export class Loading extends LitElement {
       this.animator.speed = this.speed * (reduced ? 0.25 : 1)
       this.animator.paused = this.paused
       this.animator.update(ts)
-      const shape = getMorphedShape(this.animator.morph)
 
       this.frameCount++
       if (this.frameCount % 60 === 0) {
         this.updateResolvedColors()
       }
 
-      drawIndicator(this.ctx, this.size, shape, this.animator.rotation, {
-        color: this.resolvedColor,
-        sizeRatio: this.sizeRatio,
-        contained: this.contained,
-        containerColor: this.resolvedContainerColor,
-      })
+      this._drawCurrentFrame()
       this.rafId = requestAnimationFrame(loop)
     }
     this.rafId = requestAnimationFrame(loop)
@@ -465,7 +473,11 @@ export class Loading extends LitElement {
     }
     if (this.hasUpdated) {
       this.updateResolvedColors()
-      this.startAnimation()
+      if (this.paused) {
+        this._drawCurrentFrame()
+      } else {
+        this.startAnimation()
+      }
     }
   }
 
@@ -482,12 +494,19 @@ export class Loading extends LitElement {
     if (this._explicitSize != null) {
       this.style.setProperty('--_size', `${this._explicitSize}px`)
     }
-    this._syncCanvasSize()
     this.updateResolvedColors()
-    this.startAnimation()
+    this._syncCanvasSize()
+    if (!this.paused) {
+      this.startAnimation()
+    }
   }
 
   updated(changedProperties) {
+    const colorChanged =
+      changedProperties.has('color') || changedProperties.has('containerColor') || changedProperties.has('contained')
+    if (colorChanged) {
+      this.updateResolvedColors()
+    }
     if (changedProperties.has('size')) {
       if (this._explicitSize != null) {
         this.style.setProperty('--_size', `${this._explicitSize}px`)
@@ -495,17 +514,13 @@ export class Loading extends LitElement {
         this.style.removeProperty('--_size')
       }
       this._syncCanvasSize()
-    }
-    if (
-      changedProperties.has('color') ||
-      changedProperties.has('containerColor') ||
-      changedProperties.has('contained')
-    ) {
-      this.updateResolvedColors()
+    } else if (colorChanged && this.paused) {
+      this._drawCurrentFrame()
     }
     if (changedProperties.has('paused')) {
       if (this.paused) {
         this.stopAnimation()
+        this._drawCurrentFrame()
       } else {
         this.startAnimation()
       }
