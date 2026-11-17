@@ -584,13 +584,15 @@ class ExpressiveComponent extends LitElement {
           <h3 class="sub-section-title">Primary Tabs (with Icons & Badges)</h3>
           <div style="max-width: 600px;">
             <md-tabs @change=${this.tabChanged} id="tabs">
-              <md-tab type="primary" id="photos-tab" aria-label="Photos" aria-controls="photos-panel" badge-value="3">
+              <md-tab type="primary" id="photos-tab" aria-label="Photos" aria-controls="photos-panel">
                 <md-icon slot="icon">photo</md-icon>
                 Photos
+                <md-badge slot="badge" value="3"></md-badge>
               </md-tab>
-              <md-tab type="primary" id="videos-tab" aria-label="Videos" aria-controls="videos-panel" show-badge>
+              <md-tab type="primary" id="videos-tab" aria-label="Videos" aria-controls="videos-panel">
                 <md-icon slot="icon">videocam</md-icon>
                 Video
+                <md-badge slot="badge"></md-badge>
               </md-tab>
               <md-tab type="primary" id="music-tab" aria-label="Music" aria-controls="music-panel">
                 <md-icon slot="icon">music_note</md-icon>
@@ -604,7 +606,10 @@ class ExpressiveComponent extends LitElement {
           <div style="max-width: 600px;">
             <md-tabs @change=${this.secondaryTabChanged} id="tabs2">
               <md-tab type="secondary" id="photos-tab2" aria-label="Photos">Photos</md-tab>
-              <md-tab type="secondary" id="videos-tab2" aria-label="Videos" badge-value="12">Videos</md-tab>
+              <md-tab type="secondary" id="videos-tab2" aria-label="Videos">
+                Videos
+                <md-badge slot="badge" value="12"></md-badge>
+              </md-tab>
               <md-tab type="secondary" id="music-tab2" aria-label="Music">Music</md-tab>
             </md-tabs>
             ${this.renderSecondaryTabPanel()}
@@ -648,18 +653,18 @@ class ExpressiveComponent extends LitElement {
             </md-chip-set>
 
             <div class="flex aic g16">
-              <span style="position: relative; display: inline-flex">
-                <md-icon-button>
-                  <md-icon>notifications</md-icon>
-                </md-icon-button>
-                <md-badge value="5" style="position: absolute; top: 4px; right: 4px"></md-badge>
-              </span>
-              <span style="position: relative; display: inline-flex">
-                <md-icon-button>
-                  <md-icon>mail</md-icon>
-                </md-icon-button>
-                <md-badge style="position: absolute; top: 8px; right: 8px"></md-badge>
-              </span>
+              <md-icon-button aria-label="5 unread notifications">
+                <md-icon>notifications</md-icon>
+                <md-badge slot="badge" value="5"></md-badge>
+              </md-icon-button>
+              <md-icon-button aria-label="Unread mail">
+                <md-icon>mail</md-icon>
+                <md-badge slot="badge"></md-badge>
+              </md-icon-button>
+              <md-icon-button aria-label="More than 99 unread messages">
+                <md-icon>chat</md-icon>
+                <md-badge slot="badge" value="99+"></md-badge>
+              </md-icon-button>
             </div>
           </div>
 

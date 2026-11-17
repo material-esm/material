@@ -1827,24 +1827,24 @@ import 'material/indicators/progress.js'</code></pre>
               </md-chip-set>
             </div>
             <div class="preview-row" style="margin-top: 6px">
-              <span style="position: relative; display: inline-flex">
-                <md-icon-button>
-                  <md-icon>notifications</md-icon>
-                </md-icon-button>
-                <md-badge value="5" style="position: absolute; top: 4px; right: 4px"></md-badge>
-              </span>
-              <span style="position: relative; display: inline-flex">
-                <md-icon-button>
-                  <md-icon>mail</md-icon>
-                </md-icon-button>
-                <md-badge style="position: absolute; top: 8px; right: 8px"></md-badge>
-              </span>
+              <md-icon-button aria-label="5 unread notifications">
+                <md-icon>notifications</md-icon>
+                <md-badge slot="badge" value="5"></md-badge>
+              </md-icon-button>
+              <md-icon-button aria-label="Unread mail">
+                <md-icon>mail</md-icon>
+                <md-badge slot="badge"></md-badge>
+              </md-icon-button>
+              <md-icon-button aria-label="More than 99 unread messages">
+                <md-icon>chat</md-icon>
+                <md-badge slot="badge" value="99+"></md-badge>
+              </md-icon-button>
             </div>
           </div>
           <div class="showcase-code">
             <code
-              >&lt;md-chip type="filter" label="Filter" selected&gt;&lt;/md-chip&gt; &lt;md-badge
-              value="5"&gt;&lt;/md-badge&gt;</code
+              >&lt;md-icon-button&gt;&lt;md-icon&gt;notifications&lt;/md-icon&gt;&lt;md-badge slot="badge"
+              value="5"&gt;&lt;/md-badge&gt;&lt;/md-icon-button&gt;</code
             >
           </div>
         </div>

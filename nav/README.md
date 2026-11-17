@@ -347,9 +347,10 @@ Navigation items can be placed in either `md-nav-rail` or `md-nav-bar`. They rep
 </md-nav-item>
 
 <!-- Destination with badge -->
-<md-nav-item label="Notifications" badge-value="9+" show-badge>
+<md-nav-item label="Notifications">
   <md-icon slot="active-icon">notifications</md-icon>
   <md-icon slot="inactive-icon">notifications_none</md-icon>
+  <md-badge slot="badge" value="9+"></md-badge>
 </md-nav-item>
 ```
 
@@ -361,11 +362,11 @@ Navigation items can be placed in either `md-nav-rail` or `md-nav-bar`. They rep
 
 #### Properties and Attributes
 
-| Property             | Attribute              | Type      | Default | Description                                                 |
-| -------------------- | ---------------------- | --------- | ------- | ----------------------------------------------------------- |
+| Property             | Attribute              | Type      | Default | Description                                                                |
+| -------------------- | ---------------------- | --------- | ------- | -------------------------------------------------------------------------- |
 | `activeIndex`        | `active-index`         | `number`  | `-1`    | The 0-based index of the currently active navigation item (`-1` for none). |
-| `expanded`           | `expanded`             | `boolean` | `false` | Whether the rail is expanded into the wide drawer layout.   |
-| `hideInactiveLabels` | `hide-inactive-labels` | `boolean` | `false` | Whether to hide labels on destinations that are not active. |
+| `expanded`           | `expanded`             | `boolean` | `false` | Whether the rail is expanded into the wide drawer layout.                  |
+| `hideInactiveLabels` | `hide-inactive-labels` | `boolean` | `false` | Whether to hide labels on destinations that are not active.                |
 
 #### Methods
 
@@ -407,10 +408,11 @@ Navigation items can be placed in either `md-nav-rail` or `md-nav-bar`. They rep
 
 #### Slots
 
-| Slot            | Description                           |
-| --------------- | ------------------------------------- |
-| `active-icon`   | Icon displayed when item is active.   |
-| `inactive-icon` | Icon displayed when item is inactive. |
+| Slot            | Description                                 |
+| --------------- | ------------------------------------------- |
+| `active-icon`   | Icon displayed when item is active.         |
+| `inactive-icon` | Icon displayed when item is inactive.       |
+| `badge`         | Optional `<md-badge>` anchored to the icon. |
 
 ---
 
@@ -418,10 +420,10 @@ Navigation items can be placed in either `md-nav-rail` or `md-nav-bar`. They rep
 
 #### Properties and Attributes
 
-| Property             | Attribute              | Type      | Default | Description                                                |
-| -------------------- | ---------------------- | --------- | ------- | ---------------------------------------------------------- |
+| Property             | Attribute              | Type      | Default | Description                                                                |
+| -------------------- | ---------------------- | --------- | ------- | -------------------------------------------------------------------------- |
 | `activeIndex`        | `active-index`         | `number`  | `-1`    | The 0-based index of the currently active navigation item (`-1` for none). |
-| `hideInactiveLabels` | `hide-inactive-labels` | `boolean` | `false` | Whether to hide labels on inactive navigation items.       |
+| `hideInactiveLabels` | `hide-inactive-labels` | `boolean` | `false` | Whether to hide labels on inactive navigation items.                       |
 
 #### Events
 

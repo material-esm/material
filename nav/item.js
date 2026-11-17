@@ -72,7 +72,7 @@ export class NavigationItem extends LitElement {
           <span class="md3-navigation-tab__icon md3-navigation-tab__icon--active">
             <slot name="active-icon"></slot>
           </span>
-          ${this.renderBadge()}
+          ${this.renderBadge(false)}
         </div>
         <div>${this.renderLabel()}</div>
       </div>`
@@ -87,13 +87,36 @@ export class NavigationItem extends LitElement {
     return html`
       <md-button color="${color}" size="medium" style="${style}">
         <slot name="active-icon" slot="icon"></slot>
-        ${this.label}
+        <span class="flex aic g8">${this.label}${this.renderBadge(true)}</span>
       </md-button>
     `
   }
 
-  renderBadge() {
-    return this.showBadge ? html`<md-badge .value="${this.badgeValue}"></md-badge>` : nothing
+  renderBadge(inline = false) {
+    return html`
+      ${this.showBadge ? html`<md-badge ?inline=${inline} .value="${this.badgeValue}"></md-badge>` : nothing}
+      <slot name="badge" @slotchange=${this.syncSlottedBadges}></slot>
+    `
+  }
+
+  updated(changedProperties) {
+    super.updated(changedProperties)
+    if (changedProperties.has('expanded')) {
+      this.syncSlottedBadges()
+    }
+  }
+
+  syncSlottedBadges() {
+    const inline = Boolean(this.expanded)
+    const slot = this.renderRoot?.querySelector('slot[name="badge"]')
+    const badges = slot ? slot.assignedElements({ flatten: true }) : []
+    for (const badge of badges) {
+      if ('inline' in badge) {
+        badge.inline = inline
+      } else {
+        badge.toggleAttribute('inline', inline)
+      }
+    }
   }
   renderLabel() {
     // Needed for closure conformance

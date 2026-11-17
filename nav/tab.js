@@ -403,7 +403,10 @@ export class NavigationTab extends LitElement {
     }
   }
   renderBadge() {
-    return this.showBadge ? html`<md-badge .value="${this.badgeValue}"></md-badge>` : nothing
+    return html`
+      ${this.showBadge ? html`<md-badge .value="${this.badgeValue}"></md-badge>` : nothing}
+      <slot name="badge"></slot>
+    `
   }
   renderLabel() {
     // Needed for closure conformance
