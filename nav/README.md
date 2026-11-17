@@ -63,9 +63,10 @@ Place `md-nav-rail` in a persistent container next to your main content.
         <md-icon slot="active-icon">groups</md-icon>
         <md-icon slot="inactive-icon">groups</md-icon>
       </md-nav-item>
-      <md-nav-item label="Cart" badge-value="3" show-badge>
+      <md-nav-item label="Cart">
         <md-icon slot="active-icon">shopping_cart</md-icon>
         <md-icon slot="inactive-icon">shopping_cart</md-icon>
+        <md-badge slot="badge" value="3"></md-badge>
       </md-nav-item>
     </md-nav-rail>
   </div>
@@ -134,9 +135,10 @@ On compact / mobile screens (e.g. width < 600px), Material 3 guidelines recommen
         <md-icon slot="active-icon">groups</md-icon>
         <md-icon slot="inactive-icon">groups</md-icon>
       </md-nav-item>
-      <md-nav-item label="Cart" badge-value="3" show-badge>
+      <md-nav-item label="Cart">
         <md-icon slot="active-icon">shopping_cart</md-icon>
         <md-icon slot="inactive-icon">shopping_cart</md-icon>
+        <md-badge slot="badge" value="3"></md-badge>
       </md-nav-item>
     </md-nav-rail>
   </div>
@@ -320,9 +322,10 @@ The bottom navigation bar displays three to five destinations at the bottom of a
     <md-icon slot="active-icon">search</md-icon>
     <md-icon slot="inactive-icon">search</md-icon>
   </md-nav-item>
-  <md-nav-item label="Cart" badge-value="3" show-badge>
+  <md-nav-item label="Cart">
     <md-icon slot="active-icon">shopping_cart</md-icon>
     <md-icon slot="inactive-icon">shopping_cart</md-icon>
+    <md-badge slot="badge" value="3"></md-badge>
   </md-nav-item>
 </md-nav-bar>
 ```

@@ -95,8 +95,7 @@ export class Badge extends LitElement {
         margin-block-start: calc(0px - var(--_anchor-offset));
         margin-inline-start: calc(var(--_anchor-offset) - var(--_size));
       }
-      :host(:not([inline])[value]:not([value=''])),
-      :host(:not([inline]):state(large)) {
+      :host(:not([inline]):is([value]:not([value='']), :state(large))) {
         margin-block-start: calc(14px - var(--_anchor-offset) - var(--_large-size));
         margin-inline-start: calc(var(--_anchor-offset) - 12px);
       }
