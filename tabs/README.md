@@ -15,13 +15,15 @@ import 'material/tabs/tab.js'
 
 ```html
 <md-tabs @change="${this.tabChanged}" id="tabs">
-  <md-tab type="primary" id="photos-tab" aria-controls="photos-panel" badge-value="3">
+  <md-tab type="primary" id="photos-tab" aria-controls="photos-panel">
     <md-icon slot="icon">photo</md-icon>
     Photos
+    <md-badge slot="badge" value="3"></md-badge>
   </md-tab>
-  <md-tab type="primary" id="videos-tab" aria-controls="videos-panel" show-badge>
+  <md-tab type="primary" id="videos-tab" aria-controls="videos-panel">
     <md-icon slot="icon">videocam</md-icon>
     Videos
+    <md-badge slot="badge"></md-badge>
   </md-tab>
   <md-tab type="primary" id="music-tab" aria-controls="music-panel">
     <md-icon slot="icon">music_note</md-icon>
@@ -37,7 +39,10 @@ Add `inline-icon` on `<md-tab type="primary">` to render the icon inline beside 
 ```html
 <md-tabs>
   <md-tab type="secondary">Overview</md-tab>
-  <md-tab type="secondary" badge-value="12">Specifications</md-tab>
+  <md-tab type="secondary">
+    Specifications
+    <md-badge slot="badge" value="12"></md-badge>
+  </md-tab>
   <md-tab type="secondary">Guidelines</md-tab>
 </md-tabs>
 ```

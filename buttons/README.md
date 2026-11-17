@@ -98,3 +98,22 @@ Extended FAB
   </div>
 </md-split-button>
 ```
+
+## Icon Buttons
+
+```html
+<md-icon-button aria-label="Search">
+  <md-icon>search</md-icon>
+</md-icon-button>
+
+<!-- With M3 notification badges -->
+<md-icon-button aria-label="5 unread notifications">
+  <md-icon>notifications</md-icon>
+  <md-badge slot="badge" value="5"></md-badge>
+</md-icon-button>
+
+<md-icon-button aria-label="Unread mail">
+  <md-icon>mail</md-icon>
+  <md-badge slot="badge"></md-badge>
+</md-icon-button>
+```

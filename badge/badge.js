@@ -3,28 +3,57 @@
  * Copyright 2022 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
-import { html, LitElement, css } from 'lit'
+import { html, isServer, LitElement, nothing, css } from 'lit'
 import { classMap } from 'lit/directives/class-map.js'
+
+const stringValueConverter = {
+  fromAttribute(value) {
+    return value ?? ''
+  },
+  toAttribute(value) {
+    return value !== null && value !== undefined && String(value) !== '' ? String(value) : null
+  },
+}
+
 /**
- * b/265340196 - add docs
+ * Material Design 3 Badge (`<md-badge>`).
  */
 export class Badge extends LitElement {
   static properties = {
-    value: { type: String },
+    value: { type: String, reflect: true, converter: stringValueConverter },
     inline: { type: Boolean, reflect: true },
   }
+
+  #internals = null
 
   constructor() {
     super(...arguments)
     this.value = ''
     this.inline = false
+    if (!isServer && typeof this.attachInternals === 'function') {
+      this.#internals = this.attachInternals()
+    }
   }
+
+  willUpdate() {
+    const hasValue = this.value !== null && this.value !== undefined && String(this.value) !== ''
+    if (this.#internals?.states) {
+      if (hasValue) {
+        this.#internals.states.add('large')
+      } else {
+        this.#internals.states.delete('large')
+      }
+    }
+  }
+
   render() {
-    const classes = { 'md3-badge--large': this.value }
+    const hasValue = this.value !== null && this.value !== undefined && String(this.value) !== ''
+    const classes = { 'md3-badge--large': hasValue }
     return html`<div class="md3-badge ${classMap(classes)}">
-      <p class="md3-badge__value">${this.value}</p>
+      ${hasValue ? html`<p class="md3-badge__value">${this.value}</p>` : nothing}
     </div>`
   }
+
   static styles = [
     css`
       :host {
@@ -43,6 +72,10 @@ export class Badge extends LitElement {
           --md-badge-large-label-text-size,
           var(--md-sys-typescale-label-small-size, 0.6875rem)
         );
+        --_large-label-text-tracking: var(
+          --md-badge-large-label-text-tracking,
+          var(--md-sys-typescale-label-small-tracking, 0.03125rem)
+        );
         --_large-label-text-weight: var(
           --md-badge-large-label-text-weight,
           var(--md-sys-typescale-label-small-weight, var(--md-ref-typeface-weight-medium, 500))
@@ -51,13 +84,30 @@ export class Badge extends LitElement {
         --_large-size: var(--md-badge-large-size, 16px);
         --_shape: var(--md-badge-shape, var(--md-sys-shape-corner-full, 9999px));
         --_size: var(--md-badge-size, 6px);
+        --_anchor-offset: calc(var(--md-badge-anchor-size, 24px) / 2);
+        pointer-events: none;
+      }
+      :host(:not([inline])) {
+        display: inline-flex;
+        position: absolute;
+        inset-block-start: 50%;
+        inset-inline-start: 50%;
+        margin-block-start: calc(0px - var(--_anchor-offset));
+        margin-inline-start: calc(var(--_anchor-offset) - var(--_size));
+      }
+      :host(:not([inline]):is([value]:not([value='']), :state(large))) {
+        margin-block-start: calc(14px - var(--_anchor-offset) - var(--_large-size));
+        margin-inline-start: calc(var(--_anchor-offset) - 12px);
+      }
+      :host([inline]) {
+        display: inline-flex;
+        position: static;
+        align-items: center;
+        vertical-align: middle;
       }
       .md3-badge {
-        inset-inline-start: 50%;
-        margin-inline-start: 6px;
-        margin-block-start: 4px;
-        position: absolute;
-        inset-block-start: 0px;
+        position: static;
+        box-sizing: border-box;
         background-color: var(--_color);
         border-radius: var(--_shape);
         height: var(--_size);
@@ -67,36 +117,24 @@ export class Badge extends LitElement {
       }
       .md3-badge.md3-badge--large {
         display: flex;
-        flex-direction: column;
+        align-items: center;
         justify-content: center;
-        margin-inline-start: 2px;
-        margin-block-start: 1px;
         background-color: var(--_large-color);
         border-radius: var(--_large-shape);
         height: var(--_large-size);
         min-width: var(--_large-size);
+        padding-inline: 4px;
         color: var(--_large-label-text-color);
-      }
-      .md3-badge.md3-badge--large .md3-badge__value {
-        padding: 0px 4px;
-        text-align: center;
       }
       .md3-badge__value {
         margin: 0;
+        text-align: center;
+        white-space: nowrap;
         font-family: var(--_large-label-text-font);
         font-size: var(--_large-label-text-size);
         line-height: var(--_large-label-text-line-height);
+        letter-spacing: var(--_large-label-text-tracking);
         font-weight: var(--_large-label-text-weight);
-      }
-      :host([inline]) {
-        display: inline-flex;
-        align-items: center;
-        vertical-align: middle;
-      }
-      :host([inline]) .md3-badge {
-        position: static;
-        inset: auto;
-        margin: 0;
       }
     `,
   ]
