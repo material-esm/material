@@ -298,8 +298,8 @@ customElements.define('profile-form', ProfileForm)
   <div slot="headline">Delete project?</div>
   <div slot="content">This action cannot be undone.</div>
   <div slot="actions">
-    <md-button color="text" @click=${() => dlg.close('cancel')}>Cancel</md-button>
-    <md-button color="filled" @click=${() => dlg.close('delete')}>Delete</md-button>
+    <md-button color="text" onclick="document.getElementById('confirm-dlg').close('cancel')">Cancel</md-button>
+    <md-button color="filled" onclick="document.getElementById('confirm-dlg').close('delete')">Delete</md-button>
   </div>
 </md-dialog>
 ```
@@ -355,7 +355,7 @@ customElements.define('profile-form', ProfileForm)
 
 ```html
 <div style="position: relative; display: inline-block;">
-  <md-button id="more-btn" @click=${() => menu.show()}>Actions</md-button>
+  <md-button id="more-btn" onclick="document.getElementById('more-menu').show()">Actions</md-button>
   <md-menu id="more-menu" anchor="more-btn" positioning="popover">
     <md-menu-item><md-icon slot="start">edit</md-icon><div slot="headline">Edit</div></md-menu-item>
     <md-menu-item><md-icon slot="start">delete</md-icon><div slot="headline">Delete</div></md-menu-item>
@@ -445,7 +445,7 @@ customElements.define('profile-form', ProfileForm)
 <md-sheet id="filters" position="end" headline="Filters" divider>
   <p>Filter options...</p>
   <div slot="actions">
-    <md-button color="filled" @click=${() => filters.close('apply')}>Apply</md-button>
+    <md-button color="filled" onclick="document.getElementById('filters').close('apply')">Apply</md-button>
   </div>
 </md-sheet>
 ```
@@ -487,7 +487,7 @@ snack('Item archived', {
 - **`<md-tab>` Props & Slots**: `type`: `'primary'` (default) | `'secondary'`; `inline-icon` (`inlineIcon`, `boolean`), `active`, `disabled`: `boolean`. Slots: `(default)` label text, `icon` (`<md-icon slot="icon">`), `badge` (`<md-badge slot="badge">`).
 
 ```html
-<md-tabs @change=${(e) => (this.tab = e.target.activeTabIndex)}>
+<md-tabs active-tab-index="0">
   <md-tab type="primary"><md-icon slot="icon">photo</md-icon>Photos</md-tab>
   <md-tab type="primary"><md-icon slot="icon">videocam</md-icon>Videos</md-tab>
 </md-tabs>
@@ -499,8 +499,8 @@ snack('Item archived', {
   - `color`: `'outlined'` (default) | `'filled'`
   - `type`: `'text'` (default) | `'textarea'` | `'email'` | `'password'` | `'number'` | `'search'` | `'tel'` | `'url'` | `'color'` | `'date'` | `'time'` | `'datetime-local'`
   - `label`, `value`, `placeholder`, `supporting-text` (`supportingText`), `error-text` (`errorText`), `prefix-text` (`prefixText`), `suffix-text` (`suffixText`): `string`
-  - `required`, `disabled`, `readOnly` (`readonly`), `error`, `no-spinner`: `boolean`
-  - `rows`, `cols`, `minLength` (`minlength`), `maxLength` (`maxlength`): `number`; `min`, `max`, `step`, `pattern`, `autocomplete`, `inputMode`: `string`
+  - `required`, `disabled`, `readonly` (`readOnly`), `error`, `no-spinner`: `boolean`
+  - `rows`, `cols`, `minlength` (`minLength`), `maxlength` (`maxLength`): `number`; `min`, `max`, `step`, `pattern`, `autocomplete`, `inputmode` (`inputMode`): `string`
   - Methods: `checkValidity()`, `reportValidity()`, `setCustomValidity(msg)`, `focus()`, `select()`, `reset()`
 - **Slots**: `leading-icon` (`<md-icon slot="leading-icon">`), `trailing-icon` (`<md-icon>` or `<md-icon-button slot="trailing-icon">`).
 - **Events**: `input`, `change`, `select` (read `e.target.value`).
