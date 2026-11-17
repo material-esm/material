@@ -10,6 +10,7 @@ import '../buttons/icon-button.js'
 import '../icon/icon.js'
 import { html, isServer, LitElement, nothing } from 'lit'
 import { classMap } from 'lit/directives/class-map.js'
+import { requestUpdateOnAriaChange } from '../internal/aria/delegate.js'
 import { isRtl } from '../internal/controller/is-rtl.js'
 import { styles } from './sheet-styles.js'
 
@@ -106,13 +107,10 @@ export class Sheet extends LitElement {
 
   set open(value) {
     const boolValue = Boolean(value)
-    if (boolValue === this.isOpen) {
-      if (boolValue && !this.hasAttribute('open')) {
+    if (boolValue) {
+      if (this.isOpen && !this.isClosing && !this.hasAttribute('open')) {
         this.setAttribute('open', '')
       }
-      return
-    }
-    if (boolValue) {
       this.show()
     } else {
       this.close()
@@ -703,7 +701,7 @@ export class Sheet extends LitElement {
       'with-divider': this.divider,
     }
 
-    const explicitAriaLabel = this.getAttribute('aria-label')
+    const { ariaLabel } = this
 
     return html`
       ${isModal ? html`<div class="scrim" part="scrim" @click=${this.handleScrimClick} aria-hidden="true"></div>` : nothing}
@@ -712,8 +710,8 @@ export class Sheet extends LitElement {
         class=${classMap(sheetClasses)}
         role=${isModal ? 'dialog' : 'region'}
         aria-modal=${isModal ? 'true' : nothing}
-        aria-labelledby=${hasHeadlineText && !explicitAriaLabel ? 'headline' : nothing}
-        aria-label=${explicitAriaLabel || (!hasHeadlineText ? 'Sheet' : nothing)}
+        aria-labelledby=${hasHeadlineText && !ariaLabel ? 'headline' : nothing}
+        aria-label=${ariaLabel || (!hasHeadlineText ? 'Sheet' : nothing)}
         tabindex="-1">
         <md-elevation part="elevation"></md-elevation>
         ${
@@ -782,5 +780,9 @@ export class Sheet extends LitElement {
     `
   }
 }
+
+;(() => {
+  requestUpdateOnAriaChange(Sheet)
+})()
 
 customElements.define('md-sheet', Sheet)
