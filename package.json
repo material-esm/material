@@ -31,6 +31,8 @@
   },
   "type": "module",
   "files": [
+    "llms.txt",
+    "**/*.md",
     "**/*.js",
     "**/*.js.map",
     "**/*.d.ts",
