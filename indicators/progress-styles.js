@@ -23,8 +23,8 @@ export const SUPPORTS_REGISTERED_PROPS = (() => {
 
 // Seamless C2-continuous sinusoidal SVG masks (stroke-width=4, amplitude=3, height=10)
 // Extended one half-cycle past [0, wavelength] so repeat-x tile boundaries have zero seam.
-const WAVY_MASK_40 = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='10' viewBox='0 0 40 10'%3E%3Cpath d='M -20 5 C -12.72 9 -7.28 9 0 5 S 12.72 1 20 5 S 32.72 9 40 5 S 52.72 1 60 5' fill='none' stroke='black' stroke-width='4'/%3E%3C/svg%3E")`
-const WAVY_MASK_20 = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='10' viewBox='0 0 20 10'%3E%3Cpath d='M -10 5 C -6.36 9 -3.64 9 0 5 S 6.36 1 10 5 S 16.36 9 20 5 S 26.36 1 30 5' fill='none' stroke='black' stroke-width='4'/%3E%3C/svg%3E")`
+const WAVY_MASK_40 = css`url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='10' viewBox='0 0 40 10'%3E%3Cpath d='M -20 5 C -12.72 9 -7.28 9 0 5 S 12.72 1 20 5 S 32.72 9 40 5 S 52.72 1 60 5' fill='none' stroke='black' stroke-width='4'/%3E%3C/svg%3E")`
+const WAVY_MASK_20 = css`url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='10' viewBox='0 0 20 10'%3E%3Cpath d='M -10 5 C -6.36 9 -3.64 9 0 5 S 6.36 1 10 5 S 16.36 9 20 5 S 26.36 1 30 5' fill='none' stroke='black' stroke-width='4'/%3E%3C/svg%3E")`
 
 export const circularStyles = css`
   :host(:not([type])),
