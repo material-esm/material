@@ -393,13 +393,15 @@ export class Sheet extends LitElement {
       })
 
       if (animId !== this._animId) return
+    }
 
+    if (sheet) {
       sheet.style.transition = ''
       sheet.style.transform = ''
-      if (scrim) {
-        scrim.style.transition = ''
-        scrim.style.opacity = ''
-      }
+    }
+    if (scrim) {
+      scrim.style.transition = ''
+      scrim.style.opacity = ''
     }
 
     this.isOpen = false
