@@ -216,14 +216,17 @@ export class ScrollField extends LitElement {
     return mid * this.itemCount + this.selectedIndex
   }
 
+  get _isExplicitEmpty() {
+    return Boolean(this.required && this._rawValue === '')
+  }
+
   get value() {
-    return this._explicitEmpty ? '' : this.valueAtIndex(this.selectedIndex)
+    return this._isExplicitEmpty ? '' : this.valueAtIndex(this.selectedIndex)
   }
 
   set value(val) {
     const oldVal = this.value
-    this._explicitEmpty = val === '' && this.required
-    this._rawValue = this._explicitEmpty ? '' : val === null || val === undefined ? undefined : String(val)
+    this._rawValue = val === null || val === undefined ? undefined : String(val)
     this._syncFormState()
     this.requestUpdate('value', oldVal)
   }
@@ -241,7 +244,7 @@ export class ScrollField extends LitElement {
   }
 
   get formattedValue() {
-    return this._explicitEmpty ? '' : this.labelAtIndex(this.selectedIndex)
+    return this._isExplicitEmpty ? '' : this.labelAtIndex(this.selectedIndex)
   }
 
   get computedAriaValueText() {
@@ -268,9 +271,11 @@ export class ScrollField extends LitElement {
     return this._internals?.willValidate ?? !this.isDisabled
   }
   checkValidity() {
-    return this._internals?.checkValidity ? this._internals.checkValidity() : !(this.required && this._explicitEmpty)
+    this._syncFormState()
+    return this._internals?.checkValidity ? this._internals.checkValidity() : !(this.required && this._isExplicitEmpty)
   }
   reportValidity() {
+    this._syncFormState()
     return this._internals?.reportValidity ? this._internals.reportValidity() : this.checkValidity()
   }
 
@@ -282,7 +287,6 @@ export class ScrollField extends LitElement {
   }
 
   formResetCallback() {
-    this._explicitEmpty = false
     this._rawValue = this._initialAttrValue ?? undefined
     this._syncFormState()
     this.requestUpdate()
@@ -308,7 +312,7 @@ export class ScrollField extends LitElement {
       super.disconnectedCallback()
       this.removeEventListener('keydown', this._onHostKeyDown)
     }
-    clearTimeout(this._programmaticTimer)
+    this._finishProgrammaticScroll(false)
     clearTimeout(this._scrollSettleTimer)
     clearTimeout(this._wheelChangeTimer)
     if (this._scrollRafId && typeof cancelAnimationFrame === 'function') {
@@ -385,7 +389,7 @@ export class ScrollField extends LitElement {
     }
     const val = this.value
     this._internals.setFormValue(val)
-    if (this.required && (this._explicitEmpty || val === '')) {
+    if (this.required && (this._isExplicitEmpty || val === '')) {
       this._internals.setValidity(
         { valueMissing: true },
         this.errorText || 'Please select a value.',
@@ -396,6 +400,14 @@ export class ScrollField extends LitElement {
     }
   }
 
+  _finishProgrammaticScroll(recenter = false) {
+    clearTimeout(this._programmaticTimer)
+    this._programmaticTimer = 0
+    this._programmaticScroll = false
+    this._programmaticTargetTop = null
+    if (recenter) this._recenterLoopIfNeeded()
+  }
+
   _syncScrollToSlot(slot, smooth = false) {
     const scroller = this.scrollerElement
     if (!scroller) return
@@ -404,22 +416,23 @@ export class ScrollField extends LitElement {
       this._windowCenterSlot = slot
     }
     this._programmaticScroll = true
+    this._programmaticTargetTop = targetTop
     clearTimeout(this._programmaticTimer)
 
-    if (smooth && !prefersReducedMotion() && typeof scroller.scrollTo === 'function') {
+    if (
+      smooth &&
+      !prefersReducedMotion() &&
+      typeof scroller.scrollTo === 'function' &&
+      Math.abs(scroller.scrollTop - targetTop) >= 1
+    ) {
       scroller.scrollTo({ top: targetTop, behavior: 'smooth' })
-      this._programmaticTimer = setTimeout(() => {
-        this._programmaticScroll = false
-        this._recenterLoopIfNeeded()
-      }, 260)
+      this._programmaticTimer = setTimeout(() => this._finishProgrammaticScroll(true), 1000)
     } else {
       const prevBehavior = scroller.style.scrollBehavior
       scroller.style.scrollBehavior = 'auto'
       scroller.scrollTop = targetTop
       scroller.style.scrollBehavior = prevBehavior
-      this._programmaticTimer = setTimeout(() => {
-        this._programmaticScroll = false
-      }, 32)
+      this._programmaticTimer = setTimeout(() => this._finishProgrammaticScroll(false), 32)
     }
   }
 
@@ -461,13 +474,12 @@ export class ScrollField extends LitElement {
     if (count <= 0 || !Number.isFinite(deltaSteps) || deltaSteps === 0) return false
     const curIdx = this.selectedIndex
     const nextIdx = this.isLoopActive ? wrapIndex(curIdx + deltaSteps, count) : clampIndex(curIdx + deltaSteps, count)
-    if (nextIdx === curIdx && !this._explicitEmpty) return false
+    if (nextIdx === curIdx && !this._isExplicitEmpty) return false
 
     const baseSlot = this.canonicalSlot
     const visualSlot =
       this.isLoopActive && Math.abs(deltaSteps) <= count ? baseSlot + deltaSteps : baseSlot - curIdx + nextIdx
 
-    this._explicitEmpty = false
     this._rawValue = this.valueAtIndex(nextIdx)
     this._syncFormState()
     this.requestUpdate()
@@ -502,7 +514,7 @@ export class ScrollField extends LitElement {
     this._editCommitting = true
     const raw = String(this._editDraft ?? '').trim()
     const prevValue = this.value
-    const prevEmpty = this._explicitEmpty
+    const prevEmpty = this._isExplicitEmpty
     let nextIdx = null
 
     if (raw !== '') {
@@ -526,7 +538,6 @@ export class ScrollField extends LitElement {
     this._editCommitting = false
     let changed = false
     if (nextIdx !== null) {
-      this._explicitEmpty = false
       this._rawValue = this.valueAtIndex(nextIdx)
       changed = prevEmpty || this._rawValue !== prevValue
       this._syncFormState()
@@ -556,8 +567,7 @@ export class ScrollField extends LitElement {
     const nextVal = this.valueAtIndex(nextIdx)
     if (this._gestureStartValue === null) this._gestureStartValue = this.value
 
-    if (this._explicitEmpty || nextVal !== this.value) {
-      this._explicitEmpty = false
+    if (this._isExplicitEmpty || nextVal !== this.value) {
       this._rawValue = nextVal
       this._syncFormState()
       this.requestUpdate()
@@ -618,7 +628,19 @@ export class ScrollField extends LitElement {
   }
 
   _onScrollEnd() {
-    if (this._programmaticScroll || this._isRecentering || this._editing || this._dragging) return
+    if (this._programmaticScroll) {
+      const scroller = this.scrollerElement
+      const maxTop = scroller ? Math.max(0, scroller.scrollHeight - scroller.clientHeight) : 0
+      const expectedTop =
+        this._programmaticTargetTop !== null && this._programmaticTargetTop !== undefined
+          ? Math.min(this._programmaticTargetTop, maxTop)
+          : null
+      if (expectedTop === null || !scroller || Math.abs(scroller.scrollTop - expectedTop) <= 2) {
+        this._finishProgrammaticScroll(true)
+      }
+      return
+    }
+    if (this._isRecentering || this._editing || this._dragging) return
     clearTimeout(this._scrollSettleTimer)
     this._applySlotFromUserScroll(this._closestSlot(), true)
   }
@@ -672,6 +694,7 @@ export class ScrollField extends LitElement {
     if (!this._dragMoved && Math.abs(dy) > 5) {
       this._dragMoved = true
       this._dragging = true
+      if (this._programmaticScroll) this._finishProgrammaticScroll(false)
       scroller.setPointerCapture?.(event.pointerId)
     }
     if (!this._dragging) return
@@ -732,8 +755,7 @@ export class ScrollField extends LitElement {
   }
 
   _jumpToIndex(idx) {
-    if (idx === this.selectedIndex && !this._explicitEmpty) return
-    this._explicitEmpty = false
+    if (idx === this.selectedIndex && !this._isExplicitEmpty) return
     this._rawValue = this.valueAtIndex(idx)
     this._syncFormState()
     this.requestUpdate()
@@ -813,7 +835,7 @@ export class ScrollField extends LitElement {
     const items = []
     for (let slot = winStart; slot <= winEnd; slot++) {
       const idx = slot % count
-      const isSelected = !this._explicitEmpty && idx === selectedIdx
+      const isSelected = !this._isExplicitEmpty && idx === selectedIdx
       items.push(html`
         <div
           class="wheel-item ${isSelected ? 'selected' : ''}"

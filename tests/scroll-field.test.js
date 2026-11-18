@@ -454,11 +454,29 @@ test('Form-associated lifecycle: setFormValue, formResetCallback, formStateResto
   el.formStateRestoreCallback('64')
   assert.equal(el.value, '64')
 
-  // Required + explicit empty triggers valueMissing validity
+  // Required + explicit empty triggers valueMissing validity regardless of property order
   el.required = true
   el.value = ''
   assert.equal(el.checkValidity(), false)
   assert.deepEqual(recordedValidity, { valueMissing: true })
+
+  const elReverse = new ScrollField()
+  let reverseValidity = {}
+  elReverse._internals = {
+    setFormValue() {},
+    setValidity(flags) {
+      reverseValidity = flags
+    },
+    checkValidity() {
+      return !reverseValidity || Object.keys(reverseValidity).length === 0
+    },
+  }
+  elReverse._supportsFormInternals = true
+  elReverse.value = ''
+  elReverse.required = true
+  assert.equal(elReverse.value, '')
+  assert.equal(elReverse.checkValidity(), false)
+  assert.deepEqual(reverseValidity, { valueMissing: true })
 })
 
 function findBrowserBinary() {
@@ -630,10 +648,17 @@ test('Live headless browser audit: demo/scroll-field-demo.html renders cleanly w
           await cadence.updateComplete
           const afterCancel = cadence.value
 
+          // Test long-distance smooth scroll via End key without mid-flight value overwrite
+          let endEvents = 0
+          s12.addEventListener('input', () => endEvents++)
+          s12.dispatchEvent(new KeyboardEvent('keydown', { key: 'End', bubbles: true }))
+          await new Promise((r) => setTimeout(r, 400))
+          const afterEndJump = s12.value
+
           // Test native FormData participation
           const formVal = new FormData(document.getElementById('demo-form')).get('cadence')
 
-          return { count: fields.length, widths, height, ariaNow, ariaText, wrappedVal, openedEditor, afterCommit, afterCancel, formVal }
+          return { count: fields.length, widths, height, ariaNow, ariaText, wrappedVal, openedEditor, afterCommit, afterCancel, afterEndJump, endEvents, formVal }
         })()`,
       },
       sessionId,
@@ -652,12 +677,15 @@ test('Live headless browser audit: demo/scroll-field-demo.html renders cleanly w
     assert.equal(data.openedEditor, true)
     assert.equal(data.afterCommit, '184')
     assert.equal(data.afterCancel, '184')
+    assert.equal(data.afterEndJump, '59')
+    assert.equal(data.endEvents, 1)
     assert.equal(data.formVal, '184')
   } finally {
     try {
       ws?.close()
     } catch {}
     proc.kill()
+    server.closeAllConnections?.()
     await new Promise((resolve) => server.close(resolve))
     try {
       fs.rmSync(userDataDir, { recursive: true, force: true })

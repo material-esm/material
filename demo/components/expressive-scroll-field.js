@@ -10,15 +10,6 @@ export const expressiveScrollFieldStyles = css`
     align-items: flex-start;
   }
 
-  .scroll-time-separator {
-    font-size: 1.5rem;
-    font-weight: 600;
-    line-height: 1;
-    padding: 0 2px;
-    color: var(--md-sys-color-on-surface);
-    align-self: center;
-  }
-
   .readout-chip {
     display: inline-flex;
     align-items: center;
@@ -108,7 +99,7 @@ export function renderScrollFieldsSection(host) {
               @input=${(e) => {
                 host.alarmHour = e.target.value
               }}></md-scroll-field>
-            <span class="scroll-time-separator" aria-hidden="true">:</span>
+            <span class="separator" aria-hidden="true">:</span>
             <md-scroll-field
               size="1-2"
               min="0"
