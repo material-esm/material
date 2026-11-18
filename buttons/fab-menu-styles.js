@@ -419,7 +419,7 @@ export const fabMenuStyles = css`
     opacity: 1;
     transition:
       opacity 180ms var(--_standard-easing),
-      display 220ms;
+      display 260ms;
     transition-behavior: allow-discrete;
   }
 

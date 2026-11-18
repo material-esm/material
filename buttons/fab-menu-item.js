@@ -179,9 +179,7 @@ export class FabMenuItem extends LitElement {
           ${this.icon ? html`<md-icon>${this.icon}</md-icon>` : nothing}
         </slot>
       </span>
-      <span class="label" part="label">
-        <slot>${this.label}</slot>
-      </span>
+      <span class="label" part="label">${this.label ? this.label : html`<slot></slot>`}</span>
     `
   }
 

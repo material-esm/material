@@ -252,9 +252,7 @@ describe('Material 3 Expressive FAB Menu — Live DOM, Specs, Events & Accessibi
     cdp = new CdpSession(wsUrl)
     await cdp.connect()
 
-    const { targetId } = await cdp.send('Target.createTarget', {
-      url: `${serverInfo.baseUrl}/__test_harness__.html`,
-    })
+    const { targetId } = await cdp.send('Target.createTarget', { url: 'about:blank' })
     const attached = await cdp.send('Target.attachToTarget', { targetId, flatten: true })
     sessionId = attached.sessionId
 
@@ -266,6 +264,7 @@ describe('Material 3 Expressive FAB Menu — Live DOM, Specs, Events & Accessibi
 
     await cdp.send('Page.enable', {}, sessionId)
     await cdp.send('Runtime.enable', {}, sessionId)
+    await cdp.send('Page.navigate', { url: `${serverInfo.baseUrl}/__test_harness__.html` }, sessionId)
 
     await cdp.evaluate(
       sessionId,
@@ -311,12 +310,16 @@ describe('Material 3 Expressive FAB Menu — Live DOM, Specs, Events & Accessibi
         fixture.innerHTML = \`
           <md-fab-menu quick aria-label="Create item">
             <md-icon slot="icon">add</md-icon>
-            <md-fab-menu-item value="doc" label="Document"><md-icon slot="icon">description</md-icon></md-fab-menu-item>
+            <md-fab-menu-item value="doc" label="Document">
+              <md-icon slot="icon">description</md-icon>
+            </md-fab-menu-item>
             <md-fab-menu-item value="sheet" label="Spreadsheet"><md-icon slot="icon">table_chart</md-icon></md-fab-menu-item>
           </md-fab-menu>
         \`
         const el = fixture.querySelector('md-fab-menu')
         await el.updateComplete
+        await el.items[0].updateComplete
+        const multilineLabelText = el.items[0].shadowRoot.querySelector('.label')?.textContent?.trim()
         const trigger = el.shadowRoot.querySelector('#trigger')
         const menu = el.shadowRoot.querySelector('#menu')
         const style = getComputedStyle(trigger)
@@ -336,11 +339,13 @@ describe('Material 3 Expressive FAB Menu — Live DOM, Specs, Events & Accessibi
           borderRadius: style.borderTopLeftRadius,
           menuDisplay: menuStyle.display,
           menuRole: menu.getAttribute('role'),
+          multilineLabelText,
         }
       })()`,
     )
 
     assert.equal(result.open, false)
+    assert.equal(result.multilineLabelText, 'Document')
     assert.equal(result.variant, 'primary')
     assert.equal(result.size, 'medium')
     assert.equal(result.align, 'end')
@@ -902,9 +907,7 @@ describe('Material 3 Expressive FAB Menu — Live DOM, Specs, Events & Accessibi
   })
 
   test('loads demo/fab-menu-demo.html cleanly with zero console or page errors', async () => {
-    const demoTarget = await cdp.send('Target.createTarget', {
-      url: `${serverInfo.baseUrl}/demo/fab-menu-demo.html`,
-    })
+    const demoTarget = await cdp.send('Target.createTarget', { url: 'about:blank' })
     const demoAttached = await cdp.send('Target.attachToTarget', {
       targetId: demoTarget.targetId,
       flatten: true,
@@ -926,6 +929,7 @@ describe('Material 3 Expressive FAB Menu — Live DOM, Specs, Events & Accessibi
 
     await cdp.send('Page.enable', {}, demoSession)
     await cdp.send('Runtime.enable', {}, demoSession)
+    await cdp.send('Page.navigate', { url: `${serverInfo.baseUrl}/demo/fab-menu-demo.html` }, demoSession)
 
     const demoState = await cdp.evaluate(
       demoSession,
