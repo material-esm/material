@@ -375,15 +375,25 @@ describe('Material 3 Expressive FAB Menu — Live DOM, Specs, Events & Accessibi
             <md-fab-menu-item icon="mail" label="Email"></md-fab-menu-item>
             <md-fab-menu-item icon="chat" label="Chat"></md-fab-menu-item>
           </md-fab-menu>
+          <md-fab-menu id="m-compact-label" label="Accessible label" quick>
+            <md-fab-menu-item icon="mail" label="Email"></md-fab-menu-item>
+          </md-fab-menu>
         \`
         const large = fixture.querySelector('#m-large')
         const small = fixture.querySelector('#m-small')
         const ext = fixture.querySelector('#m-ext')
-        await Promise.all([large.updateComplete, small.updateComplete, ext.updateComplete])
+        const compactLabel = fixture.querySelector('#m-compact-label')
+        await Promise.all([large.updateComplete, small.updateComplete, ext.updateComplete, compactLabel.updateComplete])
 
         const largeTrigger = large.shadowRoot.querySelector('#trigger')
         const smallTrigger = small.shadowRoot.querySelector('#trigger')
         const extTrigger = ext.shadowRoot.querySelector('#trigger')
+        const compactTrigger = compactLabel.shadowRoot.querySelector('#trigger')
+        const compactLabelInfo = {
+          w: getComputedStyle(compactTrigger).width,
+          ariaLabel: compactTrigger.getAttribute('aria-label'),
+          hasLabelSpan: Boolean(compactLabel.shadowRoot.querySelector('.trigger-label')),
+        }
 
         const collapsedLarge = {
           w: getComputedStyle(largeTrigger).width,
@@ -430,6 +440,7 @@ describe('Material 3 Expressive FAB Menu — Live DOM, Specs, Events & Accessibi
           collapsedLarge,
           collapsedSmall,
           collapsedExtWidth,
+          compactLabelInfo,
           openLarge,
           openSmall,
           openExt,
@@ -445,6 +456,7 @@ describe('Material 3 Expressive FAB Menu — Live DOM, Specs, Events & Accessibi
     assert.deepEqual(result.collapsedLarge, { w: '96px', h: '96px', r: '28px' })
     assert.deepEqual(result.collapsedSmall, { w: '40px', h: '40px', r: '12px' })
     assert.ok(result.collapsedExtWidth >= 80, `Expected extended FAB >= 80px, got ${result.collapsedExtWidth}`)
+    assert.deepEqual(result.compactLabelInfo, { w: '56px', ariaLabel: 'Accessible label', hasLabelSpan: false })
 
     assert.equal(result.openLarge.w, '56px')
     assert.equal(result.openLarge.h, '56px')
@@ -722,11 +734,13 @@ describe('Material 3 Expressive FAB Menu — Live DOM, Specs, Events & Accessibi
           shadowActiveId: menu.shadowRoot.activeElement?.id,
         }
 
-        // Reopen and press Tab -> closes without trapping focus
+        // Reopen and press Tab -> closes without pulling focus back to #trigger
         await menu.show()
+        menu.items[0].focus()
         press(menu.items[0], 'Tab')
         await menu.updateComplete
         const openAfterTab = menu.open
+        const activeAfterTab = document.activeElement?.id
 
         return {
           afterOpenDown,
@@ -737,6 +751,7 @@ describe('Material 3 Expressive FAB Menu — Live DOM, Specs, Events & Accessibi
           afterHome,
           afterEscape,
           openAfterTab,
+          activeAfterTab,
         }
       })()`,
     )
@@ -753,6 +768,7 @@ describe('Material 3 Expressive FAB Menu — Live DOM, Specs, Events & Accessibi
       shadowActiveId: 'trigger',
     })
     assert.equal(kbRes.openAfterTab, false)
+    assert.equal(kbRes.activeAfterTab, 'k0')
   })
 
   test('supports outside-click light-dismiss, scrim dismiss, align="start", direction="down", and RTL stagger origin', async () => {
@@ -843,11 +859,14 @@ describe('Material 3 Expressive FAB Menu — Live DOM, Specs, Events & Accessibi
         const declarativeOpen = menu.open
         const staggerIndices = menu.items.map((item) => item.style.getPropertyValue('--_stagger-index'))
 
-        let closedFired = false
-        menu.addEventListener('closed', () => {
-          closedFired = true
+        let closedReason = ''
+        menu.addEventListener('closed', (e) => {
+          closedReason = e.detail?.reason || ''
         })
-        await menu.close('animated')
+        const closePromise = menu.close('animated')
+        const closingZIndex = getComputedStyle(menu).zIndex
+        await closePromise
+        const closedZIndex = getComputedStyle(menu).zIndex
         const hiddenAfterClose = getComputedStyle(menu.shadowRoot.querySelector('#menu')).display === 'none'
 
         let openedFired = false
@@ -856,23 +875,30 @@ describe('Material 3 Expressive FAB Menu — Live DOM, Specs, Events & Accessibi
         })
         await menu.show()
 
+        // Removing open attribute triggers close('attribute')
+        menu.removeAttribute('open')
+        await new Promise((r) => setTimeout(r, 380))
+        const attrCloseReason = closedReason
+
         return {
           declarativeOpen,
           staggerIndices,
-          closedFired,
+          closingZIndex,
+          closedZIndex,
           hiddenAfterClose,
           openedFired,
-          finalOpen: menu.open,
+          attrCloseReason,
         }
       })()`,
     )
 
     assert.equal(animRes.declarativeOpen, true)
     assert.deepEqual(animRes.staggerIndices, ['2', '1', '0'])
-    assert.equal(animRes.closedFired, true)
+    assert.equal(animRes.closingZIndex, '900')
+    assert.equal(animRes.closedZIndex, 'auto')
     assert.equal(animRes.hiddenAfterClose, true)
     assert.equal(animRes.openedFired, true)
-    assert.equal(animRes.finalOpen, true)
+    assert.equal(animRes.attrCloseReason, 'attribute')
   })
 
   test('loads demo/fab-menu-demo.html cleanly with zero console or page errors', async () => {

@@ -75,7 +75,8 @@ export const fabMenuStyles = css`
     display: none;
   }
 
-  :host([open]) {
+  :host([open]),
+  :host([data-closing]) {
     z-index: var(--_z-index);
   }
 

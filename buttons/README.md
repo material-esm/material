@@ -127,19 +127,22 @@ The M3 Expressive FAB Menu replaces custom speed dials with a standardized, acce
 
 ### `<md-fab-menu>` API
 
-| Property / Attribute | Type                                                  | Default        | Description                                                                          |
-| -------------------- | ----------------------------------------------------- | -------------- | ------------------------------------------------------------------------------------ |
-| `open`               | `boolean`                                             | `false`        | Reflected open state of the menu.                                                    |
-| `variant` / `color`  | `'primary' \| 'secondary' \| 'tertiary' \| 'surface'` | `'primary'`    | M3 Expressive tonal color pairing for trigger, close button, and items.              |
-| `size`               | `'small' \| 'medium' \| 'large'`                      | `'medium'`     | Collapsed FAB size (`40px`, `56px`, or `96px`); morphs to circular `56px` when open. |
-| `label`              | `string`                                              | `''`           | Optional label text for an extended collapsed trigger.                               |
-| `align`              | `'end' \| 'start'`                                    | `'end'`        | Inline alignment of the menu items relative to the trigger (RTL-aware).              |
-| `direction`          | `'up' \| 'down'`                                      | `'up'`         | Vertical opening direction from the trigger.                                         |
-| `scrim`              | `boolean`                                             | `false`        | Renders a light-dismiss backdrop scrim behind the menu when open.                    |
-| `close-label`        | `string`                                              | `'Close menu'` | Accessible `aria-label` applied to the trigger button while open.                    |
-| `lowered`            | `boolean`                                             | `false`        | Lowers collapsed trigger elevation from level 3 to level 1.                          |
-| `disabled`           | `boolean`                                             | `false`        | Disables opening the menu.                                                           |
-| `quick`              | `boolean`                                             | `false`        | Skips open/close transitions.                                                        |
+| Property / Attribute | Type                                                  | Default        | Description                                                                           |
+| -------------------- | ----------------------------------------------------- | -------------- | ------------------------------------------------------------------------------------- |
+| `open`               | `boolean`                                             | `false`        | Reflected open state of the menu.                                                     |
+| `variant` / `color`  | `'primary' \| 'secondary' \| 'tertiary' \| 'surface'` | `'primary'`    | M3 Expressive tonal color pairing for trigger, close button, and items.               |
+| `size`               | `'small' \| 'medium' \| 'large'`                      | `'medium'`     | Collapsed FAB size (`40px`, `56px`, or `96px`); morphs to circular `56px` when open.  |
+| `label`              | `string`                                              | `''`           | Label text (used as accessible fallback label, and displayed when `extended` is set). |
+| `extended`           | `boolean`                                             | `false`        | Expands the collapsed trigger into an extended FAB showing `label`.                   |
+| `icon`               | `string`                                              | `''`           | Optional Material icon name for the collapsed trigger (or pass `slot="icon"`).        |
+| `close-icon`         | `string`                                              | `''`           | Optional Material icon name for the expanded close button (or `slot="close-icon"`).   |
+| `align`              | `'end' \| 'start'`                                    | `'end'`        | Inline alignment of the menu items relative to the trigger (RTL-aware).               |
+| `direction`          | `'up' \| 'down'`                                      | `'up'`         | Vertical opening direction from the trigger.                                          |
+| `scrim`              | `boolean`                                             | `false`        | Renders a light-dismiss backdrop scrim behind the menu when open.                     |
+| `close-label`        | `string`                                              | `'Close menu'` | Accessible `aria-label` applied to the trigger button while open.                     |
+| `lowered`            | `boolean`                                             | `false`        | Lowers collapsed trigger elevation from level 3 to level 1.                           |
+| `disabled`           | `boolean`                                             | `false`        | Disables opening the menu.                                                            |
+| `quick`              | `boolean`                                             | `false`        | Skips open/close transitions.                                                         |
 
 - **Methods**: `show()`, `close(reason?)`, `toggle()`
 - **Events**: `open` (cancelable), `opened`, `close` (cancelable), `closed`, `item-activate` (cancelable, bubbles from `<md-fab-menu-item>`)

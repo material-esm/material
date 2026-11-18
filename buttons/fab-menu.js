@@ -158,15 +158,18 @@ export class FabMenu extends LitElement {
   }
 
   attributeChangedCallback(name, old, value) {
-    super.attributeChangedCallback(name, old, value)
-    if (name === 'open' && !this._syncingAttr) {
-      const hasAttr = value !== null
-      if (hasAttr && !this._isOpen) {
-        this.show()
-      } else if (!hasAttr && this._isOpen) {
-        this.close('attribute')
+    if (name === 'open') {
+      if (!this._syncingAttr) {
+        const hasAttr = value !== null
+        if (hasAttr && !this._isOpen) {
+          this.show()
+        } else if (!hasAttr && this._isOpen) {
+          this.close('attribute')
+        }
       }
+      return
     }
+    super.attributeChangedCallback(name, old, value)
   }
 
   connectedCallback() {
@@ -234,9 +237,10 @@ export class FabMenu extends LitElement {
     })
   }
 
-  restoreTriggerFocus({ restoreFocus = false, fromPointer = false } = {}) {
-    if (isServer || typeof document === 'undefined') return
-    const active = document.activeElement
+  restoreTriggerFocus({ restoreFocus, fromPointer = false } = {}) {
+    if (isServer || typeof document === 'undefined' || restoreFocus === false) return
+    const root = this.getRootNode?.()
+    const active = (root && 'activeElement' in root ? root.activeElement : null) ?? document.activeElement
     const focusInsideMenu =
       Boolean(active) && (active === this || this.contains?.(active) || Boolean(this.renderRoot?.activeElement))
 
@@ -300,6 +304,7 @@ export class FabMenu extends LitElement {
     this._isOpen = true
     this._isClosing = false
     this._menuHidden = false
+    this.removeAttribute('data-closing')
     this._syncingAttr = true
     this.setAttribute('open', '')
     this._syncingAttr = false
@@ -327,6 +332,7 @@ export class FabMenu extends LitElement {
    */
   async close(reason = '', options = {}) {
     if (!this._isOpen) {
+      this.removeAttribute('data-closing')
       this._syncingAttr = true
       this.removeAttribute('open')
       this._syncingAttr = false
@@ -355,6 +361,7 @@ export class FabMenu extends LitElement {
     this._syncingAttr = false
 
     if (this.shouldSkipAnimation()) {
+      this.removeAttribute('data-closing')
       this._isClosing = false
       this._menuHidden = true
       this.requestUpdate('open', true)
@@ -363,6 +370,8 @@ export class FabMenu extends LitElement {
       this.dispatchEvent(new CustomEvent('closed', { detail: { reason } }))
       return true
     }
+
+    this.setAttribute('data-closing', '')
 
     if (canTransitionDisplay()) {
       this._isClosing = false
@@ -376,6 +385,7 @@ export class FabMenu extends LitElement {
       await this.waitForAnimations([this.menuElement, this.scrimElement, ...this.items], 320)
       if (animId !== this._animId) return false
 
+      this.removeAttribute('data-closing')
       this.dispatchEvent(new CustomEvent('closed', { detail: { reason } }))
       return true
     }
@@ -391,6 +401,7 @@ export class FabMenu extends LitElement {
     await this.waitForAnimations([this.menuElement, this.scrimElement, ...this.items], 320)
     if (animId !== this._animId) return false
 
+    this.removeAttribute('data-closing')
     this._isClosing = false
     this._menuHidden = true
     this.requestUpdate()
@@ -488,7 +499,10 @@ export class FabMenu extends LitElement {
     event.stopPropagation()
 
     const path = typeof event.composedPath === 'function' ? event.composedPath() : []
-    const active = typeof document !== 'undefined' ? document.activeElement : null
+    const root = this.getRootNode?.()
+    const active =
+      (root && 'activeElement' in root ? root.activeElement : null) ??
+      (typeof document !== 'undefined' ? document.activeElement : null)
     const currentIndex = enabled.findIndex((item) => item === active || item.contains?.(active) || path.includes(item))
 
     if (key === 'Home') {
@@ -534,7 +548,7 @@ export class FabMenu extends LitElement {
   }
 
   render() {
-    const isExtended = Boolean(this.label) && (this.extended || Boolean(this.label))
+    const isExtended = Boolean(this.label && this.extended)
     const collapsedLabel = this.ariaLabel || this.label || 'Open menu'
     const triggerAriaLabel = this._isOpen ? this.closeLabel || 'Close menu' : collapsedLabel
     const showOverlay = this._isOpen || this._isClosing
