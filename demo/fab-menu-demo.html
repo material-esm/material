@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Material 3 Expressive FAB Menu Demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="preload"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap"
+      as="style"
+      onload="
+        this.onload = null
+        this.rel = 'stylesheet'
+      " />
+    <link
+      rel="preload"
+      href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;700&display=swap"
+      as="style"
+      onload="
+        this.onload = null
+        this.rel = 'stylesheet'
+      " />
+
+    <link rel="icon" href="./images/material.jpeg" />
+    <link rel="stylesheet" href="./css/styles.css" />
+
+    <script type="importmap">
+      {
+        "imports": {
+          "lit": "https://cdn.jsdelivr.net/npm/lit@3/index.js",
+          "lit/": "https://cdn.jsdelivr.net/npm/lit@3/",
+          "@lit/localize": "https://cdn.jsdelivr.net/npm/@lit/localize/lit-localize.js",
+          "@lit/reactive-element": "https://cdn.jsdelivr.net/npm/@lit/reactive-element@2/reactive-element.js",
+          "@lit/reactive-element/": "https://cdn.jsdelivr.net/npm/@lit/reactive-element@2/",
+          "lit-element/lit-element.js": "https://cdn.jsdelivr.net/npm/lit-element@4/lit-element.js",
+          "lit-html": "https://cdn.jsdelivr.net/npm/lit-html@3/lit-html.js",
+          "lit-html/": "https://cdn.jsdelivr.net/npm/lit-html@3/",
+          "material/": "../"
+        }
+      }
+    </script>
+
+    <script type="module">
+      import 'material/buttons/fab-menu.js'
+      import 'material/buttons/button.js'
+      import 'material/buttons/button-group.js'
+      import 'material/icon/icon.js'
+      import 'material/switch/switch.js'
+    </script>
+
+    <style>
+      body {
+        background: var(--md-sys-color-background, #fef7ff);
+        color: var(--md-sys-color-on-background, #1d1b20);
+        padding: 24px 24px 120px;
+        max-width: 1040px;
+        margin: 0 auto;
+        box-sizing: border-box;
+      }
+
+      header.header-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      header.header-nav h1 {
+        margin: 0;
+        font-size: 1.75rem;
+        font-weight: 600;
+      }
+
+      .subtitle {
+        margin: 4px 0 0;
+        color: var(--md-sys-color-on-surface-variant, #49454f);
+      }
+
+      .demo-section {
+        margin-bottom: 24px;
+        background: var(--md-sys-color-surface-container, #f3edf7);
+        border-radius: 24px;
+        padding: 24px;
+        box-sizing: border-box;
+      }
+
+      .demo-section h2 {
+        margin: 0 0 8px;
+        font-size: 1.25rem;
+        font-weight: 500;
+      }
+
+      .demo-section p {
+        margin: 0 0 16px;
+        color: var(--md-sys-color-on-surface-variant, #49454f);
+      }
+
+      .playground-layout {
+        display: grid;
+        grid-template-columns: minmax(260px, 1fr) minmax(300px, 1.2fr);
+        gap: 24px;
+        align-items: stretch;
+      }
+
+      @media (width < 720px) {
+        .playground-layout {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .controls-panel {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+
+      .control-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+      }
+
+      .control-row label {
+        font-weight: 500;
+        font-size: 0.9rem;
+      }
+
+      .control-row select,
+      .control-row input[type='range'] {
+        padding: 6px 10px;
+        border-radius: 10px;
+        border: 1px solid var(--md-sys-color-outline-variant, #cac4d0);
+        background: var(--md-sys-color-surface, #ffffff);
+        color: inherit;
+        font: inherit;
+      }
+
+      .preview-stage {
+        position: relative;
+        min-height: 440px;
+        border-radius: 20px;
+        padding: 24px;
+        background: var(--md-sys-color-surface-container-lowest, #ffffff);
+        border: 1px solid var(--md-sys-color-outline-variant, #cac4d0);
+        display: flex;
+        align-items: flex-end;
+        justify-content: flex-end;
+        overflow: visible;
+      }
+
+      .preview-stage[data-align='start'] {
+        justify-content: flex-start;
+      }
+
+      .preview-stage[data-direction='down'] {
+        align-items: flex-start;
+      }
+
+      .stage-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+      }
+
+      .mini-stage {
+        position: relative;
+        min-height: 300px;
+        border-radius: 20px;
+        padding: 20px;
+        background: var(--md-sys-color-surface-container-lowest, #ffffff);
+        border: 1px solid var(--md-sys-color-outline-variant, #cac4d0);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .mini-stage-header {
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: var(--md-sys-color-on-surface-variant, #49454f);
+      }
+
+      .mini-stage-anchor {
+        display: flex;
+        justify-content: flex-end;
+        align-items: flex-end;
+      }
+
+      .mini-stage-anchor.start {
+        justify-content: flex-start;
+      }
+
+      .button-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .event-log {
+        background: var(--md-sys-color-surface-container-high, #ece6f0);
+        border-radius: 12px;
+        padding: 12px 16px;
+        font-family: monospace;
+        font-size: 0.85rem;
+        margin-top: 16px;
+        max-height: 150px;
+        overflow-y: auto;
+      }
+
+      .floating-corner-fab {
+        position: fixed;
+        inset-block-end: 24px;
+        inset-inline-end: 24px;
+        z-index: 950;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="header-nav">
+      <div>
+        <h1>FAB Menu (M3 Expressive)</h1>
+        <p class="subtitle">
+          Speed-dial menu with 2–6 pill actions, morphing 56dp close button, dynamic color sets, and keyboard navigation
+        </p>
+      </div>
+      <div class="button-row">
+        <a href="./index.html">← All Demos</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="demo-section">
+        <h2>Interactive Playground</h2>
+        <p>
+          Configure tonal color sets, collapsed FAB sizes, item counts (2–6), alignment, opening direction, and optional
+          scrim. Use <code>ArrowUp</code> / <code>ArrowDown</code> / <code>Home</code> / <code>End</code> /
+          <code>Escape</code> to test keyboard navigation.
+        </p>
+
+        <div class="playground-layout">
+          <div class="controls-panel">
+            <div class="control-row">
+              <label for="ctrl-variant">Color scheme (`variant`)</label>
+              <select id="ctrl-variant">
+                <option value="primary" selected>primary</option>
+                <option value="secondary">secondary</option>
+                <option value="tertiary">tertiary</option>
+                <option value="surface">surface</option>
+              </select>
+            </div>
+
+            <div class="control-row">
+              <label for="ctrl-size">Collapsed FAB `size`</label>
+              <select id="ctrl-size">
+                <option value="small">small (40px)</option>
+                <option value="medium" selected>medium (56px)</option>
+                <option value="large">large (96px)</option>
+              </select>
+            </div>
+
+            <div class="control-row">
+              <label for="ctrl-count">Action items: <span id="ctrl-count-val">4</span></label>
+              <input id="ctrl-count" type="range" min="2" max="6" value="4" />
+            </div>
+
+            <div class="control-row">
+              <label for="ctrl-align">Alignment (`align`)</label>
+              <select id="ctrl-align">
+                <option value="end" selected>end (trailing)</option>
+                <option value="start">start (leading)</option>
+              </select>
+            </div>
+
+            <div class="control-row">
+              <label for="ctrl-direction">Opening `direction`</label>
+              <select id="ctrl-direction">
+                <option value="up" selected>up</option>
+                <option value="down">down</option>
+              </select>
+            </div>
+
+            <div class="control-row">
+              <label for="ctrl-extended">Extended label (`label="Create"`)</label>
+              <input id="ctrl-extended" type="checkbox" />
+            </div>
+
+            <div class="control-row">
+              <label for="ctrl-scrim">Backdrop `scrim`</label>
+              <input id="ctrl-scrim" type="checkbox" />
+            </div>
+
+            <div class="button-row" style="margin-top: 8px">
+              <md-button id="btn-open" color="tonal" size="small">show()</md-button>
+              <md-button id="btn-close" color="outlined" size="small">close()</md-button>
+              <md-button id="btn-toggle" color="filled" size="small">toggle()</md-button>
+            </div>
+
+            <div class="event-log" id="event-log" role="log" aria-live="polite">
+              <div>Ready — click or press Enter on any FAB menu trigger.</div>
+            </div>
+          </div>
+
+          <div class="preview-stage" id="preview-stage" data-align="end" data-direction="up">
+            <md-fab-menu id="playground-menu" variant="primary" size="medium" aria-label="Create new item">
+              <md-icon slot="icon">add</md-icon>
+              <md-fab-menu-item value="document" label="Document">
+                <md-icon slot="icon">description</md-icon>
+              </md-fab-menu-item>
+              <md-fab-menu-item value="spreadsheet" label="Spreadsheet">
+                <md-icon slot="icon">table_chart</md-icon>
+              </md-fab-menu-item>
+              <md-fab-menu-item value="presentation" label="Presentation">
+                <md-icon slot="icon">slideshow</md-icon>
+              </md-fab-menu-item>
+              <md-fab-menu-item value="folder" label="Folder">
+                <md-icon slot="icon">folder</md-icon>
+              </md-fab-menu-item>
+            </md-fab-menu>
+          </div>
+        </div>
+      </section>
+
+      <section class="demo-section">
+        <h2>M3 Expressive Color Sets (Primary, Secondary, Tertiary)</h2>
+        <p>
+          Each color set pairs a container-colored collapsed FAB and 56dp pill items with a contrasting solid 56dp round
+          close button when expanded.
+        </p>
+
+        <div class="stage-grid">
+          <div class="mini-stage">
+            <span class="mini-stage-header">Primary (default) — 3 items</span>
+            <div class="mini-stage-anchor">
+              <md-fab-menu variant="primary" aria-label="Compose message">
+                <md-icon slot="icon">edit</md-icon>
+                <md-fab-menu-item value="reply" icon="reply" label="Reply"></md-fab-menu-item>
+                <md-fab-menu-item value="reply-all" icon="reply_all" label="Reply all"></md-fab-menu-item>
+                <md-fab-menu-item value="forward" icon="forward" label="Forward"></md-fab-menu-item>
+              </md-fab-menu>
+            </div>
+          </div>
+
+          <div class="mini-stage">
+            <span class="mini-stage-header">Secondary — 3 items</span>
+            <div class="mini-stage-anchor">
+              <md-fab-menu variant="secondary" aria-label="Share media">
+                <md-icon slot="icon">share</md-icon>
+                <md-fab-menu-item value="photo" icon="photo_camera" label="Camera"></md-fab-menu-item>
+                <md-fab-menu-item value="gallery" icon="image" label="Photo library"></md-fab-menu-item>
+                <md-fab-menu-item value="scan" icon="document_scanner" label="Scan document"></md-fab-menu-item>
+              </md-fab-menu>
+            </div>
+          </div>
+
+          <div class="mini-stage">
+            <span class="mini-stage-header">Tertiary — 2 items</span>
+            <div class="mini-stage-anchor">
+              <md-fab-menu variant="tertiary" aria-label="Start call">
+                <md-icon slot="icon">call</md-icon>
+                <md-fab-menu-item value="voice" icon="mic" label="Voice call"></md-fab-menu-item>
+                <md-fab-menu-item value="video" icon="videocam" label="Video call"></md-fab-menu-item>
+              </md-fab-menu>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="demo-section">
+        <h2>Trigger Sizes, Alignment, Links & Item States</h2>
+        <p>
+          Demonstrating Large (`96px` → `56px` round close button), Extended (`label`), leading alignment
+          (`align="start"`), `keep-open`, `href` links, and `disabled` items.
+        </p>
+
+        <div class="stage-grid">
+          <div class="mini-stage">
+            <span class="mini-stage-header">Large FAB (`96px` → `56px` close)</span>
+            <div class="mini-stage-anchor">
+              <md-fab-menu size="large" variant="primary" aria-label="Add media">
+                <md-icon slot="icon">add</md-icon>
+                <md-fab-menu-item value="note" icon="note_add" label="Quick note"></md-fab-menu-item>
+                <md-fab-menu-item value="voice-memo" icon="graphic_eq" label="Voice memo"></md-fab-menu-item>
+              </md-fab-menu>
+            </div>
+          </div>
+
+          <div class="mini-stage">
+            <span class="mini-stage-header">Extended FAB + `align="start"`</span>
+            <div class="mini-stage-anchor start">
+              <md-fab-menu align="start" variant="secondary" label="New item" extended aria-label="New item">
+                <md-icon slot="icon">add</md-icon>
+                <md-fab-menu-item
+                  value="pin"
+                  icon="push_pin"
+                  label="Pin draft (keep-open)"
+                  keep-open></md-fab-menu-item>
+                <md-fab-menu-item value="docs" icon="open_in_new" label="M3 Spec" href="#top"></md-fab-menu-item>
+                <md-fab-menu-item value="locked" icon="lock" label="Archived (disabled)" disabled></md-fab-menu-item>
+              </md-fab-menu>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Viewport-anchored 6-item FAB Menu with Scrim -->
+    <md-fab-menu class="floating-corner-fab" variant="primary" scrim aria-label="Quick actions">
+      <md-icon slot="icon">bolt</md-icon>
+      <md-fab-menu-item value="event" icon="event" label="Calendar event"></md-fab-menu-item>
+      <md-fab-menu-item value="task" icon="check_circle" label="New task"></md-fab-menu-item>
+      <md-fab-menu-item value="reminder" icon="notifications" label="Reminder"></md-fab-menu-item>
+      <md-fab-menu-item value="contact" icon="person_add" label="Add contact"></md-fab-menu-item>
+      <md-fab-menu-item value="upload" icon="cloud_upload" label="Upload file"></md-fab-menu-item>
+      <md-fab-menu-item value="note" icon="edit_note" label="New note"></md-fab-menu-item>
+    </md-fab-menu>
+
+    <script type="module">
+      const ALL_ITEMS = [
+        { value: 'document', icon: 'description', label: 'Document' },
+        { value: 'spreadsheet', icon: 'table_chart', label: 'Spreadsheet' },
+        { value: 'presentation', icon: 'slideshow', label: 'Presentation' },
+        { value: 'folder', icon: 'folder', label: 'Folder' },
+        { value: 'upload', icon: 'upload_file', label: 'Upload file' },
+        { value: 'template', icon: 'dashboard_customize', label: 'From template' },
+      ]
+
+      const playgroundMenu = document.getElementById('playground-menu')
+      const previewStage = document.getElementById('preview-stage')
+      const logEl = document.getElementById('event-log')
+
+      function log(message) {
+        const line = document.createElement('div')
+        const time = new Date().toLocaleTimeString()
+        line.textContent = `[${time}] ${message}`
+        logEl.prepend(line)
+      }
+
+      function rebuildItems(count) {
+        playgroundMenu.querySelectorAll('md-fab-menu-item').forEach((el) => el.remove())
+        ALL_ITEMS.slice(0, count).forEach(({ value, icon, label }) => {
+          const item = document.createElement('md-fab-menu-item')
+          item.value = value
+          item.icon = icon
+          item.label = label
+          playgroundMenu.appendChild(item)
+        })
+      }
+
+      document.getElementById('ctrl-variant').addEventListener('change', (e) => {
+        playgroundMenu.variant = e.target.value
+      })
+      document.getElementById('ctrl-size').addEventListener('change', (e) => {
+        playgroundMenu.size = e.target.value
+      })
+      document.getElementById('ctrl-count').addEventListener('input', (e) => {
+        const count = Number(e.target.value)
+        document.getElementById('ctrl-count-val').textContent = String(count)
+        rebuildItems(count)
+      })
+      document.getElementById('ctrl-align').addEventListener('change', (e) => {
+        playgroundMenu.align = e.target.value
+        previewStage.dataset.align = e.target.value
+      })
+      document.getElementById('ctrl-direction').addEventListener('change', (e) => {
+        playgroundMenu.direction = e.target.value
+        previewStage.dataset.direction = e.target.value
+      })
+      document.getElementById('ctrl-extended').addEventListener('change', (e) => {
+        playgroundMenu.extended = e.target.checked
+        playgroundMenu.label = e.target.checked ? 'Create' : ''
+      })
+      document.getElementById('ctrl-scrim').addEventListener('change', (e) => {
+        playgroundMenu.scrim = e.target.checked
+      })
+
+      document.getElementById('btn-open').addEventListener('click', () => playgroundMenu.show())
+      document.getElementById('btn-close').addEventListener('click', () => playgroundMenu.close('button'))
+      document.getElementById('btn-toggle').addEventListener('click', () => playgroundMenu.toggle())
+
+      document.querySelectorAll('md-fab-menu').forEach((menu) => {
+        const id = menu.id || menu.getAttribute('variant') || 'fab-menu'
+        menu.addEventListener('open', () => log(`${id}: open`))
+        menu.addEventListener('opened', () => log(`${id}: opened`))
+        menu.addEventListener('close', (e) => log(`${id}: close (reason=${e.detail?.reason || 'none'})`))
+        menu.addEventListener('closed', (e) => log(`${id}: closed (reason=${e.detail?.reason || 'none'})`))
+        menu.addEventListener('item-activate', (e) => {
+          log(`${id}: item-activate -> #${e.detail.index} "${e.detail.label}" (value=${e.detail.value})`)
+        })
+      })
+    </script>
+  </body>
+</html>
