@@ -46,6 +46,37 @@ const FOCUSABLE_ROLES = new Set([
   'slider',
 ])
 
+const NON_TEXT_INPUT_TYPES = new Set([
+  'button',
+  'checkbox',
+  'color',
+  'file',
+  'hidden',
+  'image',
+  'radio',
+  'range',
+  'reset',
+  'submit',
+])
+
+function isTextEditableElement(el) {
+  if (!el) return false
+  if (el.isContentEditable === true) return true
+  if (el.hasAttribute?.('contenteditable')) {
+    const ce = (el.getAttribute('contenteditable') || '').trim().toLowerCase()
+    if (ce === '' || ce === 'true' || ce === 'plaintext-only') return true
+  }
+  const tag = (el.tagName || '').toUpperCase()
+  if (tag === 'TEXTAREA' || tag === 'MD-TEXT-FIELD' || tag === 'MD-SEARCH') {
+    return true
+  }
+  if (tag === 'INPUT') {
+    const inputType = (el.type || el.getAttribute?.('type') || 'text').trim().toLowerCase()
+    return !NON_TEXT_INPUT_TYPES.has(inputType)
+  }
+  return false
+}
+
 /**
  * Material Design 3 Expressive Toolbar component (`<md-toolbar>`).
  *
@@ -76,7 +107,7 @@ export class Toolbar extends LitElement {
     /** Toolbar layout type: 'floating' (default) | 'docked' */
     type: { type: String, reflect: true },
     /** Optional alias for `type` ('floating' | 'docked') or `color` ('standard' | 'vibrant') */
-    variant: { type: String },
+    variant: { type: String, reflect: true },
     /** Toolbar axis: 'horizontal' (default) | 'vertical' (docked toolbars are always horizontal) */
     orientation: { type: String, reflect: true },
     /** M3 Expressive color mapping: 'standard' (default) | 'vibrant' */
@@ -363,10 +394,13 @@ export class Toolbar extends LitElement {
     if (!event || event.altKey || event.ctrlKey || event.metaKey) {
       return
     }
+    const path = typeof event.composedPath === 'function' ? event.composedPath() : [event.target]
+    if (isTextEditableElement(path[0]) || isTextEditableElement(event.target)) {
+      return
+    }
     const items = this.getToolbarItems()
     if (items.length === 0) return
 
-    const path = typeof event.composedPath === 'function' ? event.composedPath() : [event.target]
     const targetIdx = items.findIndex(
       (item) =>
         path.includes(item) || item === event.target || item.contains?.(event.target) || this._isItemFocused(item),

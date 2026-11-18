@@ -210,6 +210,7 @@ describe('Material 3 Expressive Toolbar (<md-toolbar>)', () => {
       assert.equal(el._effectiveColor, 'vibrant')
 
       const viaVariant = new Toolbar()
+      assert.equal(Toolbar.properties.variant.reflect, true)
       viaVariant.variant = 'docked'
       assert.equal(viaVariant._effectiveType, 'docked')
 
@@ -353,7 +354,11 @@ describe('Material 3 Expressive Toolbar (<md-toolbar>)', () => {
       assert.match(cssText, /--md-icon-button-icon-color:\s*var\(--_icon-color\)/)
       assert.match(cssText, /--md-icon-button-selected-container-color:\s*var\(--_active-container-color\)/)
       assert.match(cssText, /--md-button-container-color:\s*var\(--_filled-container-color\)/)
+      assert.match(cssText, /::slotted\(md-button\[color='text'\]\)/)
       assert.match(cssText, /--md-filled-tonal-button-container-color:\s*var\(--_active-container-color\)/)
+      assert.match(cssText, /:host\(\[collapsed\]\[position='top'\]\)\s*\.toolbar-wrapper:not\(\.has-fab\)/)
+      assert.match(cssText, /:host\(\[collapsed\]\[position='start'\]\)\s*\.toolbar-wrapper:not\(\.has-fab\)/)
+      assert.match(cssText, /:host\(\[collapsed\]\[position='end'\]\)\s*\.toolbar-wrapper:not\(\.has-fab\)/)
     })
 
     it('respects prefers-reduced-motion and forced-colors media queries', () => {
@@ -494,6 +499,36 @@ describe('Material 3 Expressive Toolbar (<md-toolbar>)', () => {
       assert.equal(b2.tabIndex, 0)
       assert.equal(b0.tabIndex, -1)
       assert.equal(b1.tabIndex, -1)
+    })
+
+    it('does not intercept arrow, Home, or End keys inside text-editable inputs or textareas', () => {
+      const el = new Toolbar()
+      const textInput = createMockControl('INPUT', { type: 'text' })
+      const textarea = createMockControl('TEXTAREA')
+      const checkboxInput = createMockControl('INPUT', { type: 'checkbox' })
+      const btn = createMockControl('MD-ICON-BUTTON')
+      attachMockChildren(el, [textInput, textarea, checkboxInput, btn])
+
+      textInput.focus()
+      for (const key of ['ArrowRight', 'ArrowLeft', 'Home', 'End']) {
+        const ev = createKeyEvent(key, textInput)
+        el._handleKeydown(ev)
+        assert.equal(ev.defaultPrevented, false)
+        assert.equal(textInput.focused, true)
+      }
+
+      textarea.focus()
+      const evTextarea = createKeyEvent('ArrowRight', textarea)
+      el._handleKeydown(evTextarea)
+      assert.equal(evTextarea.defaultPrevented, false)
+      assert.equal(textarea.focused, true)
+
+      // Non-text inputs such as checkboxes still rove normally
+      checkboxInput.focus()
+      const evCheckbox = createKeyEvent('ArrowRight', checkboxInput)
+      el._handleKeydown(evCheckbox)
+      assert.equal(evCheckbox.defaultPrevented, true)
+      assert.equal(btn.focused, true)
     })
   })
 

@@ -351,6 +351,20 @@ export const styles = css`
     --_container-color: var(--_active-container-color);
   }
 
+  /* Slotted text buttons read --md-button-* tokens; restore toolbar icon/text color so they stay legible */
+  .toolbar__section ::slotted(md-button[color='text']) {
+    --md-button-label-text-color: var(--_icon-color);
+    --md-button-hover-label-text-color: var(--_icon-color);
+    --md-button-focus-label-text-color: var(--_icon-color);
+    --md-button-pressed-label-text-color: var(--_icon-color);
+    --md-button-icon-color: var(--_icon-color);
+    --md-button-hover-icon-color: var(--_icon-color);
+    --md-button-focus-icon-color: var(--_icon-color);
+    --md-button-pressed-icon-color: var(--_icon-color);
+    --md-button-hover-state-layer-color: var(--_icon-color);
+    --md-button-pressed-state-layer-color: var(--_icon-color);
+  }
+
   /* Floating toolbars enforce round pill geometry on selected icon buttons per M3 Expressive guidelines */
   .toolbar--floating .toolbar__section ::slotted(md-icon-button[selected]) {
     --_container-shape-start-start: var(--md-sys-shape-corner-full, 9999px);
@@ -432,6 +446,20 @@ export const styles = css`
     opacity: 0;
     pointer-events: none;
     transform: translateY(calc(100% + 24px)) scale(0.92);
+  }
+
+  :host([collapsed][position='top']) .toolbar-wrapper:not(.has-fab) {
+    transform: translateY(calc(-100% - 24px)) scale(0.92);
+  }
+
+  :host([collapsed][position='start']) .toolbar-wrapper:not(.has-fab),
+  :host([collapsed][position='end']:dir(rtl)) .toolbar-wrapper:not(.has-fab) {
+    transform: translateX(calc(-100% - 24px)) scale(0.92);
+  }
+
+  :host([collapsed][position='end']) .toolbar-wrapper:not(.has-fab),
+  :host([collapsed][position='start']:dir(rtl)) .toolbar-wrapper:not(.has-fab) {
+    transform: translateX(calc(100% + 24px)) scale(0.92);
   }
 
   /* Expressive spring transitions gated behind reduced-motion preference */

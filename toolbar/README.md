@@ -163,20 +163,20 @@ Attach `scroll-behavior="hide"` (slides off-screen on scroll down) or `scroll-be
 
 ### CSS Custom Properties
 
-| Property                              | Default                                                              | Description                                                  |
-| ------------------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------ |
-| `--md-toolbar-container-color`        | `surface-container-high` / `surface-container` / `primary-container` | Background color of the toolbar container.                   |
-| `--md-toolbar-container-height`       | `64px`                                                               | Height of horizontal floating and docked toolbars.           |
-| `--md-toolbar-container-width`        | `64px`                                                               | Width of vertical floating toolbars.                         |
-| `--md-toolbar-container-shape`        | `9999px` (floating) / `0px` (docked)                                 | Border radius of the toolbar surface.                        |
-| `--md-toolbar-container-elevation`    | `3` (floating) / `2` (docked)                                        | Material elevation level (`0`–`5`).                          |
-| `--md-toolbar-icon-color`             | `on-surface-variant` / `on-primary-container`                        | Unselected icon and text color cascaded to slotted controls. |
-| `--md-toolbar-active-container-color` | `secondary-container` / `primary`                                    | Background color of selected/active toggle controls.         |
-| `--md-toolbar-active-icon-color`      | `on-secondary-container` / `on-primary`                              | Icon/text color of selected/active toggle controls.          |
-| `--md-toolbar-inline-padding`         | `12px` (floating) / `16px` (docked)                                  | Inline start/end padding of the toolbar surface.             |
-| `--md-toolbar-block-padding`          | `8px` (horizontal) / `12px` (vertical) / `0px` (docked)              | Block top/bottom padding of the toolbar surface.             |
-| `--md-toolbar-item-gap`               | `4px` (floating) / `clamp(8px, 3vw, 32px)` (docked)                  | Spacing between toolbar items.                               |
-| `--md-toolbar-fab-gap`                | `8px`                                                                | Gap between the toolbar and a paired `slot="fab"`.           |
-| `--md-toolbar-edge-offset`            | `16px`                                                               | Screen-edge offset margin for positioned floating toolbars.  |
-| `--md-toolbar-z-index`                | `100`                                                                | `z-index` applied when `position` is `'bottom'               | 'top' | 'start' | 'end'`. |
-| `--md-toolbar-positioning`            | `fixed` (`absolute` when `contained`)                                | CSS `position` mode for anchored toolbars.                   |
+| Property                              | Default                                                              | Description                                                                      |
+| ------------------------------------- | -------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `--md-toolbar-container-color`        | `surface-container-high` / `surface-container` / `primary-container` | Background color of the toolbar container.                                       |
+| `--md-toolbar-container-height`       | `64px`                                                               | Height of horizontal floating and docked toolbars.                               |
+| `--md-toolbar-container-width`        | `64px`                                                               | Width of vertical floating toolbars.                                             |
+| `--md-toolbar-container-shape`        | `9999px` (floating) / `0px` (docked)                                 | Border radius of the toolbar surface.                                            |
+| `--md-toolbar-container-elevation`    | `3` (floating) / `2` (docked)                                        | Material elevation level (`0`–`5`).                                              |
+| `--md-toolbar-icon-color`             | `on-surface-variant` / `on-primary-container`                        | Unselected icon and text color cascaded to slotted controls.                     |
+| `--md-toolbar-active-container-color` | `secondary-container` / `primary`                                    | Background color of selected/active toggle controls.                             |
+| `--md-toolbar-active-icon-color`      | `on-secondary-container` / `on-primary`                              | Icon/text color of selected/active toggle controls.                              |
+| `--md-toolbar-inline-padding`         | `12px` (floating) / `16px` (docked)                                  | Inline start/end padding of the toolbar surface.                                 |
+| `--md-toolbar-block-padding`          | `8px` (horizontal) / `12px` (vertical) / `0px` (docked)              | Block top/bottom padding of the toolbar surface.                                 |
+| `--md-toolbar-item-gap`               | `4px` (floating) / `clamp(8px, 3vw, 32px)` (docked)                  | Spacing between toolbar items.                                                   |
+| `--md-toolbar-fab-gap`                | `8px`                                                                | Gap between the toolbar and a paired `slot="fab"`.                               |
+| `--md-toolbar-edge-offset`            | `16px`                                                               | Screen-edge offset margin for positioned floating toolbars.                      |
+| `--md-toolbar-z-index`                | `100`                                                                | `z-index` applied when `position` is `'bottom'`, `'top'`, `'start'`, or `'end'`. |
+| `--md-toolbar-positioning`            | `fixed` (`absolute` when `contained`)                                | CSS `position` mode for anchored toolbars.                                       |
