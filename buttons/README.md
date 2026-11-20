@@ -86,6 +86,80 @@ Extended FAB
 </md-fab>
 ```
 
+## FAB Menu
+
+[Material 3 Expressive FAB Menu](https://m3.material.io/components/fab-menu/overview)
+
+The M3 Expressive FAB Menu replaces custom speed dials with a standardized, accessible menu expanding `2–6` pill-shaped actions (`56px` height, `9999px` pill radius, `4px` gap) while morphing the trigger FAB into a circular `56px` close (`×`) toggle button (`8px` gap to nearest item).
+
+```html
+<md-fab-menu variant="primary" aria-label="Create new item">
+  <md-icon slot="icon">add</md-icon>
+  <md-fab-menu-item value="doc" label="Document">
+    <md-icon slot="icon">description</md-icon>
+  </md-fab-menu-item>
+  <md-fab-menu-item value="folder" label="Folder">
+    <md-icon slot="icon">folder</md-icon>
+  </md-fab-menu-item>
+  <md-fab-menu-item value="upload" label="Upload file">
+    <md-icon slot="icon">upload</md-icon>
+  </md-fab-menu-item>
+</md-fab-menu>
+```
+
+### Color Schemes, Sizes, Alignment & Scrim
+
+```html
+<!-- Secondary & Tertiary M3 Expressive tonal sets -->
+<md-fab-menu variant="secondary" aria-label="Share options">
+  <md-icon slot="icon">share</md-icon>
+  <md-fab-menu-item icon="link" label="Copy link" keep-open></md-fab-menu-item>
+  <md-fab-menu-item icon="mail" label="Email" href="mailto:team@example.com"></md-fab-menu-item>
+</md-fab-menu>
+
+<!-- Large (96px -> 56px close button), leading alignment, downward opening, backdrop scrim -->
+<md-fab-menu variant="tertiary" size="large" align="start" direction="down" scrim aria-label="Compose">
+  <md-icon slot="icon">edit</md-icon>
+  <md-fab-menu-item icon="chat" label="New message"></md-fab-menu-item>
+  <md-fab-menu-item icon="videocam" label="Video call"></md-fab-menu-item>
+</md-fab-menu>
+```
+
+### `<md-fab-menu>` API
+
+| Property / Attribute | Type                                                  | Default        | Description                                                                           |
+| -------------------- | ----------------------------------------------------- | -------------- | ------------------------------------------------------------------------------------- |
+| `open`               | `boolean`                                             | `false`        | Reflected open state of the menu.                                                     |
+| `variant` / `color`  | `'primary' \| 'secondary' \| 'tertiary' \| 'surface'` | `'primary'`    | M3 Expressive tonal color pairing for trigger, close button, and items.               |
+| `size`               | `'small' \| 'medium' \| 'large'`                      | `'medium'`     | Collapsed FAB size (`40px`, `56px`, or `96px`); morphs to circular `56px` when open.  |
+| `label`              | `string`                                              | `''`           | Label text (used as accessible fallback label, and displayed when `extended` is set). |
+| `extended`           | `boolean`                                             | `false`        | Expands the collapsed trigger into an extended FAB showing `label`.                   |
+| `icon`               | `string`                                              | `''`           | Optional Material icon name for the collapsed trigger (or pass `slot="icon"`).        |
+| `close-icon`         | `string`                                              | `''`           | Optional Material icon name for the expanded close button (or `slot="close-icon"`).   |
+| `align`              | `'end' \| 'start'`                                    | `'end'`        | Inline alignment of the menu items relative to the trigger (RTL-aware).               |
+| `direction`          | `'up' \| 'down'`                                      | `'up'`         | Vertical opening direction from the trigger.                                          |
+| `scrim`              | `boolean`                                             | `false`        | Renders a light-dismiss backdrop scrim behind the menu when open.                     |
+| `close-label`        | `string`                                              | `'Close menu'` | Accessible `aria-label` applied to the trigger button while open.                     |
+| `lowered`            | `boolean`                                             | `false`        | Lowers collapsed trigger elevation from level 3 to level 1.                           |
+| `disabled`           | `boolean`                                             | `false`        | Disables opening the menu.                                                            |
+| `quick`              | `boolean`                                             | `false`        | Skips open/close transitions.                                                         |
+
+- **Methods**: `show()`, `close(reason?)`, `toggle()`
+- **Events**: `open` (cancelable), `opened`, `close` (cancelable), `closed`, `item-activate` (cancelable, bubbles from `<md-fab-menu-item>`)
+- **Keyboard & Accessibility**: Trigger exposes `aria-haspopup="menu"`, `aria-expanded`, and `aria-controls`; menu uses `role="menu"` and items use `role="menuitem"`. Supports `ArrowUp`, `ArrowDown`, `Home`, `End`, `Escape` (restores focus to trigger), `Tab` (closes without trapping focus), and outside-click light-dismiss.
+- **CSS Custom Properties**: `--md-fab-menu-container-color`, `--md-fab-menu-icon-color`, `--md-fab-menu-close-button-container-color`, `--md-fab-menu-close-button-icon-color`, `--md-fab-menu-close-button-size`, `--md-fab-menu-item-container-color`, `--md-fab-menu-item-content-color`, `--md-fab-menu-item-height`, `--md-fab-menu-item-shape`, `--md-fab-menu-item-gap`, `--md-fab-menu-button-gap`, `--md-fab-menu-scrim-color`, `--md-fab-menu-scrim-opacity`.
+
+### `<md-fab-menu-item>` API
+
+| Property / Attribute | Type      | Default | Description                                                        |
+| -------------------- | --------- | ------- | ------------------------------------------------------------------ |
+| `label`              | `string`  | `''`    | Action label text (can also be supplied via default slot).         |
+| `icon`               | `string`  | `''`    | Optional Material icon name (or pass `<md-icon slot="icon">`).     |
+| `value`              | `string`  | `''`    | Identifier included in `item-activate` event `detail.value`.       |
+| `href` / `target`    | `string`  | `''`    | Renders a semantic `<a role="menuitem">` link item.                |
+| `keep-open`          | `boolean` | `false` | Keeps `<md-fab-menu>` open after activating this item.             |
+| `disabled`           | `boolean` | `false` | Disables activation and skips the item during keyboard navigation. |
+
 ## Split Buttons
 
 ```html

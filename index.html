@@ -1124,6 +1124,7 @@
       import 'material/buttons/button.js'
       import 'material/buttons/button-group.js'
       import 'material/buttons/fab.js'
+      import 'material/buttons/fab-menu.js'
       import 'material/buttons/icon-button.js'
       import 'material/badge/badge.js'
       import 'material/card/card.js'
@@ -1729,6 +1730,39 @@ import 'material/indicators/progress.js'</code></pre>
           </div>
         </div>
 
+        <!-- FAB Menu (M3 Expressive) -->
+        <div class="showcase-card" data-category="buttons">
+          <div class="showcase-header">
+            <h3>FAB Menu (M3 Expressive)</h3>
+            <a href="buttons/README.md" class="showcase-docs-link">
+              Docs <span class="material-symbols-outlined" style="font-size: 16px">arrow_forward</span>
+            </a>
+          </div>
+          <div
+            class="showcase-preview"
+            style="width: 100%; min-height: 230px; justify-content: flex-end; align-items: stretch">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; width: 100%">
+              <md-fab-menu align="start" variant="secondary" label="Share" extended aria-label="Share">
+                <md-icon slot="icon">share</md-icon>
+                <md-fab-menu-item value="camera" icon="photo_camera" label="Camera"></md-fab-menu-item>
+                <md-fab-menu-item value="gallery" icon="image" label="Gallery"></md-fab-menu-item>
+              </md-fab-menu>
+              <md-fab-menu variant="primary" aria-label="Create item">
+                <md-icon slot="icon">add</md-icon>
+                <md-fab-menu-item value="doc" icon="description" label="Document"></md-fab-menu-item>
+                <md-fab-menu-item value="sheet" icon="table_chart" label="Spreadsheet"></md-fab-menu-item>
+                <md-fab-menu-item value="folder" icon="folder" label="Folder"></md-fab-menu-item>
+              </md-fab-menu>
+            </div>
+          </div>
+          <div class="showcase-code">
+            <code
+              >&lt;md-fab-menu variant="primary" aria-label="Create"&gt; &lt;md-fab-menu-item icon="description"
+              label="Document"&gt;&lt;/md-fab-menu-item&gt; &lt;/md-fab-menu&gt;</code
+            >
+          </div>
+        </div>
+
         <!-- 5. Text Fields -->
         <div class="showcase-card" data-category="inputs">
           <div class="showcase-header">
@@ -1903,6 +1937,23 @@ import 'material/indicators/progress.js'</code></pre>
               <h3>Expressive Demo</h3>
               <p>
                 The full kitchen-sink sandbox showcasing responsive navigation rail, app bar, search, and form inputs.
+              </p>
+            </div>
+          </div>
+          <span class="demo-cta">
+            Open Demo <span class="material-symbols-outlined" style="font-size: 18px">arrow_forward</span>
+          </span>
+        </a>
+
+        <a href="./demo/fab-menu-demo.html" class="demo-card">
+          <div class="demo-card-top">
+            <div class="demo-icon">
+              <span class="material-symbols-outlined">add_circle</span>
+            </div>
+            <div>
+              <h3>FAB Menu</h3>
+              <p>
+                Speed-dial FAB menu expanding 2–6 pill items with morphing circular close button and tonal palettes.
               </p>
             </div>
           </div>
