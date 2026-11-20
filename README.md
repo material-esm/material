@@ -51,6 +51,7 @@ See the README in each component's directory for how to use them:
 - [Switch](switch/README.md)
 - [Tabs](tabs/README.md)
 - [Text Field](text/README.md)
+- [Toolbar](toolbar/README.md)
 - [Tooltip](tooltip/README.md)
 
 ## Quick start

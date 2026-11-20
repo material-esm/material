@@ -5,6 +5,7 @@ import '../../buttons/button-group.js'
 import '../../buttons/icon-button.js'
 import '../../buttons/split-button.js'
 import '../../buttons/fab.js'
+import '../../toolbar/toolbar.js'
 import '../../card/card.js'
 import '../../chips/chip-set.js'
 import '../../chips/chip.js'
@@ -29,11 +30,13 @@ import '../../carousel/carousel-item.js'
 import { snack } from '../../snackbar/snackbar.js'
 import { styles as sharedStyles } from './styles.js'
 import { styles as typography } from '../../typography/md-typescale-styles.js'
+import { expressiveToolbarStyles, renderToolbarsSection } from './expressive-toolbar.js'
 
 class ExpressiveComponent extends LitElement {
   static styles = [
     sharedStyles,
     typography,
+    expressiveToolbarStyles,
     css`
       :host {
         display: block;
@@ -214,6 +217,8 @@ class ExpressiveComponent extends LitElement {
               aria-label="65% thick linear"></md-progress>
           </div>
         </section>
+
+        ${renderToolbarsSection()}
 
         <!-- 3. Buttons & Actions Section -->
         <section class="demo-section">
