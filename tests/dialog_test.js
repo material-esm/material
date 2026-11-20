@@ -92,6 +92,7 @@ describe('md-dialog overscroll containment', () => {
   it('opens with showModal() and closes without mutating html or body scroll styles', async () => {
     const htmlStyle = { overflow: '', position: '' }
     const bodyStyle = { overflow: '', position: '' }
+    const hadDoc = 'document' in globalThis
     const prevDoc = globalThis.document
     globalThis.document = {
       documentElement: { style: htmlStyle },
@@ -143,7 +144,11 @@ describe('md-dialog overscroll containment', () => {
       assert.deepEqual(htmlStyle, { overflow: '', position: '' })
       assert.deepEqual(bodyStyle, { overflow: '', position: '' })
     } finally {
-      globalThis.document = prevDoc
+      if (hadDoc) {
+        globalThis.document = prevDoc
+      } else {
+        delete globalThis.document
+      }
     }
   })
 })
