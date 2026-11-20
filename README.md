@@ -25,6 +25,8 @@ Please [consider sponsoring](https://github.com/sponsors/treeder) before creatin
 
 ## Documentation
 
+For AI coding agents and LLMs, see [llms.txt](llms.txt) for a single-file reference of all components, imports, attributes, and `@material/web` differences.
+
 See the README in each component's directory for how to use them:
 
 - [App Bar](app/README.md)
