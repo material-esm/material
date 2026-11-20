@@ -27,7 +27,8 @@
     "build": "echo 'No build required'",
     "deploy": "wrangler deploy",
     "preview": "wrangler preview",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "test": "node --test tests/*_test.js"
   },
   "type": "module",
   "files": [

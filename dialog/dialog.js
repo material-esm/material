@@ -510,8 +510,10 @@ export class Dialog extends LitElement {
       dialog[open] {
         display: flex;
       }
-      ::backdrop {
+      dialog::backdrop {
         background: none;
+        overflow: hidden;
+        overscroll-behavior: contain;
       }
       md-elevation {
         border-radius: inherit;
@@ -585,12 +587,15 @@ export class Dialog extends LitElement {
       .scrollable.has-headline slot[name='content']::slotted(*) {
         padding-top: 8px;
       }
+      /* Keep overflow: visible on <dialog> so <md-elevation>'s shadow is not clipped;
+         contain scroll chaining on .container and .scroller (which establish scroll containers). */
       .container {
         border-radius: inherit;
         display: flex;
         flex-direction: column;
         flex-grow: 1;
         overflow: hidden;
+        overscroll-behavior: contain;
         position: relative;
         transform-origin: top;
       }
@@ -606,6 +611,7 @@ export class Dialog extends LitElement {
         flex: 1;
         flex-direction: column;
         overflow: hidden;
+        overscroll-behavior: contain;
         z-index: 1;
       }
       .scrollable .scroller {
