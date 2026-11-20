@@ -38,6 +38,7 @@ import './snackbar/snackbar.js'
 import './switch/switch.js'
 import './tabs/tab.js'
 import './tabs/tabs.js'
+import './text/scroll-field.js'
 import './text/text-field.js'
 // go/keep-sorted end
 // LINT.ThenChange(:exports)
@@ -77,4 +78,5 @@ export * from './snackbar/snackbar.js'
 export * from './switch/switch.js'
 export * from './tabs/tab.js'
 export * from './tabs/tabs.js'
+export * from './text/scroll-field.js'
 export * from './text/text-field.js'

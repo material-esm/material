@@ -1141,6 +1141,7 @@
       import 'material/switch/switch.js'
       import 'material/tabs/tab.js'
       import 'material/tabs/tabs.js'
+      import 'material/text/scroll-field.js'
       import 'material/text/text-field.js'
       import 'material/carousel/carousel.js'
       import 'material/carousel/carousel-item.js'
@@ -1729,6 +1730,43 @@ import 'material/indicators/progress.js'</code></pre>
           </div>
         </div>
 
+        <!-- Scroll Fields (M3 Expressive) -->
+        <div class="showcase-card" data-category="inputs">
+          <div class="showcase-header">
+            <h3>Scroll Fields (M3 Expressive)</h3>
+            <a href="text/README.md" class="showcase-docs-link">
+              Docs <span class="material-symbols-outlined" style="font-size: 16px">arrow_forward</span>
+            </a>
+          </div>
+          <div class="showcase-preview" style="width: 100%; align-items: center">
+            <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-start; justify-content: center">
+              <md-scroll-field
+                size="1-2"
+                min="0"
+                max="59"
+                pad="2"
+                value="30"
+                loop
+                label="Min"
+                aria-label="Minutes"></md-scroll-field>
+              <md-scroll-field
+                size="3"
+                min="0"
+                max="359"
+                value="180"
+                suffix="°"
+                label="Deg"
+                aria-label="Degrees"></md-scroll-field>
+            </div>
+          </div>
+          <div class="showcase-code">
+            <code
+              >&lt;md-scroll-field size="1-2" min="0" max="59" pad="2" value="30" loop
+              label="Min"&gt;&lt;/md-scroll-field&gt;</code
+            >
+          </div>
+        </div>
+
         <!-- 5. Text Fields -->
         <div class="showcase-card" data-category="inputs">
           <div class="showcase-header">
@@ -1903,6 +1941,23 @@ import 'material/indicators/progress.js'</code></pre>
               <h3>Expressive Demo</h3>
               <p>
                 The full kitchen-sink sandbox showcasing responsive navigation rail, app bar, search, and form inputs.
+              </p>
+            </div>
+          </div>
+          <span class="demo-cta">
+            Open Demo <span class="material-symbols-outlined" style="font-size: 18px">arrow_forward</span>
+          </span>
+        </a>
+
+        <a href="./demo/scroll-field-demo.html" class="demo-card">
+          <div class="demo-card-top">
+            <div class="demo-icon">
+              <span class="material-symbols-outlined">pin</span>
+            </div>
+            <div>
+              <h3>Scroll Fields</h3>
+              <p>
+                Expressive 1–2, 3, and 4 digit drum wheels with finite/looping scroll, unit pickers, and inline typing.
               </p>
             </div>
           </div>
@@ -2095,7 +2150,7 @@ import 'material/indicators/progress.js'</code></pre>
         </a>
         <a href="text/README.md" class="comp-item">
           <span class="material-symbols-outlined">text_fields</span>
-          Text Field
+          Text &amp; Scroll Field
         </a>
         <a href="tooltip/README.md" class="comp-item">
           <span class="material-symbols-outlined">info</span>
