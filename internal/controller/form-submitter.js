@@ -76,4 +76,3 @@ export function setupFormSubmitter(ctor) {
     })
   })
 }
-//# sourceMappingURL=form-submitter.js.map

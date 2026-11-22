@@ -37,4 +37,3 @@ export function redispatchEvent(element, event) {
     }
     return dispatched;
 }
-//# sourceMappingURL=redispatch-event.js.map

@@ -9,7 +9,6 @@ import '../internal/ripple/ripple.js'
 import { html, isServer, LitElement, nothing, css } from 'lit'
 import { classMap } from 'lit/directives/class-map.js'
 import { styleMap } from 'lit/directives/style-map.js'
-import { when } from 'lit/directives/when.js'
 import { requestUpdateOnAriaChange } from '../internal/aria/delegate.js'
 import { dispatchActivationClick, isActivationClick } from '../internal/events/form-label-activation.js'
 import { redispatchEvent } from '../internal/events/redispatch-event.js'
@@ -316,12 +315,12 @@ export class Slider extends sliderBaseClass {
       hover: this.handleStartHover || this.handleEndHover,
     }
     return html` <div class="container ${classMap(containerClasses)}" style=${styleMap(containerStyles)}>
-      ${when(this.range, () => this.renderInput(inputStartProps))} ${this.renderInput(inputEndProps)}
+      ${this.range ? this.renderInput(inputStartProps) : nothing} ${this.renderInput(inputEndProps)}
       ${this.renderTrack()}
       <div class="handleContainerPadded">
         <div class="handleContainerBlock">
           <div class="handleContainer ${classMap(handleContainerClasses)}">
-            ${when(this.range, () => this.renderHandle(handleStartProps))} ${this.renderHandle(handleEndProps)}
+            ${this.range ? this.renderHandle(handleStartProps) : nothing} ${this.renderHandle(handleEndProps)}
           </div>
         </div>
       </div>
@@ -354,7 +353,7 @@ export class Slider extends sliderBaseClass {
       <div class="handleNub">
         <md-elevation part="elevation"></md-elevation>
       </div>
-      ${when(this.labeled, () => this.renderLabel(label))}
+      ${this.labeled ? this.renderLabel(label) : nothing}
     </div>`
   }
   renderInput({ start, value, ariaLabel, ariaValueText, ariaMin, ariaMax }) {

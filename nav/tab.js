@@ -3,9 +3,7 @@ import '../internal/ripple/ripple.js'
 import '../badge/badge.js'
 import { css, html, LitElement, nothing } from 'lit'
 import { literal, html as staticHtml } from 'lit/static-html.js'
-import { property, query } from 'lit/decorators.js'
 import { classMap } from 'lit/directives/class-map.js'
-import { requestUpdateOnAriaChange } from '../internal/aria/delegate.js'
 import { sharedStyles } from '../shared/shared.css.js'
 
 /**
