@@ -218,4 +218,44 @@ describe('Safari 26 indicator animations', () => {
     assert.match(progressCss, /@keyframes\s+wavy-linear-move[\s\S]*?translate3d\(var\(--_wavelength,\s*40px\)/)
     assert.ok(!progressCss.includes('mask-position: var('))
   })
+
+  it('synchronizes custom circular indeterminate track WAAPI startTime with circular-indeterminate-active even when four-color runs', () => {
+    const p = new Progress()
+    p.type = 'circular'
+    p.shape = 'flat'
+    p.indeterminate = true
+    p.fourColor = true
+    // Custom 96px diameter produces non-default gapDeg so WAAPI fallback activates
+    p._boxSize = 96
+    p._strokeWidth = 4
+    p._trackGap = 4
+
+    let createdAnim = null
+    const trackEl = {
+      animate(keyframes, options) {
+        createdAnim = { keyframes, options, startTime: 0, cancel() {} }
+        return createdAnim
+      },
+    }
+    const activeEl = {
+      getAnimations() {
+        return [
+          { animationName: 'circular-four-color', startTime: 120 },
+          { animationName: 'circular-indeterminate-active', startTime: 845 },
+        ]
+      },
+    }
+    p.renderRoot = {
+      querySelector(sel) {
+        if (sel === '.circular .track') return trackEl
+        if (sel === '.circular .active-track') return activeEl
+        return null
+      },
+    }
+
+    p._syncCustomCircularTrackAnimation()
+    assert.ok(createdAnim, 'expected custom circular track WAAPI animation to be created')
+    assert.equal(createdAnim.startTime, 845)
+    p._stopCustomCircularTrackAnimation()
+  })
 })

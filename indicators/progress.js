@@ -190,7 +190,8 @@ export class Progress extends LitElement {
       },
     )
     const activeEl = this.renderRoot?.querySelector('.circular .active-track')
-    const activeAnim = activeEl?.getAnimations?.()?.[0]
+    const activeAnims = activeEl?.getAnimations?.()
+    const activeAnim = activeAnims?.find((a) => a.animationName === 'circular-indeterminate-active') ?? activeAnims?.[0]
     if (activeAnim && activeAnim.startTime !== null) {
       anim.startTime = activeAnim.startTime
     }
