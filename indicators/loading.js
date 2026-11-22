@@ -492,7 +492,7 @@ export class Loading extends LitElement {
       this._resizeObserver.observe(this)
     }
     if (typeof document !== 'undefined') {
-      if ('contentVisibility' in document.documentElement.style) {
+      if ('oncontentvisibilityautostatechange' in this) {
         this.addEventListener('contentvisibilityautostatechange', this._onContentVisibilityChange)
       } else if (typeof IntersectionObserver !== 'undefined' && !this._intersectionObserver) {
         this._intersectionObserver = new IntersectionObserver(

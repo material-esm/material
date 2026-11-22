@@ -821,7 +821,7 @@ export class Progress extends LitElement {
 
   _setupVisibilityObserver() {
     if (typeof document === 'undefined') return
-    if ('contentVisibility' in document.documentElement.style) {
+    if ('oncontentvisibilityautostatechange' in this) {
       this.addEventListener('contentvisibilityautostatechange', this._onContentVisibilityChange)
     } else if (typeof IntersectionObserver !== 'undefined' && !this._intersectionObserver) {
       this._intersectionObserver = new IntersectionObserver(

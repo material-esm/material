@@ -735,7 +735,11 @@ export class TextField extends textFieldBaseClass {
   }
 
   async openPickerDialog() {
-    await ensurePickerDeps()
+    try {
+      await ensurePickerDeps()
+    } catch {
+      return
+    }
     if (!this.isConnected) return
     const fieldPicker = this.renderRoot.getElementById('datetime-picker-dialog')
     if (fieldPicker) {
