@@ -73,6 +73,8 @@ export class Progress extends LitElement {
     this._wavyElapsedMs = 0
     this._wavyPathEl = null
     this._wavyTrackEl = null
+    this._customTrackAnim = null
+    this._customTrackKey = ''
     this._resizeObserver = null
   }
 
@@ -96,12 +98,14 @@ export class Progress extends LitElement {
     if (this.hasUpdated) {
       this._syncCircularMetrics()
       this._updateWavyAnimationState()
+      this._syncCustomCircularTrackAnimation()
     }
   }
 
   firstUpdated() {
     this._syncCircularMetrics()
     this._updateWavyAnimationState()
+    this._syncCustomCircularTrackAnimation()
   }
 
   updated(changedProperties) {
@@ -114,12 +118,77 @@ export class Progress extends LitElement {
     } else if (changedProperties.has('value') || changedProperties.has('max')) {
       this._updateWavyAnimationState()
     }
+    this._syncCustomCircularTrackAnimation()
   }
 
   disconnectedCallback() {
     super.disconnectedCallback()
     this._stopWavyAnimation()
+    this._stopCustomCircularTrackAnimation()
     this._teardownResizeObserver()
+  }
+
+  _stopCustomCircularTrackAnimation() {
+    if (this._customTrackAnim) {
+      this._customTrackAnim.cancel()
+      this._customTrackAnim = null
+      this._customTrackKey = ''
+    }
+  }
+
+  _syncCustomCircularTrackAnimation() {
+    const isFlatCircularIndeterminate = this.type !== 'linear' && this.shape !== 'wavy' && this.indeterminate
+    if (!isFlatCircularIndeterminate || this._prefersReducedMotion()) {
+      this._stopCustomCircularTrackAnimation()
+      return
+    }
+    const { stroke, gap, circumference } = this._getCircularGeometry()
+    const clearance = gap > 0 ? gap + stroke : 0
+    const gapDeg = Math.min(80, (clearance / circumference) * 360)
+    const trackMax = Math.max(0, 360 - 20 - 2 * gapDeg)
+    // Default 48px geometry already matches static literal CSS @keyframes (289.07)
+    if (Math.abs(trackMax - 289.07) < 0.2) {
+      this._stopCustomCircularTrackAnimation()
+      return
+    }
+    const trackEl = this.renderRoot?.querySelector('.circular .track')
+    if (!trackEl || typeof trackEl.animate !== 'function') {
+      return
+    }
+    const trackMin = Math.max(0, 360 - 260 - 2 * gapDeg)
+    const key = `${trackMax.toFixed(2)}:${gapDeg.toFixed(2)}`
+    if (this._customTrackAnim && this._customTrackKey === key) {
+      return
+    }
+    this._stopCustomCircularTrackAnimation()
+    const anim = trackEl.animate(
+      [
+        {
+          strokeDasharray: `${trackMax.toFixed(2)} ${(360 - trackMax).toFixed(2)}`,
+          strokeDashoffset: `${-(20 + gapDeg).toFixed(2)}`,
+        },
+        {
+          strokeDasharray: `${trackMin.toFixed(2)} ${(360 - trackMin).toFixed(2)}`,
+          strokeDashoffset: `${-(50 + 260 + gapDeg).toFixed(2)}`,
+        },
+        {
+          strokeDasharray: `${trackMax.toFixed(2)} ${(360 - trackMax).toFixed(2)}`,
+          strokeDashoffset: `${-(360 + 20 + gapDeg).toFixed(2)}`,
+        },
+      ],
+      {
+        duration: CIRCULAR_INDETERMINATE_ARC_MS,
+        iterations: Infinity,
+        easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+      },
+    )
+    const activeEl = this.renderRoot?.querySelector('.circular .active-track')
+    const activeAnim = activeEl?.getAnimations?.()?.[0]
+    if (activeAnim && activeAnim.startTime !== null) {
+      anim.startTime = activeAnim.startTime
+    }
+    this._customTrackAnim = anim
+    this._customTrackKey = key
   }
 
   _setupResizeObserver() {

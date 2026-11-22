@@ -20,24 +20,20 @@ export class SplitButton extends LitElement {
     /* Start button styling */
     .leading-button {
       /* Generic shape flattening for Start Button (Right side flat) */
-      --md-button-container-shape-start-end: 0;
-      --md-button-container-shape-end-end: 0;
+      --md-button-container-shape-start-end: 0px;
+      --md-button-container-shape-end-end: 0px;
 
       /* Variant specific shapes */
-      --md-filled-tonal-button-container-shape-start-end: 0;
-      --md-filled-tonal-button-container-shape-end-end: 0;
-      --md-elevated-button-container-shape-start-end: 0;
-      --md-elevated-button-container-shape-end-end: 0;
-      --md-outlined-button-container-shape-start-end: 0;
-      --md-outlined-button-container-shape-end-end: 0;
-
-      /* Force internal variables to ensure override (fix for Outlined variant) */
-      --_container-shape-start-end: 0;
-      --_container-shape-end-end: 0;
+      --md-filled-tonal-button-container-shape-start-end: 0px;
+      --md-filled-tonal-button-container-shape-end-end: 0px;
+      --md-elevated-button-container-shape-start-end: 0px;
+      --md-elevated-button-container-shape-end-end: 0px;
+      --md-outlined-button-container-shape-start-end: 0px;
+      --md-outlined-button-container-shape-end-end: 0px;
 
       /* Explicit border radius as fallback */
-      border-start-end-radius: 0;
-      border-end-end-radius: 0;
+      border-start-end-radius: 0px;
+      border-end-end-radius: 0px;
 
       margin-inline-end: 0;
     }
@@ -46,30 +42,31 @@ export class SplitButton extends LitElement {
     slot[name='end']::slotted(md-button),
     .trailing-button {
       /* Generic shape flattening for End Button (Left side flat) */
-      --md-button-container-shape-start-start: 0;
-      --md-button-container-shape-end-start: 0;
+      --md-button-container-shape-start-start: 0px;
+      --md-button-container-shape-end-start: 0px;
+      --md-icon-button-container-shape-start-start: 0px;
+      --md-icon-button-container-shape-end-start: 0px;
 
       /* Variant specific shapes */
-      --md-filled-tonal-button-container-shape-start-start: 0;
-      --md-filled-tonal-button-container-shape-end-start: 0;
-      --md-elevated-button-container-shape-start-start: 0;
-      --md-elevated-button-container-shape-end-start: 0;
-      --md-outlined-button-container-shape-start-start: 0;
-      --md-outlined-button-container-shape-end-start: 0;
-
-      /* Force internal variables */
-      --_container-shape-start-start: 0;
-      --_container-shape-end-start: 0;
+      --md-filled-tonal-button-container-shape-start-start: 0px;
+      --md-filled-tonal-button-container-shape-end-start: 0px;
+      --md-elevated-button-container-shape-start-start: 0px;
+      --md-elevated-button-container-shape-end-start: 0px;
+      --md-outlined-button-container-shape-start-start: 0px;
+      --md-outlined-button-container-shape-end-start: 0px;
 
       /* Explicit border radius as fallback */
-      border-start-start-radius: 0;
-      border-end-start-radius: 0;
+      border-start-start-radius: 0px;
+      border-end-start-radius: 0px;
 
       margin-inline-start: 0;
     }
 
     .trailing-button md-icon {
-      transition: transform 0.2s ease-in-out;
+      transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1);
+      @media (prefers-reduced-motion: reduce) {
+        transition-duration: 0s;
+      }
     }
 
     .trailing-button:is(:hover, :active) md-icon {

@@ -314,8 +314,7 @@ export class Loading extends LitElement {
       position: relative;
       align-items: center;
       justify-content: center;
-      contain: strict;
-      content-visibility: auto;
+      contain: layout style paint;
       width: var(--_size);
       height: var(--_size);
     }
@@ -373,9 +372,15 @@ export class Loading extends LitElement {
   }
 
   render() {
+    const indicatorColor = this.color || this._defaultIndicatorColor()
+    const bgContainerColor = this.containerColor || this._defaultContainerColor()
     return html`
-      <div class="loading" role="progressbar" aria-label=${this.ariaLabel || 'Loading'}>
-        <canvas id="canvas" aria-hidden="true"></canvas>
+      <div
+        class="loading"
+        role="progressbar"
+        aria-label=${this.ariaLabel || 'Loading'}
+        style="color: ${indicatorColor}">
+        <canvas id="canvas" aria-hidden="true" style="color: ${bgContainerColor}"></canvas>
       </div>
     `
   }
@@ -395,6 +400,23 @@ export class Loading extends LitElement {
     if (typeof window !== 'undefined' && window.matchMedia?.('(forced-colors: active)').matches) {
       this.resolvedColor = 'CanvasText'
       this.resolvedContainerColor = 'Canvas'
+      return
+    }
+    if (typeof window !== 'undefined' && typeof window.getComputedStyle === 'function') {
+      const loadingEl = this.renderRoot?.querySelector('.loading')
+      const canvasEl = this.renderRoot?.querySelector('#canvas')
+      const computedIndicator = loadingEl ? window.getComputedStyle(loadingEl).color?.trim() : ''
+      const computedContainer = canvasEl ? window.getComputedStyle(canvasEl).color?.trim() : ''
+      if (computedIndicator) {
+        this.resolvedColor = computedIndicator
+      } else {
+        this.resolvedColor = this._resolveColor(this.color || this._defaultIndicatorColor())
+      }
+      if (computedContainer) {
+        this.resolvedContainerColor = computedContainer
+      } else {
+        this.resolvedContainerColor = this._resolveColor(this.containerColor || this._defaultContainerColor())
+      }
       return
     }
     this.resolvedColor = this._resolveColor(this.color || this._defaultIndicatorColor())

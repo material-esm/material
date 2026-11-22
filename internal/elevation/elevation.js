@@ -29,12 +29,16 @@ export class Elevation extends LitElement {
       :host {
         display: flex;
         pointer-events: none;
-        transition-property: box-shadow, opacity;
+        transition-property:
+          box-shadow, opacity, border-radius, border-start-start-radius, border-start-end-radius,
+          border-end-start-radius, border-end-end-radius;
       }
       .shadow::before,
       .shadow::after {
         content: '';
-        transition-property: box-shadow, opacity;
+        transition-property:
+          box-shadow, opacity, border-radius, border-start-start-radius, border-start-end-radius,
+          border-end-start-radius, border-end-end-radius;
         --_level: var(--md-elevation-level, 0);
         --_shadow-color: var(--md-elevation-shadow-color, var(--md-sys-color-shadow, #000));
       }

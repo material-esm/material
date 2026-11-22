@@ -31,38 +31,66 @@ export const menuItemStyles = css`
   :host {
     display: flex;
     text-wrap: nowrap;
-    border-radius: var(--md-menu-item-shape, 0px);
-    transition:
-      border-radius 200ms cubic-bezier(0.2, 0, 0, 1),
-      background-color 200ms cubic-bezier(0.2, 0, 0, 1);
+    --_shape-start-start: var(--md-menu-item-shape, 0px);
+    --_shape-start-end: var(--md-menu-item-shape, 0px);
+    --_shape-end-start: var(--md-menu-item-shape, 0px);
+    --_shape-end-end: var(--md-menu-item-shape, 0px);
+    --_shape-duration: 200ms;
     --md-ripple-hover-color: var(--md-menu-item-hover-state-layer-color, var(--md-sys-color-on-surface, #1d1b20));
     --md-ripple-hover-opacity: var(--md-menu-item-hover-state-layer-opacity, 0.08);
     --md-ripple-pressed-color: var(--md-menu-item-pressed-state-layer-color, var(--md-sys-color-on-surface, #1d1b20));
     --md-ripple-pressed-opacity: var(--md-menu-item-pressed-state-layer-opacity, 0.12);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    :host {
+      --_shape-duration: 0s;
+    }
+  }
+  :host,
+  .list-item,
+  md-ripple,
+  md-item {
+    border-start-start-radius: var(--_shape-start-start);
+    border-start-end-radius: var(--_shape-start-end);
+    border-end-start-radius: var(--_shape-end-start);
+    border-end-end-radius: var(--_shape-end-end);
+    transition:
+      background-color 200ms cubic-bezier(0.2, 0, 0, 1),
+      border-radius var(--_shape-duration) cubic-bezier(0.2, 0, 0, 1),
+      border-start-start-radius var(--_shape-duration) cubic-bezier(0.2, 0, 0, 1),
+      border-start-end-radius var(--_shape-duration) cubic-bezier(0.2, 0, 0, 1),
+      border-end-start-radius var(--_shape-duration) cubic-bezier(0.2, 0, 0, 1),
+      border-end-end-radius var(--_shape-duration) cubic-bezier(0.2, 0, 0, 1);
   }
   :host([hidden]) {
     display: none;
   }
   :host([menu-position]) {
     margin: 2px 4px;
-    border-radius: var(--md-menu-item-shape, var(--md-sys-shape-corner-extra-small, 4px));
+    --_shape-start-start: var(--md-menu-item-shape, var(--md-sys-shape-corner-extra-small, 4px));
+    --_shape-start-end: var(--md-menu-item-shape, var(--md-sys-shape-corner-extra-small, 4px));
+    --_shape-end-start: var(--md-menu-item-shape, var(--md-sys-shape-corner-extra-small, 4px));
+    --_shape-end-end: var(--md-menu-item-shape, var(--md-sys-shape-corner-extra-small, 4px));
   }
   :host([menu-position='first']) {
-    border-start-start-radius: var(--md-sys-shape-corner-medium, 12px);
-    border-start-end-radius: var(--md-sys-shape-corner-medium, 12px);
-    border-end-start-radius: var(--md-sys-shape-corner-extra-small, 4px);
-    border-end-end-radius: var(--md-sys-shape-corner-extra-small, 4px);
+    --_shape-start-start: var(--md-sys-shape-corner-medium, 12px);
+    --_shape-start-end: var(--md-sys-shape-corner-medium, 12px);
+    --_shape-end-start: var(--md-sys-shape-corner-extra-small, 4px);
+    --_shape-end-end: var(--md-sys-shape-corner-extra-small, 4px);
   }
   :host([menu-position='last']) {
-    border-start-start-radius: var(--md-sys-shape-corner-extra-small, 4px);
-    border-start-end-radius: var(--md-sys-shape-corner-extra-small, 4px);
-    border-end-start-radius: var(--md-sys-shape-corner-medium, 12px);
-    border-end-end-radius: var(--md-sys-shape-corner-medium, 12px);
+    --_shape-start-start: var(--md-sys-shape-corner-extra-small, 4px);
+    --_shape-start-end: var(--md-sys-shape-corner-extra-small, 4px);
+    --_shape-end-start: var(--md-sys-shape-corner-medium, 12px);
+    --_shape-end-end: var(--md-sys-shape-corner-medium, 12px);
   }
   :host([menu-position='single']),
   :host([menu-position]:hover),
   :host([menu-position]:focus-within) {
-    border-radius: var(--md-sys-shape-corner-medium, 12px);
+    --_shape-start-start: var(--md-sys-shape-corner-medium, 12px);
+    --_shape-start-end: var(--md-sys-shape-corner-medium, 12px);
+    --_shape-end-start: var(--md-sys-shape-corner-medium, 12px);
+    --_shape-end-end: var(--md-sys-shape-corner-medium, 12px);
   }
   :host([disabled]) {
     opacity: var(--md-menu-item-disabled-opacity, 0.38);
@@ -70,7 +98,10 @@ export const menuItemStyles = css`
   }
   md-focus-ring {
     z-index: 1;
-    --md-focus-ring-shape: inherit;
+    --md-focus-ring-shape-start-start: var(--_shape-start-start);
+    --md-focus-ring-shape-start-end: var(--_shape-start-end);
+    --md-focus-ring-shape-end-start: var(--_shape-end-start);
+    --md-focus-ring-shape-end-end: var(--_shape-end-end);
   }
   a,
   button,
@@ -83,7 +114,6 @@ export const menuItemStyles = css`
     text-decoration: none;
   }
   .list-item {
-    border-radius: inherit;
     display: flex;
     flex: 1;
     max-width: inherit;
@@ -91,9 +121,6 @@ export const menuItemStyles = css`
     outline: none;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
     background-color: var(--md-menu-item-container-color, transparent);
-    transition:
-      background-color 200ms cubic-bezier(0.2, 0, 0, 1),
-      border-radius 200ms cubic-bezier(0.2, 0, 0, 1);
   }
   .list-item:not(.disabled) {
     cursor: pointer;
@@ -101,11 +128,7 @@ export const menuItemStyles = css`
   [slot='container'] {
     pointer-events: none;
   }
-  md-ripple {
-    border-radius: inherit;
-  }
   md-item {
-    border-radius: inherit;
     flex: 1;
     color: var(--md-menu-item-label-text-color, var(--md-sys-color-on-surface, #1d1b20));
     font-family: var(

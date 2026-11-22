@@ -10,6 +10,7 @@ import { styles } from './icon-button-styles.js'
 
 export { styles as iconButtonStyles } from './icon-button-styles.js'
 
+const MINIMUM_PRESS_MS = 150
 const iconButtonBaseClass = mixinElementInternals(LitElement)
 
 /**
@@ -28,6 +29,8 @@ export class IconButton extends iconButtonBaseClass {
     ariaLabelSelected: { type: String, attribute: 'aria-label-selected' },
     toggle: { type: Boolean, reflect: true },
     selected: { type: Boolean, reflect: true },
+    pressed: { type: Boolean, reflect: true },
+    shape: { type: String, reflect: true },
     type: { type: String },
     value: { type: String },
     flipIcon: { type: Boolean },
@@ -65,6 +68,11 @@ export class IconButton extends iconButtonBaseClass {
      * icon is provided.
      */
     this.selected = false
+    this.pressed = false
+    /**
+     * Accepted values are 'round' (default), 'square'.
+     */
+    this.shape = 'round'
     /**
      * The default behavior of the button. May be "text", "reset", or "submit"
      * (default).
@@ -84,6 +92,10 @@ export class IconButton extends iconButtonBaseClass {
      * extra-small, small, medium, large, extra-large
      */
     this.size = 'small'
+
+    this.handlePress = this.handlePress.bind(this)
+    this.handleRelease = this.handleRelease.bind(this)
+    this.handleClick = this.handleClick.bind(this)
   }
 
   get name() {
@@ -102,6 +114,9 @@ export class IconButton extends iconButtonBaseClass {
   }
 
   #formDisabled = false
+  #pressStartTime = 0
+  #releaseTimer = 0
+  #activePointerId = null
 
   get disabled() {
     return this.hasAttribute('disabled') || this.#formDisabled
@@ -109,18 +124,27 @@ export class IconButton extends iconButtonBaseClass {
   set disabled(disabled) {
     const oldValue = this.disabled
     this.toggleAttribute('disabled', Boolean(disabled))
+    if (this.disabled) {
+      this.#clearPressImmediately()
+    }
     this.requestUpdate('disabled', oldValue)
   }
 
   formDisabledCallback(disabled) {
     const oldValue = this.disabled
     this.#formDisabled = disabled
+    if (this.disabled) {
+      this.#clearPressImmediately()
+    }
     this.requestUpdate('disabled', oldValue)
   }
 
   attributeChangedCallback(name, old, value) {
     if (name === 'disabled') {
       const oldValue = old !== null
+      if (value !== null) {
+        this.#clearPressImmediately()
+      }
       this.requestUpdate(name, oldValue)
       return
     }
@@ -140,12 +164,85 @@ export class IconButton extends iconButtonBaseClass {
   connectedCallback() {
     this.flipIcon = isRtl(this, this.flipIconInRtl)
     super.connectedCallback()
+    this.addEventListener('pointerdown', this.handlePress)
+    this.addEventListener('pointerup', this.handleRelease)
+    this.addEventListener('pointercancel', this.#onPointerCancel)
+    this.addEventListener('pointerleave', this.#onPointerCancel)
     this.addEventListener('click', this.handleClick)
   }
 
   disconnectedCallback() {
     super.disconnectedCallback()
+    this.#clearPressImmediately()
+    this.removeEventListener('pointerdown', this.handlePress)
+    this.removeEventListener('pointerup', this.handleRelease)
+    this.removeEventListener('pointercancel', this.#onPointerCancel)
+    this.removeEventListener('pointerleave', this.#onPointerCancel)
     this.removeEventListener('click', this.handleClick)
+  }
+
+  #clearPressImmediately() {
+    if (this.#releaseTimer) {
+      clearTimeout(this.#releaseTimer)
+      this.#releaseTimer = 0
+    }
+    this.#activePointerId = null
+    this.#pressStartTime = 0
+    if (this.pressed) {
+      this.pressed = false
+    }
+  }
+
+  #onPointerCancel = (event) => {
+    if (event && this.#activePointerId !== null && event.pointerId !== this.#activePointerId) {
+      return
+    }
+    this.#clearPressImmediately()
+  }
+
+  handlePress(event) {
+    if (this.disabled && !this.href) {
+      return
+    }
+    if (event) {
+      if (event.isPrimary === false) return
+      if (event.pointerType === 'mouse' && event.buttons !== undefined && event.buttons !== 1) return
+      this.#activePointerId = event.pointerId ?? null
+    }
+    if (this.#releaseTimer) {
+      clearTimeout(this.#releaseTimer)
+      this.#releaseTimer = 0
+    }
+    this.#pressStartTime = typeof performance !== 'undefined' ? performance.now() : Date.now()
+    this.pressed = true
+  }
+
+  handleRelease(event) {
+    if (
+      event &&
+      this.#activePointerId !== null &&
+      event.pointerId !== undefined &&
+      event.pointerId !== this.#activePointerId
+    ) {
+      return
+    }
+    this.#activePointerId = null
+    if (!this.pressed) {
+      return
+    }
+    const now = typeof performance !== 'undefined' ? performance.now() : Date.now()
+    const elapsed = this.#pressStartTime > 0 ? now - this.#pressStartTime : MINIMUM_PRESS_MS
+    if (elapsed >= MINIMUM_PRESS_MS) {
+      this.pressed = false
+      return
+    }
+    if (this.#releaseTimer) {
+      clearTimeout(this.#releaseTimer)
+    }
+    this.#releaseTimer = setTimeout(() => {
+      this.#releaseTimer = 0
+      this.pressed = false
+    }, MINIMUM_PRESS_MS - elapsed)
   }
 
   render() {

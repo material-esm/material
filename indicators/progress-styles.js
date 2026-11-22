@@ -1,25 +1,6 @@
 import { css } from 'lit'
 
-const INDETERMINATE_LINEAR_PROPS = ['--_l1-head', '--_l1-tail', '--_l2-head', '--_l2-tail']
-
-export const SUPPORTS_REGISTERED_PROPS = (() => {
-  if (typeof CSS === 'undefined' || typeof CSS.registerProperty !== 'function') {
-    return false
-  }
-  for (const name of INDETERMINATE_LINEAR_PROPS) {
-    try {
-      CSS.registerProperty({
-        name,
-        syntax: '<percentage>',
-        inherits: true,
-        initialValue: '-12%',
-      })
-    } catch {
-      // Property may already be registered if module is evaluated multiple times
-    }
-  }
-  return true
-})()
+export const SUPPORTS_REGISTERED_PROPS = typeof CSS !== 'undefined' && typeof CSS.registerProperty === 'function'
 
 // Seamless C2-continuous sinusoidal SVG masks (stroke-width=4, amplitude=3, height=10)
 // Extended one half-cycle past [0, wavelength] so repeat-x tile boundaries have zero seam.
@@ -64,8 +45,7 @@ export const circularStyles = css`
     position: relative;
     align-items: center;
     justify-content: center;
-    contain: strict;
-    content-visibility: auto;
+    contain: layout style;
   }
 
   .circular.progress {
@@ -199,16 +179,16 @@ export const circularStyles = css`
 
   @keyframes circular-indeterminate-track {
     0% {
-      stroke-dasharray: var(--_ind-track-max, 289.07) var(--_ind-track-max-comp, 70.93);
-      stroke-dashoffset: var(--_ind-offset-0, -45.46);
+      stroke-dasharray: 289.07 70.93;
+      stroke-dashoffset: -45.46;
     }
     50% {
-      stroke-dasharray: var(--_ind-track-min, 49.07) var(--_ind-track-min-comp, 310.93);
-      stroke-dashoffset: var(--_ind-offset-50, -335.46);
+      stroke-dasharray: 49.07 310.93;
+      stroke-dashoffset: -335.46;
     }
     100% {
-      stroke-dasharray: var(--_ind-track-max, 289.07) var(--_ind-track-max-comp, 70.93);
-      stroke-dashoffset: var(--_ind-offset-100, -405.46);
+      stroke-dasharray: 289.07 70.93;
+      stroke-dashoffset: -405.46;
     }
   }
 
@@ -284,8 +264,7 @@ export const linearStyles = css`
     position: relative;
     min-width: 40px;
     height: max(var(--_track-height), var(--_active-indicator-height));
-    content-visibility: auto;
-    contain: strict;
+    contain: layout style paint;
   }
 
   :host([type='linear']:dir(rtl)) {
@@ -368,7 +347,7 @@ export const linearStyles = css`
     mask-image: url("data:image/svg+xml,%3Csvg version='1.1' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 5 2' preserveAspectRatio='xMinYMin slice'%3E%3Ccircle cx='1' cy='1' r='1'/%3E%3C/svg%3E");
   }
 
-  /* --- Indeterminate Linear (M3 2-bar disjoint curves + 4px gap track segments) --- */
+  /* --- Indeterminate Linear (M3 2-bar disjoint curves + gap track segments via standard left/right keyframes) --- */
   .linear.progress.indeterminate .inactive-track {
     display: none;
   }
@@ -378,67 +357,48 @@ export const linearStyles = css`
     display: block;
   }
 
-  .linear.progress.indeterminate.registered-props {
+  .linear.progress.indeterminate .primary-bar {
+    width: auto;
     animation:
-      m3-l1-head 1800ms infinite,
-      m3-l1-tail 1800ms infinite,
-      m3-l2-head 1800ms infinite,
-      m3-l2-tail 1800ms infinite;
+      m3-l1-tail-left 1800ms infinite,
+      m3-l1-head-right 1800ms infinite;
   }
 
-  .linear.progress.indeterminate.registered-props .primary-bar {
-    left: var(--_l1-tail);
-    width: max(0px, calc(var(--_l1-head) - var(--_l1-tail)));
+  .linear.progress.indeterminate .secondary-bar {
+    width: auto;
+    animation:
+      m3-l2-tail-left 1800ms infinite,
+      m3-l2-head-right 1800ms infinite;
   }
 
-  .linear.progress.indeterminate.registered-props .secondary-bar {
-    left: var(--_l2-tail);
-    width: max(0px, calc(var(--_l2-head) - var(--_l2-tail)));
+  .linear.progress.indeterminate .track-0 {
+    right: 0;
+    width: auto;
+    margin-left: var(--_track-gap);
+    animation: m3-l1-head-left 1800ms infinite;
   }
 
-  .linear.progress.indeterminate.registered-props .track-0 {
-    --_t0-left: max(0px, calc(var(--_l1-head) + var(--_track-gap)));
-    left: var(--_t0-left);
-    width: max(0px, calc(100% - var(--_t0-left)));
+  .linear.progress.indeterminate .track-1 {
+    width: auto;
+    margin-left: var(--_track-gap);
+    margin-right: var(--_track-gap);
+    animation:
+      m3-l2-head-left 1800ms infinite,
+      m3-l1-tail-right 1800ms infinite;
   }
 
-  .linear.progress.indeterminate.registered-props .track-1 {
-    --_t1-left: max(0px, calc(var(--_l2-head) + var(--_track-gap)));
-    --_t1-right: max(0px, calc(100% - var(--_l1-tail) + var(--_track-gap)));
-    left: var(--_t1-left);
-    width: max(0px, calc(100% - var(--_t1-left) - var(--_t1-right)));
-  }
-
-  .linear.progress.indeterminate.registered-props .track-2 {
-    --_t2-right: max(0px, calc(100% - var(--_l2-tail) + var(--_track-gap)));
+  .linear.progress.indeterminate .track-2 {
     left: 0;
-    width: max(0px, calc(100% - var(--_t2-right)));
+    width: auto;
+    margin-right: var(--_track-gap);
+    animation: m3-l2-tail-right 1800ms infinite;
   }
 
-  /* Fallback when CSS.registerProperty is unavailable (e.g. non-browser test runners) */
-  .linear.progress.indeterminate:not(.registered-props) .track-0 {
-    left: 0;
-    width: 100%;
-  }
-
-  .linear.progress.indeterminate:not(.registered-props) .track-1,
-  .linear.progress.indeterminate:not(.registered-props) .track-2 {
-    display: none;
-  }
-
-  .linear.progress.indeterminate:not(.registered-props) .primary-bar {
-    animation: m3-fallback-bar-1 1800ms cubic-bezier(0.4, 0, 0.2, 1) infinite;
-  }
-
-  .linear.progress.indeterminate:not(.registered-props) .secondary-bar {
-    animation: m3-fallback-bar-2 1800ms cubic-bezier(0.4, 0, 0.2, 1) infinite;
-  }
-
-  .linear.progress.indeterminate.four-color .bar-inner {
+  .linear.progress.indeterminate.four-color:not(.wavy) .bar-inner {
     animation: linear-four-color 3600ms linear infinite;
   }
 
-  /* --- M3 Expressive Wavy Linear --- */
+  /* --- M3 Expressive Wavy Linear (GPU compositor translate3d, zero var() in @keyframes) --- */
   :host([shape='wavy'][type='linear']) {
     --_wave-height: var(--md-linear-progress-wave-height, var(--md-progress-wave-height, 10px));
     --_wavelength: var(--md-linear-progress-wavelength, var(--md-progress-wavelength, 40px));
@@ -448,6 +408,7 @@ export const linearStyles = css`
 
   .linear.progress.wavy {
     border-radius: 0;
+    container-type: inline-size;
   }
 
   .linear.progress.wavy .bar {
@@ -456,28 +417,44 @@ export const linearStyles = css`
   }
 
   .linear.progress.wavy .bar-inner {
+    inset: 0;
+    right: auto;
+    width: var(--_wavelength);
+    background: transparent;
     border-radius: 0;
+    animation: wavy-linear-move 1s linear infinite;
+    will-change: transform;
+  }
+
+  .linear.progress.wavy .bar-inner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -100%;
+    width: calc(100cqi + 200%);
+    background-color: var(--_active-indicator-color);
     -webkit-mask-image: ${WAVY_MASK_40};
     mask-image: ${WAVY_MASK_40};
     -webkit-mask-size: var(--_wavelength) 100%;
     mask-size: var(--_wavelength) 100%;
     -webkit-mask-repeat: repeat-x;
     mask-repeat: repeat-x;
-    animation: wavy-linear-move 1s linear infinite;
   }
 
   .linear.progress.wavy.indeterminate .bar-inner {
     --_wavelength: var(--_indeterminate-wavelength);
+  }
+
+  .linear.progress.wavy.indeterminate .bar-inner::before {
     -webkit-mask-image: ${WAVY_MASK_20};
     mask-image: ${WAVY_MASK_20};
     -webkit-mask-size: var(--_wavelength) 100%;
     mask-size: var(--_wavelength) 100%;
   }
 
-  .linear.progress.wavy.indeterminate.four-color .bar-inner {
-    animation:
-      wavy-linear-move 1s linear infinite,
-      linear-four-color 3600ms linear infinite;
+  .linear.progress.wavy.indeterminate.four-color .bar-inner::before {
+    animation: linear-four-color 3600ms linear infinite;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -486,12 +463,9 @@ export const linearStyles = css`
       transition: none;
     }
 
-    .linear.progress.indeterminate.registered-props {
-      animation-duration: 6s;
-    }
-
-    .linear.progress.indeterminate:not(.registered-props) .primary-bar,
-    .linear.progress.indeterminate:not(.registered-props) .secondary-bar {
+    .linear.progress.indeterminate .primary-bar,
+    .linear.progress.indeterminate .secondary-bar,
+    .linear.progress.indeterminate .indeterminate-track {
       animation-duration: 6s;
     }
 
@@ -499,8 +473,9 @@ export const linearStyles = css`
       animation-duration: 5s;
     }
 
-    .linear.progress.wavy.indeterminate.four-color .bar-inner {
-      animation-duration: 5s, 12s;
+    .linear.progress.indeterminate.four-color:not(.wavy) .bar-inner,
+    .linear.progress.wavy.indeterminate.four-color .bar-inner::before {
+      animation-duration: 12s;
     }
 
     .linear .dots {
@@ -512,7 +487,8 @@ export const linearStyles = css`
     :host([type='linear']) {
       forced-color-adjust: none;
     }
-    .linear .bar-inner,
+    .linear.progress:not(.wavy) .bar-inner,
+    .linear.progress.wavy .bar-inner::before,
     .linear .stop-indicator,
     .linear .dots {
       background-color: CanvasText;
@@ -522,98 +498,113 @@ export const linearStyles = css`
     }
   }
 
-  @keyframes m3-l1-head {
+  @keyframes m3-l1-head-right {
     0% {
-      --_l1-head: -12%;
+      right: 112%;
       animation-timing-function: cubic-bezier(0.2, 0, 0.8, 1);
     }
     41.67%,
     100% {
-      --_l1-head: 112%;
+      right: -12%;
     }
   }
 
-  @keyframes m3-l1-tail {
+  @keyframes m3-l1-head-left {
+    0% {
+      left: -12%;
+      animation-timing-function: cubic-bezier(0.2, 0, 0.8, 1);
+    }
+    41.67%,
+    100% {
+      left: 112%;
+    }
+  }
+
+  @keyframes m3-l1-tail-left {
     0%,
     18.5% {
-      --_l1-tail: -12%;
+      left: -12%;
       animation-timing-function: cubic-bezier(0.4, 0, 1, 1);
     }
     65.72%,
     100% {
-      --_l1-tail: 112%;
+      left: 112%;
     }
   }
 
-  @keyframes m3-l2-head {
+  @keyframes m3-l1-tail-right {
+    0%,
+    18.5% {
+      right: 112%;
+      animation-timing-function: cubic-bezier(0.4, 0, 1, 1);
+    }
+    65.72%,
+    100% {
+      right: -12%;
+    }
+  }
+
+  @keyframes m3-l2-head-right {
     0%,
     55.56% {
-      --_l2-head: -12%;
+      right: 112%;
       animation-timing-function: cubic-bezier(0.1, 0, 0.45, 1);
     }
     87.06%,
     100% {
-      --_l2-head: 112%;
+      right: -12%;
     }
   }
 
-  @keyframes m3-l2-tail {
+  @keyframes m3-l2-head-left {
+    0%,
+    55.56% {
+      left: -12%;
+      animation-timing-function: cubic-bezier(0.1, 0, 0.45, 1);
+    }
+    87.06%,
+    100% {
+      left: 112%;
+    }
+  }
+
+  @keyframes m3-l2-tail-left {
     0%,
     70.39% {
-      --_l2-tail: -12%;
+      left: -12%;
       animation-timing-function: cubic-bezier(0.2, 0, 0.9, 1);
     }
     100% {
-      --_l2-tail: 112%;
+      left: 112%;
     }
   }
 
-  @keyframes m3-fallback-bar-1 {
-    0% {
-      left: -10%;
-      width: 10%;
-    }
-    45% {
-      left: 25%;
-      width: 55%;
-    }
-    70%,
-    100% {
-      left: 105%;
-      width: 10%;
-    }
-  }
-
-  @keyframes m3-fallback-bar-2 {
+  @keyframes m3-l2-tail-right {
     0%,
-    55% {
-      left: -10%;
-      width: 10%;
-    }
-    80% {
-      left: 35%;
-      width: 50%;
+    70.39% {
+      right: 112%;
+      animation-timing-function: cubic-bezier(0.2, 0, 0.9, 1);
     }
     100% {
-      left: 105%;
-      width: 10%;
+      right: -12%;
     }
   }
 
   @keyframes linear-buffering {
     0% {
-      transform: translateY(-50%) translateX(calc(var(--_track-height) / 2 * 5));
+      transform: translateY(-50%) translateX(10px);
+    }
+    100% {
+      transform: translateY(-50%) translateX(0px);
     }
   }
 
   @keyframes wavy-linear-move {
     from {
-      -webkit-mask-position: 0px 0px;
-      mask-position: 0px 0px;
+      transform: translate3d(0, 0, 0);
     }
     to {
-      -webkit-mask-position: var(--_wavelength) 0px;
-      mask-position: var(--_wavelength) 0px;
+      transform: translate3d(100%, 0, 0);
     }
   }
 
