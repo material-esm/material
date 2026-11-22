@@ -181,7 +181,9 @@ export class Fab extends LitElement {
         padding: 0;
         position: relative;
         height: var(--_container-height);
-        transition-property: background-color;
+        transition-property:
+          background-color, border-radius, border-start-start-radius, border-start-end-radius, border-end-start-radius,
+          border-end-end-radius;
         border-width: 0px;
         outline: none;
         z-index: 0;

@@ -1,4 +1,4 @@
-import { html, LitElement, nothing, css } from 'lit'
+import { css, html, LitElement, nothing } from 'lit'
 import { dispatchActivationClick, isActivationClick } from '../internal/events/form-label-activation.js'
 import { requestUpdateOnAriaChange } from '../internal/aria/delegate.js'
 import { setupFormSubmitter } from '../internal/controller/form-submitter.js'
@@ -7,6 +7,7 @@ import '../internal/elevation/elevation.js'
 import '../internal/focus/focus-ring.js'
 import '../internal/ripple/ripple.js'
 
+const MINIMUM_PRESS_MS = 150
 const buttonBaseClass = mixinElementInternals(LitElement)
 
 /**
@@ -28,7 +29,7 @@ export class Button extends buttonBaseClass {
   }
 
   static properties = {
-    size: { type: String, reflect: true },
+    size: { type: String, noAccessor: true },
     shape: { type: String, reflect: true },
     color: { type: String, reflect: true }, // this is elevated, filled, etc. Not an actual color.
     pressed: { type: Boolean, reflect: true },
@@ -60,6 +61,9 @@ export class Button extends buttonBaseClass {
   }
 
   #formDisabled = false
+  #pressStartTime = 0
+  #releaseTimer = 0
+  #activePointerId = null
 
   get disabled() {
     return this.hasAttribute('disabled') || this.#formDisabled
@@ -67,19 +71,53 @@ export class Button extends buttonBaseClass {
   set disabled(disabled) {
     const oldValue = this.disabled
     this.toggleAttribute('disabled', Boolean(disabled))
+    if (this.disabled) {
+      this.#clearPressImmediately()
+    }
     this.requestUpdate('disabled', oldValue)
   }
 
   formDisabledCallback(disabled) {
     const oldValue = this.disabled
     this.#formDisabled = disabled
+    if (this.disabled) {
+      this.#clearPressImmediately()
+    }
     this.requestUpdate('disabled', oldValue)
+  }
+
+  /**
+   * Accepted values are 'small' (default), 'extra-small', 'medium', 'large', 'extra-large'.
+   */
+  get size() {
+    return this.getAttribute('size') || 'small'
+  }
+  set size(size) {
+    const next = size || ''
+    const prevAttr = this.getAttribute('size') ?? ''
+    if (next === prevAttr) return
+    const oldValue = prevAttr || 'small'
+    if (next) {
+      this.setAttribute('size', next)
+    } else {
+      this.removeAttribute('size')
+    }
+    this.requestUpdate('size', oldValue)
   }
 
   attributeChangedCallback(name, old, value) {
     if (name === 'disabled') {
       const oldValue = old !== null
+      if (value !== null) {
+        this.#clearPressImmediately()
+      }
       this.requestUpdate(name, oldValue)
+      return
+    }
+    if (name === 'size') {
+      if (old !== value) {
+        this.requestUpdate('size', old || 'small')
+      }
       return
     }
     super.attributeChangedCallback(name, old, value)
@@ -92,10 +130,6 @@ export class Button extends buttonBaseClass {
   constructor() {
     super()
 
-    /**
-     * Accepted values are 'small' (default), 'extra-small', 'medium', 'large', 'extra-large'.
-     */
-    this.size = 'small'
     /**
      * Accepted values are 'round' (default), 'square'.
      */
@@ -151,6 +185,9 @@ export class Button extends buttonBaseClass {
      */
     this.checkmark = false
 
+    this.handlePress = this.handlePress.bind(this)
+    this.handleRelease = this.handleRelease.bind(this)
+    this.handleClick = this.handleClick.bind(this)
     this.handleActivationClick = (event) => {
       if (!isActivationClick(event) || !this.buttonElement) {
         return
@@ -162,20 +199,21 @@ export class Button extends buttonBaseClass {
 
   connectedCallback() {
     super.connectedCallback()
-    this.addEventListener('mousedown', this.handlePress)
-    this.addEventListener('mouseup', this.handleRelease)
-    this.addEventListener('touchstart', this.handlePress)
-    this.addEventListener('touchend', this.handleRelease)
+    this.addEventListener('pointerdown', this.handlePress)
+    this.addEventListener('pointerup', this.handleRelease)
+    this.addEventListener('pointercancel', this.#onPointerCancel)
+    this.addEventListener('pointerleave', this.#onPointerCancel)
     this.addEventListener('click', this.handleClick)
     this.addEventListener('keydown', this.handleActivationClick)
   }
 
   disconnectedCallback() {
     super.disconnectedCallback()
-    this.removeEventListener('mousedown', this.handlePress)
-    this.removeEventListener('mouseup', this.handleRelease)
-    this.removeEventListener('touchstart', this.handlePress)
-    this.removeEventListener('touchend', this.handleRelease)
+    this.#clearPressImmediately()
+    this.removeEventListener('pointerdown', this.handlePress)
+    this.removeEventListener('pointerup', this.handleRelease)
+    this.removeEventListener('pointercancel', this.#onPointerCancel)
+    this.removeEventListener('pointerleave', this.#onPointerCancel)
     this.removeEventListener('click', this.handleClick)
     this.removeEventListener('keydown', this.handleActivationClick)
   }
@@ -208,13 +246,74 @@ export class Button extends buttonBaseClass {
     `
   }
 
-  handlePress() {
+  #clearPressImmediately() {
+    if (this.#releaseTimer) {
+      clearTimeout(this.#releaseTimer)
+      this.#releaseTimer = 0
+    }
+    this.#activePointerId = null
+    this.#pressStartTime = 0
+    if (this.pressed) {
+      this.pressed = false
+    }
+  }
+
+  #onPointerCancel = (event) => {
+    if (!this.pressed || this.#releaseTimer) {
+      return
+    }
+    if (event && this.#activePointerId !== null && event.pointerId !== this.#activePointerId) {
+      return
+    }
+    this.#clearPressImmediately()
+  }
+
+  handlePress(event) {
+    if (this.disabled && !this.href) {
+      return
+    }
+    if (event) {
+      if (event.isPrimary === false) return
+      if (event.pointerType === 'mouse' && event.buttons !== undefined && event.buttons !== 1) return
+      this.#activePointerId = event.pointerId ?? null
+    }
+    if (this.#releaseTimer) {
+      clearTimeout(this.#releaseTimer)
+      this.#releaseTimer = 0
+    }
+    this.#pressStartTime = typeof performance !== 'undefined' ? performance.now() : Date.now()
     this.pressed = true
   }
-  handleRelease() {
-    this.pressed = false
+
+  handleRelease(event) {
+    if (
+      event &&
+      this.#activePointerId !== null &&
+      event.pointerId !== undefined &&
+      event.pointerId !== this.#activePointerId
+    ) {
+      return
+    }
+    this.#activePointerId = null
+    if (!this.pressed) {
+      return
+    }
+    const now = typeof performance !== 'undefined' ? performance.now() : Date.now()
+    const elapsed = this.#pressStartTime > 0 ? now - this.#pressStartTime : MINIMUM_PRESS_MS
+    if (elapsed >= MINIMUM_PRESS_MS) {
+      this.pressed = false
+      return
+    }
+    if (this.#releaseTimer) {
+      clearTimeout(this.#releaseTimer)
+    }
+    this.#releaseTimer = setTimeout(() => {
+      this.#releaseTimer = 0
+      this.pressed = false
+    }, MINIMUM_PRESS_MS - elapsed)
   }
-  handleClick(event) {
+
+  handleClick() {
     if (this.disabled || !this.toggle) {
       return
     }
@@ -268,16 +367,61 @@ export class Button extends buttonBaseClass {
     `
   }
   handleSlotChange() {
-    return
-    // errors, no assignedIcons?
-    this.hasIcon = this.assignedIcons.length > 0
+    const slot = this.renderRoot?.querySelector('slot[name="icon"]')
+    if (slot) {
+      this.hasIcon = slot.assignedElements({ flatten: true }).length > 0
+    }
   }
   static styles = [
+    css`
+      :host {
+        --_size-height: 40px;
+        --_container-height: var(--md-button-container-height, var(--_size-height));
+        --_full-shape: calc(var(--_container-height) / 2);
+        --_square-shape: 12px;
+        --_pressed-shape: 8px;
+        --_shape-transition-duration: var(--md-button-shape-transition-duration, 200ms);
+        --_shape-transition-easing: var(--md-button-shape-transition-easing, cubic-bezier(0.2, 0, 0, 1));
+        --_color-transition-duration: 150ms;
+
+        --_container-shape-start-start: var(
+          --md-button-container-shape-start-start,
+          var(--md-button-container-shape, var(--md-sys-shape-corner-full, var(--_full-shape)))
+        );
+        --_container-shape-start-end: var(
+          --md-button-container-shape-start-end,
+          var(--md-button-container-shape, var(--md-sys-shape-corner-full, var(--_full-shape)))
+        );
+        --_container-shape-end-end: var(
+          --md-button-container-shape-end-end,
+          var(--md-button-container-shape, var(--md-sys-shape-corner-full, var(--_full-shape)))
+        );
+        --_container-shape-end-start: var(
+          --md-button-container-shape-end-start,
+          var(--md-button-container-shape, var(--md-sys-shape-corner-full, var(--_full-shape)))
+        );
+
+        --_base-shape-start-start: min(var(--_container-shape-start-start), var(--_full-shape));
+        --_base-shape-start-end: min(var(--_container-shape-start-end), var(--_full-shape));
+        --_base-shape-end-end: min(var(--_container-shape-end-end), var(--_full-shape));
+        --_base-shape-end-start: min(var(--_container-shape-end-start), var(--_full-shape));
+
+        --_resolved-shape-start-start: var(--_base-shape-start-start);
+        --_resolved-shape-start-end: var(--_base-shape-start-end);
+        --_resolved-shape-end-end: var(--_base-shape-end-end);
+        --_resolved-shape-end-start: var(--_base-shape-end-start);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        :host {
+          --_shape-transition-duration: 0s;
+        }
+      }
+    `,
     css`
       :host([color='filled']) {
         --_container-color: var(--md-button-container-color, var(--md-sys-color-primary, #6750a4));
         --_container-elevation: var(--md-button-container-elevation, 0);
-        /* --_container-height: var(--_container-height, var(--md-button-container-height, 40px)); */
         --_container-shadow-color: var(--md-button-container-shadow-color, var(--md-sys-color-shadow, #000));
         --_disabled-container-color: var(--md-button-disabled-container-color, var(--md-sys-color-on-surface, #1d1b20));
         --_disabled-container-elevation: var(--md-button-disabled-container-elevation, 0);
@@ -320,19 +464,19 @@ export class Button extends buttonBaseClass {
         --_pressed-icon-color: var(--md-button-pressed-icon-color, var(--md-sys-color-on-primary, #fff));
         --_container-shape-start-start: var(
           --md-button-container-shape-start-start,
-          var(--md-button-container-shape, var(--md-sys-shape-corner-full, 9999px))
+          var(--md-button-container-shape, var(--md-sys-shape-corner-full, var(--_full-shape)))
         );
         --_container-shape-start-end: var(
           --md-button-container-shape-start-end,
-          var(--md-button-container-shape, var(--md-sys-shape-corner-full, 9999px))
+          var(--md-button-container-shape, var(--md-sys-shape-corner-full, var(--_full-shape)))
         );
         --_container-shape-end-end: var(
           --md-button-container-shape-end-end,
-          var(--md-button-container-shape, var(--md-sys-shape-corner-full, 9999px))
+          var(--md-button-container-shape, var(--md-sys-shape-corner-full, var(--_full-shape)))
         );
         --_container-shape-end-start: var(
           --md-button-container-shape-end-start,
-          var(--md-button-container-shape, var(--md-sys-shape-corner-full, 9999px))
+          var(--md-button-container-shape, var(--md-sys-shape-corner-full, var(--_full-shape)))
         );
         --_leading-space: var(--md-button-leading-space, 16px);
         --_trailing-space: var(--md-button-trailing-space, 16px);
@@ -459,19 +603,19 @@ export class Button extends buttonBaseClass {
         );
         --_container-shape-start-start: var(
           --md-filled-tonal-button-container-shape-start-start,
-          var(--md-filled-tonal-button-container-shape, var(--md-sys-shape-corner-full, 9999px))
+          var(--md-filled-tonal-button-container-shape, var(--md-sys-shape-corner-full, var(--_full-shape)))
         );
         --_container-shape-start-end: var(
           --md-filled-tonal-button-container-shape-start-end,
-          var(--md-filled-tonal-button-container-shape, var(--md-sys-shape-corner-full, 9999px))
+          var(--md-filled-tonal-button-container-shape, var(--md-sys-shape-corner-full, var(--_full-shape)))
         );
         --_container-shape-end-end: var(
           --md-filled-tonal-button-container-shape-end-end,
-          var(--md-filled-tonal-button-container-shape, var(--md-sys-shape-corner-full, 9999px))
+          var(--md-filled-tonal-button-container-shape, var(--md-sys-shape-corner-full, var(--_full-shape)))
         );
         --_container-shape-end-start: var(
           --md-filled-tonal-button-container-shape-end-start,
-          var(--md-filled-tonal-button-container-shape, var(--md-sys-shape-corner-full, 9999px))
+          var(--md-filled-tonal-button-container-shape, var(--md-sys-shape-corner-full, var(--_full-shape)))
         );
         --_leading-space: var(--md-filled-tonal-button-leading-space, 24px);
         --_trailing-space: var(--md-filled-tonal-button-trailing-space, 24px);
@@ -588,19 +732,19 @@ export class Button extends buttonBaseClass {
         --_pressed-icon-color: var(--md-elevated-button-pressed-icon-color, var(--md-sys-color-primary, #6750a4));
         --_container-shape-start-start: var(
           --md-elevated-button-container-shape-start-start,
-          var(--md-elevated-button-container-shape, var(--md-sys-shape-corner-full, 9999px))
+          var(--md-elevated-button-container-shape, var(--md-sys-shape-corner-full, var(--_full-shape)))
         );
         --_container-shape-start-end: var(
           --md-elevated-button-container-shape-start-end,
-          var(--md-elevated-button-container-shape, var(--md-sys-shape-corner-full, 9999px))
+          var(--md-elevated-button-container-shape, var(--md-sys-shape-corner-full, var(--_full-shape)))
         );
         --_container-shape-end-end: var(
           --md-elevated-button-container-shape-end-end,
-          var(--md-elevated-button-container-shape, var(--md-sys-shape-corner-full, 9999px))
+          var(--md-elevated-button-container-shape, var(--md-sys-shape-corner-full, var(--_full-shape)))
         );
         --_container-shape-end-start: var(
           --md-elevated-button-container-shape-end-start,
-          var(--md-elevated-button-container-shape, var(--md-sys-shape-corner-full, 9999px))
+          var(--md-elevated-button-container-shape, var(--md-sys-shape-corner-full, var(--_full-shape)))
         );
         --_leading-space: var(--md-elevated-button-leading-space, 24px);
         --_trailing-space: var(--md-elevated-button-trailing-space, 24px);
@@ -625,12 +769,6 @@ export class Button extends buttonBaseClass {
         --_container-color: var(--md-elevated-button-selected-container-color, var(--md-sys-color-primary, #6750a4));
         --_label-text-color: var(--md-elevated-button-selected-label-text-color, var(--md-sys-color-on-primary, #fff));
         --_icon-color: var(--md-elevated-button-selected-icon-color, var(--md-sys-color-on-primary, #fff));
-      }
-
-      :host([color='elevated'][selected]) {
-        --_container-color: var(--md-elevated-button-selected-container-color, var(--md-sys-color-primary, #6750a4));
-        --_label-text-color: var(--md-elevated-button-selected-label-text-color, var(--md-sys-color-on-primary, #fff));
-        --_icon-color: var(--md-elevated-button-selected-icon-color, var(--md-sys-color-on-primary, #fff));
         --_hover-state-layer-color: var(
           --md-elevated-button-selected-hover-state-layer-color,
           var(--md-sys-color-on-primary, #fff)
@@ -642,35 +780,30 @@ export class Button extends buttonBaseClass {
       }
 
       md-elevation {
-        transition-duration: 280ms;
+        transition-duration: var(--_shape-transition-duration);
+        transition-timing-function: var(--_shape-transition-easing);
         inset: 0;
         pointer-events: none;
         position: absolute;
-      }
-
-      :host([disabled]) md-elevation {
-        transition: none;
-      }
-
-      md-elevation {
         --md-elevation-level: var(--_container-elevation);
         --md-elevation-shadow-color: var(--_container-shadow-color);
       }
 
-      :host(:focus-within) md-elevation {
+      :host([disabled]) md-elevation {
+        transition: none;
+        --md-elevation-level: var(--_disabled-container-elevation);
+      }
+
+      :host(:focus-within:not([disabled])) md-elevation {
         --md-elevation-level: var(--_focus-container-elevation);
       }
 
-      :host(:hover) md-elevation {
+      :host(:hover:not([disabled])) md-elevation {
         --md-elevation-level: var(--_hover-container-elevation);
       }
 
-      :host(:active) md-elevation {
+      :host(:active:not([disabled])) md-elevation {
         --md-elevation-level: var(--_pressed-container-elevation);
-      }
-
-      :host([disabled]) md-elevation {
-        --md-elevation-level: var(--_disabled-container-elevation);
       }
     `,
     css`
@@ -710,19 +843,19 @@ export class Button extends buttonBaseClass {
         --_pressed-icon-color: var(--md-button-pressed-icon-color, var(--md-sys-color-primary, #6750a4));
         --_container-shape-start-start: var(
           --md-button-container-shape-start-start,
-          var(--md-button-container-shape, var(--md-sys-shape-corner-full, 9999px))
+          var(--md-button-container-shape, var(--md-sys-shape-corner-full, var(--_full-shape)))
         );
         --_container-shape-start-end: var(
           --md-button-container-shape-start-end,
-          var(--md-button-container-shape, var(--md-sys-shape-corner-full, 9999px))
+          var(--md-button-container-shape, var(--md-sys-shape-corner-full, var(--_full-shape)))
         );
         --_container-shape-end-end: var(
           --md-button-container-shape-end-end,
-          var(--md-button-container-shape, var(--md-sys-shape-corner-full, 9999px))
+          var(--md-button-container-shape, var(--md-sys-shape-corner-full, var(--_full-shape)))
         );
         --_container-shape-end-start: var(
           --md-button-container-shape-end-start,
-          var(--md-button-container-shape, var(--md-sys-shape-corner-full, 9999px))
+          var(--md-button-container-shape, var(--md-sys-shape-corner-full, var(--_full-shape)))
         );
         --_leading-space: var(--md-button-leading-space, 12px);
         --_trailing-space: var(--md-button-trailing-space, 12px);
@@ -730,8 +863,8 @@ export class Button extends buttonBaseClass {
         --_with-leading-icon-trailing-space: var(--md-button-with-leading-icon-trailing-space, 16px);
         --_with-trailing-icon-leading-space: var(--md-button-with-trailing-icon-leading-space, 16px);
         --_with-trailing-icon-trailing-space: var(--md-button-with-trailing-icon-trailing-space, 12px);
-        --_container-color: none;
-        --_disabled-container-color: none;
+        --_container-color: transparent;
+        --_disabled-container-color: transparent;
         --_disabled-container-opacity: 0;
       }
       /* This is for things like the snackbar, will use opposite colors */
@@ -837,19 +970,19 @@ export class Button extends buttonBaseClass {
         );
         --_container-shape-start-start: var(
           --md-outlined-button-container-shape-start-start,
-          var(--md-outlined-button-container-shape, var(--md-sys-shape-corner-full, 9999px))
+          var(--md-outlined-button-container-shape, var(--md-sys-shape-corner-full, var(--_full-shape)))
         );
         --_container-shape-start-end: var(
           --md-outlined-button-container-shape-start-end,
-          var(--md-outlined-button-container-shape, var(--md-sys-shape-corner-full, 9999px))
+          var(--md-outlined-button-container-shape, var(--md-sys-shape-corner-full, var(--_full-shape)))
         );
         --_container-shape-end-end: var(
           --md-outlined-button-container-shape-end-end,
-          var(--md-outlined-button-container-shape, var(--md-sys-shape-corner-full, 9999px))
+          var(--md-outlined-button-container-shape, var(--md-sys-shape-corner-full, var(--_full-shape)))
         );
         --_container-shape-end-start: var(
           --md-outlined-button-container-shape-end-start,
-          var(--md-outlined-button-container-shape, var(--md-sys-shape-corner-full, 9999px))
+          var(--md-outlined-button-container-shape, var(--md-sys-shape-corner-full, var(--_full-shape)))
         );
         --_leading-space: var(--md-outlined-button-leading-space, 24px);
         --_trailing-space: var(--md-outlined-button-trailing-space, 24px);
@@ -857,8 +990,8 @@ export class Button extends buttonBaseClass {
         --_with-leading-icon-trailing-space: var(--md-outlined-button-with-leading-icon-trailing-space, 24px);
         --_with-trailing-icon-leading-space: var(--md-outlined-button-with-trailing-icon-leading-space, 24px);
         --_with-trailing-icon-trailing-space: var(--md-outlined-button-with-trailing-icon-trailing-space, 16px);
-        --_container-color: none;
-        --_disabled-container-color: none;
+        --_container-color: transparent;
+        --_disabled-container-color: transparent;
         --_disabled-container-opacity: 0;
       }
 
@@ -881,10 +1014,18 @@ export class Button extends buttonBaseClass {
         position: absolute;
         box-sizing: border-box;
         border-color: var(--_outline-color);
-        border-radius: inherit;
+        pointer-events: none;
+        transition:
+          border-color var(--_color-transition-duration) linear,
+          opacity var(--_color-transition-duration) linear,
+          border-radius var(--_shape-transition-duration) var(--_shape-transition-easing),
+          border-start-start-radius var(--_shape-transition-duration) var(--_shape-transition-easing),
+          border-start-end-radius var(--_shape-transition-duration) var(--_shape-transition-easing),
+          border-end-start-radius var(--_shape-transition-duration) var(--_shape-transition-easing),
+          border-end-end-radius var(--_shape-transition-duration) var(--_shape-transition-easing);
       }
 
-      :host(:active) .outlined {
+      :host(:active:not([disabled])) .outlined {
         border-color: var(--_pressed-outline-color);
       }
 
@@ -916,11 +1057,24 @@ export class Button extends buttonBaseClass {
       }
     `,
     css`
+      :host,
+      .background,
+      .outlined,
+      .button,
+      md-ripple,
+      md-elevation {
+        border-start-start-radius: var(--_resolved-shape-start-start);
+        border-start-end-radius: var(--_resolved-shape-start-end);
+        border-end-start-radius: var(--_resolved-shape-end-start);
+        border-end-end-radius: var(--_resolved-shape-end-end);
+      }
+
       :host {
-        border-start-start-radius: var(--_container-shape-start-start);
-        border-start-end-radius: var(--_container-shape-start-end);
-        border-end-start-radius: var(--_container-shape-end-start);
-        border-end-end-radius: var(--_container-shape-end-end);
+        height: var(--_container-height);
+        padding-left: 16px;
+        padding-right: 16px;
+        font-weight: 500;
+        font-size: 14px;
         box-sizing: border-box;
         cursor: pointer;
         display: inline-flex;
@@ -941,22 +1095,37 @@ export class Button extends buttonBaseClass {
         --md-ripple-pressed-color: var(--_pressed-state-layer-color);
         --md-ripple-hover-opacity: var(--_hover-state-layer-opacity);
         --md-ripple-pressed-opacity: var(--_pressed-state-layer-opacity);
+        transition:
+          border-radius var(--_shape-transition-duration) var(--_shape-transition-easing),
+          border-start-start-radius var(--_shape-transition-duration) var(--_shape-transition-easing),
+          border-start-end-radius var(--_shape-transition-duration) var(--_shape-transition-easing),
+          border-end-start-radius var(--_shape-transition-duration) var(--_shape-transition-easing),
+          border-end-end-radius var(--_shape-transition-duration) var(--_shape-transition-easing);
+      }
+
+      md-ripple {
+        transition:
+          border-radius var(--_shape-transition-duration) var(--_shape-transition-easing),
+          border-start-start-radius var(--_shape-transition-duration) var(--_shape-transition-easing),
+          border-start-end-radius var(--_shape-transition-duration) var(--_shape-transition-easing),
+          border-end-start-radius var(--_shape-transition-duration) var(--_shape-transition-easing),
+          border-end-end-radius var(--_shape-transition-duration) var(--_shape-transition-easing);
       }
 
       md-focus-ring {
-        --md-focus-ring-shape-start-start: var(--_container-shape-start-start);
-        --md-focus-ring-shape-start-end: var(--_container-shape-start-end);
-        --md-focus-ring-shape-end-end: var(--_container-shape-end-end);
-        --md-focus-ring-shape-end-start: var(--_container-shape-end-start);
+        --md-focus-ring-shape-start-start: var(--_resolved-shape-start-start);
+        --md-focus-ring-shape-start-end: var(--_resolved-shape-start-end);
+        --md-focus-ring-shape-end-end: var(--_resolved-shape-end-end);
+        --md-focus-ring-shape-end-start: var(--_resolved-shape-end-start);
       }
 
       :host([disabled]) {
         cursor: default;
         pointer-events: none;
+        --_shape-transition-duration: 0s;
       }
 
       .button {
-        border-radius: inherit;
         cursor: inherit;
         display: inline-flex;
         align-items: center;
@@ -967,7 +1136,7 @@ export class Button extends buttonBaseClass {
         vertical-align: middle;
         background: rgba(0, 0, 0, 0);
         text-decoration: none;
-        min-width: calc(64px - var(--_leading-space) - var(--_trailing-space));
+        min-width: calc(64px - var(--_leading-space, 16px) - var(--_trailing-space, 16px));
         width: 100%;
         z-index: 0;
         height: 100%;
@@ -976,6 +1145,7 @@ export class Button extends buttonBaseClass {
         padding: 0;
         gap: inherit;
         text-transform: inherit;
+        transition: color var(--_color-transition-duration) linear;
       }
 
       .button::-moz-focus-inner {
@@ -983,23 +1153,31 @@ export class Button extends buttonBaseClass {
         border: 0;
       }
 
-      :host(:hover) .button {
+      :host(:hover:not([disabled])) .button {
         color: var(--_hover-label-text-color);
       }
 
-      :host(:focus-within) .button {
+      :host(:focus-within:not([disabled])) .button {
         color: var(--_focus-label-text-color);
       }
 
-      :host(:active) .button {
+      :host(:active:not([disabled])) .button {
         color: var(--_pressed-label-text-color);
       }
 
       .background {
         background-color: var(--_container-color);
-        border-radius: inherit;
         inset: 0;
         position: absolute;
+        pointer-events: none;
+        transition:
+          background-color var(--_color-transition-duration) linear,
+          opacity var(--_color-transition-duration) linear,
+          border-radius var(--_shape-transition-duration) var(--_shape-transition-easing),
+          border-start-start-radius var(--_shape-transition-duration) var(--_shape-transition-easing),
+          border-start-end-radius var(--_shape-transition-duration) var(--_shape-transition-easing),
+          border-end-start-radius var(--_shape-transition-duration) var(--_shape-transition-easing),
+          border-end-end-radius var(--_shape-transition-duration) var(--_shape-transition-easing);
       }
 
       .label {
@@ -1055,17 +1233,18 @@ export class Button extends buttonBaseClass {
         font-size: var(--_icon-size);
         inline-size: var(--_icon-size);
         block-size: var(--_icon-size);
+        transition: color var(--_color-transition-duration) linear;
       }
 
-      :host(:hover) ::slotted([slot='icon']) {
+      :host(:hover:not([disabled])) ::slotted([slot='icon']) {
         color: var(--_hover-icon-color);
       }
 
-      :host(:focus-within) ::slotted([slot='icon']) {
+      :host(:focus-within:not([disabled])) ::slotted([slot='icon']) {
         color: var(--_focus-icon-color);
       }
 
-      :host(:active) ::slotted([slot='icon']) {
+      :host(:active:not([disabled])) ::slotted([slot='icon']) {
         color: var(--_pressed-icon-color);
       }
 
@@ -1082,17 +1261,18 @@ export class Button extends buttonBaseClass {
         font-size: var(--_icon-size, 18px);
         inline-size: var(--_icon-size, 18px);
         block-size: var(--_icon-size, 18px);
+        transition: color var(--_color-transition-duration) linear;
       }
 
-      :host(:hover) .checkmark {
+      :host(:hover:not([disabled])) .checkmark {
         color: var(--_hover-icon-color);
       }
 
-      :host(:focus-within) .checkmark {
+      :host(:focus-within:not([disabled])) .checkmark {
         color: var(--_focus-icon-color);
       }
 
-      :host(:active) .checkmark {
+      :host(:active:not([disabled])) .checkmark {
         color: var(--_pressed-icon-color);
       }
 
@@ -1111,7 +1291,7 @@ export class Button extends buttonBaseClass {
       }
 
       :host([touch-target='wrapper']) {
-        margin: max(0px, (48px - var(--_container-height))/2) 0;
+        margin: max(0px, (48px - var(--_container-height)) / 2) 0;
       }
 
       :host([touch-target='none']) .touch {
@@ -1121,7 +1301,9 @@ export class Button extends buttonBaseClass {
     // sizes
     css`
       :host([size='extra-small']) {
-        height: 32px;
+        --_size-height: 32px;
+        --_square-shape: 12px;
+        --_pressed-shape: 8px;
         padding-left: 12px;
         padding-right: 12px;
         font-weight: 500;
@@ -1129,8 +1311,11 @@ export class Button extends buttonBaseClass {
         line-height: 20px;
         border-width: 1px;
       }
+      :host(:not([size])),
       :host([size='small']) {
-        height: 40px;
+        --_size-height: 40px;
+        --_square-shape: 12px;
+        --_pressed-shape: 8px;
         padding-left: 16px;
         padding-right: 16px;
         font-weight: 500;
@@ -1139,7 +1324,9 @@ export class Button extends buttonBaseClass {
         border-width: 1px;
       }
       :host([size='medium']) {
-        height: 56px;
+        --_size-height: 56px;
+        --_square-shape: 16px;
+        --_pressed-shape: 12px;
         padding-left: 24px;
         padding-right: 24px;
         font-weight: 500;
@@ -1149,7 +1336,9 @@ export class Button extends buttonBaseClass {
         --_icon-size: 24px;
       }
       :host([size='large']) {
-        height: 96px;
+        --_size-height: 96px;
+        --_square-shape: 28px;
+        --_pressed-shape: 16px;
         padding-left: 48px;
         padding-right: 48px;
         font-weight: 400;
@@ -1159,7 +1348,9 @@ export class Button extends buttonBaseClass {
         --_icon-size: 32px;
       }
       :host([size='extra-large']) {
-        height: 136px;
+        --_size-height: 136px;
+        --_square-shape: 28px;
+        --_pressed-shape: 16px;
         padding-left: 64px;
         padding-right: 64px;
         font-weight: 400;
@@ -1169,54 +1360,45 @@ export class Button extends buttonBaseClass {
         --_icon-size: 40px;
       }
     `,
-    // shapes
+    // shapes (M3 Expressive shape morphing)
     css`
-      :host(:not([group-position])[shape='square'][size='extra-small']) {
-        border-radius: 12px;
-      }
-      :host(:not([group-position])[shape='square'][size='small']) {
-        border-radius: 12px;
-      }
-      :host(:not([group-position])[shape='square'][size='medium']) {
-        border-radius: 16px;
-      }
-      :host(:not([group-position])[shape='square'][size='large']) {
-        border-radius: 28px;
-      }
-      :host(:not([group-position])[shape='square'][size='extra-large']) {
-        border-radius: 28px;
-      }
-      :host(:not([group-position])[pressed][size='extra-small']),
-      :host(:not([group-position])[selected][size='extra-small']) {
-        border-radius: 8px;
-      }
-      :host(:not([group-position])[pressed][size='small']),
-      :host(:not([group-position])[selected][size='small']) {
-        border-radius: 8px;
-      }
-      :host(:not([group-position])[pressed][size='medium']),
-      :host(:not([group-position])[selected][size='medium']) {
-        border-radius: 12px;
-      }
-      :host(:not([group-position])[pressed][size='large']),
-      :host(:not([group-position])[selected][size='large']) {
-        border-radius: 16px;
-      }
-      :host(:not([group-position])[pressed][size='extra-large']),
-      :host(:not([group-position])[selected][size='extra-large']) {
-        border-radius: 16px;
+      /* Standalone square rest state, or standalone round toggle when selected */
+      :host(:not([group-position]):not([pressed])[shape='square']:not([selected])),
+      :host(:not([group-position]):not([pressed]):not([shape='square'])[selected]) {
+        --_resolved-shape-start-start: min(var(--_square-shape), var(--_base-shape-start-start));
+        --_resolved-shape-start-end: min(var(--_square-shape), var(--_base-shape-start-end));
+        --_resolved-shape-end-end: min(var(--_square-shape), var(--_base-shape-end-end));
+        --_resolved-shape-end-start: min(var(--_square-shape), var(--_base-shape-end-start));
       }
 
-      :host([group-position]),
-      :host([group-position][selected]) {
-        border-start-start-radius: var(--_container-shape-start-start);
-        border-start-end-radius: var(--_container-shape-start-end);
-        border-end-start-radius: var(--_container-shape-end-start);
-        border-end-end-radius: var(--_container-shape-end-end);
+      /* Standalone square toggle when selected morphs to full pill */
+      :host(:not([group-position]):not([pressed])[shape='square'][selected]) {
+        --_resolved-shape-start-start: var(--_base-shape-start-start);
+        --_resolved-shape-start-end: var(--_base-shape-start-end);
+        --_resolved-shape-end-end: var(--_base-shape-end-end);
+        --_resolved-shape-end-start: var(--_base-shape-end-start);
+      }
+
+      /* Standalone pressed state sharpens corners for tactile feedback */
+      :host(:not([group-position])[pressed]) {
+        --_resolved-shape-start-start: min(var(--_pressed-shape), var(--_base-shape-start-start));
+        --_resolved-shape-start-end: min(var(--_pressed-shape), var(--_base-shape-start-end));
+        --_resolved-shape-end-end: min(var(--_pressed-shape), var(--_base-shape-end-end));
+        --_resolved-shape-end-start: min(var(--_pressed-shape), var(--_base-shape-end-start));
+      }
+
+      /* Connected button group positions resolve directly from group-assigned container-shape tokens */
+      :host([group-position]) {
+        --_resolved-shape-start-start: var(--_base-shape-start-start);
+        --_resolved-shape-start-end: var(--_base-shape-start-end);
+        --_resolved-shape-end-end: var(--_base-shape-end-end);
+        --_resolved-shape-end-start: var(--_base-shape-end-start);
       }
     `,
   ]
 }
+
+export const buttonStyles = Button.styles
 ;(() => {
   requestUpdateOnAriaChange(Button)
   setupFormSubmitter(Button)

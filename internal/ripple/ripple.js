@@ -434,6 +434,12 @@ export class Ripple extends LitElement {
       }
       .surface {
         -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        transform: translateZ(0);
+        transition-duration: inherit;
+        transition-timing-function: inherit;
+        transition-property:
+          border-radius, border-start-start-radius, border-start-end-radius, border-end-start-radius,
+          border-end-end-radius;
       }
       .surface::before,
       .surface::after {

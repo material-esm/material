@@ -199,9 +199,8 @@ function getMorphedShape(morphFraction) {
 }
 
 const _reducedMotionMql =
-  typeof window !== 'undefined' ? window.matchMedia?.('(prefers-reduced-motion: reduce)') ?? null : null
-const _forcedColorsMql =
-  typeof window !== 'undefined' ? window.matchMedia?.('(forced-colors: active)') ?? null : null
+  typeof window !== 'undefined' ? (window.matchMedia?.('(prefers-reduced-motion: reduce)') ?? null) : null
+const _forcedColorsMql = typeof window !== 'undefined' ? (window.matchMedia?.('(forced-colors: active)') ?? null) : null
 
 // --- Animator State Machine ---
 const DURATION_PER_SHAPE_MS = 650
@@ -323,8 +322,7 @@ export class Loading extends LitElement {
       position: relative;
       align-items: center;
       justify-content: center;
-      contain: strict;
-      content-visibility: auto;
+      contain: layout style paint;
       width: var(--_size);
       height: var(--_size);
     }
@@ -369,9 +367,12 @@ export class Loading extends LitElement {
     this.frameCount = 0
     this._resizeObserver = null
     this._intersectionObserver = null
+    this._cvSkipped = false
+    this._ioOffscreen = false
     this._isOffscreen = false
     this._onContentVisibilityChange = (e) => {
-      this._isOffscreen = Boolean(e.skipped)
+      this._cvSkipped = Boolean(e.skipped)
+      this._isOffscreen = this._cvSkipped || this._ioOffscreen
       if (this._isOffscreen) {
         this.stopAnimation()
       } else if (!this.paused) {
@@ -392,9 +393,21 @@ export class Loading extends LitElement {
   }
 
   render() {
+    const rawIndicatorColor = this.color || this._defaultIndicatorColor()
+    const rawContainerColor = this.containerColor || this._defaultContainerColor()
+    const indicatorColor = rawIndicatorColor.trim().startsWith('--')
+      ? `var(${rawIndicatorColor.trim()})`
+      : rawIndicatorColor
+    const bgContainerColor = rawContainerColor.trim().startsWith('--')
+      ? `var(${rawContainerColor.trim()})`
+      : rawContainerColor
     return html`
-      <div class="loading" role="progressbar" aria-label=${this.ariaLabel || 'Loading'}>
-        <canvas id="canvas" aria-hidden="true"></canvas>
+      <div
+        class="loading"
+        role="progressbar"
+        aria-label=${this.ariaLabel || 'Loading'}
+        style="color: ${indicatorColor}">
+        <canvas id="canvas" aria-hidden="true" style="color: ${bgContainerColor}"></canvas>
       </div>
     `
   }
@@ -416,9 +429,19 @@ export class Loading extends LitElement {
       this.resolvedContainerColor = 'Canvas'
       return
     }
-    const cs = typeof window !== 'undefined' ? window.getComputedStyle(this) : null
-    this.resolvedColor = this._resolveColor(this.color || this._defaultIndicatorColor(), cs)
-    this.resolvedContainerColor = this._resolveColor(this.containerColor || this._defaultContainerColor(), cs)
+    if (typeof window !== 'undefined' && typeof window.getComputedStyle === 'function') {
+      const cs = window.getComputedStyle(this)
+      const loadingEl = this.renderRoot?.querySelector('.loading')
+      const canvasEl = this.renderRoot?.querySelector('#canvas')
+      const computedIndicator = loadingEl ? window.getComputedStyle(loadingEl).color?.trim() : ''
+      const computedContainer = canvasEl ? window.getComputedStyle(canvasEl).color?.trim() : ''
+      this.resolvedColor = computedIndicator || this._resolveColor(this.color || this._defaultIndicatorColor(), cs)
+      this.resolvedContainerColor =
+        computedContainer || this._resolveColor(this.containerColor || this._defaultContainerColor(), cs)
+      return
+    }
+    this.resolvedColor = this._resolveColor(this.color || this._defaultIndicatorColor())
+    this.resolvedContainerColor = this._resolveColor(this.containerColor || this._defaultContainerColor())
   }
 
   _drawCurrentFrame() {
@@ -494,12 +517,14 @@ export class Loading extends LitElement {
     if (typeof document !== 'undefined') {
       if ('oncontentvisibilityautostatechange' in this) {
         this.addEventListener('contentvisibilityautostatechange', this._onContentVisibilityChange)
-      } else if (typeof IntersectionObserver !== 'undefined' && !this._intersectionObserver) {
+      }
+      if (typeof IntersectionObserver !== 'undefined' && !this._intersectionObserver) {
         this._intersectionObserver = new IntersectionObserver(
           (entries) => {
             const entry = entries[entries.length - 1]
             if (!entry) return
-            this._isOffscreen = !entry.isIntersecting
+            this._ioOffscreen = !entry.isIntersecting
+            this._isOffscreen = this._cvSkipped || this._ioOffscreen
             if (this._isOffscreen) {
               this.stopAnimation()
             } else if (!this.paused) {
@@ -533,6 +558,8 @@ export class Loading extends LitElement {
       this._intersectionObserver.disconnect()
       this._intersectionObserver = null
     }
+    this._cvSkipped = false
+    this._ioOffscreen = false
     this._isOffscreen = false
   }
 

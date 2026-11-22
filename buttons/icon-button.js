@@ -20,21 +20,78 @@ export const iconButtonStyles = [
 
       /* Default size (small) */
       --_size: 40px;
-      height: var(--md-icon-button-container-height, var(--_size));
-      width: var(--md-icon-button-container-width, var(--_size));
+      --_container-height: var(--md-icon-button-container-height, var(--_size));
+      --_container-width: var(--md-icon-button-container-width, var(--_size));
+      height: var(--_container-height);
+      width: var(--_container-width);
       --_icon-size: 24px;
       --_resolved-icon-size: var(--md-icon-button-icon-size, var(--_icon-size));
       --md-badge-anchor-size: var(--_resolved-icon-size);
 
-      border-start-start-radius: var(--_container-shape-start-start);
-      border-start-end-radius: var(--_container-shape-start-end);
-      border-end-start-radius: var(--_container-shape-end-start);
-      border-end-end-radius: var(--_container-shape-end-end);
+      --_full-shape: calc(min(var(--_container-height), var(--_container-width)) / 2);
+      --_square-shape: 12px;
+      --_pressed-shape: 8px;
+      --_shape-transition-duration: var(--md-icon-button-shape-transition-duration, 200ms);
+      --_shape-transition-easing: var(--md-icon-button-shape-transition-easing, cubic-bezier(0.2, 0, 0, 1));
+      --_color-transition-duration: 150ms;
+
+      --_container-shape-start-start: var(
+        --md-icon-button-container-shape-start-start,
+        var(--md-icon-button-container-shape, var(--md-sys-shape-corner-full, var(--_full-shape)))
+      );
+      --_container-shape-start-end: var(
+        --md-icon-button-container-shape-start-end,
+        var(--md-icon-button-container-shape, var(--md-sys-shape-corner-full, var(--_full-shape)))
+      );
+      --_container-shape-end-end: var(
+        --md-icon-button-container-shape-end-end,
+        var(--md-icon-button-container-shape, var(--md-sys-shape-corner-full, var(--_full-shape)))
+      );
+      --_container-shape-end-start: var(
+        --md-icon-button-container-shape-end-start,
+        var(--md-icon-button-container-shape, var(--md-sys-shape-corner-full, var(--_full-shape)))
+      );
+
+      --_base-shape-start-start: min(var(--_container-shape-start-start), var(--_full-shape));
+      --_base-shape-start-end: min(var(--_container-shape-start-end), var(--_full-shape));
+      --_base-shape-end-end: min(var(--_container-shape-end-end), var(--_full-shape));
+      --_base-shape-end-start: min(var(--_container-shape-end-start), var(--_full-shape));
+
+      --_resolved-shape-start-start: var(--_base-shape-start-start);
+      --_resolved-shape-start-end: var(--_base-shape-start-end);
+      --_resolved-shape-end-end: var(--_base-shape-end-end);
+      --_resolved-shape-end-start: var(--_base-shape-end-start);
+
+      transition:
+        color var(--_color-transition-duration) linear,
+        border-radius var(--_shape-transition-duration) var(--_shape-transition-easing),
+        border-start-start-radius var(--_shape-transition-duration) var(--_shape-transition-easing),
+        border-start-end-radius var(--_shape-transition-duration) var(--_shape-transition-easing),
+        border-end-start-radius var(--_shape-transition-duration) var(--_shape-transition-easing),
+        border-end-end-radius var(--_shape-transition-duration) var(--_shape-transition-easing);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      :host {
+        --_shape-transition-duration: 0s;
+      }
+    }
+
+    :host,
+    .background,
+    .outlined,
+    .icon-button,
+    md-ripple {
+      border-start-start-radius: var(--_resolved-shape-start-start);
+      border-start-end-radius: var(--_resolved-shape-start-end);
+      border-end-start-radius: var(--_resolved-shape-end-start);
+      border-end-end-radius: var(--_resolved-shape-end-end);
     }
 
     :host([disabled]) {
       pointer-events: none;
       cursor: default;
+      --_shape-transition-duration: 0s;
     }
 
     .icon-button {
@@ -53,7 +110,6 @@ export const iconButtonStyles = [
       z-index: 0;
       width: 100%;
       height: 100%;
-      border-radius: inherit;
       color: inherit;
     }
 
@@ -72,12 +128,20 @@ export const iconButtonStyles = [
     }
 
     .background {
-      background-color: var(--_container-color);
-      border-radius: inherit;
+      background-color: var(--_container-color, transparent);
       inset: 0;
       position: absolute;
       width: 100%;
       height: 100%;
+      pointer-events: none;
+      transition:
+        background-color var(--_color-transition-duration) linear,
+        opacity var(--_color-transition-duration) linear,
+        border-radius var(--_shape-transition-duration) var(--_shape-transition-easing),
+        border-start-start-radius var(--_shape-transition-duration) var(--_shape-transition-easing),
+        border-start-end-radius var(--_shape-transition-duration) var(--_shape-transition-easing),
+        border-end-start-radius var(--_shape-transition-duration) var(--_shape-transition-easing),
+        border-end-end-radius var(--_shape-transition-duration) var(--_shape-transition-easing);
     }
 
     .outlined {
@@ -87,19 +151,32 @@ export const iconButtonStyles = [
       box-sizing: border-box;
       border-color: var(--_outline-color);
       border-width: var(--_outline-width);
-      border-radius: inherit;
       pointer-events: none;
+      transition:
+        border-color var(--_color-transition-duration) linear,
+        border-width var(--_color-transition-duration) linear,
+        opacity var(--_color-transition-duration) linear,
+        border-radius var(--_shape-transition-duration) var(--_shape-transition-easing),
+        border-start-start-radius var(--_shape-transition-duration) var(--_shape-transition-easing),
+        border-start-end-radius var(--_shape-transition-duration) var(--_shape-transition-easing),
+        border-end-start-radius var(--_shape-transition-duration) var(--_shape-transition-easing),
+        border-end-end-radius var(--_shape-transition-duration) var(--_shape-transition-easing);
     }
 
     md-ripple {
-      border-radius: inherit;
+      transition:
+        border-radius var(--_shape-transition-duration) var(--_shape-transition-easing),
+        border-start-start-radius var(--_shape-transition-duration) var(--_shape-transition-easing),
+        border-start-end-radius var(--_shape-transition-duration) var(--_shape-transition-easing),
+        border-end-start-radius var(--_shape-transition-duration) var(--_shape-transition-easing),
+        border-end-end-radius var(--_shape-transition-duration) var(--_shape-transition-easing);
     }
 
     md-focus-ring {
-      --md-focus-ring-shape-start-start: var(--_container-shape-start-start);
-      --md-focus-ring-shape-start-end: var(--_container-shape-start-end);
-      --md-focus-ring-shape-end-end: var(--_container-shape-end-end);
-      --md-focus-ring-shape-end-start: var(--_container-shape-end-start);
+      --md-focus-ring-shape-start-start: var(--_resolved-shape-start-start);
+      --md-focus-ring-shape-start-end: var(--_resolved-shape-start-end);
+      --md-focus-ring-shape-end-end: var(--_resolved-shape-end-end);
+      --md-focus-ring-shape-end-start: var(--_resolved-shape-end-start);
     }
 
     .flip-icon .icon {
@@ -126,7 +203,7 @@ export const iconButtonStyles = [
     }
 
     :host([touch-target='wrapper']) {
-      margin: max(0px, (48px - var(--_size))/2);
+      margin: max(0px, (48px - var(--_size)) / 2);
     }
 
     @media (forced-colors: active) {
@@ -180,10 +257,22 @@ export const iconButtonStyles = [
       );
       --_pressed-state-layer-opacity: var(--md-icon-button-pressed-state-layer-opacity, 0.12);
 
-      --_container-shape-start-start: 9999px;
-      --_container-shape-start-end: 9999px;
-      --_container-shape-end-end: 9999px;
-      --_container-shape-end-start: 9999px;
+      --_container-shape-start-start: var(
+        --md-icon-button-container-shape-start-start,
+        var(--md-icon-button-container-shape, var(--md-sys-shape-corner-full, var(--_full-shape)))
+      );
+      --_container-shape-start-end: var(
+        --md-icon-button-container-shape-start-end,
+        var(--md-icon-button-container-shape, var(--md-sys-shape-corner-full, var(--_full-shape)))
+      );
+      --_container-shape-end-end: var(
+        --md-icon-button-container-shape-end-end,
+        var(--md-icon-button-container-shape, var(--md-sys-shape-corner-full, var(--_full-shape)))
+      );
+      --_container-shape-end-start: var(
+        --md-icon-button-container-shape-end-start,
+        var(--md-icon-button-container-shape, var(--md-sys-shape-corner-full, var(--_full-shape)))
+      );
 
       --md-ripple-hover-color: var(--_hover-state-layer-color);
       --md-ripple-hover-opacity: var(--_hover-state-layer-opacity);
@@ -191,13 +280,13 @@ export const iconButtonStyles = [
       --md-ripple-pressed-opacity: var(--_pressed-state-layer-opacity);
     }
 
-    :host([color='standard']:hover) {
+    :host([color='standard']:hover:not([disabled])) {
       color: var(--_hover-icon-color);
     }
-    :host([color='standard']:focus) {
+    :host([color='standard']:focus:not([disabled])) {
       color: var(--_focus-icon-color);
     }
-    :host([color='standard']:active) {
+    :host([color='standard']:active:not([disabled])) {
       color: var(--_pressed-icon-color);
     }
     :host([color='standard'][disabled]) {
@@ -208,10 +297,6 @@ export const iconButtonStyles = [
     }
 
     :host([color='standard'][selected]) {
-      --_container-shape-start-start: var(--md-sys-shape-corner-medium, 12px);
-      --_container-shape-start-end: var(--md-sys-shape-corner-medium, 12px);
-      --_container-shape-end-end: var(--md-sys-shape-corner-medium, 12px);
-      --_container-shape-end-start: var(--md-sys-shape-corner-medium, 12px);
       --md-ripple-hover-color: var(--_selected-hover-state-layer-color);
       --md-ripple-hover-opacity: var(--_selected-hover-state-layer-opacity);
       --md-ripple-pressed-color: var(--_selected-pressed-state-layer-color);
@@ -290,19 +375,19 @@ export const iconButtonStyles = [
 
       --_container-shape-start-start: var(
         --md-icon-button-container-shape-start-start,
-        var(--md-icon-button-container-shape, var(--md-sys-shape-corner-full, 9999px))
+        var(--md-icon-button-container-shape, var(--md-sys-shape-corner-full, var(--_full-shape)))
       );
       --_container-shape-start-end: var(
         --md-icon-button-container-shape-start-end,
-        var(--md-icon-button-container-shape, var(--md-sys-shape-corner-full, 9999px))
+        var(--md-icon-button-container-shape, var(--md-sys-shape-corner-full, var(--_full-shape)))
       );
       --_container-shape-end-end: var(
         --md-icon-button-container-shape-end-end,
-        var(--md-icon-button-container-shape, var(--md-sys-shape-corner-full, 9999px))
+        var(--md-icon-button-container-shape, var(--md-sys-shape-corner-full, var(--_full-shape)))
       );
       --_container-shape-end-start: var(
         --md-icon-button-container-shape-end-start,
-        var(--md-icon-button-container-shape, var(--md-sys-shape-corner-full, 9999px))
+        var(--md-icon-button-container-shape, var(--md-sys-shape-corner-full, var(--_full-shape)))
       );
 
       --md-ripple-hover-color: var(--_hover-state-layer-color);
@@ -311,13 +396,13 @@ export const iconButtonStyles = [
       --md-ripple-pressed-opacity: var(--_pressed-state-layer-opacity);
     }
 
-    :host([color='outlined']:hover) {
+    :host([color='outlined']:hover:not([disabled])) {
       color: var(--_hover-icon-color);
     }
-    :host([color='outlined']:focus) {
+    :host([color='outlined']:focus:not([disabled])) {
       color: var(--_focus-icon-color);
     }
-    :host([color='outlined']:active) {
+    :host([color='outlined']:active:not([disabled])) {
       color: var(--_pressed-icon-color);
     }
     :host([color='outlined'][disabled]) {
@@ -447,19 +532,19 @@ export const iconButtonStyles = [
 
       --_container-shape-start-start: var(
         --md-icon-button-container-shape-start-start,
-        var(--md-icon-button-container-shape, var(--md-sys-shape-corner-full, 9999px))
+        var(--md-icon-button-container-shape, var(--md-sys-shape-corner-full, var(--_full-shape)))
       );
       --_container-shape-start-end: var(
         --md-icon-button-container-shape-start-end,
-        var(--md-icon-button-container-shape, var(--md-sys-shape-corner-full, 9999px))
+        var(--md-icon-button-container-shape, var(--md-sys-shape-corner-full, var(--_full-shape)))
       );
       --_container-shape-end-end: var(
         --md-icon-button-container-shape-end-end,
-        var(--md-icon-button-container-shape, var(--md-sys-shape-corner-full, 9999px))
+        var(--md-icon-button-container-shape, var(--md-sys-shape-corner-full, var(--_full-shape)))
       );
       --_container-shape-end-start: var(
         --md-icon-button-container-shape-end-start,
-        var(--md-icon-button-container-shape, var(--md-sys-shape-corner-full, 9999px))
+        var(--md-icon-button-container-shape, var(--md-sys-shape-corner-full, var(--_full-shape)))
       );
 
       color: var(--_icon-color);
@@ -469,13 +554,13 @@ export const iconButtonStyles = [
       --md-ripple-pressed-opacity: var(--_pressed-state-layer-opacity);
     }
 
-    :host([color='tonal']:hover) {
+    :host([color='tonal']:hover:not([disabled])) {
       color: var(--_hover-icon-color);
     }
-    :host([color='tonal']:focus) {
+    :host([color='tonal']:focus:not([disabled])) {
       color: var(--_focus-icon-color);
     }
-    :host([color='tonal']:active) {
+    :host([color='tonal']:active:not([disabled])) {
       color: var(--_pressed-icon-color);
     }
     :host([color='tonal'][disabled]) {
@@ -600,19 +685,19 @@ export const iconButtonStyles = [
 
       --_container-shape-start-start: var(
         --md-icon-button-container-shape-start-start,
-        var(--md-icon-button-container-shape, var(--md-sys-shape-corner-full, 9999px))
+        var(--md-icon-button-container-shape, var(--md-sys-shape-corner-full, var(--_full-shape)))
       );
       --_container-shape-start-end: var(
         --md-icon-button-container-shape-start-end,
-        var(--md-icon-button-container-shape, var(--md-sys-shape-corner-full, 9999px))
+        var(--md-icon-button-container-shape, var(--md-sys-shape-corner-full, var(--_full-shape)))
       );
       --_container-shape-end-end: var(
         --md-icon-button-container-shape-end-end,
-        var(--md-icon-button-container-shape, var(--md-sys-shape-corner-full, 9999px))
+        var(--md-icon-button-container-shape, var(--md-sys-shape-corner-full, var(--_full-shape)))
       );
       --_container-shape-end-start: var(
         --md-icon-button-container-shape-end-start,
-        var(--md-icon-button-container-shape, var(--md-sys-shape-corner-full, 9999px))
+        var(--md-icon-button-container-shape, var(--md-sys-shape-corner-full, var(--_full-shape)))
       );
 
       color: var(--_icon-color);
@@ -622,13 +707,13 @@ export const iconButtonStyles = [
       --md-ripple-pressed-opacity: var(--_pressed-state-layer-opacity);
     }
 
-    :host([color='filled']:hover) {
+    :host([color='filled']:hover:not([disabled])) {
       color: var(--_hover-icon-color);
     }
-    :host([color='filled']:focus) {
+    :host([color='filled']:focus:not([disabled])) {
       color: var(--_focus-icon-color);
     }
-    :host([color='filled']:active) {
+    :host([color='filled']:active:not([disabled])) {
       color: var(--_pressed-icon-color);
     }
     :host([color='filled'][disabled]) {
@@ -684,32 +769,76 @@ export const iconButtonStyles = [
       background-color: var(--_selected-container-color);
     }
   `,
-  // Sizes
+  // Sizes & M3 Expressive shape morphing
   css`
     :host([size='extra-small']) {
       --_size: 32px;
       --_icon-size: 20px;
+      --_square-shape: 12px;
+      --_pressed-shape: 8px;
     }
+    :host(:not([size])),
     :host([size='small']) {
       --_size: 40px;
       --_icon-size: 24px;
+      --_square-shape: 12px;
+      --_pressed-shape: 8px;
     }
     :host([size='medium']) {
       --_size: 56px;
       --_icon-size: 24px;
+      --_square-shape: 16px;
+      --_pressed-shape: 12px;
     }
     :host([size='large']) {
       --_size: 96px;
       --_icon-size: 32px;
+      --_square-shape: 28px;
+      --_pressed-shape: 16px;
     }
     :host([size='extra-large']) {
       --_size: 136px;
       --_icon-size: 40px;
+      --_square-shape: 28px;
+      --_pressed-shape: 16px;
+    }
+
+    /* Standalone square rest state, or standalone round toggle when selected */
+    :host(:not([group-position]):not([pressed])[shape='square']:not([selected])),
+    :host(:not([group-position]):not([pressed]):not([shape='square'])[selected]) {
+      --_resolved-shape-start-start: min(var(--_square-shape), var(--_base-shape-start-start));
+      --_resolved-shape-start-end: min(var(--_square-shape), var(--_base-shape-start-end));
+      --_resolved-shape-end-end: min(var(--_square-shape), var(--_base-shape-end-end));
+      --_resolved-shape-end-start: min(var(--_square-shape), var(--_base-shape-end-start));
+    }
+
+    /* Standalone square toggle when selected morphs to full circle */
+    :host(:not([group-position]):not([pressed])[shape='square'][selected]) {
+      --_resolved-shape-start-start: var(--_base-shape-start-start);
+      --_resolved-shape-start-end: var(--_base-shape-start-end);
+      --_resolved-shape-end-end: var(--_base-shape-end-end);
+      --_resolved-shape-end-start: var(--_base-shape-end-start);
+    }
+
+    /* Standalone pressed state sharpens corners */
+    :host(:not([group-position])[pressed]) {
+      --_resolved-shape-start-start: min(var(--_pressed-shape), var(--_base-shape-start-start));
+      --_resolved-shape-start-end: min(var(--_pressed-shape), var(--_base-shape-start-end));
+      --_resolved-shape-end-end: min(var(--_pressed-shape), var(--_base-shape-end-end));
+      --_resolved-shape-end-start: min(var(--_pressed-shape), var(--_base-shape-end-start));
+    }
+
+    :host([group-position]) {
+      --_resolved-shape-start-start: var(--_base-shape-start-start);
+      --_resolved-shape-start-end: var(--_base-shape-start-end);
+      --_resolved-shape-end-end: var(--_base-shape-end-end);
+      --_resolved-shape-end-start: var(--_base-shape-end-start);
     }
   `,
 ]
 const styles = iconButtonStyles
 
+const MINIMUM_PRESS_MS = 150
 const iconButtonBaseClass = mixinElementInternals(LitElement)
 
 /**
@@ -728,11 +857,13 @@ export class IconButton extends iconButtonBaseClass {
     ariaLabelSelected: { type: String, attribute: 'aria-label-selected' },
     toggle: { type: Boolean, reflect: true },
     selected: { type: Boolean, reflect: true },
+    pressed: { type: Boolean, reflect: true },
+    shape: { type: String, reflect: true },
     type: { type: String },
     value: { type: String },
     flipIcon: { type: Boolean },
     color: { type: String, reflect: true },
-    size: { type: String, reflect: true },
+    size: { type: String, noAccessor: true },
   }
 
   constructor() {
@@ -765,6 +896,11 @@ export class IconButton extends iconButtonBaseClass {
      * icon is provided.
      */
     this.selected = false
+    this.pressed = false
+    /**
+     * Accepted values are 'round' (default), 'square'.
+     */
+    this.shape = 'round'
     /**
      * The default behavior of the button. May be "text", "reset", or "submit"
      * (default).
@@ -780,10 +916,10 @@ export class IconButton extends iconButtonBaseClass {
      * filled, tonal, outlined, standard
      */
     this.color = 'standard'
-    /**
-     * extra-small, small, medium, large, extra-large
-     */
-    this.size = 'small'
+
+    this.handlePress = this.handlePress.bind(this)
+    this.handleRelease = this.handleRelease.bind(this)
+    this.handleClick = this.handleClick.bind(this)
   }
 
   get name() {
@@ -802,6 +938,9 @@ export class IconButton extends iconButtonBaseClass {
   }
 
   #formDisabled = false
+  #pressStartTime = 0
+  #releaseTimer = 0
+  #activePointerId = null
 
   get disabled() {
     return this.hasAttribute('disabled') || this.#formDisabled
@@ -809,19 +948,53 @@ export class IconButton extends iconButtonBaseClass {
   set disabled(disabled) {
     const oldValue = this.disabled
     this.toggleAttribute('disabled', Boolean(disabled))
+    if (this.disabled) {
+      this.#clearPressImmediately()
+    }
     this.requestUpdate('disabled', oldValue)
   }
 
   formDisabledCallback(disabled) {
     const oldValue = this.disabled
     this.#formDisabled = disabled
+    if (this.disabled) {
+      this.#clearPressImmediately()
+    }
     this.requestUpdate('disabled', oldValue)
+  }
+
+  /**
+   * extra-small, small, medium, large, extra-large
+   */
+  get size() {
+    return this.getAttribute('size') || 'small'
+  }
+  set size(size) {
+    const next = size || ''
+    const prevAttr = this.getAttribute('size') ?? ''
+    if (next === prevAttr) return
+    const oldValue = prevAttr || 'small'
+    if (next) {
+      this.setAttribute('size', next)
+    } else {
+      this.removeAttribute('size')
+    }
+    this.requestUpdate('size', oldValue)
   }
 
   attributeChangedCallback(name, old, value) {
     if (name === 'disabled') {
       const oldValue = old !== null
+      if (value !== null) {
+        this.#clearPressImmediately()
+      }
       this.requestUpdate(name, oldValue)
+      return
+    }
+    if (name === 'size') {
+      if (old !== value) {
+        this.requestUpdate('size', old || 'small')
+      }
       return
     }
     super.attributeChangedCallback(name, old, value)
@@ -840,12 +1013,88 @@ export class IconButton extends iconButtonBaseClass {
   connectedCallback() {
     this.flipIcon = isRtl(this, this.flipIconInRtl)
     super.connectedCallback()
+    this.addEventListener('pointerdown', this.handlePress)
+    this.addEventListener('pointerup', this.handleRelease)
+    this.addEventListener('pointercancel', this.#onPointerCancel)
+    this.addEventListener('pointerleave', this.#onPointerCancel)
     this.addEventListener('click', this.handleClick)
   }
 
   disconnectedCallback() {
     super.disconnectedCallback()
+    this.#clearPressImmediately()
+    this.removeEventListener('pointerdown', this.handlePress)
+    this.removeEventListener('pointerup', this.handleRelease)
+    this.removeEventListener('pointercancel', this.#onPointerCancel)
+    this.removeEventListener('pointerleave', this.#onPointerCancel)
     this.removeEventListener('click', this.handleClick)
+  }
+
+  #clearPressImmediately() {
+    if (this.#releaseTimer) {
+      clearTimeout(this.#releaseTimer)
+      this.#releaseTimer = 0
+    }
+    this.#activePointerId = null
+    this.#pressStartTime = 0
+    if (this.pressed) {
+      this.pressed = false
+    }
+  }
+
+  #onPointerCancel = (event) => {
+    if (!this.pressed || this.#releaseTimer) {
+      return
+    }
+    if (event && this.#activePointerId !== null && event.pointerId !== this.#activePointerId) {
+      return
+    }
+    this.#clearPressImmediately()
+  }
+
+  handlePress(event) {
+    if (this.disabled && !this.href) {
+      return
+    }
+    if (event) {
+      if (event.isPrimary === false) return
+      if (event.pointerType === 'mouse' && event.buttons !== undefined && event.buttons !== 1) return
+      this.#activePointerId = event.pointerId ?? null
+    }
+    if (this.#releaseTimer) {
+      clearTimeout(this.#releaseTimer)
+      this.#releaseTimer = 0
+    }
+    this.#pressStartTime = typeof performance !== 'undefined' ? performance.now() : Date.now()
+    this.pressed = true
+  }
+
+  handleRelease(event) {
+    if (
+      event &&
+      this.#activePointerId !== null &&
+      event.pointerId !== undefined &&
+      event.pointerId !== this.#activePointerId
+    ) {
+      return
+    }
+    this.#activePointerId = null
+    if (!this.pressed) {
+      return
+    }
+    const now = typeof performance !== 'undefined' ? performance.now() : Date.now()
+    const elapsed = this.#pressStartTime > 0 ? now - this.#pressStartTime : MINIMUM_PRESS_MS
+    if (elapsed >= MINIMUM_PRESS_MS) {
+      this.pressed = false
+      return
+    }
+    if (this.#releaseTimer) {
+      clearTimeout(this.#releaseTimer)
+    }
+    this.#releaseTimer = setTimeout(() => {
+      this.#releaseTimer = 0
+      this.pressed = false
+    }, MINIMUM_PRESS_MS - elapsed)
   }
 
   render() {

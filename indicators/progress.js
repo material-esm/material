@@ -66,8 +66,7 @@ export const circularStyles = css`
     position: relative;
     align-items: center;
     justify-content: center;
-    contain: strict;
-    content-visibility: auto;
+    contain: layout style;
   }
 
   .circular.progress {
@@ -205,16 +204,16 @@ export const circularStyles = css`
 
   @keyframes circular-indeterminate-track {
     0% {
-      stroke-dasharray: var(--_ind-track-max, 289.07) var(--_ind-track-max-comp, 70.93);
-      stroke-dashoffset: var(--_ind-offset-0, -45.46);
+      stroke-dasharray: 289.07 70.93;
+      stroke-dashoffset: -45.46;
     }
     50% {
-      stroke-dasharray: var(--_ind-track-min, 49.07) var(--_ind-track-min-comp, 310.93);
-      stroke-dashoffset: var(--_ind-offset-50, -335.46);
+      stroke-dasharray: 49.07 310.93;
+      stroke-dashoffset: -335.46;
     }
     100% {
-      stroke-dasharray: var(--_ind-track-max, 289.07) var(--_ind-track-max-comp, 70.93);
-      stroke-dashoffset: var(--_ind-offset-100, -405.46);
+      stroke-dasharray: 289.07 70.93;
+      stroke-dashoffset: -405.46;
     }
   }
 
@@ -286,12 +285,12 @@ export const linearStyles = css`
       --md-linear-progress-four-color-active-indicator-four-color,
       var(--md-sys-color-tertiary-container, #ffd8e4)
     );
+    --_used-indeterminate-bar-duration: 1750ms;
     display: flex;
     position: relative;
     min-width: 40px;
     height: max(var(--_track-height), var(--_active-indicator-height));
-    content-visibility: auto;
-    contain: strict;
+    contain: layout style paint;
   }
 
   :host([type='linear']:dir(rtl)) {
@@ -350,8 +349,20 @@ export const linearStyles = css`
   }
 
   .linear .secondary-bar,
+  .linear .indeterminate-tracks,
   .linear .indeterminate-track {
     display: none;
+  }
+
+  .linear .indeterminate-tracks {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    height: var(--_track-height);
+    border-radius: var(--_track-shape);
+    overflow: hidden;
   }
 
   .linear .stop-indicator {
@@ -381,6 +392,7 @@ export const linearStyles = css`
   }
 
   .linear.progress.indeterminate .secondary-bar,
+  .linear.progress.indeterminate .indeterminate-tracks,
   .linear.progress.indeterminate .indeterminate-track {
     display: block;
   }
@@ -393,52 +405,43 @@ export const linearStyles = css`
       m3-l2-tail 1750ms infinite;
   }
 
-  .linear.progress.indeterminate.registered-props .primary-bar {
-    left: calc(var(--_l1-tail) * 100%);
-    width: max(0px, calc((var(--_l1-head) - var(--_l1-tail)) * 100%));
+  /* Direct standard left/right keyframes ensure WebKit/Safari 26 animates every frame
+     even when Shadow DOM custom-property keyframes skip descendant calc() invalidation. */
+  .linear.progress.indeterminate .primary-bar {
+    width: auto;
+    animation:
+      m3-l1-tail-left 1750ms infinite,
+      m3-l1-head-right 1750ms infinite;
   }
 
-  .linear.progress.indeterminate.registered-props .secondary-bar {
-    left: calc(var(--_l2-tail) * 100%);
-    width: max(0px, calc((var(--_l2-head) - var(--_l2-tail)) * 100%));
+  .linear.progress.indeterminate .secondary-bar {
+    width: auto;
+    animation:
+      m3-l2-tail-left 1750ms infinite,
+      m3-l2-head-right 1750ms infinite;
   }
 
-  .linear.progress.indeterminate.registered-props .track-0 {
-    --_t0-left: max(0px, calc(var(--_l1-head) * 100% + var(--_track-gap)));
-    left: var(--_t0-left);
-    width: max(0px, calc(100% - var(--_t0-left)));
+  .linear.progress.indeterminate .track-0 {
+    right: 0;
+    width: auto;
+    margin-left: var(--_track-gap);
+    animation: m3-l1-head-left 1750ms infinite;
   }
 
-  .linear.progress.indeterminate.registered-props .track-1 {
-    --_t1-left: max(0px, calc(var(--_l2-head) * 100% + var(--_track-gap)));
-    --_t1-right: max(0px, calc((1 - var(--_l1-tail)) * 100% + var(--_track-gap)));
-    left: var(--_t1-left);
-    width: max(0px, calc(100% - var(--_t1-left) - var(--_t1-right)));
+  .linear.progress.indeterminate .track-1 {
+    width: auto;
+    margin-left: var(--_track-gap);
+    margin-right: var(--_track-gap);
+    animation:
+      m3-l2-head-left 1750ms infinite,
+      m3-l1-tail-right 1750ms infinite;
   }
 
-  .linear.progress.indeterminate.registered-props .track-2 {
-    --_t2-right: max(0px, calc((1 - var(--_l2-tail)) * 100% + var(--_track-gap)));
+  .linear.progress.indeterminate .track-2 {
     left: 0;
-    width: max(0px, calc(100% - var(--_t2-right)));
-  }
-
-  /* Fallback when CSS.registerProperty is unavailable (e.g. non-browser test runners) */
-  .linear.progress.indeterminate:not(.registered-props) .track-0 {
-    left: 0;
-    width: 100%;
-  }
-
-  .linear.progress.indeterminate:not(.registered-props) .track-1,
-  .linear.progress.indeterminate:not(.registered-props) .track-2 {
-    display: none;
-  }
-
-  .linear.progress.indeterminate:not(.registered-props) .primary-bar {
-    animation: m3-fallback-bar-1 1750ms cubic-bezier(0.3, 0, 0.8, 0.15) infinite;
-  }
-
-  .linear.progress.indeterminate:not(.registered-props) .secondary-bar {
-    animation: m3-fallback-bar-2 1750ms cubic-bezier(0.3, 0, 0.8, 0.15) infinite;
+    width: auto;
+    margin-right: var(--_track-gap);
+    animation: m3-l2-tail-right 1750ms infinite;
   }
 
   .linear.progress.indeterminate.four-color .bar-inner {
@@ -472,6 +475,8 @@ export const linearStyles = css`
   }
 
   .linear.progress.wavy .bar-inner {
+    inset: 0 auto 0 calc(-1 * var(--_wavelength));
+    width: calc(100cqi + var(--_wavelength) * 2);
     border-radius: 0;
     -webkit-mask-image: ${WAVY_MASK_40};
     mask-image: ${WAVY_MASK_40};
@@ -480,6 +485,7 @@ export const linearStyles = css`
     -webkit-mask-repeat: repeat-x;
     mask-repeat: repeat-x;
     animation: wavy-linear-move var(--_used-wave-duration) linear infinite;
+    will-change: transform;
   }
 
   .linear.progress.wavy.indeterminate {
@@ -495,15 +501,24 @@ export const linearStyles = css`
   }
 
   /* Anchor indeterminate wavy mask in track coordinates so moving bars window across the wave
-     rather than dragging the wave mask at bar-tail velocity. */
+     rather than dragging the wave mask at bar-tail velocity. Direct cqi keyframes guarantee
+     track-anchoring in Safari 26 without relying on custom-property calc() invalidation. */
   .linear.progress.wavy.indeterminate.registered-props .primary-bar .bar-inner {
     inset: 0 auto 0 calc(var(--_l1-tail) * -100cqi - var(--_wavelength));
+    margin-left: calc(-1 * var(--_wavelength));
     width: calc(100cqi + var(--_wavelength) * 2);
+    animation:
+      wavy-linear-move var(--_used-wave-duration) linear infinite,
+      m3-l1-tail-cqi var(--_used-indeterminate-bar-duration) infinite;
   }
 
   .linear.progress.wavy.indeterminate.registered-props .secondary-bar .bar-inner {
     inset: 0 auto 0 calc(var(--_l2-tail) * -100cqi - var(--_wavelength));
+    margin-left: calc(-1 * var(--_wavelength));
     width: calc(100cqi + var(--_wavelength) * 2);
+    animation:
+      wavy-linear-move var(--_used-wave-duration) linear infinite,
+      m3-l2-tail-cqi var(--_used-indeterminate-bar-duration) infinite;
   }
 
   .linear.progress.wavy.indeterminate.four-color .bar-inner {
@@ -512,18 +527,34 @@ export const linearStyles = css`
       linear-four-color var(--_used-four-color-duration, 3500ms) linear infinite;
   }
 
+  .linear.progress.wavy.indeterminate.registered-props.four-color .primary-bar .bar-inner {
+    animation:
+      wavy-linear-move var(--_used-wave-duration) linear infinite,
+      m3-l1-tail-cqi var(--_used-indeterminate-bar-duration) infinite,
+      linear-four-color var(--_used-four-color-duration, 3500ms) linear infinite;
+  }
+
+  .linear.progress.wavy.indeterminate.registered-props.four-color .secondary-bar .bar-inner {
+    animation:
+      wavy-linear-move var(--_used-wave-duration) linear infinite,
+      m3-l2-tail-cqi var(--_used-indeterminate-bar-duration) infinite,
+      linear-four-color var(--_used-four-color-duration, 3500ms) linear infinite;
+  }
+
   @media (prefers-reduced-motion: reduce) {
+    :host([type='linear']) {
+      --_used-indeterminate-bar-duration: 6s;
+    }
+
     .linear.progress:not(.indeterminate) .primary-bar,
     .linear.progress:not(.indeterminate) .inactive-track {
       transition: none;
     }
 
-    .linear.progress.indeterminate.registered-props {
-      animation-duration: 6s;
-    }
-
-    .linear.progress.indeterminate:not(.registered-props) .primary-bar,
-    .linear.progress.indeterminate:not(.registered-props) .secondary-bar {
+    .linear.progress.indeterminate.registered-props,
+    .linear.progress.indeterminate .primary-bar,
+    .linear.progress.indeterminate .secondary-bar,
+    .linear.progress.indeterminate .indeterminate-track {
       animation-duration: 6s;
     }
 
@@ -613,52 +644,136 @@ export const linearStyles = css`
     }
   }
 
-  @keyframes m3-fallback-bar-1 {
+  @keyframes m3-l1-head-right {
     0% {
-      left: -10%;
-      width: 10%;
+      right: 110%;
+      animation-timing-function: cubic-bezier(0.3, 0, 0.8, 0.15);
     }
-    45% {
-      left: 25%;
-      width: 55%;
-    }
-    70%,
+    57.14%,
     100% {
-      left: 105%;
-      width: 10%;
+      right: -10%;
     }
   }
 
-  @keyframes m3-fallback-bar-2 {
-    0%,
-    55% {
+  @keyframes m3-l1-head-left {
+    0% {
       left: -10%;
-      width: 10%;
+      animation-timing-function: cubic-bezier(0.3, 0, 0.8, 0.15);
     }
-    80% {
-      left: 35%;
-      width: 50%;
+    57.14%,
+    100% {
+      left: 110%;
+    }
+  }
+
+  @keyframes m3-l1-tail-left {
+    0%,
+    14.29% {
+      left: -10%;
+      animation-timing-function: cubic-bezier(0.3, 0, 0.8, 0.15);
+    }
+    71.43%,
+    100% {
+      left: 110%;
+    }
+  }
+
+  @keyframes m3-l1-tail-right {
+    0%,
+    14.29% {
+      right: 110%;
+      animation-timing-function: cubic-bezier(0.3, 0, 0.8, 0.15);
+    }
+    71.43%,
+    100% {
+      right: -10%;
+    }
+  }
+
+  @keyframes m3-l2-head-right {
+    0%,
+    37.14% {
+      right: 110%;
+      animation-timing-function: cubic-bezier(0.3, 0, 0.8, 0.15);
+    }
+    85.71%,
+    100% {
+      right: -10%;
+    }
+  }
+
+  @keyframes m3-l2-head-left {
+    0%,
+    37.14% {
+      left: -10%;
+      animation-timing-function: cubic-bezier(0.3, 0, 0.8, 0.15);
+    }
+    85.71%,
+    100% {
+      left: 110%;
+    }
+  }
+
+  @keyframes m3-l2-tail-left {
+    0%,
+    51.43% {
+      left: -10%;
+      animation-timing-function: cubic-bezier(0.3, 0, 0.8, 0.15);
     }
     100% {
-      left: 105%;
-      width: 10%;
+      left: 110%;
+    }
+  }
+
+  @keyframes m3-l2-tail-right {
+    0%,
+    51.43% {
+      right: 110%;
+      animation-timing-function: cubic-bezier(0.3, 0, 0.8, 0.15);
+    }
+    100% {
+      right: -10%;
+    }
+  }
+
+  @keyframes m3-l1-tail-cqi {
+    0%,
+    14.29% {
+      left: 10cqi;
+      animation-timing-function: cubic-bezier(0.3, 0, 0.8, 0.15);
+    }
+    71.43%,
+    100% {
+      left: -110cqi;
+    }
+  }
+
+  @keyframes m3-l2-tail-cqi {
+    0%,
+    51.43% {
+      left: 10cqi;
+      animation-timing-function: cubic-bezier(0.3, 0, 0.8, 0.15);
+    }
+    100% {
+      left: -110cqi;
     }
   }
 
   @keyframes linear-buffering {
     0% {
-      transform: translateY(-50%) translateX(calc(var(--_track-height) / 2 * 5));
+      transform: translateY(-50%) translateX(10px);
+    }
+    100% {
+      transform: translateY(-50%) translateX(0px);
     }
   }
 
   @keyframes wavy-linear-move {
     from {
-      -webkit-mask-position: 0px 0px;
-      mask-position: 0px 0px;
+      transform: translate3d(0px, 0px, 0px);
     }
     to {
-      -webkit-mask-position: var(--_wavelength) 0px;
-      mask-position: var(--_wavelength) 0px;
+      transform: translate3d(var(--_wavelength, 40px), 0px, 0px);
     }
   }
 
@@ -686,8 +801,9 @@ export const linearStyles = css`
 `
 
 const TWO_PI = Math.PI * 2
+const CIRCULAR_INDETERMINATE_ARC_MS = 1333
 const _reducedMotionMql =
-  typeof window !== 'undefined' ? window.matchMedia?.('(prefers-reduced-motion: reduce)') ?? null : null
+  typeof window !== 'undefined' ? (window.matchMedia?.('(prefers-reduced-motion: reduce)') ?? null) : null
 const DEFAULT_CIRCULAR_WAVE_DURATION_MS = 1500
 const CIRCULAR_WAVY_INDETERMINATE_CYCLE_MS = 6000
 const CIRCULAR_WAVY_MIN_PROGRESS = 0.1
@@ -762,11 +878,16 @@ export class Progress extends LitElement {
     this._wavyElapsedMs = 0
     this._wavyPathEl = null
     this._wavyTrackEl = null
+    this._customTrackAnim = null
+    this._customTrackKey = ''
     this._resizeObserver = null
     this._intersectionObserver = null
+    this._cvSkipped = false
+    this._ioOffscreen = false
     this._isOffscreen = false
     this._onContentVisibilityChange = (e) => {
-      this._isOffscreen = Boolean(e.skipped)
+      this._cvSkipped = Boolean(e.skipped)
+      this._isOffscreen = this._cvSkipped || this._ioOffscreen
       this._updateWavyAnimationState()
     }
   }
@@ -792,12 +913,14 @@ export class Progress extends LitElement {
     if (this.hasUpdated) {
       this._syncCircularMetrics()
       this._updateWavyAnimationState()
+      this._syncCustomCircularTrackAnimation()
     }
   }
 
   firstUpdated() {
     this._syncCircularMetrics()
     this._updateWavyAnimationState()
+    this._syncCustomCircularTrackAnimation()
   }
 
   updated(changedProperties) {
@@ -810,11 +933,13 @@ export class Progress extends LitElement {
     } else if (changedProperties.has('value') || changedProperties.has('max')) {
       this._updateWavyAnimationState()
     }
+    this._syncCustomCircularTrackAnimation()
   }
 
   disconnectedCallback() {
     super.disconnectedCallback()
     this._stopWavyAnimation()
+    this._stopCustomCircularTrackAnimation()
     this._teardownResizeObserver()
     this._teardownVisibilityObserver()
   }
@@ -823,12 +948,14 @@ export class Progress extends LitElement {
     if (typeof document === 'undefined') return
     if ('oncontentvisibilityautostatechange' in this) {
       this.addEventListener('contentvisibilityautostatechange', this._onContentVisibilityChange)
-    } else if (typeof IntersectionObserver !== 'undefined' && !this._intersectionObserver) {
+    }
+    if (typeof IntersectionObserver !== 'undefined' && !this._intersectionObserver) {
       this._intersectionObserver = new IntersectionObserver(
         (entries) => {
           const entry = entries[entries.length - 1]
           if (!entry) return
-          this._isOffscreen = !entry.isIntersecting
+          this._ioOffscreen = !entry.isIntersecting
+          this._isOffscreen = this._cvSkipped || this._ioOffscreen
           this._updateWavyAnimationState()
         },
         { rootMargin: '200px' },
@@ -843,7 +970,75 @@ export class Progress extends LitElement {
       this._intersectionObserver.disconnect()
       this._intersectionObserver = null
     }
+    this._cvSkipped = false
+    this._ioOffscreen = false
     this._isOffscreen = false
+  }
+
+  _stopCustomCircularTrackAnimation() {
+    if (this._customTrackAnim) {
+      this._customTrackAnim.cancel()
+      this._customTrackAnim = null
+      this._customTrackKey = ''
+    }
+  }
+
+  _syncCustomCircularTrackAnimation() {
+    const isFlatCircularIndeterminate = this.type !== 'linear' && this.shape !== 'wavy' && this.indeterminate
+    if (!isFlatCircularIndeterminate || this._prefersReducedMotion()) {
+      this._stopCustomCircularTrackAnimation()
+      return
+    }
+    const { stroke, gap, circumference } = this._getCircularGeometry()
+    const clearance = gap > 0 ? gap + stroke : 0
+    const gapDeg = Math.min(80, (clearance / circumference) * 360)
+    const trackMax = Math.max(0, 360 - 20 - 2 * gapDeg)
+    // Default 48px geometry already matches static literal CSS @keyframes (289.07)
+    if (Math.abs(trackMax - 289.07) < 0.2) {
+      this._stopCustomCircularTrackAnimation()
+      return
+    }
+    const trackEl = this.renderRoot?.querySelector('.circular .track')
+    if (!trackEl || typeof trackEl.animate !== 'function') {
+      return
+    }
+    const trackMin = Math.max(0, 360 - 260 - 2 * gapDeg)
+    const key = `${trackMax.toFixed(2)}:${gapDeg.toFixed(2)}`
+    if (this._customTrackAnim && this._customTrackKey === key) {
+      return
+    }
+    this._stopCustomCircularTrackAnimation()
+    const anim = trackEl.animate(
+      [
+        {
+          strokeDasharray: `${trackMax.toFixed(2)} ${(360 - trackMax).toFixed(2)}`,
+          strokeDashoffset: `${-(20 + gapDeg).toFixed(2)}`,
+          easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+        },
+        {
+          strokeDasharray: `${trackMin.toFixed(2)} ${(360 - trackMin).toFixed(2)}`,
+          strokeDashoffset: `${-(50 + 260 + gapDeg).toFixed(2)}`,
+          easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+        },
+        {
+          strokeDasharray: `${trackMax.toFixed(2)} ${(360 - trackMax).toFixed(2)}`,
+          strokeDashoffset: `${-(360 + 20 + gapDeg).toFixed(2)}`,
+        },
+      ],
+      {
+        duration: CIRCULAR_INDETERMINATE_ARC_MS,
+        iterations: Infinity,
+        easing: 'linear',
+      },
+    )
+    const activeEl = this.renderRoot?.querySelector('.circular .active-track')
+    const activeAnims = activeEl?.getAnimations?.()
+    const activeAnim = activeAnims?.find((a) => a.animationName === 'circular-indeterminate-active') ?? activeAnims?.[0]
+    if (activeAnim && activeAnim.startTime !== null) {
+      anim.startTime = activeAnim.startTime
+    }
+    this._customTrackAnim = anim
+    this._customTrackKey = key
   }
 
   _setupResizeObserver() {
@@ -1245,9 +1440,11 @@ export class Progress extends LitElement {
     return html`
       <div class="dots" ?hidden=${hideDots} style=${styleMap(dotsStyles)}></div>
       <div class="track-segment inactive-track" style=${styleMap(inactiveTrackStyles)}></div>
-      <div class="track-segment indeterminate-track track-0"></div>
-      <div class="track-segment indeterminate-track track-1"></div>
-      <div class="track-segment indeterminate-track track-2"></div>
+      <div class="indeterminate-tracks">
+        <div class="track-segment indeterminate-track track-0"></div>
+        <div class="track-segment indeterminate-track track-1"></div>
+        <div class="track-segment indeterminate-track track-2"></div>
+      </div>
       <div class="stop-indicator" ?hidden=${hideStop}></div>
       <div class="bar primary-bar" style=${styleMap(primaryBarStyles)}>
         <div class="bar-inner"></div>
