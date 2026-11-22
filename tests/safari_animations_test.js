@@ -61,6 +61,11 @@ describe('Safari 26 button shape transitions', () => {
     // Reduced motion disables spatial shape morphing while keeping color transitions
     assert.match(cssText, /@media\s*\(prefers-reduced-motion:\s*reduce\)[\s\S]*?--_shape-transition-duration:\s*0s/)
     assert.ok(cssText.includes('--_color-transition-duration: 150ms'))
+
+    // Square and selected standalone rules exclude [pressed] so pressed shape takes precedence
+    assert.ok(cssText.includes(":host(:not([group-position]):not([pressed])[shape='square']:not([selected]))"))
+    assert.ok(cssText.includes(":host(:not([group-position]):not([pressed]):not([shape='square'])[selected])"))
+    assert.ok(cssText.includes(":host(:not([group-position]):not([pressed])[shape='square'][selected])"))
   })
 
   it('avoids 9999px and border-radius: inherit in md-icon-button and transitions logical corners', () => {
@@ -69,6 +74,8 @@ describe('Safari 26 button shape transitions', () => {
     assert.ok(!cssText.includes('border-radius: inherit'), 'md-icon-button should not rely on border-radius: inherit')
     assert.ok(cssText.includes('border-start-start-radius var(--_shape-transition-duration)'))
     assert.match(cssText, /@media\s*\(prefers-reduced-motion:\s*reduce\)[\s\S]*?--_shape-transition-duration:\s*0s/)
+    assert.ok(cssText.includes(":host(:not([group-position]):not([pressed])[shape='square']:not([selected]))"))
+    assert.ok(cssText.includes(":host(:not([group-position]):not([pressed]):not([shape='square'])[selected])"))
   })
 
   it('holds pressed state across touch pointerup -> pointerleave and clears immediately on drag-off or disable', async () => {

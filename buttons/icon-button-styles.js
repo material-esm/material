@@ -797,8 +797,8 @@ export const styles = [
     }
 
     /* Standalone square rest state, or standalone round toggle when selected */
-    :host(:not([group-position])[shape='square']:not([selected])),
-    :host(:not([group-position]):not([shape='square'])[selected]) {
+    :host(:not([group-position]):not([pressed])[shape='square']:not([selected])),
+    :host(:not([group-position]):not([pressed]):not([shape='square'])[selected]) {
       --_resolved-shape-start-start: min(var(--_square-shape), var(--_base-shape-start-start));
       --_resolved-shape-start-end: min(var(--_square-shape), var(--_base-shape-start-end));
       --_resolved-shape-end-end: min(var(--_square-shape), var(--_base-shape-end-end));
@@ -806,7 +806,7 @@ export const styles = [
     }
 
     /* Standalone square toggle when selected morphs to full circle */
-    :host(:not([group-position])[shape='square'][selected]) {
+    :host(:not([group-position]):not([pressed])[shape='square'][selected]) {
       --_resolved-shape-start-start: var(--_base-shape-start-start);
       --_resolved-shape-start-end: var(--_base-shape-start-end);
       --_resolved-shape-end-end: var(--_base-shape-end-end);
