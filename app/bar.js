@@ -10,7 +10,10 @@ import { redispatchEvent } from '../internal/events/redispatch-event.js'
 let _searchDepPromise = null
 function ensureSearchDep() {
   if (!_searchDepPromise) {
-    _searchDepPromise = import('../search/search.js')
+    _searchDepPromise = import('../search/search.js').catch((err) => {
+      _searchDepPromise = null
+      throw err
+    })
   }
   return _searchDepPromise
 }
@@ -107,7 +110,7 @@ export class AppBar extends LitElement {
   willUpdate(changedProperties) {
     super.willUpdate(changedProperties)
     if (this._effectiveType === 'search') {
-      ensureSearchDep()
+      ensureSearchDep().catch(() => {})
     }
   }
 

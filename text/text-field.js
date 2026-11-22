@@ -170,7 +170,10 @@ function ensurePickerDeps() {
     _pickerDepsPromise = Promise.all([
       import('../buttons/icon-button.js'),
       import('../pickers/datetime-picker-dialog.js'),
-    ])
+    ]).catch((err) => {
+      _pickerDepsPromise = null
+      throw err
+    })
   }
   return _pickerDepsPromise
 }
@@ -600,7 +603,7 @@ export class TextField extends textFieldBaseClass {
     }
     if (changedProperties.has('type')) {
       if (this.type === 'date' || this.type === 'datetime-local' || this.type === 'time') {
-        ensurePickerDeps()
+        ensurePickerDeps().catch(() => {})
       }
       this.handleIconChange()
     }
@@ -733,6 +736,7 @@ export class TextField extends textFieldBaseClass {
 
   async openPickerDialog() {
     await ensurePickerDeps()
+    if (!this.isConnected) return
     const fieldPicker = this.renderRoot.getElementById('datetime-picker-dialog')
     if (fieldPicker) {
       fieldPicker.value = this.value // Ensure value is synced

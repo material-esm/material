@@ -1,4 +1,4 @@
-import { css , render } from 'lit'
+
 /**
  * @summary
  * Select menus display a list of choices on temporary surfaces and display the
@@ -28,7 +28,7 @@ import { css , render } from 'lit'
  */
 var _a
 import '../menu/menu.js'
-import { html, isServer, LitElement, nothing } from 'lit'
+import { css, html, isServer, LitElement, nothing, render } from 'lit'
 import { classMap } from 'lit/directives/class-map.js'
 import { styleMap } from 'lit/directives/style-map.js'
 import { html as staticHtml } from 'lit/static-html.js'
