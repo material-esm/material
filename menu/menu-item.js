@@ -65,6 +65,13 @@ export const menuItemStyles = css`
   :host([hidden]) {
     display: none;
   }
+  :host([selected]),
+  :host(:not([menu-position])) .list-item.selected {
+    --_shape-start-start: var(--md-menu-item-selected-shape, var(--md-menu-item-shape, 0px));
+    --_shape-start-end: var(--md-menu-item-selected-shape, var(--md-menu-item-shape, 0px));
+    --_shape-end-start: var(--md-menu-item-selected-shape, var(--md-menu-item-shape, 0px));
+    --_shape-end-end: var(--md-menu-item-selected-shape, var(--md-menu-item-shape, 0px));
+  }
   :host([menu-position]) {
     margin: 2px 4px;
     --_shape-start-start: var(--md-menu-item-shape, var(--md-sys-shape-corner-extra-small, 4px));
@@ -91,6 +98,13 @@ export const menuItemStyles = css`
     --_shape-start-end: var(--md-sys-shape-corner-medium, 12px);
     --_shape-end-start: var(--md-sys-shape-corner-medium, 12px);
     --_shape-end-end: var(--md-sys-shape-corner-medium, 12px);
+  }
+  :host([menu-position][selected]),
+  :host([menu-position]) .list-item.selected {
+    --_shape-start-start: var(--md-menu-item-selected-shape, var(--md-sys-shape-corner-medium, 12px));
+    --_shape-start-end: var(--md-menu-item-selected-shape, var(--md-sys-shape-corner-medium, 12px));
+    --_shape-end-start: var(--md-menu-item-selected-shape, var(--md-sys-shape-corner-medium, 12px));
+    --_shape-end-end: var(--md-menu-item-selected-shape, var(--md-sys-shape-corner-medium, 12px));
   }
   :host([disabled]) {
     opacity: var(--md-menu-item-disabled-opacity, 0.38);
@@ -215,7 +229,6 @@ export const menuItemStyles = css`
   }
   .list-item.selected {
     background-color: var(--md-menu-item-selected-container-color, var(--md-sys-color-secondary-container, #e8def8));
-    border-radius: var(--md-menu-item-selected-shape, inherit);
   }
   .selected:not(.disabled) ::slotted(*) {
     color: var(--md-menu-item-selected-label-text-color, var(--md-sys-color-on-secondary-container, #1d192b));

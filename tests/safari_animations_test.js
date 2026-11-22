@@ -22,6 +22,7 @@ const { ButtonGroup } = await import('../buttons/button-group.js')
 const { SplitButton } = await import('../buttons/split-button.js')
 const { Ripple } = await import('../internal/ripple/ripple.js')
 const { Elevation } = await import('../internal/elevation/elevation.js')
+const { MenuItem } = await import('../menu/menu-item.js')
 const { Progress } = await import('../indicators/progress.js')
 const { Loading } = await import('../indicators/loading.js')
 
@@ -181,6 +182,16 @@ describe('Safari 26 button shape transitions', () => {
 
     const elevationCss = flattenCss(Elevation.styles)
     assert.ok(elevationCss.includes('border-start-start-radius'))
+  })
+
+  it('aligns selected menu-item and select-option inner shape tokens with vertical menu selected shape', () => {
+    const menuItemCss = flattenCss(MenuItem.styles)
+    assert.ok(menuItemCss.includes(':host([menu-position][selected])'))
+    assert.ok(menuItemCss.includes(':host([menu-position]) .list-item.selected'))
+    assert.ok(
+      !menuItemCss.includes('var(--md-menu-item-selected-shape, inherit)'),
+      'menu-item should drive selected corners via --_shape-* rather than cross-host inherit',
+    )
   })
 })
 
