@@ -5,8 +5,12 @@ import { requestUpdateOnAriaChange } from '../internal/aria/delegate.js'
 import { circularStyles, linearStyles, SUPPORTS_REGISTERED_PROPS } from './progress-styles.js'
 
 const TWO_PI = Math.PI * 2
-const CIRCULAR_INDETERMINATE_ARC_MS = 1333
-const CIRCULAR_INDETERMINATE_ROTATE_MS = 1568.2352941176
+const DEFAULT_CIRCULAR_WAVE_DURATION_MS = 1500
+const CIRCULAR_WAVY_INDETERMINATE_CYCLE_MS = 6000
+const CIRCULAR_WAVY_MIN_PROGRESS = 0.1
+const CIRCULAR_WAVY_MAX_PROGRESS = 0.87
+const CIRCULAR_WAVY_STEP_INTERVAL_MS = 1500
+const CIRCULAR_WAVY_STEP_DURATION_MS = 300
 
 /**
  * Material Design 3 Progress Indicator (`<md-progress>`).
@@ -27,6 +31,7 @@ export class Progress extends LitElement {
     _strokeWidth: { state: true },
     _trackGap: { state: true },
     _waveAmplitude: { state: true },
+    _waveDurationMs: { state: true },
   }
 
   static styles = [circularStyles, linearStyles]
@@ -65,6 +70,7 @@ export class Progress extends LitElement {
     this._strokeWidth = 4
     this._trackGap = 4
     this._waveAmplitude = 1.6
+    this._waveDurationMs = DEFAULT_CIRCULAR_WAVE_DURATION_MS
 
     this._wavyAnimationActive = false
     this._wavyRafId = 0
@@ -183,10 +189,21 @@ export class Progress extends LitElement {
       cs.getPropertyValue('--md-progress-wave-amplitude').trim()
     const waveAmplitude = explicitAmp ? Math.max(0, parsePx(explicitAmp, 1.6)) : 1.6 * (boxSize / 48)
 
+    const explicitWaveDuration =
+      cs.getPropertyValue('--md-circular-progress-wave-duration').trim() ||
+      cs.getPropertyValue('--md-progress-wave-duration').trim()
+    const waveDurationMs = explicitWaveDuration
+      ? parseTimeMs(explicitWaveDuration, DEFAULT_CIRCULAR_WAVE_DURATION_MS)
+      : DEFAULT_CIRCULAR_WAVE_DURATION_MS
+
     if (Math.abs(this._boxSize - boxSize) > 0.05) this._boxSize = boxSize
     if (Math.abs(this._strokeWidth - strokeWidth) > 0.05) this._strokeWidth = strokeWidth
     if (Math.abs(this._trackGap - trackGap) > 0.05) this._trackGap = trackGap
     if (Math.abs(this._waveAmplitude - waveAmplitude) > 0.05) this._waveAmplitude = waveAmplitude
+    if (Math.abs(this._waveDurationMs - waveDurationMs) > 0.5) {
+      this._waveDurationMs = waveDurationMs
+      this._updateWavyAnimationState()
+    }
   }
 
   _getCircularGeometry() {
@@ -219,7 +236,13 @@ export class Progress extends LitElement {
 
   _updateWavyAnimationState() {
     if (this.shape === 'wavy' && this.type !== 'linear' && (this.indeterminate || this.clampedFraction > 0)) {
-      this._startWavyAnimation()
+      if (this.indeterminate || this._waveDurationMs > 0) {
+        this._startWavyAnimation()
+      } else {
+        this._stopWavyAnimation()
+        this._wavyPhase = 0
+        this._renderWavyCircularFrame(this._prefersReducedMotion())
+      }
     } else {
       this._stopWavyAnimation()
     }
@@ -239,12 +262,14 @@ export class Progress extends LitElement {
       this._wavyLastTs = ts
 
       const reduced = this._prefersReducedMotion()
-      const speedFactor = reduced ? 0.2 : 1
-      const dt = Math.max(0, rawDt) * speedFactor
+      const dtSec = Math.max(0, rawDt)
+      const effectiveWaveDurationMs =
+        this._waveDurationMs <= 0 ? 0 : reduced ? Math.max(6000, this._waveDurationMs) : this._waveDurationMs
 
-      // Advance wave phase at ~1 wave cycle per second
-      this._wavyPhase += dt * TWO_PI
-      this._wavyElapsedMs += dt * 1000
+      if (effectiveWaveDurationMs > 0) {
+        this._wavyPhase = (this._wavyPhase + ((dtSec * 1000) / effectiveWaveDurationMs) * TWO_PI) % TWO_PI
+      }
+      this._wavyElapsedMs = (this._wavyElapsedMs + dtSec * 1000) % CIRCULAR_WAVY_INDETERMINATE_CYCLE_MS
 
       this._renderWavyCircularFrame(reduced)
       this._wavyRafId = requestAnimationFrame(loop)
@@ -271,27 +296,7 @@ export class Progress extends LitElement {
     let sweepAngle = 0
 
     if (this.indeterminate) {
-      const rotAngle =
-        ((this._wavyElapsedMs % CIRCULAR_INDETERMINATE_ROTATE_MS) / CIRCULAR_INDETERMINATE_ROTATE_MS) * TWO_PI
-      if (reduced) {
-        startAngle = rotAngle
-        sweepAngle = Math.PI * 0.5
-      } else {
-        const cycleT = (this._wavyElapsedMs % CIRCULAR_INDETERMINATE_ARC_MS) / CIRCULAR_INDETERMINATE_ARC_MS
-        let arcDeg
-        let offsetDeg
-        if (cycleT < 0.5) {
-          const u = easeStandard(cycleT * 2)
-          arcDeg = 20 + 240 * u
-          offsetDeg = 50 * u
-        } else {
-          const u = easeStandard((cycleT - 0.5) * 2)
-          arcDeg = 260 - 240 * u
-          offsetDeg = 50 + 310 * u
-        }
-        startAngle = rotAngle + (offsetDeg * Math.PI) / 180
-        sweepAngle = (arcDeg * Math.PI) / 180
-      }
+      ;({ startAngle, sweepAngle } = getCircularWavyIndeterminateState(this._wavyElapsedMs, reduced))
     } else {
       sweepAngle = this.clampedFraction * TWO_PI
     }
@@ -543,21 +548,82 @@ function parsePx(value, fallback = 0) {
   return Number.isFinite(n) ? n : fallback
 }
 
-// Fast-out, slow-in M3 standard easing approximation: cubic-bezier(0.4, 0, 0.2, 1)
-function easeStandard(x) {
+export function parseTimeMs(value, fallbackMs = DEFAULT_CIRCULAR_WAVE_DURATION_MS) {
+  if (value === null || value === undefined) return fallbackMs
+  const trimmed = String(value).trim().toLowerCase()
+  if (!trimmed) return fallbackMs
+  if (trimmed.endsWith('ms')) {
+    const n = parseFloat(trimmed)
+    return Number.isFinite(n) && n >= 0 ? n : fallbackMs
+  }
+  if (trimmed.endsWith('s')) {
+    const n = parseFloat(trimmed)
+    return Number.isFinite(n) && n >= 0 ? n * 1000 : fallbackMs
+  }
+  const n = parseFloat(trimmed)
+  return Number.isFinite(n) && n >= 0 ? n : fallbackMs
+}
+
+function solveCubicBezier(x1, y1, x2, y2, x) {
   if (x <= 0) return 0
   if (x >= 1) return 1
-  // Solve x(t) for cubic-bezier(0.4, 0, 0.2, 1) via 5 Newton-Raphson iterations
+  let lo = 0
+  let hi = 1
   let t = x
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 8; i++) {
     const u = 1 - t
-    const bx = 3 * u * u * t * 0.4 + 3 * u * t * t * 0.2 + t * t * t - x
-    const dbx = 3 * u * u * 0.4 + 6 * u * t * (0.2 - 0.4) + 3 * t * t * (1 - 0.2)
-    if (Math.abs(dbx) < 1e-6) break
-    t = Math.max(0, Math.min(1, t - bx / dbx))
+    const bx = 3 * u * u * t * x1 + 3 * u * t * t * x2 + t * t * t - x
+    if (Math.abs(bx) < 1e-6) break
+    if (bx < 0) lo = t
+    else hi = t
+    const dbx = 3 * u * u * x1 + 6 * u * t * (x2 - x1) + 3 * t * t * (1 - x2)
+    const nextT = Math.abs(dbx) > 1e-6 ? t - bx / dbx : (lo + hi) * 0.5
+    t = nextT > lo && nextT < hi ? nextT : (lo + hi) * 0.5
   }
   const u = 1 - t
-  return 3 * u * t * t + t * t * t
+  return 3 * u * u * t * y1 + 3 * u * t * t * y2 + t * t * t
+}
+
+/**
+ * Computes M3 Expressive circular wavy indeterminate arc startAngle and sweepAngle
+ * over the 6000ms cycle (3000ms expand 10% -> 87%, 3000ms contract 87% -> 10%,
+ * 1080deg linear rotation + four 90deg stepped bursts).
+ */
+export function getCircularWavyIndeterminateState(elapsedMs, reduced = false) {
+  const cycleMs =
+    ((elapsedMs % CIRCULAR_WAVY_INDETERMINATE_CYCLE_MS) + CIRCULAR_WAVY_INDETERMINATE_CYCLE_MS) %
+    CIRCULAR_WAVY_INDETERMINATE_CYCLE_MS
+
+  if (reduced) {
+    return {
+      startAngle: (cycleMs / CIRCULAR_WAVY_INDETERMINATE_CYCLE_MS) * TWO_PI,
+      sweepAngle: Math.PI * 0.5,
+    }
+  }
+
+  const halfCycleMs = CIRCULAR_WAVY_INDETERMINATE_CYCLE_MS / 2
+  let sweepFraction
+  if (cycleMs < halfCycleMs) {
+    const u = solveCubicBezier(0.2, 0, 0, 1, cycleMs / halfCycleMs)
+    sweepFraction = CIRCULAR_WAVY_MIN_PROGRESS + (CIRCULAR_WAVY_MAX_PROGRESS - CIRCULAR_WAVY_MIN_PROGRESS) * u
+  } else {
+    const u = solveCubicBezier(0.2, 0, 0, 1, (cycleMs - halfCycleMs) / halfCycleMs)
+    sweepFraction = CIRCULAR_WAVY_MAX_PROGRESS - (CIRCULAR_WAVY_MAX_PROGRESS - CIRCULAR_WAVY_MIN_PROGRESS) * u
+  }
+
+  const globalDeg = 1080 * (cycleMs / CIRCULAR_WAVY_INDETERMINATE_CYCLE_MS)
+  const stepIndex = Math.min(3, Math.floor(cycleMs / CIRCULAR_WAVY_STEP_INTERVAL_MS))
+  const stepLocalMs = cycleMs - stepIndex * CIRCULAR_WAVY_STEP_INTERVAL_MS
+  const stepProgress =
+    stepLocalMs < CIRCULAR_WAVY_STEP_DURATION_MS
+      ? solveCubicBezier(0.05, 0.7, 0.1, 1, stepLocalMs / CIRCULAR_WAVY_STEP_DURATION_MS)
+      : 1
+  const additionalDeg = (stepIndex + stepProgress) * 90
+
+  return {
+    startAngle: (((globalDeg + additionalDeg) % 360) * Math.PI) / 180,
+    sweepAngle: sweepFraction * TWO_PI,
+  }
 }
 
 export function getWavyCirclePath(cx, cy, r, amplitude, frequency, phase, startAngle = 0, sweepAngle = TWO_PI) {
@@ -575,8 +641,9 @@ export function getWavyCirclePath(cx, cy, r, amplitude, frequency, phase, startA
 
   for (let i = 0; i < count; i++) {
     const frac = i / steps
-    const theta = startAngle + frac * clampedSweep
-    const perturbedRadius = r + effectiveAmp * Math.sin(frequency * theta - phase)
+    const localTheta = frac * clampedSweep
+    const theta = startAngle + localTheta
+    const perturbedRadius = r + effectiveAmp * Math.sin(frequency * localTheta - phase)
     const x = cx + perturbedRadius * Math.cos(theta)
     const y = cy + perturbedRadius * Math.sin(theta)
     points.push(`${i === 0 ? 'M' : 'L'} ${x.toFixed(2)} ${y.toFixed(2)}`)
