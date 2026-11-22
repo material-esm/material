@@ -139,59 +139,61 @@ describe('Safari 26 button shape transitions', () => {
     )
     assert.ok(cssText.includes('--_pressed-inner-radius'))
 
-    const makeMockChild = (explicitSize = null) => {
-      const attrs = new Map()
-      let currentSize = explicitSize ?? 'small'
-      if (explicitSize) attrs.set('size', explicitSize)
-      return {
-        attrs,
-        get size() {
-          return currentSize
-        },
-        set size(v) {
-          currentSize = v
-          this.attrs.set('size', v)
-        },
-        getAttribute(k) {
-          return this.attrs.get(k) ?? null
-        },
-        hasAttribute(k) {
-          return this.attrs.has(k)
-        },
-        setAttribute(k, v) {
-          this.attrs.set(k, v)
-        },
-        removeAttribute(k) {
-          this.attrs.delete(k)
-        },
-        tagName: 'MD-BUTTON',
-      }
-    }
-
     const group = new ButtonGroup()
-    const inheritedChild = makeMockChild()
-    const explicitChild = makeMockChild('xl')
+    const inheritedBtn = new Button()
+    const inheritedIconBtn = new IconButton()
+    const explicitSmallBtn = new Button()
+    explicitSmallBtn.setAttribute('size', 'small')
+    const explicitXlBtn = new Button()
+    explicitXlBtn.size = 'extra-large'
+
+    // Unset children report 'small' via getter without spuriously reflecting size="small"
+    assert.equal(inheritedBtn.size, 'small')
+    assert.equal(inheritedBtn.hasAttribute('size'), false)
+    assert.equal(inheritedIconBtn.size, 'small')
+    assert.equal(inheritedIconBtn.hasAttribute('size'), false)
+
     group.renderRoot = {
       querySelector: () => ({
-        assignedElements: () => [inheritedChild, explicitChild],
+        assignedElements: () => [inheritedBtn, inheritedIconBtn, explicitSmallBtn, explicitXlBtn],
       }),
     }
 
+    // Initially group has no size -> unset children remain unreflected 'small'
     group.connected = false
+    group.updateConnectedPositions()
+    assert.equal(inheritedBtn.hasAttribute('group-position'), false)
+    assert.equal(inheritedBtn.hasAttribute('size'), false)
+    assert.equal(inheritedBtn.size, 'small')
+
+    // Setting group.size later propagates to unset children while respecting explicit size="small" and "extra-large"
     group.size = 'medium'
     group.updateConnectedPositions()
-    assert.equal(inheritedChild.attrs.has('group-position'), false)
-    assert.equal(inheritedChild.size, 'medium')
-    assert.equal(explicitChild.size, 'xl')
+    assert.equal(inheritedBtn.size, 'medium')
+    assert.equal(inheritedIconBtn.size, 'medium')
+    assert.equal(explicitSmallBtn.size, 'small')
+    assert.equal(explicitXlBtn.size, 'extra-large')
 
-    // Dynamic size updates on md-button-group propagate even after size reflects on children
+    // Dynamic size change propagates across reflected group-managed children
     group.connected = true
     group.size = 'large'
     group.updateConnectedPositions()
-    assert.equal(inheritedChild.attrs.get('group-position'), 'first')
-    assert.equal(explicitChild.attrs.get('group-position'), 'last')
-    assert.equal(inheritedChild.size, 'large')
-    assert.equal(explicitChild.size, 'xl')
+    assert.equal(inheritedBtn.getAttribute('group-position'), 'first')
+    assert.equal(explicitXlBtn.getAttribute('group-position'), 'last')
+    assert.equal(inheritedBtn.size, 'large')
+    assert.equal(inheritedIconBtn.size, 'large')
+    assert.equal(explicitSmallBtn.size, 'small')
+    assert.equal(explicitXlBtn.size, 'extra-large')
+
+    // Clearing group.size removes reflected size attribute cleanly without re-reflecting size="small"
+    group.size = ''
+    group.updateConnectedPositions()
+    assert.equal(inheritedBtn.hasAttribute('size'), false)
+    assert.equal(inheritedBtn.size, 'small')
+    assert.equal(inheritedIconBtn.hasAttribute('size'), false)
+    assert.equal(inheritedIconBtn.size, 'small')
+    assert.equal(explicitSmallBtn.getAttribute('size'), 'small')
+    assert.equal(explicitXlBtn.getAttribute('size'), 'extra-large')
   })
 
   it('uses explicit 0px units and icon-button shape tokens in md-split-button', () => {
@@ -243,6 +245,10 @@ describe('Safari 26 indicator animations', () => {
 
     assert.match(progressCss, /@keyframes\s+wavy-linear-move[\s\S]*?translate3d\(var\(--_wavelength,\s*40px\)/)
     assert.ok(!progressCss.includes('mask-position: var('))
+    assert.match(
+      progressCss,
+      /\.linear\s+\.indeterminate-tracks\s*\{[\s\S]*?border-radius:\s*var\(--_track-shape\);[\s\S]*?overflow:\s*hidden;/,
+    )
   })
 
   it('synchronizes custom circular indeterminate track WAAPI startTime with circular-indeterminate-active even when four-color runs', () => {

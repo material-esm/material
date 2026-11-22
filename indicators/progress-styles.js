@@ -347,8 +347,20 @@ export const linearStyles = css`
   }
 
   .linear .secondary-bar,
+  .linear .indeterminate-tracks,
   .linear .indeterminate-track {
     display: none;
+  }
+
+  .linear .indeterminate-tracks {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    height: var(--_track-height);
+    border-radius: var(--_track-shape);
+    overflow: hidden;
   }
 
   .linear .stop-indicator {
@@ -378,6 +390,7 @@ export const linearStyles = css`
   }
 
   .linear.progress.indeterminate .secondary-bar,
+  .linear.progress.indeterminate .indeterminate-tracks,
   .linear.progress.indeterminate .indeterminate-track {
     display: block;
   }

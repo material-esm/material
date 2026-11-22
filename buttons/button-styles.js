@@ -305,6 +305,7 @@ export const styles = [
       line-height: 20px;
       border-width: 1px;
     }
+    :host(:not([size])),
     :host([size='small']) {
       --_size-height: 40px;
       --_square-shape: 12px;

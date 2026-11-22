@@ -35,7 +35,7 @@ export class IconButton extends iconButtonBaseClass {
     value: { type: String },
     flipIcon: { type: Boolean },
     color: { type: String, reflect: true },
-    size: { type: String, reflect: true },
+    size: { type: String, noAccessor: true },
   }
 
   constructor() {
@@ -88,10 +88,6 @@ export class IconButton extends iconButtonBaseClass {
      * filled, tonal, outlined, standard
      */
     this.color = 'standard'
-    /**
-     * extra-small, small, medium, large, extra-large
-     */
-    this.size = 'small'
 
     this.handlePress = this.handlePress.bind(this)
     this.handleRelease = this.handleRelease.bind(this)
@@ -139,6 +135,25 @@ export class IconButton extends iconButtonBaseClass {
     this.requestUpdate('disabled', oldValue)
   }
 
+  /**
+   * extra-small, small, medium, large, extra-large
+   */
+  get size() {
+    return this.getAttribute('size') || 'small'
+  }
+  set size(size) {
+    const next = size || ''
+    const prevAttr = this.getAttribute('size') ?? ''
+    if (next === prevAttr) return
+    const oldValue = prevAttr || 'small'
+    if (next) {
+      this.setAttribute('size', next)
+    } else {
+      this.removeAttribute('size')
+    }
+    this.requestUpdate('size', oldValue)
+  }
+
   attributeChangedCallback(name, old, value) {
     if (name === 'disabled') {
       const oldValue = old !== null
@@ -146,6 +161,12 @@ export class IconButton extends iconButtonBaseClass {
         this.#clearPressImmediately()
       }
       this.requestUpdate(name, oldValue)
+      return
+    }
+    if (name === 'size') {
+      if (old !== value) {
+        this.requestUpdate('size', old || 'small')
+      }
       return
     }
     super.attributeChangedCallback(name, old, value)

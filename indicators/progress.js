@@ -591,9 +591,11 @@ export class Progress extends LitElement {
     return html`
       <div class="dots" ?hidden=${hideDots} style=${styleMap(dotsStyles)}></div>
       <div class="track-segment inactive-track" style=${styleMap(inactiveTrackStyles)}></div>
-      <div class="track-segment indeterminate-track track-0"></div>
-      <div class="track-segment indeterminate-track track-1"></div>
-      <div class="track-segment indeterminate-track track-2"></div>
+      <div class="indeterminate-tracks">
+        <div class="track-segment indeterminate-track track-0"></div>
+        <div class="track-segment indeterminate-track track-1"></div>
+        <div class="track-segment indeterminate-track track-2"></div>
+      </div>
       <div class="stop-indicator" ?hidden=${hideStop}></div>
       <div class="bar primary-bar" style=${styleMap(primaryBarStyles)}>
         <div class="bar-inner"></div>

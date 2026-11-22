@@ -771,6 +771,7 @@ export const styles = [
       --_square-shape: 12px;
       --_pressed-shape: 8px;
     }
+    :host(:not([size])),
     :host([size='small']) {
       --_size: 40px;
       --_icon-size: 24px;

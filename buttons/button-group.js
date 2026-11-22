@@ -75,16 +75,18 @@ export class ButtonGroup extends LitElement {
       --_pressed-outer-radius: 16px;
     }
 
-    /* Square shapes */
+    /* Square shapes (default small / extra-small = 12px) */
     :host([connected][shape='square']),
-    :host([connected]) ::slotted([shape='square']) {
-      --_outer-radius: 16px;
-    }
+    :host([connected]) ::slotted([shape='square']),
     :host([connected][shape='square'][size='extra-small']),
     :host([connected]) ::slotted([shape='square'][size='extra-small']),
     :host([connected][shape='square'][size='small']),
     :host([connected]) ::slotted([shape='square'][size='small']) {
       --_outer-radius: 12px;
+    }
+    :host([connected][shape='square'][size='medium']),
+    :host([connected]) ::slotted([shape='square'][size='medium']) {
+      --_outer-radius: 16px;
     }
     :host([connected][shape='square'][size='large']),
     :host([connected]) ::slotted([shape='square'][size='large']),
@@ -318,15 +320,16 @@ export class ButtonGroup extends LitElement {
         button.toggle = true
       }
       const prevGroupSize = this.#groupSizedButtons.get(button)
-      const currentSize = button.size ?? button.getAttribute?.('size')
-      const canManageSize = prevGroupSize !== undefined ? currentSize === prevGroupSize : !button.hasAttribute('size')
+      const currentAttrSize = button.getAttribute ? button.getAttribute('size') : (button.size ?? null)
+      const canManageSize =
+        prevGroupSize !== undefined ? currentAttrSize === prevGroupSize : !button.hasAttribute('size')
       if (canManageSize) {
         if (this.size) {
           this.#groupSizedButtons.set(button, this.size)
           button.size = this.size
         } else if (prevGroupSize !== undefined) {
           this.#groupSizedButtons.delete(button)
-          button.size = 'small'
+          button.size = ''
           button.removeAttribute?.('size')
         }
       } else if (prevGroupSize !== undefined) {

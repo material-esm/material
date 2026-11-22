@@ -32,7 +32,7 @@ export class Button extends buttonBaseClass {
   }
 
   static properties = {
-    size: { type: String, reflect: true },
+    size: { type: String, noAccessor: true },
     shape: { type: String, reflect: true },
     color: { type: String, reflect: true }, // this is elevated, filled, etc. Not an actual color.
     pressed: { type: Boolean, reflect: true },
@@ -89,6 +89,25 @@ export class Button extends buttonBaseClass {
     this.requestUpdate('disabled', oldValue)
   }
 
+  /**
+   * Accepted values are 'small' (default), 'extra-small', 'medium', 'large', 'extra-large'.
+   */
+  get size() {
+    return this.getAttribute('size') || 'small'
+  }
+  set size(size) {
+    const next = size || ''
+    const prevAttr = this.getAttribute('size') ?? ''
+    if (next === prevAttr) return
+    const oldValue = prevAttr || 'small'
+    if (next) {
+      this.setAttribute('size', next)
+    } else {
+      this.removeAttribute('size')
+    }
+    this.requestUpdate('size', oldValue)
+  }
+
   attributeChangedCallback(name, old, value) {
     if (name === 'disabled') {
       const oldValue = old !== null
@@ -96,6 +115,12 @@ export class Button extends buttonBaseClass {
         this.#clearPressImmediately()
       }
       this.requestUpdate(name, oldValue)
+      return
+    }
+    if (name === 'size') {
+      if (old !== value) {
+        this.requestUpdate('size', old || 'small')
+      }
       return
     }
     super.attributeChangedCallback(name, old, value)
@@ -108,10 +133,6 @@ export class Button extends buttonBaseClass {
   constructor() {
     super()
 
-    /**
-     * Accepted values are 'small' (default), 'extra-small', 'medium', 'large', 'extra-large'.
-     */
-    this.size = 'small'
     /**
      * Accepted values are 'round' (default), 'square'.
      */
