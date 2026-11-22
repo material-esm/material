@@ -1,4 +1,4 @@
-import { css } from 'lit'
+import { css , render } from 'lit'
 /**
  * @summary
  * Select menus display a list of choices on temporary surfaces and display the
@@ -42,12 +42,38 @@ import {
 import { mixinElementInternals } from '../labs/behaviors/element-internals.js'
 import { getFormValue, mixinFormAssociated } from '../labs/behaviors/form-associated.js'
 import { mixinOnReportValidity, onReportValidity } from '../labs/behaviors/on-report-validity.js'
-import { SelectValidator } from '../labs/behaviors/validators/select-validator.js'
+import { Validator } from '../labs/behaviors/validators/validator.js'
+
+/**
+ * A validator that provides constraint validation that emulates `<select>`
+ * validation.
+ */
+export class SelectValidator extends Validator {
+    computeValidity(state) {
+        if (!this.selectControl) {
+            // Lazily create the platform select
+            this.selectControl = document.createElement('select');
+        }
+        render(html `<option value=${state.value}></option>`, this.selectControl);
+        this.selectControl.value = state.value;
+        this.selectControl.required = state.required;
+        return {
+            validity: this.selectControl.validity,
+            validationMessage: this.selectControl.validationMessage,
+        };
+    }
+    equals(prev, next) {
+        return prev.value === next.value && prev.required === next.required;
+    }
+    copy({ value, required }) {
+        return { value, required };
+    }
+}
 import { getActiveItem } from '../list/internal/list-navigation-helpers.js'
 import { FocusState, isElementInSubtree, isSelectableKey } from '../menu/controllers/shared.js'
 import { TYPEAHEAD_RECORD } from '../menu/controllers/typeaheadController.js'
 import { DEFAULT_TYPEAHEAD_BUFFER_TIME } from '../menu/menu.js'
-import { queryAssignedElements, queryAssignedNodes } from '../utils/query.js'
+import { queryAssignedElements } from '../utils/query.js'
 import '../internal/field/field.js'
 
 const VALUE = Symbol('value')

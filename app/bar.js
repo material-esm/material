@@ -4,10 +4,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { LitElement, html, css, nothing } from 'lit'
-import '../search/search.js'
-import '../icon/icon.js'
 import '../internal/elevation/elevation.js'
 import { redispatchEvent } from '../internal/events/redispatch-event.js'
+
+let _searchDepPromise = null
+function ensureSearchDep() {
+  if (!_searchDepPromise) {
+    _searchDepPromise = import('../search/search.js')
+  }
+  return _searchDepPromise
+}
 
 /**
  * Material Design 3 Top App Bar component.
@@ -96,6 +102,13 @@ export class AppBar extends LitElement {
   disconnectedCallback() {
     super.disconnectedCallback()
     this._detachScrollListener()
+  }
+
+  willUpdate(changedProperties) {
+    super.willUpdate(changedProperties)
+    if (this._effectiveType === 'search') {
+      ensureSearchDep()
+    }
   }
 
   updated(changedProperties) {

@@ -29,4 +29,3 @@ export class CheckboxValidator extends Validator {
         return { checked, required };
     }
 }
-//# sourceMappingURL=checkbox-validator.js.map

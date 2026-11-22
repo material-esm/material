@@ -43,4 +43,3 @@ export function mixinElementInternals(base) {
     }
     return WithElementInternalsElement;
 }
-//# sourceMappingURL=element-internals.js.map

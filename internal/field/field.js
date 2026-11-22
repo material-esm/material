@@ -1,5 +1,5 @@
 import { html, LitElement, nothing, render, css } from 'lit'
-import { queryAssignedElements, queryAssignedNodes } from '../../utils/query.js'
+import { queryAssignedElements } from '../../utils/query.js'
 import { classMap } from 'lit/directives/class-map.js'
 import { EASING } from '../motion/animation.js'
 /**

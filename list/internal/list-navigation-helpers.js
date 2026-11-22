@@ -220,4 +220,3 @@ export function createRequestActivationEvent() {
 function isItemNotDisabled(item) {
   return !item.disabled
 }
-//# sourceMappingURL=list-navigation-helpers.js.map

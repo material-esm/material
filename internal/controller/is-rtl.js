@@ -15,4 +15,3 @@ export function isRtl(el, shouldCheck = true) {
     return (shouldCheck &&
         getComputedStyle(el).getPropertyValue('direction').trim() === 'rtl');
 }
-//# sourceMappingURL=is-rtl.js.map

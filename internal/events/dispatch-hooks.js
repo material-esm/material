@@ -148,4 +148,3 @@ export function setupDispatchHooks(element, ...eventTypes) {
         typesAlreadySetUp.add(eventType);
     }
 }
-//# sourceMappingURL=dispatch-hooks.js.map
