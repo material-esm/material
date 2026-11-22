@@ -1,4 +1,3 @@
-import { css } from 'lit'
 /**
  * @summary
  * Select menus display a list of choices on temporary surfaces and display the
@@ -28,7 +27,7 @@ import { css } from 'lit'
  */
 var _a
 import '../menu/menu.js'
-import { html, isServer, LitElement, nothing } from 'lit'
+import { css, html, isServer, LitElement, nothing, render } from 'lit'
 import { classMap } from 'lit/directives/class-map.js'
 import { styleMap } from 'lit/directives/style-map.js'
 import { html as staticHtml } from 'lit/static-html.js'
@@ -42,13 +41,39 @@ import {
 import { mixinElementInternals } from '../labs/behaviors/element-internals.js'
 import { getFormValue, mixinFormAssociated } from '../labs/behaviors/form-associated.js'
 import { mixinOnReportValidity, onReportValidity } from '../labs/behaviors/on-report-validity.js'
-import { SelectValidator } from '../labs/behaviors/validators/select-validator.js'
+import { Validator } from '../labs/behaviors/validators/validator.js'
 import { getActiveItem } from '../list/internal/list-navigation-helpers.js'
 import { FocusState, isElementInSubtree, isSelectableKey } from '../menu/controllers/shared.js'
 import { TYPEAHEAD_RECORD } from '../menu/controllers/typeaheadController.js'
 import { DEFAULT_TYPEAHEAD_BUFFER_TIME } from '../menu/menu.js'
-import { queryAssignedElements, queryAssignedNodes } from '../utils/query.js'
+import { queryAssignedElements } from '../utils/query.js'
 import '../internal/field/field.js'
+
+/**
+ * A validator that provides constraint validation that emulates `<select>`
+ * validation.
+ */
+export class SelectValidator extends Validator {
+    computeValidity(state) {
+        if (!this.selectControl) {
+            // Lazily create the platform select
+            this.selectControl = document.createElement('select');
+        }
+        render(html `<option value=${state.value}></option>`, this.selectControl);
+        this.selectControl.value = state.value;
+        this.selectControl.required = state.required;
+        return {
+            validity: this.selectControl.validity,
+            validationMessage: this.selectControl.validationMessage,
+        };
+    }
+    equals(prev, next) {
+        return prev.value === next.value && prev.required === next.required;
+    }
+    copy({ value, required }) {
+        return { value, required };
+    }
+}
 
 const VALUE = Symbol('value')
 // Separate variable needed for closure.

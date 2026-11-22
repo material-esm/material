@@ -180,13 +180,7 @@ function getShapes() {
   return _shapes
 }
 
-function lerpShapes(a, b, t) {
-  const out = new Array(a.length)
-  for (let i = 0; i < a.length; i++) {
-    out[i] = [a[i][0] + (b[i][0] - a[i][0]) * t, a[i][1] + (b[i][1] - a[i][1]) * t]
-  }
-  return out
-}
+const _lerpBuffer = new Float32Array(POINTS_PER_SHAPE * 2)
 
 function getMorphedShape(morphFraction) {
   const shapes = getShapes()
@@ -194,8 +188,19 @@ function getMorphedShape(morphFraction) {
   const from = ((idx % SHAPE_COUNT) + SHAPE_COUNT) % SHAPE_COUNT
   const to = (from + 1) % SHAPE_COUNT
   const t = Math.max(0, Math.min(1, morphFraction - idx))
-  return lerpShapes(shapes[from], shapes[to], t)
+  const a = shapes[from]
+  const b = shapes[to]
+  for (let i = 0; i < a.length; i++) {
+    const j = i * 2
+    _lerpBuffer[j] = a[i][0] + (b[i][0] - a[i][0]) * t
+    _lerpBuffer[j + 1] = a[i][1] + (b[i][1] - a[i][1]) * t
+  }
+  return _lerpBuffer
 }
+
+const _reducedMotionMql =
+  typeof window !== 'undefined' ? (window.matchMedia?.('(prefers-reduced-motion: reduce)') ?? null) : null
+const _forcedColorsMql = typeof window !== 'undefined' ? (window.matchMedia?.('(forced-colors: active)') ?? null) : null
 
 // --- Animator State Machine ---
 const DURATION_PER_SHAPE_MS = 650
@@ -279,8 +284,11 @@ function drawIndicator(ctx, cssSize, points, rotation, options) {
   ctx.translate(cx, cy)
   ctx.rotate((rotation * Math.PI) / 180)
   ctx.beginPath()
-  for (let i = 0; i <= points.length; i++) {
-    const [px, py] = points[i % points.length]
+  const count = points.length / 2
+  for (let i = 0; i <= count; i++) {
+    const j = (i % count) * 2
+    const px = points[j]
+    const py = points[j + 1]
     if (i === 0) ctx.moveTo(px * scale, py * scale)
     else ctx.lineTo(px * scale, py * scale)
   }
@@ -358,6 +366,19 @@ export class Loading extends LitElement {
     this.resolvedContainerColor = '#eaddff'
     this.frameCount = 0
     this._resizeObserver = null
+    this._intersectionObserver = null
+    this._cvSkipped = false
+    this._ioOffscreen = false
+    this._isOffscreen = false
+    this._onContentVisibilityChange = (e) => {
+      this._cvSkipped = Boolean(e.skipped)
+      this._isOffscreen = this._cvSkipped || this._ioOffscreen
+      if (this._isOffscreen) {
+        this.stopAnimation()
+      } else if (!this.paused) {
+        this.startAnimation()
+      }
+    }
   }
 
   get size() {
@@ -397,26 +418,20 @@ export class Loading extends LitElement {
   }
 
   updateResolvedColors() {
-    if (typeof window !== 'undefined' && window.matchMedia?.('(forced-colors: active)').matches) {
+    if (_forcedColorsMql?.matches) {
       this.resolvedColor = 'CanvasText'
       this.resolvedContainerColor = 'Canvas'
       return
     }
     if (typeof window !== 'undefined' && typeof window.getComputedStyle === 'function') {
+      const cs = window.getComputedStyle(this)
       const loadingEl = this.renderRoot?.querySelector('.loading')
       const canvasEl = this.renderRoot?.querySelector('#canvas')
       const computedIndicator = loadingEl ? window.getComputedStyle(loadingEl).color?.trim() : ''
       const computedContainer = canvasEl ? window.getComputedStyle(canvasEl).color?.trim() : ''
-      if (computedIndicator) {
-        this.resolvedColor = computedIndicator
-      } else {
-        this.resolvedColor = this._resolveColor(this.color || this._defaultIndicatorColor())
-      }
-      if (computedContainer) {
-        this.resolvedContainerColor = computedContainer
-      } else {
-        this.resolvedContainerColor = this._resolveColor(this.containerColor || this._defaultContainerColor())
-      }
+      this.resolvedColor = computedIndicator || this._resolveColor(this.color || this._defaultIndicatorColor(), cs)
+      this.resolvedContainerColor =
+        computedContainer || this._resolveColor(this.containerColor || this._defaultContainerColor(), cs)
       return
     }
     this.resolvedColor = this._resolveColor(this.color || this._defaultIndicatorColor())
@@ -450,7 +465,7 @@ export class Loading extends LitElement {
   }
 
   startAnimation() {
-    if (this.paused) return
+    if (this.paused || this._isOffscreen) return
     if (this.rafId || typeof requestAnimationFrame === 'undefined') return
     const canvas = this.renderRoot?.querySelector('#canvas')
     if (!canvas) return
@@ -460,7 +475,7 @@ export class Loading extends LitElement {
     this.animator.lastTs = 0
 
     const loop = (ts) => {
-      const reduced = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+      const reduced = Boolean(_reducedMotionMql?.matches)
       this.animator.speed = this.speed * (reduced ? 0.25 : 1)
       this.animator.paused = this.paused
       this.animator.update(ts)
@@ -493,6 +508,28 @@ export class Loading extends LitElement {
       })
       this._resizeObserver.observe(this)
     }
+    if (typeof document !== 'undefined') {
+      if ('oncontentvisibilityautostatechange' in this) {
+        this.addEventListener('contentvisibilityautostatechange', this._onContentVisibilityChange)
+      }
+      if (typeof IntersectionObserver !== 'undefined' && !this._intersectionObserver) {
+        this._intersectionObserver = new IntersectionObserver(
+          (entries) => {
+            const entry = entries[entries.length - 1]
+            if (!entry) return
+            this._ioOffscreen = !entry.isIntersecting
+            this._isOffscreen = this._cvSkipped || this._ioOffscreen
+            if (this._isOffscreen) {
+              this.stopAnimation()
+            } else if (!this.paused) {
+              this.startAnimation()
+            }
+          },
+          { rootMargin: '200px' },
+        )
+        this._intersectionObserver.observe(this)
+      }
+    }
     if (this.hasUpdated) {
       this.updateResolvedColors()
       if (this.paused) {
@@ -510,6 +547,14 @@ export class Loading extends LitElement {
       this._resizeObserver.disconnect()
       this._resizeObserver = null
     }
+    this.removeEventListener('contentvisibilityautostatechange', this._onContentVisibilityChange)
+    if (this._intersectionObserver) {
+      this._intersectionObserver.disconnect()
+      this._intersectionObserver = null
+    }
+    this._cvSkipped = false
+    this._ioOffscreen = false
+    this._isOffscreen = false
   }
 
   firstUpdated() {
@@ -549,31 +594,31 @@ export class Loading extends LitElement {
     }
   }
 
-  _resolveColor(colorString, depth = 0) {
+  _resolveColor(colorString, cs = null, depth = 0) {
     if (depth > 5) return '#6750a4'
     if (!colorString) return '#6750a4'
     const trimmed = colorString.trim()
-    const windowExists = typeof window !== 'undefined'
+    const style = cs ?? (typeof window !== 'undefined' ? window.getComputedStyle(this) : null)
     if (trimmed === 'currentColor') {
-      return (windowExists ? window.getComputedStyle(this).color : '') || '#6750a4'
+      return style?.color || '#6750a4'
     }
     if (trimmed.startsWith('var(') && trimmed.endsWith(')')) {
       const content = trimmed.substring(4, trimmed.length - 1).trim()
       const commaIdx = content.indexOf(',')
       if (commaIdx === -1) {
         const varName = content.trim()
-        const val = windowExists ? window.getComputedStyle(this).getPropertyValue(varName).trim() : ''
-        return val ? this._resolveColor(val, depth + 1) : '#6750a4'
+        const val = style ? style.getPropertyValue(varName).trim() : ''
+        return val ? this._resolveColor(val, style, depth + 1) : '#6750a4'
       } else {
         const varName = content.substring(0, commaIdx).trim()
         const fallback = content.substring(commaIdx + 1).trim()
-        const val = windowExists ? window.getComputedStyle(this).getPropertyValue(varName).trim() : ''
-        return val ? this._resolveColor(val, depth + 1) : this._resolveColor(fallback, depth + 1)
+        const val = style ? style.getPropertyValue(varName).trim() : ''
+        return val ? this._resolveColor(val, style, depth + 1) : this._resolveColor(fallback, style, depth + 1)
       }
     }
     if (trimmed.startsWith('--')) {
-      const val = windowExists ? window.getComputedStyle(this).getPropertyValue(trimmed).trim() : ''
-      return val ? this._resolveColor(val, depth + 1) : '#6750a4'
+      const val = style ? style.getPropertyValue(trimmed).trim() : ''
+      return val ? this._resolveColor(val, style, depth + 1) : '#6750a4'
     }
     return trimmed
   }

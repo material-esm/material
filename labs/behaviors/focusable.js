@@ -3,7 +3,6 @@
  * Copyright 2023 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
-import { property } from 'lit/decorators.js'
 /**
  * A property symbol that indicates whether or not a `Focusable` element can be
  * focused.
@@ -33,7 +32,7 @@ export function mixinFocusable(base) {
     var _a, _b, _c
     class FocusableElement extends base {
         static properties = {
-            tabIndex: { type: Number },
+            tabIndex: { type: Number, noAccessor: true },
         };
         constructor() {
             super(...arguments)
@@ -81,9 +80,5 @@ export function mixinFocusable(base) {
             this[isUpdatingTabIndex] = false
         }
     }
-    __decorate([
-        property({ noAccessor: true })
-    ], FocusableElement.prototype, "tabIndex", void 0)
     return FocusableElement
 }
-//# sourceMappingURL=focusable.js.map

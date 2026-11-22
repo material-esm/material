@@ -1,4 +1,4 @@
-import { html, css, LitElement, nothing } from 'lit'
+import { html, css, LitElement } from 'lit'
 import '../dialog/dialog.js'
 import '../buttons/button.js'
 import './date-picker.js'

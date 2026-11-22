@@ -1,8 +1,6 @@
 import { LitElement, css, html, nothing } from 'lit'
 import '../internal/field/field.js'
 import '../icon/icon.js'
-import '../buttons/icon-button.js'
-import '../pickers/datetime-picker-dialog.js'
 import { classMap } from 'lit/directives/class-map.js'
 import { live } from 'lit/directives/live.js'
 import { styleMap } from 'lit/directives/style-map.js'
@@ -17,7 +15,169 @@ import {
 import { mixinElementInternals } from '../labs/behaviors/element-internals.js'
 import { getFormValue, mixinFormAssociated } from '../labs/behaviors/form-associated.js'
 import { mixinOnReportValidity, onReportValidity } from '../labs/behaviors/on-report-validity.js'
-import { TextFieldValidator } from '../labs/behaviors/validators/text-field-validator.js'
+import { Validator } from '../labs/behaviors/validators/validator.js'
+
+/**
+ * A validator that provides constraint validation that emulates `<input>` and
+ * `<textarea>` validation.
+ */
+export class TextFieldValidator extends Validator {
+    computeValidity({ state, renderedControl }) {
+        let inputOrTextArea = renderedControl;
+        if (isInputState(state) && !inputOrTextArea) {
+            // Get cached <input> or create it.
+            inputOrTextArea = this.inputControl || document.createElement('input');
+            // Cache the <input> to re-use it next time.
+            this.inputControl = inputOrTextArea;
+        }
+        else if (!inputOrTextArea) {
+            // Get cached <textarea> or create it.
+            inputOrTextArea =
+                this.textAreaControl || document.createElement('textarea');
+            // Cache the <textarea> to re-use it next time.
+            this.textAreaControl = inputOrTextArea;
+        }
+        // Set this variable so we can check it for input-specific properties.
+        const input = isInputState(state)
+            ? inputOrTextArea
+            : null;
+        // Set input's "type" first, since this can change the other properties
+        if (input) {
+            input.type = state.type;
+        }
+        if (inputOrTextArea.value !== state.value) {
+            // Only programmatically set the value if there's a difference. When using
+            // the rendered control, the value will always be up to date. Setting the
+            // property (even if it's the same string) will reset the internal <input>
+            // dirty flag, making minlength and maxlength validation reset.
+            inputOrTextArea.value = state.value;
+        }
+        inputOrTextArea.required = state.required;
+        // The following IDLAttribute properties will always hydrate an attribute,
+        // even if set to a the default value ('' or -1). The presence of the
+        // attribute triggers constraint validation, so we must remove the attribute
+        // when empty.
+        if (input) {
+            const inputState = state;
+            if (inputState.pattern) {
+                input.pattern = inputState.pattern;
+            }
+            else {
+                input.removeAttribute('pattern');
+            }
+            if (inputState.min) {
+                input.min = inputState.min;
+            }
+            else {
+                input.removeAttribute('min');
+            }
+            if (inputState.max) {
+                input.max = inputState.max;
+            }
+            else {
+                input.removeAttribute('max');
+            }
+            if (inputState.step) {
+                input.step = inputState.step;
+            }
+            else {
+                input.removeAttribute('step');
+            }
+        }
+        // Use -1 to represent no minlength and maxlength, which is what the
+        // platform input returns. However, it will throw an error if you try to
+        // manually set it to -1.
+        //
+        // While the type is `number`, it may actually be `null` at runtime.
+        // `null > -1` is true since `null` coerces to `0`, so we default null and
+        // undefined to -1.
+        //
+        // We set attributes instead of properties since setting a property may
+        // throw an out of bounds error in relation to the other property.
+        // Attributes will not throw errors while the state is updating.
+        if ((state.minLength ?? -1) > -1) {
+            inputOrTextArea.setAttribute('minlength', String(state.minLength));
+        }
+        else {
+            inputOrTextArea.removeAttribute('minlength');
+        }
+        if ((state.maxLength ?? -1) > -1) {
+            inputOrTextArea.setAttribute('maxlength', String(state.maxLength));
+        }
+        else {
+            inputOrTextArea.removeAttribute('maxlength');
+        }
+        return {
+            validity: inputOrTextArea.validity,
+            validationMessage: inputOrTextArea.validationMessage,
+        };
+    }
+    equals({ state: prev }, { state: next }) {
+        // Check shared input and textarea properties
+        const inputOrTextAreaEqual = prev.type === next.type &&
+            prev.value === next.value &&
+            prev.required === next.required &&
+            prev.minLength === next.minLength &&
+            prev.maxLength === next.maxLength;
+        if (!isInputState(prev) || !isInputState(next)) {
+            // Both are textareas, all relevant properties are equal.
+            return inputOrTextAreaEqual;
+        }
+        // Check additional input-specific properties.
+        return (inputOrTextAreaEqual &&
+            prev.pattern === next.pattern &&
+            prev.min === next.min &&
+            prev.max === next.max &&
+            prev.step === next.step);
+    }
+    copy({ state }) {
+        // Don't hold a reference to the rendered control when copying since we
+        // don't use it when checking if the state changed.
+        return {
+            state: isInputState(state)
+                ? this.copyInput(state)
+                : this.copyTextArea(state),
+            renderedControl: null,
+        };
+    }
+    copyInput(state) {
+        const { type, pattern, min, max, step } = state;
+        return {
+            ...this.copySharedState(state),
+            type,
+            pattern,
+            min,
+            max,
+            step,
+        };
+    }
+    copyTextArea(state) {
+        return {
+            ...this.copySharedState(state),
+            type: state.type,
+        };
+    }
+    copySharedState({ value, required, minLength, maxLength, }) {
+        return { value, required, minLength, maxLength };
+    }
+}
+function isInputState(state) {
+    return state.type !== 'textarea';
+}
+let _pickerDepsPromise = null
+function ensurePickerDeps() {
+  if (!_pickerDepsPromise) {
+    _pickerDepsPromise = Promise.all([
+      import('../buttons/icon-button.js'),
+      import('../pickers/datetime-picker-dialog.js'),
+    ]).catch((err) => {
+      _pickerDepsPromise = null
+      throw err
+    })
+  }
+  return _pickerDepsPromise
+}
+
 // Separate variable needed for closure.
 const textFieldBaseClass = mixinOnReportValidity(
   mixinConstraintValidation(mixinFormAssociated(mixinElementInternals(LitElement))),
@@ -442,6 +602,9 @@ export class TextField extends textFieldBaseClass {
       this.value = value
     }
     if (changedProperties.has('type')) {
+      if (this.type === 'date' || this.type === 'datetime-local' || this.type === 'time') {
+        ensurePickerDeps().catch(() => {})
+      }
       this.handleIconChange()
     }
   }
@@ -546,7 +709,8 @@ export class TextField extends textFieldBaseClass {
           .type=${this.type}
           .min=${this.min}
           .max=${this.max}
-          .value=${this.value}></md-datetime-picker-dialog>
+          .value=${this.value}
+          @confirm=${this.handlePickerConfirm}></md-datetime-picker-dialog>
       `
     }
     return nothing
@@ -564,16 +728,23 @@ export class TextField extends textFieldBaseClass {
     this.openPickerDialog()
   }
 
-  openPickerDialog() {
+  handlePickerConfirm(e) {
+    this.value = e.target.value
+    this.dispatchEvent(new Event('input', { bubbles: true, composed: true }))
+    this.dispatchEvent(new Event('change', { bubbles: true }))
+  }
+
+  async openPickerDialog() {
+    try {
+      await ensurePickerDeps()
+    } catch {
+      return
+    }
+    if (!this.isConnected) return
     const fieldPicker = this.renderRoot.getElementById('datetime-picker-dialog')
     if (fieldPicker) {
       fieldPicker.value = this.value // Ensure value is synced
       fieldPicker.show()
-      fieldPicker.addEventListener('confirm', () => {
-        this.value = fieldPicker.value
-        this.dispatchEvent(new Event('input', { bubbles: true, composed: true }))
-        this.dispatchEvent(new Event('change', { bubbles: true }))
-      })
     }
   }
   renderInputOrTextarea() {

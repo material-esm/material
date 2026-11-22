@@ -11,4 +11,3 @@ export const stringConverter = {
         return value || null;
     },
 };
-//# sourceMappingURL=string-converter.js.map

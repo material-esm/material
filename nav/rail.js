@@ -1,4 +1,4 @@
-import { LitElement, css, html, nothing } from 'lit'
+import { css, html, nothing } from 'lit'
 import '../icon/icon.js'
 import '../buttons/icon-button.js'
 import { NavigationBar } from './bar.js'

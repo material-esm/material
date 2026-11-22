@@ -93,4 +93,3 @@ async function squelchEventsForMicrotask() {
     await null;
     isSquelchingEvents = false;
 }
-//# sourceMappingURL=form-label-activation.js.map

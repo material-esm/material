@@ -70,4 +70,3 @@ export class Validator {
         return this.currentValidity;
     }
 }
-//# sourceMappingURL=validator.js.map

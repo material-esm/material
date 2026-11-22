@@ -2,7 +2,6 @@ import { html, css, LitElement, nothing } from 'lit'
 import { classMap } from 'lit/directives/class-map.js'
 import '../icon/icon.js'
 import '../buttons/icon-button.js'
-import '../divider/divider.js'
 
 export class DatePicker extends LitElement {
   static properties = {

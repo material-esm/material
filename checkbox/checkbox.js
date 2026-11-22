@@ -1,7 +1,6 @@
 import '../internal/focus/focus-ring.js'
 import '../internal/ripple/ripple.js'
 import { html, isServer, LitElement, nothing, css } from 'lit'
-import { property, query, state } from 'lit/decorators.js'
 import { classMap } from 'lit/directives/class-map.js'
 import { requestUpdateOnAriaChange } from '../internal/aria/delegate.js'
 import { dispatchActivationClick, isActivationClick } from '../internal/events/form-label-activation.js'
