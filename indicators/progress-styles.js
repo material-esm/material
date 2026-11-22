@@ -525,10 +525,25 @@ export const linearStyles = css`
       animation-duration: 6s;
     }
 
-    :host([shape='wavy'][type='linear']),
-    .linear.progress.wavy.indeterminate {
-      --_used-wave-duration: 6s;
+    :host([shape='wavy'][type='linear']) {
+      --_used-wave-duration: max(6s, var(--_wave-duration));
       --_used-four-color-duration: 12s;
+    }
+
+    .linear.progress.wavy.indeterminate {
+      --_used-wave-duration: max(6s, var(--_indeterminate-wave-duration));
+    }
+
+    @supports (animation-duration: calc(1s * sign(1s))) {
+      :host([shape='wavy'][type='linear']) {
+        --_used-wave-duration: calc(sign(var(--_wave-duration)) * max(6s, var(--_wave-duration)));
+      }
+
+      .linear.progress.wavy.indeterminate {
+        --_used-wave-duration: calc(
+          sign(var(--_indeterminate-wave-duration)) * max(6s, var(--_indeterminate-wave-duration))
+        );
+      }
     }
 
     .linear .dots {

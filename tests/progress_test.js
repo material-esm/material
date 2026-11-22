@@ -24,13 +24,36 @@ const { Progress, getCircularWavyIndeterminateState, getWavyCirclePath, parseTim
  * @param {Array<{cssText: string}>} styles
  * @return {Map<string, Record<string, string>>}
  */
+function stripAtRuleBlocks(cssText) {
+  let out = ''
+  let i = 0
+  while (i < cssText.length) {
+    if (cssText[i] === '@') {
+      const braceIdx = cssText.indexOf('{', i)
+      if (braceIdx === -1) break
+      let depth = 1
+      let j = braceIdx + 1
+      while (j < cssText.length && depth > 0) {
+        if (cssText[j] === '{') depth++
+        else if (cssText[j] === '}') depth--
+        j++
+      }
+      i = j
+    } else {
+      out += cssText[i]
+      i++
+    }
+  }
+  return out
+}
+
 function parseTopLevelRules(styles) {
   const cssText = styles
     .map((s) => s.cssText)
     .join('\n')
     .replace(/\/\*[\s\S]*?\*\//g, '')
 
-  const withoutNestedAtRules = cssText.replace(/@(?:media|keyframes)[^{]+\{(?:[^{}]*\{[^{}]*\})*[^{}]*\}/g, '')
+  const withoutNestedAtRules = stripAtRuleBlocks(cssText)
   const rules = new Map()
   const ruleRegex = /([^{}]+)\{([^{}]*)\}/g
 
@@ -201,7 +224,10 @@ describe('md-progress wavy indicator speed & M3 Expressive motion', () => {
     assert.ok(secondaryInner['inset'].includes('var(--_l2-tail) * -100cqi'))
     assert.equal(primaryInner['width'], 'calc(100cqi + var(--_wavelength) * 2)')
 
-    // Reduced motion slows --_used-wave-duration down via @media (prefers-reduced-motion: reduce)
-    assert.match(rawCss, /@media\s*\(prefers-reduced-motion:\s*reduce\)[\s\S]*?--_used-wave-duration:\s*6s/)
+    // Reduced motion slows positive wave durations to >=6s while preserving 0s static waves via sign()
+    assert.match(
+      rawCss,
+      /@media\s*\(prefers-reduced-motion:\s*reduce\)[\s\S]*?calc\(sign\(var\(--_wave-duration\)\)\s*\*\s*max\(6s,\s*var\(--_wave-duration\)\)\)/,
+    )
   })
 })
