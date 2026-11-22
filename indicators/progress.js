@@ -173,10 +173,12 @@ export class Progress extends LitElement {
         {
           strokeDasharray: `${trackMax.toFixed(2)} ${(360 - trackMax).toFixed(2)}`,
           strokeDashoffset: `${-(20 + gapDeg).toFixed(2)}`,
+          easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
         },
         {
           strokeDasharray: `${trackMin.toFixed(2)} ${(360 - trackMin).toFixed(2)}`,
           strokeDashoffset: `${-(50 + 260 + gapDeg).toFixed(2)}`,
+          easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
         },
         {
           strokeDasharray: `${trackMax.toFixed(2)} ${(360 - trackMax).toFixed(2)}`,
@@ -186,7 +188,7 @@ export class Progress extends LitElement {
       {
         duration: CIRCULAR_INDETERMINATE_ARC_MS,
         iterations: Infinity,
-        easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+        easing: 'linear',
       },
     )
     const activeEl = this.renderRoot?.querySelector('.circular .active-track')

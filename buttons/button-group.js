@@ -29,13 +29,16 @@ export class ButtonGroup extends LitElement {
       gap: var(--md-button-group-connected-gap, 2px);
       --_inner-radius: 8px;
       --_pressed-inner-radius: 4px;
-      --_outer-radius: 20px;
+      --_round-outer-radius: 20px;
+      --_square-outer-radius: 12px;
+      --_outer-radius: var(--_round-outer-radius);
       --_pressed-outer-radius: 8px;
     }
 
-    /* Connected buttons expand to share container width equally */
+    /* Connected buttons expand to share container width equally and resolve outer radius on the child */
     :host([connected]) ::slotted(*) {
       flex: 1 1 0%;
+      --_outer-radius: var(--_round-outer-radius);
     }
 
     /* Inner and outer corner sizes by button group size */
@@ -43,56 +46,48 @@ export class ButtonGroup extends LitElement {
     :host([connected]) ::slotted([size='extra-small']) {
       --_inner-radius: 4px;
       --_pressed-inner-radius: 2px;
-      --_outer-radius: 16px;
+      --_round-outer-radius: 16px;
+      --_square-outer-radius: 12px;
       --_pressed-outer-radius: 8px;
     }
     :host([connected][size='small']),
     :host([connected]) ::slotted([size='small']) {
       --_inner-radius: 8px;
       --_pressed-inner-radius: 4px;
-      --_outer-radius: 20px;
+      --_round-outer-radius: 20px;
+      --_square-outer-radius: 12px;
       --_pressed-outer-radius: 8px;
     }
     :host([connected][size='medium']),
     :host([connected]) ::slotted([size='medium']) {
       --_inner-radius: 8px;
       --_pressed-inner-radius: 4px;
-      --_outer-radius: 28px;
+      --_round-outer-radius: 28px;
+      --_square-outer-radius: 16px;
       --_pressed-outer-radius: 12px;
     }
     :host([connected][size='large']),
     :host([connected]) ::slotted([size='large']) {
       --_inner-radius: 16px;
       --_pressed-inner-radius: 8px;
-      --_outer-radius: 48px;
+      --_round-outer-radius: 48px;
+      --_square-outer-radius: 28px;
       --_pressed-outer-radius: 16px;
     }
     :host([connected][size='extra-large']),
     :host([connected]) ::slotted([size='extra-large']) {
       --_inner-radius: 20px;
       --_pressed-inner-radius: 12px;
-      --_outer-radius: 68px;
+      --_round-outer-radius: 68px;
+      --_square-outer-radius: 28px;
       --_pressed-outer-radius: 16px;
     }
 
-    /* Square shapes (default small / extra-small = 12px) */
+    /* Square shapes resolve --_outer-radius from --_square-outer-radius regardless of which element carries size */
     :host([connected][shape='square']),
-    :host([connected]) ::slotted([shape='square']),
-    :host([connected][shape='square'][size='extra-small']),
-    :host([connected]) ::slotted([shape='square'][size='extra-small']),
-    :host([connected][shape='square'][size='small']),
-    :host([connected]) ::slotted([shape='square'][size='small']) {
-      --_outer-radius: 12px;
-    }
-    :host([connected][shape='square'][size='medium']),
-    :host([connected]) ::slotted([shape='square'][size='medium']) {
-      --_outer-radius: 16px;
-    }
-    :host([connected][shape='square'][size='large']),
-    :host([connected]) ::slotted([shape='square'][size='large']),
-    :host([connected][shape='square'][size='extra-large']),
-    :host([connected]) ::slotted([shape='square'][size='extra-large']) {
-      --_outer-radius: 28px;
+    :host([connected][shape='square']) ::slotted(*),
+    :host([connected]) ::slotted([shape='square']) {
+      --_outer-radius: var(--_square-outer-radius);
     }
 
     /* Map group corner variables once to all button variants */

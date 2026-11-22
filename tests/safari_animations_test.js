@@ -138,6 +138,8 @@ describe('Safari 26 button shape transitions', () => {
       /:host\(\[connected\]\)\s*::slotted\(\[group-position\]\[selected\]\)[\s\S]*?--_group-start-start:\s*var\(--_outer-radius,\s*20px\)/,
     )
     assert.ok(cssText.includes('--_pressed-inner-radius'))
+    assert.ok(cssText.includes(":host([connected][shape='square']) ::slotted(*)"))
+    assert.ok(cssText.includes('--_outer-radius: var(--_square-outer-radius)'))
 
     const group = new ButtonGroup()
     const inheritedBtn = new Button()
@@ -288,6 +290,9 @@ describe('Safari 26 indicator animations', () => {
     p._syncCustomCircularTrackAnimation()
     assert.ok(createdAnim, 'expected custom circular track WAAPI animation to be created')
     assert.equal(createdAnim.startTime, 845)
+    assert.equal(createdAnim.options.easing, 'linear')
+    assert.equal(createdAnim.keyframes[0].easing, 'cubic-bezier(0.4, 0, 0.2, 1)')
+    assert.equal(createdAnim.keyframes[1].easing, 'cubic-bezier(0.4, 0, 0.2, 1)')
     p._stopCustomCircularTrackAnimation()
   })
 })
