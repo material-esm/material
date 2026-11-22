@@ -194,6 +194,9 @@ export class IconButton extends iconButtonBaseClass {
   }
 
   #onPointerCancel = (event) => {
+    if (!this.pressed || this.#releaseTimer) {
+      return
+    }
     if (event && this.#activePointerId !== null && event.pointerId !== this.#activePointerId) {
       return
     }

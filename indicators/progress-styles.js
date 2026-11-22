@@ -283,6 +283,7 @@ export const linearStyles = css`
       --md-linear-progress-four-color-active-indicator-four-color,
       var(--md-sys-color-tertiary-container, #ffd8e4)
     );
+    --_used-indeterminate-bar-duration: 1750ms;
     display: flex;
     position: relative;
     min-width: 40px;
@@ -485,15 +486,24 @@ export const linearStyles = css`
   }
 
   /* Anchor indeterminate wavy mask in track coordinates so moving bars window across the wave
-     rather than dragging the wave mask at bar-tail velocity. */
+     rather than dragging the wave mask at bar-tail velocity. Direct cqi keyframes guarantee
+     track-anchoring in Safari 26 without relying on custom-property calc() invalidation. */
   .linear.progress.wavy.indeterminate.registered-props .primary-bar .bar-inner {
     inset: 0 auto 0 calc(var(--_l1-tail) * -100cqi - var(--_wavelength));
+    margin-left: calc(-1 * var(--_wavelength));
     width: calc(100cqi + var(--_wavelength) * 2);
+    animation:
+      wavy-linear-move var(--_used-wave-duration) linear infinite,
+      m3-l1-tail-cqi var(--_used-indeterminate-bar-duration) infinite;
   }
 
   .linear.progress.wavy.indeterminate.registered-props .secondary-bar .bar-inner {
     inset: 0 auto 0 calc(var(--_l2-tail) * -100cqi - var(--_wavelength));
+    margin-left: calc(-1 * var(--_wavelength));
     width: calc(100cqi + var(--_wavelength) * 2);
+    animation:
+      wavy-linear-move var(--_used-wave-duration) linear infinite,
+      m3-l2-tail-cqi var(--_used-indeterminate-bar-duration) infinite;
   }
 
   .linear.progress.wavy.indeterminate.four-color .bar-inner {
@@ -502,7 +512,25 @@ export const linearStyles = css`
       linear-four-color var(--_used-four-color-duration, 3500ms) linear infinite;
   }
 
+  .linear.progress.wavy.indeterminate.registered-props.four-color .primary-bar .bar-inner {
+    animation:
+      wavy-linear-move var(--_used-wave-duration) linear infinite,
+      m3-l1-tail-cqi var(--_used-indeterminate-bar-duration) infinite,
+      linear-four-color var(--_used-four-color-duration, 3500ms) linear infinite;
+  }
+
+  .linear.progress.wavy.indeterminate.registered-props.four-color .secondary-bar .bar-inner {
+    animation:
+      wavy-linear-move var(--_used-wave-duration) linear infinite,
+      m3-l2-tail-cqi var(--_used-indeterminate-bar-duration) infinite,
+      linear-four-color var(--_used-four-color-duration, 3500ms) linear infinite;
+  }
+
   @media (prefers-reduced-motion: reduce) {
+    :host([type='linear']) {
+      --_used-indeterminate-bar-duration: 6s;
+    }
+
     .linear.progress:not(.indeterminate) .primary-bar,
     .linear.progress:not(.indeterminate) .inactive-track {
       transition: none;
@@ -690,6 +718,29 @@ export const linearStyles = css`
     }
     100% {
       right: -10%;
+    }
+  }
+
+  @keyframes m3-l1-tail-cqi {
+    0%,
+    14.29% {
+      left: 10cqi;
+      animation-timing-function: cubic-bezier(0.3, 0, 0.8, 0.15);
+    }
+    71.43%,
+    100% {
+      left: -110cqi;
+    }
+  }
+
+  @keyframes m3-l2-tail-cqi {
+    0%,
+    51.43% {
+      left: 10cqi;
+      animation-timing-function: cubic-bezier(0.3, 0, 0.8, 0.15);
+    }
+    100% {
+      left: -110cqi;
     }
   }
 

@@ -71,35 +71,56 @@ describe('Safari 26 button shape transitions', () => {
     assert.match(cssText, /@media\s*\(prefers-reduced-motion:\s*reduce\)[\s\S]*?--_shape-transition-duration:\s*0s/)
   })
 
-  it('holds pressed state for fast Safari/touch taps and clears immediately on cancel or disable', async () => {
+  it('holds pressed state across touch pointerup -> pointerleave and clears immediately on drag-off or disable', async () => {
+    const attachListeners = (el) => {
+      const listeners = new Map()
+      el.scheduleUpdate = () => {}
+      el.addEventListener = (type, fn) => listeners.set(type, fn)
+      el.removeEventListener = (type) => listeners.delete(type)
+      el.connectedCallback()
+      return listeners
+    }
+
     const btn = new Button()
+    const btnListeners = attachListeners(btn)
     assert.equal(btn.pressed, false)
 
-    // Fast tap (< 150ms) stays pressed briefly so WebKit paints the shape morph
-    btn.handlePress({ isPrimary: true, pointerType: 'touch', pointerId: 1 })
+    // Fast touch tap: pointerdown -> pointerup -> immediate pointerleave must preserve 150ms hold
+    btnListeners.get('pointerdown')({ isPrimary: true, pointerType: 'touch', pointerId: 1 })
     assert.equal(btn.pressed, true)
-    btn.handleRelease({ pointerId: 1 })
-    assert.equal(btn.pressed, true, 'pressed should remain true immediately after a sub-frame tap')
+    btnListeners.get('pointerup')({ pointerId: 1 })
+    btnListeners.get('pointerleave')({ pointerId: 1 })
+    assert.equal(btn.pressed, true, 'pointerleave after pointerup must not cancel release-hold timer')
 
     await new Promise((resolve) => setTimeout(resolve, 180))
     assert.equal(btn.pressed, false, 'pressed should release after MINIMUM_PRESS_MS')
 
+    // Drag-off while held (pointerdown -> pointerleave before pointerup) clears immediately
+    btnListeners.get('pointerdown')({ isPrimary: true, pointerType: 'touch', pointerId: 2 })
+    assert.equal(btn.pressed, true)
+    btnListeners.get('pointerleave')({ pointerId: 2 })
+    assert.equal(btn.pressed, false, 'pointerleave while held down must clear pressed immediately')
+
     // Disabling while pressed clears immediately without waiting for timer
-    btn.handlePress({ isPrimary: true, pointerType: 'mouse', buttons: 1, pointerId: 2 })
+    btnListeners.get('pointerdown')({ isPrimary: true, pointerType: 'mouse', buttons: 1, pointerId: 3 })
     assert.equal(btn.pressed, true)
     btn.disabled = true
     assert.equal(btn.pressed, false)
+    btn.disconnectedCallback()
 
-    // IconButton follows the same press hold & disable contract
+    // IconButton follows the same press hold, pointerleave, & disable contract
     const iconBtn = new IconButton()
+    const iconListeners = attachListeners(iconBtn)
     assert.equal(iconBtn.pressed, false)
     assert.equal(iconBtn.shape, 'round')
-    iconBtn.handlePress({ isPrimary: true, pointerType: 'touch', pointerId: 3 })
+    iconListeners.get('pointerdown')({ isPrimary: true, pointerType: 'touch', pointerId: 4 })
     assert.equal(iconBtn.pressed, true)
-    iconBtn.handleRelease({ pointerId: 3 })
-    assert.equal(iconBtn.pressed, true)
+    iconListeners.get('pointerup')({ pointerId: 4 })
+    iconListeners.get('pointerleave')({ pointerId: 4 })
+    assert.equal(iconBtn.pressed, true, 'IconButton pointerleave after pointerup must preserve hold')
     iconBtn.disabled = true
     assert.equal(iconBtn.pressed, false)
+    iconBtn.disconnectedCallback()
   })
 
   it('morphs selected connected button group items to full pill and omits group-position when not connected', () => {
@@ -173,6 +194,8 @@ describe('Safari 26 indicator animations', () => {
     assert.ok(progressCss.includes('@keyframes m3-l1-tail-left'))
     assert.ok(progressCss.includes('@keyframes m3-l2-head-right'))
     assert.ok(progressCss.includes('@keyframes m3-l2-tail-left'))
+    assert.ok(progressCss.includes('@keyframes m3-l1-tail-cqi'))
+    assert.ok(progressCss.includes('@keyframes m3-l2-tail-cqi'))
 
     assert.match(progressCss, /@keyframes\s+wavy-linear-move[\s\S]*?translate3d\(var\(--_wavelength,\s*40px\)/)
     assert.ok(!progressCss.includes('mask-position: var('))
