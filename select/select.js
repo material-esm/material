@@ -1,4 +1,3 @@
-
 /**
  * @summary
  * Select menus display a list of choices on temporary surfaces and display the
@@ -43,6 +42,12 @@ import { mixinElementInternals } from '../labs/behaviors/element-internals.js'
 import { getFormValue, mixinFormAssociated } from '../labs/behaviors/form-associated.js'
 import { mixinOnReportValidity, onReportValidity } from '../labs/behaviors/on-report-validity.js'
 import { Validator } from '../labs/behaviors/validators/validator.js'
+import { getActiveItem } from '../list/internal/list-navigation-helpers.js'
+import { FocusState, isElementInSubtree, isSelectableKey } from '../menu/controllers/shared.js'
+import { TYPEAHEAD_RECORD } from '../menu/controllers/typeaheadController.js'
+import { DEFAULT_TYPEAHEAD_BUFFER_TIME } from '../menu/menu.js'
+import { queryAssignedElements } from '../utils/query.js'
+import '../internal/field/field.js'
 
 /**
  * A validator that provides constraint validation that emulates `<select>`
@@ -69,12 +74,6 @@ export class SelectValidator extends Validator {
         return { value, required };
     }
 }
-import { getActiveItem } from '../list/internal/list-navigation-helpers.js'
-import { FocusState, isElementInSubtree, isSelectableKey } from '../menu/controllers/shared.js'
-import { TYPEAHEAD_RECORD } from '../menu/controllers/typeaheadController.js'
-import { DEFAULT_TYPEAHEAD_BUFFER_TIME } from '../menu/menu.js'
-import { queryAssignedElements } from '../utils/query.js'
-import '../internal/field/field.js'
 
 const VALUE = Symbol('value')
 // Separate variable needed for closure.
