@@ -35,6 +35,9 @@ describe('Safari 26 button shape transitions', () => {
   it('re-exports buttonStyles and iconButtonStyles and registers custom elements', () => {
     assert.equal(Button.styles, buttonStyles)
     assert.equal(IconButton.styles, iconButtonStyles)
+    for (let i = 0; i < Button.styles.length; i++) {
+      assert.ok(Button.styles[i], `Button.styles[${i}] must not be empty/sparse`)
+    }
     assert.equal(globalThis.customElements.get('md-button'), Button)
     assert.equal(globalThis.customElements.get('md-icon-button'), IconButton)
     assert.equal(globalThis.customElements.get('md-button-group'), ButtonGroup)

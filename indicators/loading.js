@@ -393,8 +393,14 @@ export class Loading extends LitElement {
   }
 
   render() {
-    const indicatorColor = this.color || this._defaultIndicatorColor()
-    const bgContainerColor = this.containerColor || this._defaultContainerColor()
+    const rawIndicatorColor = this.color || this._defaultIndicatorColor()
+    const rawContainerColor = this.containerColor || this._defaultContainerColor()
+    const indicatorColor = rawIndicatorColor.trim().startsWith('--')
+      ? `var(${rawIndicatorColor.trim()})`
+      : rawIndicatorColor
+    const bgContainerColor = rawContainerColor.trim().startsWith('--')
+      ? `var(${rawContainerColor.trim()})`
+      : rawContainerColor
     return html`
       <div
         class="loading"

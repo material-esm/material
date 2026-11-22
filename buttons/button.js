@@ -1056,7 +1056,6 @@ export class Button extends buttonBaseClass {
         border-color: rgba(0, 0, 0, 0);
       }
     `,
-    ,
     css`
       :host,
       .background,
