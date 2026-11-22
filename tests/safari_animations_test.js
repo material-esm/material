@@ -139,33 +139,59 @@ describe('Safari 26 button shape transitions', () => {
     )
     assert.ok(cssText.includes('--_pressed-inner-radius'))
 
-    const group = new ButtonGroup()
-    const child = {
-      attrs: new Map(),
-      hasAttribute(k) {
-        return this.attrs.has(k)
-      },
-      setAttribute(k, v) {
-        this.attrs.set(k, v)
-      },
-      removeAttribute(k) {
-        this.attrs.delete(k)
-      },
-      tagName: 'MD-BUTTON',
+    const makeMockChild = (explicitSize = null) => {
+      const attrs = new Map()
+      let currentSize = explicitSize ?? 'small'
+      if (explicitSize) attrs.set('size', explicitSize)
+      return {
+        attrs,
+        get size() {
+          return currentSize
+        },
+        set size(v) {
+          currentSize = v
+          this.attrs.set('size', v)
+        },
+        getAttribute(k) {
+          return this.attrs.get(k) ?? null
+        },
+        hasAttribute(k) {
+          return this.attrs.has(k)
+        },
+        setAttribute(k, v) {
+          this.attrs.set(k, v)
+        },
+        removeAttribute(k) {
+          this.attrs.delete(k)
+        },
+        tagName: 'MD-BUTTON',
+      }
     }
+
+    const group = new ButtonGroup()
+    const inheritedChild = makeMockChild()
+    const explicitChild = makeMockChild('xl')
     group.renderRoot = {
       querySelector: () => ({
-        assignedElements: () => [child],
+        assignedElements: () => [inheritedChild, explicitChild],
       }),
     }
 
     group.connected = false
+    group.size = 'medium'
     group.updateConnectedPositions()
-    assert.equal(child.attrs.has('group-position'), false)
+    assert.equal(inheritedChild.attrs.has('group-position'), false)
+    assert.equal(inheritedChild.size, 'medium')
+    assert.equal(explicitChild.size, 'xl')
 
+    // Dynamic size updates on md-button-group propagate even after size reflects on children
     group.connected = true
+    group.size = 'large'
     group.updateConnectedPositions()
-    assert.equal(child.attrs.get('group-position'), 'single')
+    assert.equal(inheritedChild.attrs.get('group-position'), 'first')
+    assert.equal(explicitChild.attrs.get('group-position'), 'last')
+    assert.equal(inheritedChild.size, 'large')
+    assert.equal(explicitChild.size, 'xl')
   })
 
   it('uses explicit 0px units and icon-button shape tokens in md-split-button', () => {

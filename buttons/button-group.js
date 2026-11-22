@@ -217,6 +217,8 @@ export class ButtonGroup extends LitElement {
     size: { type: String, reflect: true },
   }
 
+  #groupSizedButtons = new WeakMap()
+
   constructor() {
     super()
     this.connected = false
@@ -315,8 +317,20 @@ export class ButtonGroup extends LitElement {
       if (this.connected && !button.toggle) {
         button.toggle = true
       }
-      if (this.size && !button.hasAttribute('size')) {
-        button.size = this.size
+      const prevGroupSize = this.#groupSizedButtons.get(button)
+      const currentSize = button.size ?? button.getAttribute?.('size')
+      const canManageSize = prevGroupSize !== undefined ? currentSize === prevGroupSize : !button.hasAttribute('size')
+      if (canManageSize) {
+        if (this.size) {
+          this.#groupSizedButtons.set(button, this.size)
+          button.size = this.size
+        } else if (prevGroupSize !== undefined) {
+          this.#groupSizedButtons.delete(button)
+          button.size = 'small'
+          button.removeAttribute?.('size')
+        }
+      } else if (prevGroupSize !== undefined) {
+        this.#groupSizedButtons.delete(button)
       }
 
       if (!this.connected) {
