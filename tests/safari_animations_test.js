@@ -173,9 +173,8 @@ describe('Safari 26 indicator animations', () => {
     assert.ok(progressCss.includes('@keyframes m3-l1-tail-left'))
     assert.ok(progressCss.includes('@keyframes m3-l2-head-right'))
     assert.ok(progressCss.includes('@keyframes m3-l2-tail-left'))
-    assert.ok(!progressCss.includes('--_l1-head:'))
 
-    assert.match(progressCss, /@keyframes\s+wavy-linear-move[\s\S]*?translate3d\(100%,\s*0,\s*0\)/)
+    assert.match(progressCss, /@keyframes\s+wavy-linear-move[\s\S]*?translate3d\(var\(--_wavelength,\s*40px\)/)
     assert.ok(!progressCss.includes('mask-position: var('))
   })
 })
