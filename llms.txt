@@ -416,7 +416,7 @@ customElements.define('profile-form', ProfileForm)
   - `import 'material/select/select-option.js'`
 - **`<md-select>` Props**:
   - `color`: `'outlined'` (default) | `'filled'`
-  - `label`, `value`, `supporting-text` (`supportingText`), `error-text` (`errorText`), `display-text`: `string`
+  - `label`, `value`, `supportingtext` (`supportingText`), `errortext` (`errorText`), `display-text` (`displayText`): `string`
   - `selected-index` (`selectedIndex`): `number`; `required`, `disabled`, `error`, `clamp-menu-width`, `quick`: `boolean`
   - `menu-positioning` (`menuPositioning`): `'popover'` (default) | `'fixed'` | `'absolute'`
 - **`<md-select-option>` Props & Slots**: `value`: `string`; `selected`, `disabled`: `boolean`; `display-text`, `typeahead-text`: `string`. Slots: `headline`, `supporting-text`, `start`, `end`.
