@@ -1,0 +1,556 @@
+# Material ESM (material-esm/material)
+
+> Pure ESM, zero-build Material Design 3 and M3 Expressive web components built on Lit 3. Import individual components directly from `material/...` via browser `<script type="importmap">` (CDN) or `npm install material-esm/material`. Framework-agnostic; works in plain HTML, Lit, React, Vue, Svelte, or any web stack.
+
+## Critical Rules for AI Agents (Do NOT Use `@material/web` Syntax)
+
+`material-esm/material` is an actively developed fork of Google's `@material/web` that **unifies variant-per-tag components into single elements** configured via `color` or `type` attributes and adds full Material 3 Expressive components. Do **not** generate `@material/web` imports or legacy variant tag names:
+
+| Legacy `@material/web` (WRONG) | `material-esm/material` (CORRECT) | Import Path |
+| --- | --- | --- |
+| `import '@material/web/...'` | `import 'material/...'` | See component sections below |
+| `<md-filled-button>`, `<md-outlined-button>`, `<md-elevated-button>`, `<md-filled-tonal-button>`, `<md-text-button>` | `<md-button color="filled \| outlined \| elevated \| tonal \| text">` | `material/buttons/button.js` |
+| `<md-filled-icon-button>`, `<md-filled-tonal-icon-button>`, `<md-outlined-icon-button>` | `<md-icon-button color="standard \| filled \| tonal \| outlined">` | `material/buttons/icon-button.js` |
+| `<md-outlined-segmented-button-set>` | `<md-button-group connected>` with `<md-button color="tonal">` | `material/buttons/button-group.js` |
+| `<md-outlined-text-field>`, `<md-filled-text-field>` | `<md-text-field color="outlined \| filled">` | `material/text/text-field.js` |
+| `<md-outlined-select>`, `<md-filled-select>` | `<md-select color="outlined \| filled">` | `material/select/select.js` |
+| `<md-assist-chip>`, `<md-filter-chip>`, `<md-input-chip>`, `<md-suggestion-chip>` | `<md-chip type="assist \| filter \| input \| suggestion">` | `material/chips/chip.js` |
+| `<md-primary-tab>`, `<md-secondary-tab>` | `<md-tab type="primary \| secondary">` | `material/tabs/tab.js` |
+| `<md-circular-progress>`, `<md-linear-progress>` | `<md-progress type="circular \| linear">` | `material/indicators/progress.js` |
+| `<md-bottom-sheet>` | `<md-sheet position="bottom \| end \| start">` | `material/sheet/sheet.js` |
+
+- Always import only the specific component modules you use in production (avoid `material/all.js` and `material/common.js` outside quick prototypes).
+- For `<md-switch>`, the checked state property/attribute is `selected` (`e.target.selected`), **not** `checked` (`<md-checkbox>` and `<md-radio>` use `checked`).
+- `<md-icon>` requires the **Material Symbols Outlined** font stylesheet in `<head>` when using ligature names (e.g. `<md-icon>search</md-icon>`), or you can slot an inline `<svg viewBox="0 0 24 24">`.
+
+---
+
+## Installation & Setup
+
+### Option 1: Zero-Build CDN (`importmap`)
+
+Add the import map and Google Fonts (Material Symbols + typeface) to `<head>`:
+
+```html
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&family=Google+Sans+Flex:wght@400;500;700&display=swap" />
+
+<script type="importmap">
+  {
+    "imports": {
+      "lit": "https://cdn.jsdelivr.net/npm/lit@3/index.js",
+      "lit/": "https://cdn.jsdelivr.net/npm/lit@3/",
+      "@lit/localize": "https://cdn.jsdelivr.net/npm/@lit/localize/lit-localize.js",
+      "@lit/reactive-element": "https://cdn.jsdelivr.net/npm/@lit/reactive-element@2/reactive-element.js",
+      "@lit/reactive-element/": "https://cdn.jsdelivr.net/npm/@lit/reactive-element@2/",
+      "lit-element/lit-element.js": "https://cdn.jsdelivr.net/npm/lit-element@4/lit-element.js",
+      "lit-html": "https://cdn.jsdelivr.net/npm/lit-html@3/lit-html.js",
+      "lit-html/": "https://cdn.jsdelivr.net/npm/lit-html@3/",
+      "material/": "https://cdn.jsdelivr.net/gh/material-esm/material@3/"
+    }
+  }
+</script>
+```
+
+### Option 2: NPM
+
+```sh
+npm install material-esm/material
+```
+
+Package name in `node_modules` is `material`, so bare specifiers (`import 'material/buttons/button.js'`) work directly with Vite, Rollup, esbuild, or import maps.
+
+### Theme Tokens & Typography
+
+Components consume standard Material 3 CSS custom properties (`--md-sys-color-*`, `--md-ref-typeface-*`, `--md-sys-typescale-*`), falling back to M3 baseline defaults if unset. Export `light.css` and `dark.css` from [Material Theme Builder](https://material-foundation.github.io/material-theme-builder/):
+
+```css
+@import url(light.css);
+@import url(dark.css) (prefers-color-scheme: dark);
+
+:root {
+  --md-ref-typeface-brand: 'Google Sans Flex', sans-serif;
+  --md-ref-typeface-plain: 'Google Sans Flex', sans-serif;
+  font-family: var(--md-ref-typeface-plain);
+  background: var(--md-sys-color-background);
+  color: var(--md-sys-color-on-background);
+}
+```
+
+Optional typography utility classes (`.md-typescale-display-large`, `.md-typescale-headline-medium`, `.md-typescale-title-large`, `.md-typescale-body-medium`, `.md-typescale-label-large`, plus `-prominent` variants):
+
+```js
+// Inside LitElement static styles:
+import { styles as typescaleStyles } from 'material/typography/md-typescale.js'
+// Or inject globally into document.head in non-Lit apps:
+import { injectTypescaleStyles } from 'material/typography/md-typescale.js'
+injectTypescaleStyles()
+```
+
+### Using in Lit Components
+
+```js
+import { LitElement, html, css } from 'lit'
+import 'material/text/text-field.js'
+import 'material/buttons/button.js'
+import { snack } from 'material/snackbar/snackbar.js'
+
+class ProfileForm extends LitElement {
+  static properties = { name: { type: String } }
+  static styles = css`
+    form { display: flex; flex-direction: column; gap: 16px; max-width: 360px; }
+  `
+  constructor() {
+    super()
+    this.name = ''
+  }
+  render() {
+    return html`
+      <form @submit=${this.#onSubmit}>
+        <md-text-field
+          label="Full name"
+          color="outlined"
+          required
+          .value=${this.name}
+          @input=${(e) => (this.name = e.target.value)}></md-text-field>
+        <md-button color="filled" type="submit">Save</md-button>
+      </form>
+    `
+  }
+  #onSubmit(e) {
+    e.preventDefault()
+    snack(`Saved ${this.name}`)
+  }
+}
+customElements.define('profile-form', ProfileForm)
+```
+
+---
+
+## Component Reference
+
+### 1. App Bar (`<md-app-bar>`)
+- **Import**: `import 'material/app/bar.js'`
+- **Attributes / Props**:
+  - `type` (alias `variant`): `'small'` (default) | `'center-aligned'` | `'medium-flexible'` | `'large-flexible'` | `'search'`
+  - `headline` (alias `title`): `string` — primary title text
+  - `subtitle`: `string` — optional subtitle
+  - `center-aligned` (`centerAligned`): `boolean`
+  - `scroll-behavior` (`scrollBehavior`): `'none'` (default) | `'scroll'` (elevates on scroll) | `'collapse'` (collapses medium/large flexible bars to 64px)
+  - `scroll-target` (`scrollTarget`): `'window'` (default) or CSS selector of scroll container
+  - `scrolled`, `collapsed`: `boolean` (reflected state)
+  - `placeholder`, `value`: `string` (used when `type="search"`)
+- **Slots**: `navigation-icon` (alias `leading-icon`), `headline` (alias `title`), `subtitle`, `action-items` (alias `trailing-icon`), `search-field`, `suggestions`, `(default)` (under-bar content like `<md-tabs>`).
+
+```html
+<md-app-bar type="medium-flexible" headline="Inbox" scroll-behavior="collapse">
+  <md-icon-button slot="navigation-icon" aria-label="Menu"><md-icon>menu</md-icon></md-icon-button>
+  <div slot="action-items">
+    <md-icon-button aria-label="Search"><md-icon>search</md-icon></md-icon-button>
+  </div>
+</md-app-bar>
+```
+
+### 2. Badge (`<md-badge>`)
+- **Import**: `import 'material/badge/badge.js'`
+- **Attributes / Props**:
+  - `value`: `string` (`''` default renders a `6px` dot badge; non-empty string renders a `16px` pill count badge, e.g. `"5"` or `"99+"`)
+  - `inline`: `boolean` (`false` default is `position: absolute` anchored to icon; `true` flows inline in flex/text)
+- **Built-in `slot="badge"` hosts**: `<md-icon-button>`, `<md-tab>`, and `<md-nav-item>` position `<md-badge slot="badge">` automatically.
+
+```html
+<md-icon-button aria-label="5 notifications">
+  <md-icon>notifications</md-icon>
+  <md-badge slot="badge" value="5"></md-badge>
+</md-icon-button>
+```
+
+### 3. Buttons (`<md-button>`, `<md-button-group>`, `<md-icon-button>`, `<md-fab>`, `<md-split-button>`)
+
+#### `<md-button>`
+- **Import**: `import 'material/buttons/button.js'`
+- **Attributes / Props**:
+  - `color`: `'filled'` (default) | `'outlined'` | `'elevated'` | `'tonal'` | `'text'`
+  - `size`: `'small'` (default) | `'extra-small'` | `'medium'` | `'large'` | `'extra-large'`
+  - `shape`: `'round'` (default) | `'square'`
+  - `disabled`, `toggle`, `selected`, `checkmark`, `trailing-icon` (`trailingIcon`): `boolean`
+  - `href`, `target`: `string` (renders as link)
+  - `type`: `'submit'` (default) | `'button'` | `'reset'`; `name`, `value`: `string` (form-associated; also supports `form="..."` in dialogs)
+- **Slots**: `(default)` label text, `icon` (leading/trailing `<md-icon>`).
+
+```html
+<md-button color="filled"><md-icon slot="icon">add</md-icon>Create</md-button>
+<md-button color="outlined" size="medium">Cancel</md-button>
+```
+
+#### `<md-button-group>`
+- **Import**: `import 'material/buttons/button-group.js'`
+- **Attributes / Props**:
+  - `connected`: `boolean` — Material 3 Expressive connected toggle group (replaces legacy segmented button)
+  - `multiselect`: `boolean` (`false` default = single-select when `connected`)
+  - `selection-required` (`selectionRequired`): `boolean` (`true` default)
+  - `checkmark`: `boolean` — shows checkmark on selected button(s)
+  - `size`: `'extra-small'` | `'small'` | `'medium'` | `'large'` | `'extra-large'`
+- **Events**: `change` (`detail: { button, selected, value, selectedIndex }`).
+
+```html
+<md-button-group connected checkmark aria-label="View mode">
+  <md-button color="tonal" value="day" selected>Day</md-button>
+  <md-button color="tonal" value="week">Week</md-button>
+  <md-button color="tonal" value="month">Month</md-button>
+</md-button-group>
+```
+
+#### `<md-icon-button>`
+- **Import**: `import 'material/buttons/icon-button.js'`
+- **Attributes / Props**:
+  - `color`: `'standard'` (default) | `'filled'` | `'tonal'` | `'outlined'`
+  - `size`: `'small'` (default) | `'extra-small'` | `'medium'` | `'large'` | `'extra-large'`
+  - `toggle`, `selected`, `disabled`, `flip-icon-in-rtl`: `boolean`
+  - `aria-label-selected`, `href`, `target`, `type`, `name`, `value`: `string`
+- **Slots**: `(default)` `<md-icon>`, `selected` (alternate `<md-icon>` when `toggle` + `selected`), `badge` (`<md-badge>`).
+- **Events**: `input`, `change` (when `toggle` is set).
+
+#### `<md-fab>`
+- **Import**: `import 'material/buttons/fab.js'`
+- **Attributes / Props**:
+  - `variant`: `'surface'` (default) | `'primary'` | `'secondary'` | `'tertiary'`
+  - `size`: `'small'` (default) | `'medium'` | `'large'`
+  - `label`: `string` — text label; pair with `extended` (`boolean`) for Extended FAB
+  - `lowered`: `boolean`; `href`, `target`: `string`
+- **Slots**: `icon` (`<md-icon slot="icon">add</md-icon>`).
+
+#### `<md-split-button>`
+- **Import**: `import 'material/buttons/split-button.js'`
+- **Attributes / Props**: `color` (`'filled'` default | `'tonal'` | `'outlined'` | `'elevated'`), `size` (`'small'` default), `disabled` (`boolean`), `separator-type`.
+- **Slots**: `(default)` primary button label/content, `menu` (`<md-menu-item>` list inside a wrapper or menu).
+
+```html
+<md-split-button color="filled">
+  Send
+  <div slot="menu">
+    <md-menu-item><div slot="headline">Schedule send</div></md-menu-item>
+    <md-menu-item><div slot="headline">Save draft</div></md-menu-item>
+  </div>
+</md-split-button>
+```
+
+### 4. Card (`<md-card>`)
+- **Import**: `import 'material/card/card.js'`
+- **Attributes / Props**: `type`: `'outlined'` (default) | `'elevated'` | `'filled'`
+- **Slots**: `(default)` card content (apply your own padding/layout inside or on `<md-card>`).
+
+```html
+<md-card type="elevated" style="padding: 16px;">Card content</md-card>
+```
+
+### 5. Carousel (`<md-carousel>`, `<md-carousel-item>`)
+- **Import**:
+  - `import 'material/carousel/carousel.js'`
+  - `import 'material/carousel/carousel-item.js'`
+- **`<md-carousel>` Props**:
+  - `layout`: `'multi-browse'` (default) | `'uncontained'` | `'hero'` | `'centered-hero'` | `'full-screen'`
+  - `item-width` (`itemWidth`): `string` (e.g. `'320px'`); `item-spacing` (`itemSpacing`): `number` (`8` default)
+  - `navigation`: `'auto'` (default) | `'always'` | `'none'`
+  - `indicators`, `loop`: `boolean`; `autoplay`: `number` (ms, `0` = off); `active-index` (`activeIndex`): `number`
+  - `scroll-snap` (`true` default), `hide-scrollbar` (`true` default): `boolean`
+- **`<md-carousel>` Methods & Events**: `next()`, `previous()`, `scrollToIndex(index, behavior)`; fires `change` (`detail: { index, item }`), `scroll`.
+- **`<md-carousel-item>` Props & Slots**: `headline`, `subhead`, `shape`, `type` (`'filled' | 'elevated' | 'outlined'`), `interactive` (`boolean`), `href`, `target`. Slots: `(default)`, `headline`, `subhead`, `scrim`, `action`.
+
+### 6. Checkbox (`<md-checkbox>`)
+- **Import**: `import 'material/checkbox/checkbox.js'`
+- **Attributes / Props**: `checked`, `indeterminate`, `disabled`, `required`: `boolean`; `name`, `value`: `string` (`'on'` default). Form-associated.
+- **Events**: `change`, `input` (read `e.target.checked`).
+
+### 7. Chips (`<md-chip-set>`, `<md-chip>`)
+- **Import**:
+  - `import 'material/chips/chip-set.js'`
+  - `import 'material/chips/chip.js'`
+- **`<md-chip>` Props**:
+  - `type`: `'assist'` (default) | `'filter'` | `'input'` | `'suggestion'`
+  - `label`: `string`; `value`: `string`
+  - `selected`, `elevated`, `removable`, `disabled`, `avatar`, `always-focusable`, `remove-only`: `boolean`
+  - `href`, `target`: `string`
+- **`<md-chip>` Slots**: `icon` (`<md-icon slot="icon">`), `selected-icon` (for `type="filter"`).
+
+```html
+<md-chip-set>
+  <md-chip type="filter" label="Active" selected></md-chip>
+  <md-chip type="filter" label="Archived"></md-chip>
+</md-chip-set>
+```
+
+### 8. Dialog (`<md-dialog>`)
+- **Import**: `import 'material/dialog/dialog.js'`
+- **Attributes / Props**:
+  - `open`: `boolean`; `return-value` (`returnValue`): `string`
+  - `type`: `''` (default) | `'alert'` (`role="alertdialog"`, disables scrim-click dismissal)
+  - `prevent-scrim-close` (`preventScrimClose`), `stacked`, `fullscreen`, `quick`: `boolean`
+- **Methods**: `await dialog.show()`, `await dialog.close(returnValue?)`
+- **Slots**: `icon` (optional header `<md-icon>`), `headline`, `content` (`<div>` or `<form id="f" method="dialog">`), `actions` (`<md-button>` controls).
+- **Events**: `open`, `opened`, `close`, `closed`, `cancel`.
+
+```html
+<md-dialog id="confirm-dlg">
+  <div slot="headline">Delete project?</div>
+  <div slot="content">This action cannot be undone.</div>
+  <div slot="actions">
+    <md-button color="text" onclick="document.getElementById('confirm-dlg').close('cancel')">Cancel</md-button>
+    <md-button color="filled" onclick="document.getElementById('confirm-dlg').close('delete')">Delete</md-button>
+  </div>
+</md-dialog>
+```
+
+### 9. Divider (`<md-divider>`)
+- **Import**: `import 'material/divider/divider.js'`
+- **Attributes / Props**: `inset`, `inset-start` (`insetStart`), `inset-end` (`insetEnd`): `boolean`.
+
+### 10. Icon (`<md-icon>`)
+- **Import**: `import 'material/icon/icon.js'`
+- **Usage**: `<md-icon>settings</md-icon>` (Material Symbols ligature) or `<md-icon><svg viewBox="0 0 24 24">...</svg></md-icon>`.
+
+### 11. Indicators (`<md-progress>`, `<md-loading>`)
+
+#### `<md-progress>`
+- **Import**: `import 'material/indicators/progress.js'`
+- **Attributes / Props**:
+  - `type`: `'circular'` (default) | `'linear'`
+  - `shape`: `'flat'` (default) | `'wavy'` (M3 Expressive sinusoidal wave)
+  - `value`: `number` (`0` to `max`); `max`: `number` (`1` default); `buffer`: `number` (linear buffer)
+  - `indeterminate`, `four-color` (`fourColor`): `boolean`
+
+```html
+<md-progress type="circular" indeterminate aria-label="Loading"></md-progress>
+<md-progress type="linear" value="0.65" shape="wavy" aria-label="Playback"></md-progress>
+```
+
+#### `<md-loading>`
+- **Import**: `import 'material/indicators/loading.js'`
+- **Description**: M3 Expressive spring-physics morphing 7-shape loader.
+- **Attributes / Props**: `contained` (`boolean`), `size` (`number`, `48` default), `color` (`string`), `container-color` (`string`), `speed` (`number`, `1` default), `paused` (`boolean`).
+
+### 12. List (`<md-list>`, `<md-list-item>`)
+- **Import**:
+  - `import 'material/list/list.js'`
+  - `import 'material/list/list-item.js'`
+- **`<md-list-item>` Props**: `type`: `'text'` (default) | `'button'` | `'link'`; `disabled`: `boolean`; `href`, `target`: `string`.
+- **`<md-list-item>` Slots**: `headline`, `supporting-text`, `trailing-supporting-text`, `overline`, `start` (leading `<md-icon>`, avatar `<img>`, checkbox), `end` (trailing `<md-icon>`, switch, metadata).
+
+### 13. Menu (`<md-menu>`, `<md-menu-item>`, `<md-sub-menu>`)
+- **Import**:
+  - `import 'material/menu/menu.js'`
+  - `import 'material/menu/menu-item.js'`
+  - `import 'material/menu/sub-menu.js'` (optional, for nested menus; add `has-overflow` on parent `<md-menu>`)
+- **`<md-menu>` Props**:
+  - `anchor`: `string` — `id` of anchor element in the same root node (wrap anchor + menu in `position: relative` container, or set `positioning="popover"` / `"fixed"`)
+  - `open`, `quick`, `has-overflow` (`hasOverflow`): `boolean`
+  - `variant`: `'vertical'` (default M3 Expressive) | `'baseline'`; `color-style` (`colorStyle`): `'standard'` (default) | `'vibrant'`
+  - `positioning`: `'absolute'` (default) | `'fixed'` | `'document'` | `'popover'`
+  - `anchor-corner` (`'end-start'`), `menu-corner` (`'start-start'`), `x-offset`, `y-offset`
+- **`<md-menu>` Methods**: `show()`, `close()`
+- **`<md-menu-item>` Props & Slots**: `selected`, `disabled`, `keep-open` (`keepOpen`): `boolean`; `href`, `target`, `type`. Slots: `headline`, `supporting-text`, `trailing-supporting-text`, `start`, `end`.
+
+```html
+<div style="position: relative; display: inline-block;">
+  <md-button id="more-btn" onclick="document.getElementById('more-menu').show()">Actions</md-button>
+  <md-menu id="more-menu" anchor="more-btn" positioning="popover">
+    <md-menu-item><md-icon slot="start">edit</md-icon><div slot="headline">Edit</div></md-menu-item>
+    <md-menu-item><md-icon slot="start">delete</md-icon><div slot="headline">Delete</div></md-menu-item>
+  </md-menu>
+</div>
+```
+
+### 14. Navigation (`<md-nav-rail>`, `<md-nav-bar>`, `<md-nav-item>`)
+- **Import**:
+  - `import 'material/nav/rail.js'` — vertical desktop/tablet rail (96px compact, 220–360px `expanded`, or modal drawer)
+  - `import 'material/nav/bar.js'` — horizontal bottom navigation bar for mobile (3–5 destinations)
+  - `import 'material/nav/item.js'` — destination item used inside `<md-nav-rail>` or `<md-nav-bar>`
+- **`<md-nav-rail>` Props, Methods, Slots & Events**:
+  - Props: `active-index` (`activeIndex`, `number`), `expanded` (`boolean`), `hide-inactive-labels` (`boolean`)
+  - Method: `toggleExpanded()`
+  - Slots: `menu` (overrides built-in expand menu button), `fab` (`<md-fab slot="fab" lowered>`), `(default)` (`<md-nav-item>` children)
+  - Events: `navigation-bar-activated` (`detail: { tab, activeIndex }`), `expanded-change` (`detail: { expanded }`)
+- **`<md-nav-bar>` Props & Events**: `active-index`, `hide-inactive-labels`; fires `navigation-bar-activated`.
+- **`<md-nav-item>` Props & Slots**: `label` (`string`), `href` (`string`), `active`, `disabled`, `expanded`: `boolean`. Slots: `active-icon`, `inactive-icon`, `badge` (`<md-badge slot="badge">`).
+
+```html
+<md-nav-bar active-index="0">
+  <md-nav-item label="Home">
+    <md-icon slot="active-icon">home</md-icon>
+    <md-icon slot="inactive-icon">home</md-icon>
+  </md-nav-item>
+  <md-nav-item label="Alerts">
+    <md-icon slot="active-icon">notifications</md-icon>
+    <md-icon slot="inactive-icon">notifications</md-icon>
+    <md-badge slot="badge" value="3"></md-badge>
+  </md-nav-item>
+</md-nav-bar>
+```
+
+### 15. Pickers (`<md-date-picker>`, `<md-time-picker>`, `<md-datetime-picker-dialog>`)
+- **Import**:
+  - `import 'material/pickers/date-picker.js'` — inline calendar (`value="YYYY-MM-DD"`, `min`, `max`, `hide-header`; fires `change`, `input`)
+  - `import 'material/pickers/time-picker.js'` — inline clock dial (`value="HH:MM"`, `format="12"` or `"24"`; fires `change`, `input`)
+  - `import 'material/pickers/datetime-picker-dialog.js'` — modal dialog (`type="date" | "time" | "datetime-local"`, `value`, `min`, `max`, `format`; methods `show()`, `close()`; fires `confirm`, `cancel`, `change`, `close`)
+- **Tip**: `<md-text-field type="date | time | datetime-local">` automatically embeds `<md-datetime-picker-dialog>` with a trigger button.
+
+### 16. Radio (`<md-radio>`)
+- **Import**: `import 'material/radio/radio.js'`
+- **Attributes / Props**: `name`, `value`: `string`; `checked`, `disabled`, `required`: `boolean`. Form-associated. Fires `change`, `input`.
+
+### 17. Search (`<md-search>`)
+- **Import**: `import 'material/search/search.js'`
+- **Attributes / Props**:
+  - `value`, `placeholder` (`'Search'`), `label` (`'Search'`), `name`: `string`
+  - `view`: `'auto'` (default: docked `>= 600px`, fullscreen `< 600px`) | `'docked'` | `'fullscreen'`
+  - `open`, `elevated`, `center-aligned`, `disabled`, `no-clear`, `no-filter`: `boolean`
+- **Slots**: `(default)` or `suggestions` (`<md-menu-item>` / `<md-list-item>` auto-filtered unless `no-filter`), `leading-icon`, `trailing-icon`, `avatar`.
+- **Events**: `input`, `change`, `search` (`detail: { value }` on Enter), `clear`, `open`, `close`.
+
+### 18. Select (`<md-select>`, `<md-select-option>`)
+- **Import**:
+  - `import 'material/select/select.js'`
+  - `import 'material/select/select-option.js'`
+- **`<md-select>` Props**:
+  - `color`: `'outlined'` (default) | `'filled'`
+  - `label`, `value`, `supportingtext` (`supportingText`), `errortext` (`errorText`), `display-text` (`displayText`): `string`
+  - `selected-index` (`selectedIndex`): `number`; `required`, `disabled`, `error`, `clamp-menu-width`, `quick`: `boolean`
+  - `menu-positioning` (`menuPositioning`): `'popover'` (default) | `'fixed'` | `'absolute'`
+- **`<md-select-option>` Props & Slots**: `value`: `string`; `selected`, `disabled`: `boolean`; `display-text`, `typeahead-text`: `string`. Slots: `headline`, `supporting-text`, `start`, `end`.
+- **Events**: `change`, `input`, `opening`, `opened`, `closing`, `closed` (read `e.target.value`).
+
+```html
+<md-select label="Role" color="outlined" value="editor">
+  <md-select-option value="viewer"><div slot="headline">Viewer</div></md-select-option>
+  <md-select-option value="editor"><div slot="headline">Editor</div></md-select-option>
+  <md-select-option value="admin"><div slot="headline">Admin</div></md-select-option>
+</md-select>
+```
+
+### 19. Sheet (`<md-sheet>`)
+- **Import**: `import 'material/sheet/sheet.js'`
+- **Description**: Unified M3 Bottom Sheet and Side Sheet (modal or coplanar standard).
+- **Attributes / Props**:
+  - `position`: `'bottom'` (default) | `'end'` (or `'side'`) | `'start'` | `'right'` | `'left'`
+  - `open`: `boolean`; `modal`: `boolean` (`true` default; set `modal="false"` + optional `inline` for coplanar standard side sheets)
+  - `headline`: `string`; `divider`, `detached`, `full-width`, `has-back-button`, `has-drag-handle`, `has-close-button`, `prevent-scrim-close`, `quick`: `boolean`
+- **Methods**: `await sheet.show()`, `await sheet.close(returnValue?)`
+- **Slots**: `(default)` scrollable body, `headline`, `actions`, `drag-handle`, `back-button`, `close-button`.
+- **Events**: `open`, `opened`, `close`, `closed`, `cancel`, `back`.
+
+```html
+<md-sheet id="filters" position="end" headline="Filters" divider>
+  <p>Filter options...</p>
+  <div slot="actions">
+    <md-button color="filled" onclick="document.getElementById('filters').close('apply')">Apply</md-button>
+  </div>
+</md-sheet>
+```
+
+### 20. Slider (`<md-slider>`)
+- **Import**: `import 'material/slider/slider.js'`
+- **Attributes / Props**:
+  - `min` (`0`), `max` (`100`), `step` (`1`), `value` (`50`): `number`
+  - `range`: `boolean` — dual-thumb range mode using `value-start` (`valueStart`) and `value-end` (`valueEnd`)
+  - `labeled`, `ticks`, `disabled`: `boolean`; `value-label`, `value-label-start`, `value-label-end`: `string`
+- **Events**: `input`, `change` (read `e.target.value` or `e.target.valueStart` / `e.target.valueEnd`).
+
+### 21. Snackbar (`<md-snackbar>` & `snack()`)
+- **Import**: `import { snack } from 'material/snackbar/snackbar.js'` (also registers `<md-snackbar>`)
+- **`snack(message, options?)` Helper** (recommended):
+  - Auto-dismisses after 5s when non-actionable; stays open until dismissed when `action` or `showCloseIcon` is set.
+  - `options`: `{ duration?: number, stacked?: boolean, showCloseIcon?: boolean, action?: { label: string, onClick: () => void } }`
+- **Declarative `<md-snackbar>`**: Props `message`, `open`, `stacked`, `duration`, `show-close-icon`; slot `action`; methods `show()`, `close()`.
+
+```js
+import { snack } from 'material/snackbar/snackbar.js'
+
+snack('Item archived', {
+  action: { label: 'Undo', onClick: () => restoreItem() },
+  showCloseIcon: true,
+})
+```
+
+### 22. Switch (`<md-switch>`)
+- **Import**: `import 'material/switch/switch.js'`
+- **Attributes / Props**: `selected` (`boolean` — **note**: uses `selected`, not `checked`), `icons` (`boolean`), `show-only-selected-icon` (`boolean`), `disabled`, `required`: `boolean`; `name`, `value`: `string`.
+- **Events**: `change`, `input` (read `e.target.selected`).
+
+### 23. Tabs (`<md-tabs>`, `<md-tab>`)
+- **Import**:
+  - `import 'material/tabs/tabs.js'`
+  - `import 'material/tabs/tab.js'`
+- **`<md-tabs>` Props & Events**: `active-tab-index` (`activeTabIndex`, `number`), `auto-activate` (`boolean`), `scrollable` (`boolean`); fires `change` (`e.target.activeTabIndex`).
+- **`<md-tab>` Props & Slots**: `type`: `'primary'` (default) | `'secondary'`; `inline-icon` (`inlineIcon`, `boolean`), `active`, `disabled`: `boolean`. Slots: `(default)` label text, `icon` (`<md-icon slot="icon">`), `badge` (`<md-badge slot="badge">`).
+
+```html
+<md-tabs active-tab-index="0">
+  <md-tab type="primary"><md-icon slot="icon">photo</md-icon>Photos</md-tab>
+  <md-tab type="primary"><md-icon slot="icon">videocam</md-icon>Videos</md-tab>
+</md-tabs>
+```
+
+### 24. Text Field (`<md-text-field>`)
+- **Import**: `import 'material/text/text-field.js'`
+- **Attributes / Props**:
+  - `color`: `'outlined'` (default) | `'filled'`
+  - `type`: `'text'` (default) | `'textarea'` | `'email'` | `'password'` | `'number'` | `'search'` | `'tel'` | `'url'` | `'color'` | `'date'` | `'time'` | `'datetime-local'`
+  - `label`, `value`, `placeholder`, `supporting-text` (`supportingText`), `error-text` (`errorText`), `prefix-text` (`prefixText`), `suffix-text` (`suffixText`): `string`
+  - `required`, `disabled`, `readonly` (`readOnly`), `error`, `no-spinner`: `boolean`
+  - `rows`, `cols`, `minlength` (`minLength`), `maxlength` (`maxLength`): `number`; `min`, `max`, `step`, `pattern`, `autocomplete`, `inputmode` (`inputMode`): `string`
+  - Methods: `checkValidity()`, `reportValidity()`, `setCustomValidity(msg)`, `focus()`, `select()`, `reset()`
+- **Slots**: `leading-icon` (`<md-icon slot="leading-icon">`), `trailing-icon` (`<md-icon>` or `<md-icon-button slot="trailing-icon">`).
+- **Events**: `input`, `change`, `select` (read `e.target.value`).
+
+```html
+<md-text-field label="Amount" color="outlined" type="number" prefix-text="$" supporting-text="USD">
+  <md-icon slot="leading-icon">payments</md-icon>
+</md-text-field>
+```
+
+### 25. Tooltip (`<md-tooltip>`)
+- **Import**: `import 'material/tooltip/tooltip.js'`
+- **Usage**: Wrap the target trigger element inside `<md-tooltip>`.
+- **Attributes / Props**: `type`: `'plain'` (default) | `'rich'`; `text`: `string`; `headline`: `string` (rich); `open`: `boolean`.
+- **Slots**: `(default)` trigger element, `headline` (rich), `text`, `actions` (rich).
+
+```html
+<md-tooltip text="Copy link">
+  <md-icon-button aria-label="Copy link"><md-icon>content_copy</md-icon></md-icon-button>
+</md-tooltip>
+```
+
+---
+
+## Documentation
+
+- [Repository Overview](https://raw.githubusercontent.com/material-esm/material/main/README.md): Quick start, CDN importmap, fonts, and theming setup.
+- [Live Interactive Demo](https://material-esm.github.io/material/demo/): Material 3 Expressive component showcase.
+- [App Bar](https://raw.githubusercontent.com/material-esm/material/main/app/README.md): Small, center-aligned, medium/large flexible, and search top app bars.
+- [Badge](https://raw.githubusercontent.com/material-esm/material/main/badge/README.md): Small dot and large count notification badges.
+- [Buttons](https://raw.githubusercontent.com/material-esm/material/main/buttons/README.md): Expressive buttons, connected button groups, icon buttons, FABs, and split buttons.
+- [Card](https://raw.githubusercontent.com/material-esm/material/main/card/README.md): Outlined, elevated, and filled cards.
+- [Carousel](https://raw.githubusercontent.com/material-esm/material/main/carousel/README.md): Multi-browse, uncontained, hero, centered-hero, and full-screen carousels.
+- [Checkbox](https://raw.githubusercontent.com/material-esm/material/main/checkbox/README.md): Form-associated checkboxes with indeterminate state.
+- [Chips](https://raw.githubusercontent.com/material-esm/material/main/chips/README.md): Assist, filter, input, and suggestion chips and chip sets.
+- [Dialog](https://raw.githubusercontent.com/material-esm/material/main/dialog/README.md): Modal, alert, stacked-action, and fullscreen dialogs.
+- [Divider](https://raw.githubusercontent.com/material-esm/material/main/divider/README.md): Full-bleed and inset dividers.
+- [Icon](https://raw.githubusercontent.com/material-esm/material/main/icon/README.md): Material Symbols ligature and custom SVG icons.
+- [Indicators](https://raw.githubusercontent.com/material-esm/material/main/indicators/README.md): Circular/linear progress (flat & wavy) and morphing loading indicators.
+- [List](https://raw.githubusercontent.com/material-esm/material/main/list/README.md): Single-line, multi-line, interactive button, and link lists.
+- [Menu](https://raw.githubusercontent.com/material-esm/material/main/menu/README.md): Expressive vertical menus, vibrant menus, baseline menus, and nested submenus.
+- [Navigation](https://raw.githubusercontent.com/material-esm/material/main/nav/README.md): Navigation rail, modal navigation drawer pattern, bottom navigation bar, and nav items.
+- [Pickers](https://raw.githubusercontent.com/material-esm/material/main/pickers/README.md): Inline date/time pickers and modal date/time/datetime picker dialogs.
+- [Radio](https://raw.githubusercontent.com/material-esm/material/main/radio/README.md): Form-associated radio buttons.
+- [Search](https://raw.githubusercontent.com/material-esm/material/main/search/README.md): Search bar with adaptive docked and full-screen suggestion views.
+- [Select](https://raw.githubusercontent.com/material-esm/material/main/select/README.md): Outlined and filled select dropdown menus.
+- [Sheet](https://raw.githubusercontent.com/material-esm/material/main/sheet/README.md): Modal and standard bottom sheets and side sheets.
+- [Slider](https://raw.githubusercontent.com/material-esm/material/main/slider/README.md): Continuous, discrete tick, labeled, and dual-thumb range sliders.
+- [Snackbar](https://raw.githubusercontent.com/material-esm/material/main/snackbar/README.md): Declarative snackbars and imperative `snack()` helper.
+- [Switch](https://raw.githubusercontent.com/material-esm/material/main/switch/README.md): Form-associated toggle switches with optional icons.
+- [Tabs](https://raw.githubusercontent.com/material-esm/material/main/tabs/README.md): Primary, secondary, inline-icon, and scrollable tabs.
+- [Text Field](https://raw.githubusercontent.com/material-esm/material/main/text/README.md): Outlined/filled text fields, textareas, color inputs, and integrated date/time pickers.
+- [Tooltip](https://raw.githubusercontent.com/material-esm/material/main/tooltip/README.md): Plain and rich interactive tooltips.
