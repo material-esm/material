@@ -31,7 +31,7 @@ See the README in each component's directory for how to use them:
 
 - [App Bar](app/README.md)
 - [Badge](badge/README.md)
-- [Buttons](buttons/README.md)
+- [Buttons](buttons/README.md) (Button, Button Group, Split Button, Icon Button, FAB, FAB Menu)
 - [Card](card/README.md)
 - [Carousel](carousel/README.md)
 - [Checkbox](checkbox/README.md)
