@@ -87,6 +87,7 @@ export class Carousel extends LitElement {
     this._autoplayTimer = null
     this._programmaticScrollTimer = null
     this._minTransitionTimer = null
+    this._instantScrollRaf = null
     this._scrollEndHandler = null
     this._isPointerDown = false
     this._startX = 0
@@ -166,6 +167,11 @@ export class Carousel extends LitElement {
     if (this._minTransitionTimer) {
       clearTimeout(this._minTransitionTimer)
       this._minTransitionTimer = null
+    }
+
+    if (this._instantScrollRaf !== null && typeof cancelAnimationFrame === 'function') {
+      cancelAnimationFrame(this._instantScrollRaf)
+      this._instantScrollRaf = null
     }
 
     if (this._scrollEndHandler && this.scrollerElement) {
@@ -345,6 +351,11 @@ export class Carousel extends LitElement {
       this._minTransitionTimer = null
     }
 
+    if (this._instantScrollRaf !== null && typeof cancelAnimationFrame === 'function') {
+      cancelAnimationFrame(this._instantScrollRaf)
+      this._instantScrollRaf = null
+    }
+
     if (this._scrollEndHandler) {
       scroller.removeEventListener('scrollend', this._scrollEndHandler)
       this._scrollEndHandler = null
@@ -462,12 +473,13 @@ export class Carousel extends LitElement {
         tryFinish()
       }, timeoutMs)
     } else {
-      endProgrammaticScroll()
       if (typeof requestAnimationFrame === 'function') {
-        requestAnimationFrame(() => {
-          scroller.classList.remove('is-instant-scrolling')
-          items.forEach((it) => it.classList.remove('no-transition'))
+        this._instantScrollRaf = requestAnimationFrame(() => {
+          this._instantScrollRaf = null
+          endProgrammaticScroll()
         })
+      } else {
+        endProgrammaticScroll()
       }
     }
   }
@@ -813,12 +825,20 @@ export class Carousel extends LitElement {
     if (event.defaultPrevented) return
 
     if (event.key === 'Enter' || event.key === ' ') {
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
       const clickedItem = this._getEventItem(event)
-      if (clickedItem && !clickedItem.disabled && !clickedItem.href) {
+      if (clickedItem && !clickedItem.disabled) {
         const index = this.items.indexOf(clickedItem)
         if (index !== -1 && index !== this.activeIndex && !this._isNestedInteractiveTarget(event, clickedItem)) {
-          event.preventDefault()
-          this.scrollToIndex(index)
+          if (clickedItem.href) {
+            if (event.key === 'Enter' && this._isFocalLayout()) {
+              event.preventDefault()
+              this.scrollToIndex(index)
+            }
+          } else {
+            event.preventDefault()
+            this.scrollToIndex(index)
+          }
         }
       }
       return
@@ -893,6 +913,10 @@ export class Carousel extends LitElement {
     return false
   }
 
+  _isFocalLayout() {
+    return this.layout !== 'uncontained' && this.layout !== 'full-screen'
+  }
+
   _handleItemClick(e) {
     if (this._hasDragged || e.defaultPrevented) return
     if (e.button && e.button !== 0) return
@@ -907,8 +931,7 @@ export class Carousel extends LitElement {
     if (this._isNestedInteractiveTarget(e, clickedItem)) return
 
     if (clickedItem.href) {
-      const isFocalLayout = this.layout !== 'uncontained' && this.layout !== 'full-screen'
-      if (!isFocalLayout) return
+      if (!this._isFocalLayout()) return
       e.preventDefault()
     }
 

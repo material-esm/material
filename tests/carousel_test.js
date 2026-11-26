@@ -303,15 +303,70 @@ describe('md-carousel item click navigation', () => {
     carousel.disconnectedCallback()
   })
 
-  it('uses instant scrolling when prefers-reduced-motion: reduce is active', async () => {
+  it('focuses non-active href items on unmodified Enter in focal layouts and preserves modifier/uncontained Enter', async () => {
+    const { carousel, items, mocks, scrollCalls } = makeCarousel({
+      layout: 'multi-browse',
+      activeIndex: 0,
+      itemsConfig: [{ href: '#1' }, { href: '#2' }, { href: '#3' }],
+    })
+
+    // Modifier-key Enter is preserved for opening links in a new tab/window
+    const modEnter = makeClickEvent([mocks[1].linkEl, mocks[1].shadowRoot, items[1]], {
+      key: 'Enter',
+      ctrlKey: true,
+    })
+    carousel._handleKeyDown(modEnter)
+    await carousel.updateComplete
+    assert.equal(modEnter.defaultPrevented, false)
+    assert.equal(carousel.activeIndex, 0)
+    assert.equal(scrollCalls.length, 0)
+
+    // Unmodified Enter on non-active href item in focal layout focuses it first
+    const firstEnter = makeClickEvent([mocks[1].linkEl, mocks[1].shadowRoot, items[1]], { key: 'Enter' })
+    carousel._handleKeyDown(firstEnter)
+    await carousel.updateComplete
+    assert.equal(firstEnter.defaultPrevented, true)
+    assert.equal(carousel.activeIndex, 1)
+    assert.equal(scrollCalls.length, 1)
+
+    // Second Enter now that item 1 is active allows native navigation
+    const secondEnter = makeClickEvent([mocks[1].linkEl, mocks[1].shadowRoot, items[1]], { key: 'Enter' })
+    carousel._handleKeyDown(secondEnter)
+    await carousel.updateComplete
+    assert.equal(secondEnter.defaultPrevented, false)
+    assert.equal(scrollCalls.length, 1)
+
+    // Uncontained layout does not intercept Enter on linked cards
+    carousel.layout = 'uncontained'
+    const uncontainedEnter = makeClickEvent([mocks[2].linkEl, mocks[2].shadowRoot, items[2]], { key: 'Enter' })
+    carousel._handleKeyDown(uncontainedEnter)
+    await carousel.updateComplete
+    assert.equal(uncontainedEnter.defaultPrevented, false)
+    assert.equal(carousel.activeIndex, 1)
+
+    carousel.disconnectedCallback()
+  })
+
+  it('uses instant scrolling and defers transition cleanup to requestAnimationFrame under prefers-reduced-motion: reduce', async () => {
     const hadWindow = 'window' in globalThis
     const prevWindow = globalThis.window
+    const hadRaf = 'requestAnimationFrame' in globalThis
+    const prevRaf = globalThis.requestAnimationFrame
+    const hadCancelRaf = 'cancelAnimationFrame' in globalThis
+    const prevCancelRaf = globalThis.cancelAnimationFrame
+    const rafQueue = []
+
     globalThis.window = {
       matchMedia: (q) => ({ matches: q === '(prefers-reduced-motion: reduce)' }),
     }
+    globalThis.requestAnimationFrame = (cb) => {
+      rafQueue.push(cb)
+      return rafQueue.length
+    }
+    globalThis.cancelAnimationFrame = () => {}
 
     try {
-      const { carousel, items, mocks, scrollCalls } = makeCarousel({
+      const { carousel, items, mocks, scroller, scrollCalls } = makeCarousel({
         layout: 'multi-browse',
         activeIndex: 0,
       })
@@ -322,6 +377,14 @@ describe('md-carousel item click navigation', () => {
       assert.equal(carousel.activeIndex, 2)
       assert.equal(scrollCalls.length, 1)
       assert.equal(scrollCalls[0].behavior, 'instant')
+      // Instant/no-transition flags remain set until the next animation frame
+      assert.equal(scroller.classList.contains('is-instant-scrolling'), true)
+      assert.equal(items[2].classList.contains('no-transition'), true)
+      assert.equal(rafQueue.length, 1)
+
+      rafQueue.shift()()
+      assert.equal(scroller.classList.contains('is-instant-scrolling'), false)
+      assert.equal(items[2].classList.contains('no-transition'), false)
 
       carousel.disconnectedCallback()
     } finally {
@@ -329,6 +392,16 @@ describe('md-carousel item click navigation', () => {
         globalThis.window = prevWindow
       } else {
         delete globalThis.window
+      }
+      if (hadRaf) {
+        globalThis.requestAnimationFrame = prevRaf
+      } else {
+        delete globalThis.requestAnimationFrame
+      }
+      if (hadCancelRaf) {
+        globalThis.cancelAnimationFrame = prevCancelRaf
+      } else {
+        delete globalThis.cancelAnimationFrame
       }
     }
   })
