@@ -405,4 +405,48 @@ describe('md-carousel item click navigation', () => {
       }
     }
   })
+
+  it('clears is-instant-scrolling when a smooth scroll interrupts a pending instant scroll rAF', async () => {
+    const hadRaf = 'requestAnimationFrame' in globalThis
+    const prevRaf = globalThis.requestAnimationFrame
+    const hadCancelRaf = 'cancelAnimationFrame' in globalThis
+    const prevCancelRaf = globalThis.cancelAnimationFrame
+    const cancelled = []
+    let nextId = 1
+
+    globalThis.requestAnimationFrame = () => nextId++
+    globalThis.cancelAnimationFrame = (id) => {
+      cancelled.push(id)
+    }
+
+    try {
+      const { carousel, items, scroller } = makeCarousel({
+        layout: 'multi-browse',
+        activeIndex: 0,
+      })
+
+      await carousel.scrollToIndex(1, 'instant')
+      assert.equal(scroller.classList.contains('is-instant-scrolling'), true)
+      assert.equal(items[1].classList.contains('no-transition'), true)
+
+      await carousel.scrollToIndex(2, 'smooth')
+      assert.deepEqual(cancelled, [1])
+      assert.equal(scroller.classList.contains('is-instant-scrolling'), false)
+      assert.equal(scroller.classList.contains('is-programmatic-scrolling'), true)
+      assert.equal(items[2].classList.contains('no-transition'), false)
+
+      carousel.disconnectedCallback()
+    } finally {
+      if (hadRaf) {
+        globalThis.requestAnimationFrame = prevRaf
+      } else {
+        delete globalThis.requestAnimationFrame
+      }
+      if (hadCancelRaf) {
+        globalThis.cancelAnimationFrame = prevCancelRaf
+      } else {
+        delete globalThis.cancelAnimationFrame
+      }
+    }
+  })
 })

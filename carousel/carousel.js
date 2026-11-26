@@ -368,9 +368,11 @@ export class Carousel extends LitElement {
     const effectiveBehavior = behavior === 'smooth' && prefersReducedMotion ? 'instant' : behavior
 
     if (effectiveBehavior === 'instant') {
+      scroller.classList.remove('is-programmatic-scrolling')
       scroller.classList.add('is-instant-scrolling')
       items.forEach((it) => it.classList.add('no-transition'))
     } else if (effectiveBehavior === 'smooth') {
+      scroller.classList.remove('is-instant-scrolling')
       scroller.classList.add('is-programmatic-scrolling')
       items.forEach((it) => it.classList.remove('no-transition'))
     }
