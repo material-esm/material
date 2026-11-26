@@ -12,6 +12,35 @@ import '../internal/focus/focus-ring.js'
 import '../internal/ripple/ripple.js'
 import './carousel-item.js'
 
+const INTERACTIVE_SELECTOR = [
+  'a[href]',
+  'button',
+  'input',
+  'select',
+  'textarea',
+  'summary',
+  'label',
+  '[role="button"]',
+  '[role="link"]',
+  '[role="checkbox"]',
+  '[role="radio"]',
+  '[role="switch"]',
+  '[role="tab"]',
+  '[role="menuitem"]',
+  '[contenteditable=""]',
+  '[contenteditable="true"]',
+  'md-button',
+  'md-icon-button',
+  'md-fab',
+  'md-chip',
+  'md-checkbox',
+  'md-radio',
+  'md-switch',
+  'md-slider',
+  'md-select',
+  'md-text-field',
+].join(', ')
+
 /**
  * A Material 3 Carousel component supporting multi-browse, uncontained, hero,
  * centered-hero, and full-screen layout strategies.
@@ -58,6 +87,7 @@ export class Carousel extends LitElement {
     this._autoplayTimer = null
     this._programmaticScrollTimer = null
     this._minTransitionTimer = null
+    this._instantScrollRaf = null
     this._scrollEndHandler = null
     this._isPointerDown = false
     this._startX = 0
@@ -67,6 +97,7 @@ export class Carousel extends LitElement {
 
     this._handleScroll = this._handleScroll.bind(this)
     this._handleKeyDown = this._handleKeyDown.bind(this)
+    this._handleItemClick = this._handleItemClick.bind(this)
     this._handleClickCapture = this._handleClickCapture.bind(this)
     this._onPointerDown = this._onPointerDown.bind(this)
     this._onPointerMove = this._onPointerMove.bind(this)
@@ -101,7 +132,7 @@ export class Carousel extends LitElement {
       this._resizeObserver = new ResizeObserver(() => {
         const scroller = this.scrollerElement
         scroller?.classList.add('is-instant-scrolling')
-        this.items.forEach(it => it.classList.add('no-transition'))
+        this.items.forEach((it) => it.classList.add('no-transition'))
         this._updateLayout()
         this._updateScrollState()
         if (!this._isPointerDown && !this._isScrollingProgrammatically) {
@@ -109,7 +140,7 @@ export class Carousel extends LitElement {
         }
         requestAnimationFrame(() => {
           scroller?.classList.remove('is-instant-scrolling')
-          this.items.forEach(it => it.classList.remove('no-transition'))
+          this.items.forEach((it) => it.classList.remove('no-transition'))
         })
       })
       this._resizeObserver.observe(this)
@@ -138,6 +169,11 @@ export class Carousel extends LitElement {
       this._minTransitionTimer = null
     }
 
+    if (this._instantScrollRaf !== null && typeof cancelAnimationFrame === 'function') {
+      cancelAnimationFrame(this._instantScrollRaf)
+      this._instantScrollRaf = null
+    }
+
     if (this._scrollEndHandler && this.scrollerElement) {
       this.scrollerElement.removeEventListener('scrollend', this._scrollEndHandler)
       this._scrollEndHandler = null
@@ -151,7 +187,7 @@ export class Carousel extends LitElement {
   firstUpdated() {
     const scroller = this.scrollerElement
     scroller?.classList.add('is-instant-scrolling')
-    this.items.forEach(it => it.classList.add('no-transition'))
+    this.items.forEach((it) => it.classList.add('no-transition'))
     this._updateLayout()
     this._updateScrollState()
     this._syncActiveItem()
@@ -160,7 +196,7 @@ export class Carousel extends LitElement {
     }
     requestAnimationFrame(() => {
       scroller?.classList.remove('is-instant-scrolling')
-      this.items.forEach(it => it.classList.remove('no-transition'))
+      this.items.forEach((it) => it.classList.remove('no-transition'))
     })
   }
 
@@ -199,6 +235,7 @@ export class Carousel extends LitElement {
           aria-label=${this.ariaLabel}
           tabindex="0"
           @scroll=${this._handleScroll}
+          @click=${this._handleItemClick}
           @pointerdown=${this._onPointerDown}
           @pointermove=${this._onPointerMove}
           @pointerup=${this._onPointerUp}
@@ -206,49 +243,53 @@ export class Carousel extends LitElement {
           <slot @slotchange=${this._handleSlotChange}></slot>
         </div>
 
-        ${showNav
-          ? html`
-              <button
-                class="nav-button prev ${!this.canScrollPrev ? 'disabled' : ''}"
-                ?disabled=${!this.canScrollPrev}
-                @click=${this.previous}
-                aria-label="Previous item"
-                tabindex="-1">
-                <md-elevation></md-elevation>
-                <md-ripple></md-ripple>
-                <md-focus-ring></md-focus-ring>
-                <md-icon>${isRtlMode ? 'chevron_right' : 'chevron_left'}</md-icon>
-              </button>
+        ${
+          showNav
+            ? html`
+                <button
+                  class="nav-button prev ${!this.canScrollPrev ? 'disabled' : ''}"
+                  ?disabled=${!this.canScrollPrev}
+                  @click=${this.previous}
+                  aria-label="Previous item"
+                  tabindex="-1">
+                  <md-elevation></md-elevation>
+                  <md-ripple></md-ripple>
+                  <md-focus-ring></md-focus-ring>
+                  <md-icon>${isRtlMode ? 'chevron_right' : 'chevron_left'}</md-icon>
+                </button>
 
-              <button
-                class="nav-button next ${!this.canScrollNext ? 'disabled' : ''}"
-                ?disabled=${!this.canScrollNext}
-                @click=${this.next}
-                aria-label="Next item"
-                tabindex="-1">
-                <md-elevation></md-elevation>
-                <md-ripple></md-ripple>
-                <md-focus-ring></md-focus-ring>
-                <md-icon>${isRtlMode ? 'chevron_left' : 'chevron_right'}</md-icon>
-              </button>
-            `
-          : nothing}
-        ${this.indicators && itemCount > 0
-          ? html`
-              <div class="indicators" role="tablist" aria-label="Slides">
-                ${this.items.map(
-                  (_, i) => html`
-                    <button
-                      class="indicator-dot ${i === this.activeIndex ? 'active' : ''}"
-                      role="tab"
-                      aria-selected=${i === this.activeIndex}
-                      aria-label="Go to slide ${i + 1}"
-                      @click=${() => this.scrollToIndex(i)}></button>
-                  `,
-                )}
-              </div>
-            `
-          : nothing}
+                <button
+                  class="nav-button next ${!this.canScrollNext ? 'disabled' : ''}"
+                  ?disabled=${!this.canScrollNext}
+                  @click=${this.next}
+                  aria-label="Next item"
+                  tabindex="-1">
+                  <md-elevation></md-elevation>
+                  <md-ripple></md-ripple>
+                  <md-focus-ring></md-focus-ring>
+                  <md-icon>${isRtlMode ? 'chevron_left' : 'chevron_right'}</md-icon>
+                </button>
+              `
+            : nothing
+        }
+        ${
+          this.indicators && itemCount > 0
+            ? html`
+                <div class="indicators" role="tablist" aria-label="Slides">
+                  ${this.items.map(
+                    (_, i) => html`
+                      <button
+                        class="indicator-dot ${i === this.activeIndex ? 'active' : ''}"
+                        role="tab"
+                        aria-selected=${i === this.activeIndex}
+                        aria-label="Go to slide ${i + 1}"
+                        @click=${() => this.scrollToIndex(i)}></button>
+                    `,
+                  )}
+                </div>
+              `
+            : nothing
+        }
       </div>
     `
   }
@@ -310,17 +351,30 @@ export class Carousel extends LitElement {
       this._minTransitionTimer = null
     }
 
+    if (this._instantScrollRaf !== null && typeof cancelAnimationFrame === 'function') {
+      cancelAnimationFrame(this._instantScrollRaf)
+      this._instantScrollRaf = null
+    }
+
     if (this._scrollEndHandler) {
       scroller.removeEventListener('scrollend', this._scrollEndHandler)
       this._scrollEndHandler = null
     }
 
-    if (behavior === 'instant') {
+    const prefersReducedMotion =
+      typeof window !== 'undefined' &&
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const effectiveBehavior = behavior === 'smooth' && prefersReducedMotion ? 'instant' : behavior
+
+    if (effectiveBehavior === 'instant') {
+      scroller.classList.remove('is-programmatic-scrolling')
       scroller.classList.add('is-instant-scrolling')
-      items.forEach(it => it.classList.add('no-transition'))
-    } else if (behavior === 'smooth') {
+      items.forEach((it) => it.classList.add('no-transition'))
+    } else if (effectiveBehavior === 'smooth') {
+      scroller.classList.remove('is-instant-scrolling')
       scroller.classList.add('is-programmatic-scrolling')
-      items.forEach(it => it.classList.remove('no-transition'))
+      items.forEach((it) => it.classList.remove('no-transition'))
     }
 
     this._applyItemSizes()
@@ -352,7 +406,7 @@ export class Carousel extends LitElement {
 
     scroller.scrollTo({
       left: clampedTarget,
-      behavior,
+      behavior: effectiveBehavior,
     })
 
     this._updateScrollState()
@@ -381,12 +435,12 @@ export class Carousel extends LitElement {
       }
       scroller.classList.remove('is-programmatic-scrolling')
       scroller.classList.remove('is-instant-scrolling')
-      items.forEach(it => it.classList.remove('no-transition'))
+      items.forEach((it) => it.classList.remove('no-transition'))
       this._isScrollingProgrammatically = false
       this._updateScrollState()
     }
 
-    if (behavior === 'smooth') {
+    if (effectiveBehavior === 'smooth') {
       const scrollDistance = Math.abs(clampedTarget - scroller.scrollLeft)
       const timeoutMs = Math.max(450, Math.min(1200, Math.round(scrollDistance * 0.5 + 350)))
 
@@ -404,7 +458,7 @@ export class Carousel extends LitElement {
         tryFinish()
       }
 
-      if ('onscrollend' in window) {
+      if (typeof window !== 'undefined' && 'onscrollend' in window) {
         scroller.addEventListener('scrollend', this._scrollEndHandler, { once: true })
       } else {
         scrollEnded = true
@@ -421,11 +475,14 @@ export class Carousel extends LitElement {
         tryFinish()
       }, timeoutMs)
     } else {
-      endProgrammaticScroll()
-      requestAnimationFrame(() => {
-        scroller.classList.remove('is-instant-scrolling')
-        items.forEach(it => it.classList.remove('no-transition'))
-      })
+      if (typeof requestAnimationFrame === 'function') {
+        this._instantScrollRaf = requestAnimationFrame(() => {
+          this._instantScrollRaf = null
+          endProgrammaticScroll()
+        })
+      } else {
+        endProgrammaticScroll()
+      }
     }
   }
 
@@ -769,6 +826,26 @@ export class Carousel extends LitElement {
   _handleKeyDown(event) {
     if (event.defaultPrevented) return
 
+    if (event.key === 'Enter' || event.key === ' ') {
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
+      const clickedItem = this._getEventItem(event)
+      if (clickedItem && !clickedItem.disabled) {
+        const index = this.items.indexOf(clickedItem)
+        if (index !== -1 && index !== this.activeIndex && !this._isNestedInteractiveTarget(event, clickedItem)) {
+          if (clickedItem.href) {
+            if (event.key === 'Enter' && this._isFocalLayout()) {
+              event.preventDefault()
+              this.scrollToIndex(index)
+            }
+          } else {
+            event.preventDefault()
+            this.scrollToIndex(index)
+          }
+        }
+      }
+      return
+    }
+
     const isRtlMode = isRtl(this, false)
     const isLeft = event.key === 'ArrowLeft'
     const isRight = event.key === 'ArrowRight'
@@ -793,6 +870,74 @@ export class Carousel extends LitElement {
     } else if (backwards) {
       this.previous()
     }
+  }
+
+  _getEventPath(event) {
+    if (typeof event.composedPath === 'function') {
+      return event.composedPath()
+    }
+    const path = []
+    let node = event.target
+    while (node) {
+      path.push(node)
+      node = node.parentNode || node.host || null
+    }
+    return path
+  }
+
+  _getEventItem(event) {
+    const items = this.items
+    if (!items.length) return null
+    for (const node of this._getEventPath(event)) {
+      if (items.includes(node)) {
+        return node
+      }
+    }
+    return null
+  }
+
+  _isNestedInteractiveTarget(event, item) {
+    const itemShadowRoot = item.shadowRoot || item.renderRoot || null
+    for (const node of this._getEventPath(event)) {
+      if (node === item) {
+        return false
+      }
+      if (!node || typeof node.matches !== 'function') {
+        continue
+      }
+      if (itemShadowRoot && typeof node.getRootNode === 'function' && node.getRootNode() === itemShadowRoot) {
+        continue
+      }
+      if (node.matches(INTERACTIVE_SELECTOR)) {
+        return true
+      }
+    }
+    return false
+  }
+
+  _isFocalLayout() {
+    return this.layout !== 'uncontained' && this.layout !== 'full-screen'
+  }
+
+  _handleItemClick(e) {
+    if (this._hasDragged || e.defaultPrevented) return
+    if (e.button && e.button !== 0) return
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
+
+    const clickedItem = this._getEventItem(e)
+    if (!clickedItem || clickedItem.disabled) return
+
+    const index = this.items.indexOf(clickedItem)
+    if (index === -1 || index === this.activeIndex) return
+
+    if (this._isNestedInteractiveTarget(e, clickedItem)) return
+
+    if (clickedItem.href) {
+      if (!this._isFocalLayout()) return
+      e.preventDefault()
+    }
+
+    this.scrollToIndex(index)
   }
 
   _handleClickCapture(e) {
@@ -825,7 +970,7 @@ export class Carousel extends LitElement {
     if (!this._hasDragged && Math.abs(deltaX) > 5) {
       this._hasDragged = true
       scroller.classList.add('is-dragging')
-      this.items.forEach(it => it.classList.add('no-transition'))
+      this.items.forEach((it) => it.classList.add('no-transition'))
       try {
         scroller.setPointerCapture?.(e.pointerId)
       } catch {}
@@ -843,7 +988,7 @@ export class Carousel extends LitElement {
     const scroller = this.scrollerElement
     if (scroller) {
       scroller.classList.remove('is-dragging')
-      this.items.forEach(it => it.classList.remove('no-transition'))
+      this.items.forEach((it) => it.classList.remove('no-transition'))
       try {
         if (this._pointerId !== null && scroller.hasPointerCapture?.(this._pointerId)) {
           scroller.releasePointerCapture?.(this._pointerId)
@@ -881,7 +1026,7 @@ export class Carousel extends LitElement {
     const scroller = this.scrollerElement
     if (scroller) {
       scroller.classList.remove('is-dragging')
-      this.items.forEach(it => it.classList.remove('no-transition'))
+      this.items.forEach((it) => it.classList.remove('no-transition'))
       try {
         if (this._pointerId !== null && scroller.hasPointerCapture?.(this._pointerId)) {
           scroller.releasePointerCapture?.(this._pointerId)
@@ -973,7 +1118,7 @@ export class Carousel extends LitElement {
         flex: 1;
         overflow-x: auto;
         overflow-y: hidden;
-        scroll-behavior: smooth;
+        overscroll-behavior-x: contain;
         gap: var(--_item-spacing, 8px);
         width: 100%;
         height: 100%;
@@ -983,6 +1128,12 @@ export class Carousel extends LitElement {
         user-select: none;
         touch-action: pan-y pinch-zoom;
         -webkit-overflow-scrolling: touch;
+      }
+
+      @media (prefers-reduced-motion: no-preference) {
+        .scroller {
+          scroll-behavior: smooth;
+        }
       }
 
       ::slotted([md-carousel-item]),
@@ -1029,6 +1180,11 @@ export class Carousel extends LitElement {
         height: 100%;
         min-height: 0;
         scroll-snap-align: start;
+      }
+
+      ::slotted([md-carousel-item]:not([active]):not([disabled])),
+      ::slotted(md-carousel-item:not([active]):not([disabled])) {
+        cursor: pointer;
       }
 
       :host([layout='centered-hero']) ::slotted([md-carousel-item]),

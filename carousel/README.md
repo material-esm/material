@@ -2,7 +2,9 @@
 
 [Material Design 3 Carousel component](https://m3.material.io/components/carousel/overview).
 
-Carousels show a scrollable collection of items with dynamic sizing, snapping, navigation buttons, and pagination indicators.
+Carousels show a scrollable collection of items with dynamic sizing, snapping, click-to-focus item selection, navigation buttons, and pagination indicators.
+
+Clicking a non-active item smoothly scrolls it into the focal position (ignoring clicks on nested interactive controls such as buttons or inputs, drag gestures, and modifier-key clicks). In focal layouts (`multi-browse`, `hero`, `centered-hero`), clicking a non-active linked (`href`) item focuses it first before navigating on a subsequent click.
 
 ## Usage
 
@@ -92,18 +94,18 @@ import 'material/carousel/carousel-item.js'
 
 ## `<md-carousel>` Properties & Attributes
 
-| Property / Attribute | Type | Default | Description |
-| --- | --- | --- | --- |
-| `layout` | `'multi-browse' \| 'uncontained' \| 'hero' \| 'centered-hero' \| 'full-screen'` | `'multi-browse'` | Carousel layout strategy. |
-| `item-width` / `itemWidth` | `string` | `''` | Custom item width (e.g. `'300px'`). |
-| `item-spacing` / `itemSpacing` | `number` | `8` | Spacing between items in px. |
-| `navigation` | `'auto' \| 'always' \| 'none'` | `'auto'` | Controls visibility of previous/next navigation buttons. |
-| `indicators` | `boolean` | `false` | When true, shows pagination indicator dots. |
-| `autoplay` | `number` | `0` | Delay in milliseconds for automatic sliding (0 = disabled). |
-| `loop` | `boolean` | `false` | When true, wraps navigation around when reaching edges. |
-| `active-index` / `activeIndex` | `number` | `0` | 0-based index of the currently active slide. |
-| `scroll-snap` / `scrollSnap` | `boolean` | `true` | Enables/disables CSS scroll-snapping. |
-| `hide-scrollbar` / `hideScrollbar` | `boolean` | `true` | Hides the horizontal scrollbar. |
+| Property / Attribute               | Type                                                                            | Default          | Description                                                 |
+| ---------------------------------- | ------------------------------------------------------------------------------- | ---------------- | ----------------------------------------------------------- |
+| `layout`                           | `'multi-browse' \| 'uncontained' \| 'hero' \| 'centered-hero' \| 'full-screen'` | `'multi-browse'` | Carousel layout strategy.                                   |
+| `item-width` / `itemWidth`         | `string`                                                                        | `''`             | Custom item width (e.g. `'300px'`).                         |
+| `item-spacing` / `itemSpacing`     | `number`                                                                        | `8`              | Spacing between items in px.                                |
+| `navigation`                       | `'auto' \| 'always' \| 'none'`                                                  | `'auto'`         | Controls visibility of previous/next navigation buttons.    |
+| `indicators`                       | `boolean`                                                                       | `false`          | When true, shows pagination indicator dots.                 |
+| `autoplay`                         | `number`                                                                        | `0`              | Delay in milliseconds for automatic sliding (0 = disabled). |
+| `loop`                             | `boolean`                                                                       | `false`          | When true, wraps navigation around when reaching edges.     |
+| `active-index` / `activeIndex`     | `number`                                                                        | `0`              | 0-based index of the currently active slide.                |
+| `scroll-snap` / `scrollSnap`       | `boolean`                                                                       | `true`           | Enables/disables CSS scroll-snapping.                       |
+| `hide-scrollbar` / `hideScrollbar` | `boolean`                                                                       | `true`           | Hides the horizontal scrollbar.                             |
 
 ### Methods
 
@@ -120,15 +122,15 @@ import 'material/carousel/carousel-item.js'
 
 ## `<md-carousel-item>` Properties & Attributes
 
-| Property / Attribute | Type | Default | Description |
-| --- | --- | --- | --- |
-| `shape` | `string` | `'var(--md-sys-shape-corner-extra-large, 28px)'` | Corner radius or shape (`'small'`, `'medium'`, `'large'`, `'extra-large'`, `'full'`). |
-| `type` | `'filled' \| 'elevated' \| 'outlined' \| ''` | `''` | Container card style variant. |
-| `interactive` | `boolean` | `false` | Enables ripple, focus-ring, and hover elevation effects. |
-| `href` | `string` | `''` | Link URL when clicking the carousel item. |
-| `target` | `string` | `''` | Target window for link (`'_blank'`, etc.). |
-| `headline` | `string` | `''` | Headline text overlay. |
-| `subhead` | `string` | `''` | Subhead text overlay. |
+| Property / Attribute | Type                                         | Default                                          | Description                                                                           |
+| -------------------- | -------------------------------------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------- |
+| `shape`              | `string`                                     | `'var(--md-sys-shape-corner-extra-large, 28px)'` | Corner radius or shape (`'small'`, `'medium'`, `'large'`, `'extra-large'`, `'full'`). |
+| `type`               | `'filled' \| 'elevated' \| 'outlined' \| ''` | `''`                                             | Container card style variant.                                                         |
+| `interactive`        | `boolean`                                    | `false`                                          | Enables ripple, focus-ring, and hover elevation effects.                              |
+| `href`               | `string`                                     | `''`                                             | Link URL when clicking the carousel item.                                             |
+| `target`             | `string`                                     | `''`                                             | Target window for link (`'_blank'`, etc.).                                            |
+| `headline`           | `string`                                     | `''`                                             | Headline text overlay.                                                                |
+| `subhead`            | `string`                                     | `''`                                             | Subhead text overlay.                                                                 |
 
 ### Slots
 
